@@ -38,7 +38,12 @@ legend_format <- function() {
 }
 
 ################## Plot 1 - Catches ################
-figure_1_catches <- function(data, years, landings, discards) {
+figure_1_catches <- function(data, years, catches, landings, discards) {
+    #Make sure that if the column landings is empy, the column catches is plotted
+    if (all(is.na(data[, "landings"]))) {
+        data$landings <- data$catches
+    }
+    # Start the plot
     fig1 <- plot_ly(
         data = data,
         x = ~years,
