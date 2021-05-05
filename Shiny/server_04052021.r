@@ -57,12 +57,16 @@ server <- function(input, output) {
         #stock_list_all <- read.csv("./Shiny/FilteredStocklist_all.csv")
         stock_list_all <- jsonlite::fromJSON(
             URLencode(
-                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, ExpertGroup"
+                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
             )
         )$value
-
+        #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
+        stock_list_all <- stock_list_all  %>% filter(DataCategory == "1")
+        
+        ### if no polygon is clicked, just show all stocks in the table
         if (identical(key_subset, character(0))) {
-            output$tbl <- renderDT(stock_list_all, extensions = 'Buttons', 
+            output$tbl <- renderDT(stock_list_all, 
+            extensions = 'Buttons', 
             options = list(dom = 'Bfrtip', pageLength = 300,#lengthChange = TRUE,
             buttons = c('csv')
             )                         
@@ -96,7 +100,11 @@ server <- function(input, output) {
             
             # turn off row selection otherwise you'll also select that row when you
             # click on the actionButton 
-            selection = 'none'
+            selection = 'none',
+
+            # add buttons to download csv
+            extensions = 'Buttons', 
+            options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv'))
             )
         }
     
