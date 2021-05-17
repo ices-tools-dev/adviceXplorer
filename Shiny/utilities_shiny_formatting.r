@@ -1,4 +1,4 @@
-side_width <- 5
+side_width <- 4
 
 # allocations advice information panel
 allocations_infopanel <-
@@ -33,6 +33,12 @@ allocations_plotspanel <-
             title = "SSB",
             plotlyOutput("SSB"),
             h5(helpText("Figure 4: SSB"))
+            # actionButton("r_SSB", "Get Stock Data")
+        ),
+        tabPanel(
+            title = "Quality of Assessment",
+            plotlyOutput("Q_Ass"),
+            h5(helpText("Figure 4: Quality of Assessment"))
             # actionButton("r_SSB", "Get Stock Data")
         )
     )

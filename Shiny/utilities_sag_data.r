@@ -15,57 +15,51 @@ access_sag_data <- function(stock_code, year) {
 
 # stock_list_all <- jsonlite::fromJSON(
 #             URLencode(
-#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020&$select=AssessmentKey,DataCategory,StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, ExpertGroup"
-#                 #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021"
+#                 #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020&$select=AssessmentKey,DataCategory,StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, ExpertGroup"
+#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021"
+#                 #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$DataCategory eq 1"
 #             )
 #         )$value
-
+# stock_list_cat1 <- stock_list_all  %>% filter(DataCategory == "1")
 # stock_list_all  %>% tibble()
 
 
-# data <- access_sag_data("ory.27.nea",2020)
-# data %>% tibble()
-# source("Shiny/utilities_plotting.r")
-# figure_1_catches(data, data$Year, data$catches, data$landings, data$discards)
+# function to dowload the quality assessemnt data
+quality_assessment_data <- function(stock_code){
 
-# if (all(is.na(data[,'landings']))){
-# data$landings <- data$catches
-# }
-# fig1 <- plot_ly(
-#         data = data,
-#         x = ~Year,
-#         y = ~landings,
-#         name = "Landings",
-#         type = "bar",
-#         hoverinfo = 'text',
-#         text = ~paste('Year:', Year, '<br>Landings:', landings),
-#         marker = list(color = '#66a4cd',
-#                       line = list(color = 'black',
-#                                   width = 0.5)),
-#         showlegend = TRUE)
+years <- c(2021, 2020, 2019, 2018, 2017)
+datalist = list()
 
-#     fig1 <- fig1 %>% add_trace(
-#         data = data,
-#         x = ~Year,
-#         y = ~discards,
-#         name = "Discards",
-#         type = "bar",
-#         hoverinfo = 'text',
-#         text = ~paste('Year:', Year, '<br>Discards:', discards),
-#         marker = list(color = '#a00130',
-#                         line = list(color = 'black',
-#                                     width = 0.5)),
-#         showlegend = TRUE)
+for (i in years) {
+    print(i)
+    data_temp <- try(access_sag_data(stock_code, i)) # "had.27.6b"
 
-#     fig1 <- fig1 %>% layout(title = "Catches",
-#             xaxis = list(title = "Years",
-#             titlefont = titlefont_format(),
-#             tickfont = tickfont_format(),
-#             showticklabels = TRUE),
-#             barmode = "stack",
-#             legend = legend_format(),
-#             yaxis = list(title = "Catches",
-#             titlefont = titlefont_format(),
-#             tickfont = tickfont_format(),
-#             showticklabels = TRUE))
-#     fig1
+    ###############
+    if (isTRUE(class(data_temp) == "try-error")) {
+        next
+    }
+    else {
+        #
+        data_temp <- filter(data_temp, between(Year, 2005, 2021))
+        data_temp <- data_temp %>% select(Year, recruitment, SSB, F, Bpa, Blim, MSYBtrigger, FLim, Fpa, FMSY, RecruitmentAge, AssessmentYear)
+        datalist[[i]] <- data_temp
+        # }
+    }
+}
+
+
+### bind data in unique df
+big_data <- dplyr::bind_rows(datalist)
+
+# find last asseement year
+last_year <- tail(big_data$AssessmentYear, n=1)
+big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
+
+#make assessmentYear as factor
+big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
+
+df_list <- list(big_data, big_data_last_year)
+return(df_list)
+}
+# list_df<-quality_assessment_data("her.27.3a47d")

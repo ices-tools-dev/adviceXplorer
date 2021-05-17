@@ -350,3 +350,217 @@ figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtri
 }
 
 #figure_4_SSB(SSB, SSB$Year, SSB$low_SSB, SSB$SSB, SSB$high_SSB, SSB$Blim, SSB$Bpa, SSB$MSYBtrigger)
+
+
+
+#####################Subplots quality of assessment
+quality_assessment_plots <- function(big_data, big_data_last_year) {
+# pal <- c("red", "blue", "green")
+ fig1 <- plot_ly(
+     data = big_data,
+     x = ~Year,
+     y = ~SSB,
+     split = ~AssessmentYear,
+     type = "scatter",
+     mode = "lines+markers",
+    #  line = list(shape = "spline"),
+     connectgaps = FALSE,
+     color = ~AssessmentYear
+ )
+ fig1 <- fig1 %>% add_trace(
+        data = big_data_last_year, ###select for last reference points last year
+        x = ~Year, 
+        y = ~Blim, 
+        name = "Blim", 
+        type = "scatter", 
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dash"), 
+        showlegend = TRUE
+    )
+    fig1 <- fig1 %>% add_trace(
+        data = big_data_last_year, 
+        x = ~Year, 
+        y = ~Bpa, 
+        name = "Bpa", 
+        type = "scatter", 
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dot"), 
+        showlegend = TRUE
+    )
+
+    fig1 <- fig1 %>% add_trace(
+        data = big_data_last_year, 
+        x = ~Year, 
+        y = ~MSYBtrigger, 
+        name = "MSYBtrigger", 
+        type = "scatter", 
+        mode = "lines",
+        line = list(color = "orange", shape = "linear", dash = "dash"), 
+        showlegend = TRUE
+    )
+ fig1 <- fig1 %>% layout(
+        title = "SSB", 
+        legend = legend_format(),
+        paper_bgcolor = "rgb(255,255,255)", 
+        plot_bgcolor = "rgb(229,229,229)",
+        xaxis = list(
+            title = "Years",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        ),
+        yaxis = list(
+            title = "SSB",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
+    )
+
+ fig2 <- plot_ly(
+     data = big_data,
+     x = ~Year,
+     y = ~F,
+     split = ~AssessmentYear,
+     type = "scatter",
+     mode = "lines+markers",
+    #  line = list(shape = "spline"),
+     connectgaps = FALSE,
+     color = ~AssessmentYear,
+     showlegend = FALSE
+
+ )
+
+ ## Add horizontal lines
+    fig2 <- fig2 %>% add_trace(
+        data = big_data_last_year, 
+        x = ~Year, 
+        y = ~FLim, 
+        name = "FLim", 
+        type = "scatter", 
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dash"), 
+        showlegend = TRUE
+    )
+    fig2 <- fig2 %>% add_trace(
+        data = big_data_last_year, 
+        x = ~Year, 
+        y = ~Fpa, 
+        name = "Fpa", 
+        type = "scatter", 
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dot"), 
+        showlegend = TRUE
+    )
+
+    fig2 <- fig2 %>% add_trace(
+        data = big_data_last_year, 
+        x = ~Year, 
+        y = ~FMSY, 
+        name = "FMSY", 
+        type = "scatter", 
+        mode = "lines",
+        line = list(color = "orange", shape = "linear", dash = "dash"), 
+        showlegend = TRUE
+    )
+fig2 <- fig2 %>% layout(
+        title = "F", 
+        legend = legend_format(),
+        paper_bgcolor = "rgb(255,255,255)", 
+        plot_bgcolor = "rgb(229,229,229)",
+        xaxis = list(
+            title = "Years",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        ),
+        yaxis = list(
+            title = "F",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
+    )
+
+ fig3 <- plot_ly(
+     data = big_data,
+     x = ~Year,
+     y = ~recruitment,
+     split = ~AssessmentYear,
+     type = "scatter",
+     mode = "lines+markers",
+    #  line = list(shape = "spline"),
+     connectgaps = FALSE,
+     color = ~AssessmentYear,
+     showlegend = FALSE
+ )
+fig3 <- fig3 %>% layout(
+        title = "R", 
+        legend = legend_format(),
+        paper_bgcolor = "rgb(255,255,255)", 
+        plot_bgcolor = "rgb(229,229,229)",
+        xaxis = list(
+            title = "Years",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        ),
+        yaxis = list(
+            title = "R",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
+    )
+
+ fig <- subplot(fig1, fig2, fig3, 
+ nrows = 1, shareX = TRUE, titleX = TRUE,titleY = TRUE, margin = 0.045)#, 
+#  nrows = 1,
+#    widths = NULL,
+#    heights = NULL,
+#    margin = 0.02,
+#    shareX = TRUE,
+#    shareY = FALSE,
+#    titleX = shareX)
+#    titleY = shareY,
+#    which_layout = "merge")
+ fig
+}
+
+# quality_assessment_plots(big_data, big_data_last_year)
