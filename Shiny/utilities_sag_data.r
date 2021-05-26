@@ -1,3 +1,5 @@
+options(icesSAG.use_token = TRUE)
+
 access_sag_data <- function(stock_code, year) {
 
     # Dowload the data
@@ -41,7 +43,7 @@ for (i in years) {
     else {
         #
         data_temp <- filter(data_temp, between(Year, 2005, 2021))
-        data_temp <- data_temp %>% select(Year, recruitment, SSB, F, Bpa, Blim, MSYBtrigger, FLim, Fpa, FMSY, RecruitmentAge, AssessmentYear)
+        data_temp <- data_temp %>% select(Year, recruitment, SSB, F, Bpa, Blim, MSYBtrigger, FLim, Fpa, FMSY, RecruitmentAge, AssessmentYear, StockPublishNote,Purpose)
         datalist[[i]] <- data_temp
         # }
     }
@@ -53,7 +55,15 @@ big_data <- dplyr::bind_rows(datalist)
 
 # find last asseement year
 last_year <- tail(big_data$AssessmentYear, n=1)
+
+# subset last year
 big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
+
+# take out non published data from before 2021 in big data
+big_data <- filter(big_data, StockPublishNote == "Stock published")
+big_data <- filter(big_data, Purpose == "Advice")
+# put together the published data from before 2021 with the unpublished from 2021
+big_data <- rbind(big_data, big_data_last_year)
 
 #make assessmentYear as factor
 big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
@@ -62,4 +72,26 @@ big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear
 df_list <- list(big_data, big_data_last_year)
 return(df_list)
 }
-# list_df<-quality_assessment_data("her.27.3a47d")
+
+# list_df <- quality_assessment_data("hom.27.2a4a5b6a7a-ce-k8")
+# list_df
+
+# # # list_df_copy <-  filter(list_df[[1]], StockPublishNote == "Stock published")
+# df <-access_sag_data("hom.27.2a4a5b6a7a-ce-k8", 2020)
+# df
+
+
+# stock_list_all <- jsonlite::fromJSON(
+#             URLencode(
+#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
+#             )
+#         )$value
+
+# stock_list_all  %>% tibble()
+# freq_Eco_region <- data.frame(table(stock_list_all$EcoRegion))
+
+# stock_list_all <- jsonlite::fromJSON(
+#             URLencode(
+#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020"
+#             )
+#         )$value

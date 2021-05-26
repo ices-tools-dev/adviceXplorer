@@ -16,7 +16,7 @@ server <- function(input, output) {
     
     output$map <- renderLeaflet({
 
-        leaflet() %>% 
+        leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>% 
             #addProviderTiles("Stamen.Toner") %>% 
             addPolygons(data = shape_eco, 
                 color = "#444444", 
@@ -41,7 +41,8 @@ server <- function(input, output) {
                 smoothFactor = 0.5,
                 opacity = 0.7, fillOpacity = 0.5,
                 fillColor = "grey") %>%  
-             setView(lng = 25.783660, lat = 71.170953, zoom = 3) # nordKap coordinates
+                setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
+            #  setView(lng = 25.783660, lat = 71.170953, zoom = 3.2) # nordKap coordinates
     })
     
     # click on polygon
@@ -59,7 +60,7 @@ server <- function(input, output) {
         #stock_list_all <- read.csv("./Shiny/FilteredStocklist_all.csv")
         stock_list_all <- jsonlite::fromJSON(
             URLencode(
-                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
+                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory, ExpertGroup"
             )
         )$value
         #### I'm adding this next line just to check what happens if I subset for only cat1 stocks

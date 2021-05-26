@@ -22,7 +22,7 @@ titlefont_format <- function() {
 tickfont_format <- function() {
     f2 <- list(
         family = "Arial, serif",
-        size = 20,
+        size = 25,
         color = "black")
 }
 ## Formatting legend
@@ -30,7 +30,7 @@ legend_format <- function() {
     leg <- list(
         font = list(
         family = "sans-serif",
-        size = 20,
+        size = 25,
         color = "#000"),
         bgcolor = "#E2E2E2",
         bordercolor = "#FFFFFF",
@@ -130,7 +130,7 @@ figure_2_recruitment <- function(data, years, recruitment, low_recruitment, high
                 showticklabels = TRUE
             ),
             yaxis = list(
-                title = "recruitment",
+                title = "Recruitment",
                 titlefont = titlefont_format(),
                 tickfont = tickfont_format(),
                 showticklabels = TRUE
@@ -151,7 +151,7 @@ figure_3_fish_mortality <- function(data, years, low_F, F, high_F, FLim, Fpa, FM
         y = ~high_F, 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "transparent", shape = "spline"),
+        line = list(color = "transparent", shape = "linear"),#
         showlegend = FALSE, 
         name = "high_F"
     )
@@ -161,8 +161,8 @@ figure_3_fish_mortality <- function(data, years, low_F, F, high_F, FLim, Fpa, FM
         type = "scatter", 
         mode = "lines",
         fill = "tonexty", 
-        fillcolor = "rgba(0,100,80,0.2)",
-        line = list(color = "transparent", shape = "spline"),
+        fillcolor = "rgba(255,71,26,0.2)", #"rgba(0,100,80,0.2)"
+        line = list(color = "transparent", shape = "linear"),
         showlegend = FALSE, 
         name = "low_F"
     )
@@ -172,9 +172,9 @@ figure_3_fish_mortality <- function(data, years, low_F, F, high_F, FLim, Fpa, FM
         y = ~F, 
         type = "scatter", 
         mode = "lines+markers",
-        line = list(color = "rgb(0,100,80)", shape = "spline"), 
+        line = list(color = "rgb(255,71,26)", shape = "linear"), 
         name = "F",
-        marker = list(size = 10), 
+        marker = list(size = 10, color = "rgb(255,71,26)"), 
         showlegend = TRUE
     )
 
@@ -254,7 +254,7 @@ figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtri
         y = ~high_SSB, 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "transparent", shape = "spline"),
+        line = list(color = "transparent", shape = "linear"),
         showlegend = FALSE, 
         name = "high_SSB"
     )
@@ -266,7 +266,7 @@ figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtri
         mode = "lines",
         fill = "tonexty", 
         fillcolor = "rgba(0,100,80,0.2)",
-        line = list(color = "transparent", shape = "spline"),
+        line = list(color = "transparent", shape = "linear"),
         showlegend = FALSE, 
         name = "low_SSB"
     )
@@ -276,7 +276,7 @@ figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtri
         y = ~SSB, 
         type = "scatter", 
         mode = "lines+markers",
-        line = list(color = "rgb(0,100,80)", shape = "spline"), 
+        line = list(color = "rgb(0,100,80)", shape = "linear"), 
         name = "SSB",
         marker = list(size = 10), 
         showlegend = TRUE
@@ -399,7 +399,7 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
         showlegend = TRUE
     )
  fig1 <- fig1 %>% layout(
-        title = "SSB", 
+        # title = "SSB", 
         legend = legend_format(),
         paper_bgcolor = "rgb(255,255,255)", 
         plot_bgcolor = "rgb(229,229,229)",
@@ -440,9 +440,7 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
      connectgaps = FALSE,
      color = ~AssessmentYear,
      showlegend = FALSE
-
  )
-
  ## Add horizontal lines
     fig2 <- fig2 %>% add_trace(
         data = big_data_last_year, 
@@ -472,11 +470,11 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
         name = "FMSY", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "orange", shape = "linear", dash = "dash"), 
+        line = list(color = "#ff5100", shape = "linear", dash = "dash"), 
         showlegend = TRUE
     )
 fig2 <- fig2 %>% layout(
-        title = "F", 
+        # title = "F", 
         legend = legend_format(),
         paper_bgcolor = "rgb(255,255,255)", 
         plot_bgcolor = "rgb(229,229,229)",
@@ -519,7 +517,7 @@ fig2 <- fig2 %>% layout(
      showlegend = FALSE
  )
 fig3 <- fig3 %>% layout(
-        title = "R", 
+        # title = "R", 
         legend = legend_format(),
         paper_bgcolor = "rgb(255,255,255)", 
         plot_bgcolor = "rgb(229,229,229)",
@@ -550,7 +548,7 @@ fig3 <- fig3 %>% layout(
     )
 
  fig <- subplot(fig1, fig2, fig3, 
- nrows = 1, shareX = TRUE, titleX = TRUE,titleY = TRUE, margin = 0.045)#, 
+ nrows = 1, shareX = TRUE, titleX = TRUE,titleY = TRUE,  widths = c(0.33, 0.33, 0.33), margin = 0.05)#, ,
 #  nrows = 1,
 #    widths = NULL,
 #    heights = NULL,

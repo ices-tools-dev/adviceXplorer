@@ -33,9 +33,12 @@ source("Shiny/utilities_shiny_Input.r")
 
 # ui and server
 source("Shiny/ui_05052021.r")
-source("Shiny/server_17052021.r")
+source("Shiny/server_18052021.r")
 
 
 
 ### run app
 shinyApp(server = server, ui = ui)
+
+### run app (Colin version)
+runApp("temp")

@@ -24,7 +24,7 @@ allocations_plotspanel <-
             # actionButton("r_recr", "Get Stock Data")
         ),
         tabPanel(
-            title = "Fi",
+            title = "Fishing Pressure",
             plotlyOutput("f"),
             h5(helpText("Figure 3: Fish mortality"))
             # actionButton("r_f", "Get Stock Data")
@@ -41,5 +41,6 @@ allocations_plotspanel <-
             h5(helpText("Figure 4: Quality of Assessment"))
             # actionButton("r_SSB", "Get Stock Data")
         )
+    ),
+    DTOutput("tbl_summary")
     )
-  )
