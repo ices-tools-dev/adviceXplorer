@@ -1448,7 +1448,7 @@ shinyApp(
             leaflet() %>%
                 addTiles() %>%
                 addPolygons(
-                    data = nc,
+                    data = shape_eco,
                     fillColor = "white",
                     fillOpacity = 0.5,
                     color = "black",
@@ -1459,7 +1459,7 @@ shinyApp(
                     label = ~Ecoregion
                 ) %>%
                 addPolygons(
-                    data = nc,
+                    data = shape_eco,
                     fillColor = "red",
                     fillOpacity = 0.5,
                     weight = 1,
@@ -1468,7 +1468,7 @@ shinyApp(
                     layerId = ~OBJECTID,
                     group = ~Ecoregion
                 ) %>%
-                hideGroup(group = nc$Ecoregion) # nc$CNTY_ID
+                hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
         }) # END RENDER LEAFLET
 
         # map output Areas
@@ -1625,14 +1625,30 @@ shinyApp(
             },
             ignoreNULL = FALSE
         )
-        
+        stock_list_long <- separate_ecoregions(stock_list_all)
 
+        eco_filter <- reactive({
+          req(input$selected_locations)
+          print(input$selected_locations)
+
+          temp_df <- data.frame()
+          for (i in 1:length(input$selected_locations)) {
+              temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
+              temp_df <- rbind(temp_df, temp_1)
+          }
+          stock_list_long <- temp_df
+
+        #   stock_list_long %>%
+          
+        #     filter(str_detect(stock_list_long$EcoRegion, input$selected_locations))
+                })
+        
         # res_mod <- reactive({
         res_mod <- callModule(
           module = selectizeGroupServer,
           id = "my-filters",
-          data = separate_ecoregions(stock_list_all, selected_1$groups),
-          # data = separate_ecoregions(stock_list_all) %>% filter(str_detect(EcoRegion, selected_1$groups)),
+          # data = separate_ecoregions(stock_list_all, selected_1$groups),
+          data = eco_filter,
           vars = c("EcoRegion", "StockKeyLabel", "SpeciesCommonName", "DataCategory", "ICES_area")
         )
 
@@ -1678,7 +1694,7 @@ shinyApp(
 
 
 ### this function separate rows with multiple ecoregions per row to 1 ecoregion per row + filter for the selection of ecoregions
-separate_ecoregions <- function(stock_list_all, EcoRegion_filter) {
+separate_ecoregions <- function(stock_list_all) {
   mydf <- stock_list_all
   s <- strsplit(mydf$EcoRegion, split = ", ")
   # a <- strsplit(mydf$ICES_area, split = ", ")
@@ -1690,12 +1706,19 @@ separate_ecoregions <- function(stock_list_all, EcoRegion_filter) {
     DataCategory = rep(mydf$DataCategory, sapply(s, length)),
     ICES_area = rep(mydf$ICES_area, sapply(s, length))
   )
-  req(EcoRegion_filter)
-  mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
+  # req(EcoRegion_filter)
+  # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
   return(mydf_long)
 }
-# # tibble(separate_ecoregions(stock_list_all))
-# array <- c("Norwegian Sea", "Faroes")
+# stock_list_long <- separate_ecoregions(stock_list_all)
+# loc <- c("Bay of Biscay and the Iberian Coast", "Celtic")
+# temp <- data.frame()
+# for(i in 1:length(loc)) {
+#     temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, loc[i]))
+#     temp <- rbind(temp,temp_1)
+# }
+
+# tibble(stock_list_long %>% filter(str_detect(EcoRegion, loc)))
 # df_new <- mydf_long %>% filter(str_detect(EcoRegion, array))
 # # df_new <- mydf_long[mydf_long$EcoRegion %in% array,]
 # tibble(df_new)
