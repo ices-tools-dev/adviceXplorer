@@ -1693,23 +1693,7 @@ shinyApp(
 
 
 
-### this function separate rows with multiple ecoregions per row to 1 ecoregion per row + filter for the selection of ecoregions
-separate_ecoregions <- function(stock_list_all) {
-  mydf <- stock_list_all
-  s <- strsplit(mydf$EcoRegion, split = ", ")
-  # a <- strsplit(mydf$ICES_area, split = ", ")
-  mydf_long <- data.frame(
-    StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
-    EcoRegion = unlist(s),
-    SpeciesScientificName = rep(mydf$SpeciesScientificName, sapply(s, length)),
-    SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
-    DataCategory = rep(mydf$DataCategory, sapply(s, length)),
-    ICES_area = rep(mydf$ICES_area, sapply(s, length))
-  )
-  # req(EcoRegion_filter)
-  # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
-  return(mydf_long)
-}
+
 # stock_list_long <- separate_ecoregions(stock_list_all)
 # loc <- c("Bay of Biscay and the Iberian Coast", "Celtic")
 # temp <- data.frame()
