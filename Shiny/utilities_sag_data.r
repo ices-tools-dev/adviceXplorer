@@ -12,6 +12,7 @@ access_sag_data <- function(stock_code, year) {
 
     data_sag <- cbind(SAGsummary, SAGrefpts)
     data_sag <- subset(data_sag, select = -fishstock)
+    data_sag <- filter(data_sag, StockPublishNote == "Stock published")
     #print(data_sag %>% tibble())
 }
 
@@ -64,6 +65,7 @@ big_data <- filter(big_data, StockPublishNote == "Stock published")
 big_data <- filter(big_data, Purpose == "Advice")
 # put together the published data from before 2021 with the unpublished from 2021
 big_data <- rbind(big_data, big_data_last_year)
+big_data <- big_data  %>% distinct()
 
 #make assessmentYear as factor
 big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
@@ -73,11 +75,11 @@ df_list <- list(big_data, big_data_last_year)
 return(df_list)
 }
 
-# list_df <- quality_assessment_data("hom.27.2a4a5b6a7a-ce-k8")
+# list_df <- quality_assessment_data("had.27.7b-k")
 # list_df
 
-# # # list_df_copy <-  filter(list_df[[1]], StockPublishNote == "Stock published")
-# df <-access_sag_data("hom.27.2a4a5b6a7a-ce-k8", 2020)
+# # # # list_df_copy <-  filter(list_df[[1]], StockPublishNote == "Stock published")
+# df <-access_sag_data("had.27.7b-k", 2020)
 # df
 
 
@@ -95,3 +97,30 @@ return(df_list)
 #                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020"
 #             )
 #         )$value
+
+# ### function for getting ices_areas for each stock
+library(icesVocab)
+getStockAreas <- function(stockCode) {
+  details <- getCodeDetail(code = stockCode, code_type = "ICES_StockCode")
+  areas <- details$children$codes[details$children$code_types$Key == "ICES_Area", ]
+  areas$Key
+}
+
+
+
+# areas <-  getStockAreas("her.27.irls")
+# areas
+# class(areas)
+# class(stock_list_all$EcoRegion)
+
+# str_flatten(getStockAreas("her.27.irls"), ", ")
+
+# library(plyr)
+# test <- sapply(stock_list_all$StockKeyLabel[1:10], getStockAreas)
+# test
+
+
+###### loop for the stocks
+# for(i in 1:dim(stock_list_all)[1]){
+#    stock_list_all$ICES_area[i] <- str_flatten(getStockAreas(stock_list_all$StockKeyLabel[i]), ", ") 
+# }
