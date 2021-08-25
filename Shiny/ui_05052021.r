@@ -6,7 +6,7 @@ ui <-
         # navbar title
         title =
             shiny::div(img(
-                src = "Shiny/www/ICES_logo_orange.PNG",
+                src = "ICES_logo_orange.PNG",
                 style = "margin-top: -14px; padding-right:10px;padding-bottom:10px",
                 height = 60
             )),
