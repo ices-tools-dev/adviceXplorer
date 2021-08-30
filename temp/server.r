@@ -1,5 +1,5 @@
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output, session) {
 
     cat(getwd())
 
@@ -14,42 +14,230 @@ server <- function(input, output) {
         shape_eco$Ecoregion, shape_eco$Shape_Area
     ) %>% lapply(htmltools::HTML)
     
-    output$map <- renderLeaflet({
+    # output$map <- renderLeaflet({
+    #     # map_ecoregion(shape_eco, eu_shape)
 
-        leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>% 
-            #addProviderTiles("Stamen.Toner") %>% 
-            addPolygons(data = shape_eco, 
-                color = "#444444", 
-                weight = 1,
-                smoothFactor = 0.5,
-                opacity = 0.7, 
-                fillOpacity = 0.5,
-                fillColor = ~ pal(shape_eco$Shape_Area),
-                layerId = ~uid, # unique id for polygons
-                highlightOptions = highlightOptions(
-                    color = "white", weight = 2,
-                    bringToFront = TRUE
-                ),
-                label = labels,
-                labelOptions = labelOptions(
-                    style = list("font-weight" = "normal", padding = "3px 8px"),
-                    textsize = "15px",
-                    direction = "auto"
-                )) %>%
-            addPolygons(
-                data = eu_shape, color = "black", weight = 1,
-                smoothFactor = 0.5,
-                opacity = 0.7, fillOpacity = 0.5,
-                fillColor = "grey") %>%  
-                setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
-            #  setView(lng = 25.783660, lat = 71.170953, zoom = 3.2) # nordKap coordinates
-    })
-    
+    #     # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>% 
+    #     #     #addProviderTiles("Stamen.Toner") %>% 
+    #     #     addPolygons(data = shape_eco, 
+    #     #         color = "#444444", 
+    #     #         weight = 1,
+    #     #         smoothFactor = 0.5,
+    #     #         opacity = 0.7, 
+    #     #         fillOpacity = 0.5,
+    #     #         fillColor = ~ pal(shape_eco$Shape_Area),
+    #     #         layerId = ~uid, # unique id for polygons
+    #     #         highlightOptions = highlightOptions(
+    #     #             color = "white", weight = 2,
+    #     #             bringToFront = TRUE
+    #     #         ),
+    #     #         label = labels,
+    #     #         labelOptions = labelOptions(
+    #     #             style = list("font-weight" = "normal", padding = "3px 8px"),
+    #     #             textsize = "15px",
+    #     #             direction = "auto"
+    #     #         )) %>%
+    #     #     addPolygons(
+    #     #         data = eu_shape, color = "black", weight = 1,
+    #     #         smoothFactor = 0.5,
+    #     #         opacity = 0.7, fillOpacity = 0.5,
+    #     #         fillColor = "grey") %>%  
+    #     #         setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
+    #         #  setView(lng = 25.783660, lat = 71.170953, zoom = 3.2) # nordKap coordinates
+    # })
+
+    output$map1 <- renderLeaflet({
+            leaflet() %>%
+                addTiles() %>%
+                addPolygons(
+                    data = shape_eco,
+                    fillColor = "white",
+                    fillOpacity = 0.5,
+                    color = "black",
+                    stroke = TRUE,
+                    weight = 1,
+                    layerId = ~Ecoregion,
+                    group = "Eco_regions",
+                    label = ~Ecoregion
+                ) %>%
+                addPolygons(
+                    data = shape_eco,
+                    fillColor = "red",
+                    fillOpacity = 0.5,
+                    weight = 1,
+                    color = "black",
+                    stroke = TRUE,
+                    layerId = ~OBJECTID,
+                    group = ~Ecoregion
+                ) %>%
+                hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
+        }) # END RENDER LEAFLET
+
+        # map output Areas
+        output$map2 <- renderLeaflet({
+            leaflet() %>%
+                addTiles() %>%
+                addPolygons(
+                    data = ices_areas,
+                    fillColor = "white",
+                    fillOpacity = 0.5,
+                    color = "black",
+                    stroke = TRUE,
+                    weight = 1,
+                    layerId = ~Area_Full,
+                    group = "ices_areas",
+                    label = ~Area_Full
+                ) %>%
+                addPolygons(
+                    data = ices_areas,
+                    fillColor = "red",
+                    fillOpacity = 0.5,
+                    weight = 1,
+                    color = "black",
+                    stroke = TRUE,
+                    layerId = ~OBJECTID,
+                    group = ~Area_Full
+                ) %>%
+                hideGroup(group = ices_areas$Area_Full) # nc$CNTY_ID
+        }) # END RENDER LEAFLET
+    ###############################################################END of MAPS
+
+    ################################################################# new interactive filtering first part
+
+    ############################## Interactive section Ecoregions ######################
+        # define leaflet proxy for Ecoregion map
+        proxy_1 <- leafletProxy("map1")
+
+        # create empty vector to hold all click ids
+        selected_1 <- reactiveValues(groups = vector())
+        
+        # find index
+
+
+        observeEvent(input$map1_shape_click, {
+            ## calculate index of ecoregion selected in shape_eco
+            idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
+            #print(idx_1)
+            if (input$map1_shape_click$group == "Eco_regions") {
+                selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
+                print(selected_1$groups)
+                proxy_1 %>%
+                    showGroup(group = input$map1_shape_click$id) %>%
+                    setView(
+                        lng = sf_cent[idx_1, 1],
+                        lat = sf_cent[idx_1, 2],
+                        zoom = 3
+                    )
+
+                # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
+            } else {
+                selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
+                proxy_1 %>% hideGroup(group = input$map1_shape_click$group)  %>% 
+                setView(
+                        lng = sf_cent_map[1],
+                        lat = sf_cent_map[2],
+                        zoom = 1
+                    )
+            }
+            updateSelectizeInput(session,
+                inputId = "selected_locations",
+                label = "ICES Ecoregions",
+                choices = shape_eco$Ecoregion,
+                selected = selected_1$groups
+            )
+            
+        })
+        
+        observeEvent(input$selected_locations,
+            {
+                removed_via_selectInput <- setdiff(selected_1$groups, input$selected_locations)
+                added_via_selectInput <- setdiff(input$selected_locations, selected_1$groups)
+
+                if (length(removed_via_selectInput) > 0) {
+                    selected_1$groups <- input$selected_locations
+                    print(selected_1$groups)
+                    proxy_1 %>% hideGroup(group = removed_via_selectInput)
+                }
+
+                if (length(added_via_selectInput) > 0) {
+                    selected_1$groups <- input$selected_locations
+                    print(selected_1$groups)
+                    proxy_1 %>% showGroup(group = added_via_selectInput)
+                }
+            },
+            ignoreNULL = FALSE
+
+        )
+
+
+        ############################## Interactive section Areas ######################
+        # define leaflet proxy for Ecoregion map
+        proxy_2 <- leafletProxy("map2")
+
+        # create empty vector to hold all click ids
+        selected_2 <- reactiveValues(groups = vector())
+        
+        # find index
+
+
+        observeEvent(input$map2_shape_click, {
+            ## calculate index of ecoregion selected in shape_eco
+            idx_2 <- match(input$map2_shape_click$id, ices_areas$Area_Full)
+            #print(idx_2)
+            if (input$map2_shape_click$group == "ices_areas") {
+                selected_2$groups <- c(selected_2$groups, input$map2_shape_click$id)
+                proxy_2 %>%
+                    showGroup(group = input$map2_shape_click$id) #%>%
+                    # setView(
+                    #     lng = sf_cent[idx_1, 1],
+                    #     lat = sf_cent[idx_1, 2],
+                    #     zoom = 3
+                    # )
+
+                # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
+            } else {
+                selected_2$groups <- setdiff(selected_2$groups, input$map2_shape_click$group)
+                proxy_2 %>% hideGroup(group = input$map2_shape_click$group)  %>% 
+                setView(
+                        lng = sf_cent_map[1],
+                        lat = sf_cent_map[2],
+                        zoom = 1
+                    )
+            }
+            updateSelectizeInput(session,
+                inputId = "selected_areas",
+                label = "ICES Areas",
+                choices = ices_areas$Area_Full,
+                selected = selected_2$groups
+            )
+            
+        })
+        
+        observeEvent(input$selected_areas,
+            {
+                removed_via_selectInput <- setdiff(selected_2$groups, input$selected_areas)
+                added_via_selectInput <- setdiff(input$selected_areas, selected_2$groups)
+
+                if (length(removed_via_selectInput) > 0) {
+                    selected_2$groups <- input$selected_areas
+                    proxy_2 %>% hideGroup(group = removed_via_selectInput)
+                }
+
+                if (length(added_via_selectInput) > 0) {
+                    selected_2$groups <- input$selected_areas
+                    proxy_2 %>% showGroup(group = added_via_selectInput)
+                }
+            },
+            ignoreNULL = FALSE
+        )
+
+
+    ############################################################this part is the old filtering method 30082021
     # click on polygon
     observe({ 
         
-        event <- input$map_shape_click
-        
+        event <- input$map1_shape_click
+        print(input$map1_shape_click)
         # message <- paste("Ecoregion name is:", shape_eco$Ecoregion[shape_eco$uid == event$id])
         
         # output$Ecoregion <- renderText(message)
@@ -58,11 +246,11 @@ server <- function(input, output) {
         print(key_subset)
         
         #stock_list_all <- read.csv("./Shiny/FilteredStocklist_all.csv")
-        stock_list_all <- jsonlite::fromJSON(
-            URLencode(
-                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory, ExpertGroup"
-            )
-        )$value
+        # stock_list_all <- jsonlite::fromJSON(
+        #     URLencode(
+        #         "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory, ExpertGroup"
+        #     )
+        # )$value
         #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
         stock_list_all <- stock_list_all  %>% filter(DataCategory == "1")
         
@@ -86,7 +274,7 @@ server <- function(input, output) {
                         FUN = actionButton,
                         n = nrow(subset),
                         id = "button_",
-                        label = "Advice",
+                        label = "Show Advice",
                         onclick = 'Shiny.setInputValue(\"select_button\", this.id, {priority: \"event\"})'
                     )
                 )
@@ -131,6 +319,7 @@ server <- function(input, output) {
     f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
     SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) 
     list_df <- quality_assessment_data(stock_name)
+    #the bit below could be potentially be replaced by the sag status? summary table option?
     SAG_summary <- data_sag %>% select(Year, 
                     recruitment, high_recruitment, low_recruitment, 
                     SSB, high_SSB, low_SSB,
