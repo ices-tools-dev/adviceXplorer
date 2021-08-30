@@ -15,26 +15,28 @@ navbarPage(
     tabPanel(
         "Data Filtering",
         sidebarLayout(
+            sidebarPanel = maps_panels,
+            mainPanel = selectize_panel
             # Top panel with widgets sold
             # wellPanel(
             #     textOutput("Ecoregion")
             # ),
 
             # the map itself
-            sidebarPanel(
-                div(
-                    class = "outer",
-                    tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                    # width = side_width,
-                    leafletOutput("map", width = "35%", height = "100%")
-                )
-            ),
-            mainPanel(
-                # width = 8,
-                # div(class="outer",
-                # tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 500px; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                # DTOutput("tbl")
-            )
+            # sidebarPanel(
+            #     div(
+            #         class = "outer",
+            #         tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
+            #         # width = side_width,
+            #         leafletOutput("map", width = "35%", height = "100%")
+            #     )
+            # ),
+            # mainPanel(
+            #     # width = 8,
+            #     # div(class="outer",
+            #     # tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 500px; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
+            #     # DTOutput("tbl")
+            # )
         )
         # )
     ),
