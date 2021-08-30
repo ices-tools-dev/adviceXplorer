@@ -1,5 +1,5 @@
 cat("# Standard Graphs personal access token",
-    "SG_PAT=6d7dbcdf-9743-4aee-b0a5-c0aac0922459",
+    "SG_PAT=cd8b4975-1df6-4146-bd11-93b5b902bce9",
     sep = "\n",
     file = "~/.Renviron_SG")
 
