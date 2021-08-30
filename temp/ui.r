@@ -56,13 +56,14 @@ navbarPage(
         "Catch Options/Advice"
     ),
     tabPanel(
-        "Resources"
+        "Resources",
+        verbatimTextOutput("headline")
     ),
     # extra tags, css etc
     tags$style(type = "text/css", "li {font-size: 20px;}"),
     tags$style(type = "text/css", "p {font-size: 21px;}"),
     tags$style(type = "text/css", "body {padding-top: 70px;}"),
-    tags$head(tags$style(HTML("#go{background-color:#dd4814}"))),
+    tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
     theme = shinytheme("united"),
     position = "fixed-top",
 
