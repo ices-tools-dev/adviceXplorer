@@ -1,7 +1,8 @@
 #### load the SID list of stocks, filter for cat 1 and then run the function to get ices_areas for each stock # nolint
 stock_list_all <- jsonlite::fromJSON(
             URLencode(
-                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
+                #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
+                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published"
             )
         )$value
         #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
@@ -21,10 +22,10 @@ separate_ecoregions <- function(stock_list_all) {
   mydf_long <- data.frame(
     StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
     EcoRegion = unlist(s),
+    ICES_area = rep(mydf$ICES_area, sapply(s, length)),
     SpeciesScientificName = rep(mydf$SpeciesScientificName, sapply(s, length)),
     SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
-    DataCategory = rep(mydf$DataCategory, sapply(s, length)),
-    ICES_area = rep(mydf$ICES_area, sapply(s, length))
+    DataCategory = rep(mydf$DataCategory, sapply(s, length))    
   )
   # req(EcoRegion_filter)
   # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))

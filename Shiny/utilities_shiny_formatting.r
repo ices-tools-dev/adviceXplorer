@@ -50,7 +50,7 @@ maps_panels <-
   sidebarPanel(
     width = 8,
     tabsetPanel(
-      tabPanel("ICES Ecoregions", leafletOutput("map", height = 800)),
+      tabPanel("ICES Ecoregions", leafletOutput("map1", height = 800)),
       tabPanel("ICES Areas", leafletOutput("map2", height = 800))
     )
   )
