@@ -13,7 +13,7 @@ navbarPage(
         )),
     # tabsetPanel(
     tabPanel(
-        "Stock Selection",
+        "Data Filtering",
         sidebarLayout(
             # Top panel with widgets sold
             # wellPanel(
@@ -30,13 +30,17 @@ navbarPage(
                 )
             ),
             mainPanel(
-                width = 8,
+                # width = 8,
                 # div(class="outer",
                 # tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 500px; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                DTOutput("tbl")
+                # DTOutput("tbl")
             )
         )
         # )
+    ),
+    tabPanel(
+        "Stock Selection",
+        DTOutput("tbl")
     ),
     tabPanel(
         "Stock development over time",
@@ -45,6 +49,12 @@ navbarPage(
             mainPanel = allocations_plotspanel
         )
         # includeMarkdown("Instructions.Rmd")
+    ),
+    tabPanel(
+        "Catch Options/Advice"
+    ),
+    tabPanel(
+        "Resources"
     ),
     # extra tags, css etc
     tags$style(type = "text/css", "li {font-size: 20px;}"),
