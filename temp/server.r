@@ -47,8 +47,8 @@ server <- function(input, output, session) {
     # })
 
     output$map1 <- renderLeaflet({
-            leaflet() %>%
-                addTiles() %>%
+            leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+                # addTiles() %>%
                 addPolygons(
                     data = shape_eco,
                     fillColor = "white",
@@ -75,8 +75,8 @@ server <- function(input, output, session) {
 
         # map output Areas
         output$map2 <- renderLeaflet({
-            leaflet() %>%
-                addTiles() %>%
+            leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+                # addTiles() %>%
                 addPolygons(
                     data = ices_areas,
                     fillColor = "white",
@@ -265,12 +265,14 @@ server <- function(input, output, session) {
 
 
 
-    output$tbl <- DT::renderDT(res_mod())
+    output$tbl <- DT::renderDT(res_mod(),
+    extensions = 'Buttons', 
+            options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')))
   
-    output$headline <- renderPrint({
-    h3(paste0("You clicked value ", input$tbl_cell_clicked$value," and ", input$tbl_cell_clicked$row)) #$value
-    # print(input$tbl_cell_clicked$value)
-    })
+    # output$headline <- renderPrint({
+    # h3(paste0("You clicked value ", input$tbl_cell_clicked$value," and ", input$tbl_cell_clicked$row)) #$value
+    # # print(input$tbl_cell_clicked$value)
+    # })
     
 
 
