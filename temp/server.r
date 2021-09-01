@@ -279,7 +279,8 @@ server <- function(input, output, session) {
 
 #     ############################################################this part is the old filtering method 30082021
 #     # click on polygon
-#     observe({ 
+    #  observeEvent(input$tbl_cell_clicked$value, { 
+         observe({
         
 #         event <- input$map1_shape_click
 #         print(input$map1_shape_click)
@@ -346,7 +347,7 @@ server <- function(input, output, session) {
     
 #             # When a button is clicked, employee is set to the employee name
 #             #  associated with the clicked row
-#     advice_action <- eventReactive(input$select_button, {
+    advice_action <- eventReactive(input$tbl_cell_clicked$value, {
 #     # take the value of input$select_button, e.g. "button_1"
 #     # get the button number (1) and assign to selectedRow
 #     selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
@@ -354,105 +355,107 @@ server <- function(input, output, session) {
 #     # get the value of the "Name" column in the data.frame for that row
     
 #     stock_name <- as.character(df()[selectedRow, "StockKeyLabel"])
+    stock_name <- input$tbl_cell_clicked$value
     
-#     #   # Dowload the data        
-#     data_sag <- access_sag_data(stock_name, 2020)
+    #   # Dowload the data        
+    # data_sag <- access_sag_data(stock_name, 2020)
+    data_sag <- access_sag_data(input$tbl_cell_clicked$value, 2020)
 
     
-#     catches <- data_sag %>% select(Year, catches, landings, discards)#,#,
-#     R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment) #%>% na.omit()
-#     f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
-#     SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) 
-#     list_df <- quality_assessment_data(stock_name)
-#     #the bit below could be potentially be replaced by the sag status? summary table option?
-#     SAG_summary <- data_sag %>% select(Year, 
-#                     recruitment, high_recruitment, low_recruitment, 
-#                     SSB, high_SSB, low_SSB,
-#                     catches, landings,
-#                     F, high_F, low_F)
+    catches <- data_sag %>% select(Year, catches, landings, discards)#,#,
+    R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment) #%>% na.omit()
+    f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
+    SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) 
+    list_df <- quality_assessment_data(stock_name)
+    #the bit below could be potentially be replaced by the sag status? summary table option?
+    SAG_summary <- data_sag %>% select(Year, 
+                    recruitment, high_recruitment, low_recruitment, 
+                    SSB, high_SSB, low_SSB,
+                    catches, landings,
+                    F, high_F, low_F)
     
-# #     big_data <- list_df[[1]]
-# # big_data_last_year <- list_df[[2]]
+#     big_data <- list_df[[1]]
+# big_data_last_year <- list_df[[2]]
 
-#     list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
+    list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
         
-#     })
+    })
     
 
-#     ######################### Advice panel
+    ######################### Advice panel
 
-#     #### Plot 1 Landings and discards
-#     output$catches <- renderPlotly({
+    #### Plot 1 Landings and discards
+    output$catches <- renderPlotly({
 
-#         data_list = advice_action()
+        data_list = advice_action()
         
-#          rv <- reactiveValues(
-#              catches_df = data_list$catches
-#          )
+         rv <- reactiveValues(
+             catches_df = data_list$catches
+         )
 
-#         figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
-#     })
-#     #### Plot 2 Recruitment
-#     output$R <- renderPlotly({
+        figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
+    })
+    #### Plot 2 Recruitment
+    output$R <- renderPlotly({
 
-#         data_list = advice_action()
+        data_list = advice_action()
          
-#          rv <- reactiveValues(
-#              r_df = data_list$R
-#          )
+         rv <- reactiveValues(
+             r_df = data_list$R
+         )
 
-#         figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
-#     })
-#     #### Plot 3 fish mortality 
-#     output$f <- renderPlotly({
-#         data_list = advice_action()
+        figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
+    })
+    #### Plot 3 fish mortality 
+    output$f <- renderPlotly({
+        data_list = advice_action()
          
-#          rv <- reactiveValues(
-#              f_df = data_list$f
-#          )
+         rv <- reactiveValues(
+             f_df = data_list$f
+         )
 
-#         #### third plot
-#         figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
-#     })
-#     #### Plot 4 SSB
-#     output$SSB <- renderPlotly({
+        #### third plot
+        figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
+    })
+    #### Plot 4 SSB
+    output$SSB <- renderPlotly({
 
-#         data_list = advice_action()
+        data_list = advice_action()
          
-#          rv <- reactiveValues(
-#              SSB_df = data_list$SSB
-#          )
+         rv <- reactiveValues(
+             SSB_df = data_list$SSB
+         )
 
-#         ### forth plot
-#         figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-#     })
-#     #### Plot 5 quality of assessment
-#     output$Q_Ass <- renderPlotly({
+        ### forth plot
+        figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+    })
+    #### Plot 5 quality of assessment
+    output$Q_Ass <- renderPlotly({
 
-#         data_list = advice_action()
+        data_list = advice_action()
          
-#          rv <- reactiveValues(
-#              Q_Ass_df1 = data_list$big_data,
-#              Q_Ass_df2 = data_list$big_data_last_year
-#          )
+         rv <- reactiveValues(
+             Q_Ass_df1 = data_list$big_data,
+             Q_Ass_df2 = data_list$big_data_last_year
+         )
 
-#         ### forth plot
-#         quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2)
-#         # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-#     })
+        ### forth plot
+        quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2)
+        # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+    })
     
-#     output$tbl_summary <- DT::renderDT({
-#         data_list = advice_action()
-#         rv <- reactiveValues(
-#              data_SAG = data_list$SAG_summary
-#          )
-#          rv$data_SAG},
-#          extensions = 'Buttons', 
-#             options = list(dom = 'Bfrtip', pageLength = 10,#lengthChange = TRUE,
-#             buttons = c('csv')
-#             )
+    output$tbl_summary <- DT::renderDT({
+        data_list = advice_action()
+        rv <- reactiveValues(
+             data_SAG = data_list$SAG_summary
+         )
+         rv$data_SAG},
+         extensions = 'Buttons', 
+            options = list(dom = 'Bfrtip', pageLength = 10,#lengthChange = TRUE,
+            buttons = c('csv')
+            )
 
-#     )
-# })
+    )
+})
 
 }
