@@ -84,8 +84,8 @@ mainPanel(
               EcoRegion = list(inputId = "EcoRegion", title = "EcoRegion:"),
               StockKeyLabel = list(inputId = "StockKeyLabel", title = "StockKeyLabel:"),
               SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "SpeciesCommonName:"),
-              DataCategory = list(inputId = "DataCategory", title = "DataCategory:"),
-              ICES_area = list(inputId = "ICES_area", title = "ICES_area")
+              DataCategory = list(inputId = "DataCategory", title = "DataCategory:")#,
+              # ICES_area = list(inputId = "ICES_area", title = "ICES_area")
             ),
             inline = FALSE
           ), 

@@ -5,9 +5,12 @@ server <- function(input, output, session) {
 
     ######################### Map panel   
     # Define the palette
-    bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
-    pal <- colorBin("YlOrRd", domain = shape_eco$Shape_Area, bins = bins)
-    
+    # bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+    # pal <- colorBin("YlOrRd", domain = shape_eco$Shape_Area, bins = bins)
+    sf_cent <- st_coordinates(st_centroid(shape_eco))
+    sf_cent_map_X <- mean(sf_cent[, 1])
+    sf_cent_map_Y <- mean(sf_cent[, 2])
+    sf_cent_map <- c(sf_cent_map_X, sf_cent_map_Y)
     # Define the interactive labels
     labels <- sprintf(
         "<strong>%s Ecoregion</strong><br/>%g Shape Area ",
@@ -234,6 +237,7 @@ server <- function(input, output, session) {
     
     ########################################################### tranform the sid dataframe
     stock_list_long <- separate_ecoregions(stock_list_all)
+    # print(tibble(stock_list_long))
 
     ###########################################################  function to use the input from the maps and the sid filtering
 
@@ -246,6 +250,7 @@ server <- function(input, output, session) {
               temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
               temp_df <- rbind(temp_df, temp_1)
           }
+          print(tibble(temp_df))
           stock_list_long <- temp_df
 
         #   stock_list_long %>%
@@ -260,12 +265,12 @@ server <- function(input, output, session) {
           id = "my-filters",
           # data = separate_ecoregions(stock_list_all, selected_1$groups),
           data = eco_filter,
-          vars = c("EcoRegion", "StockKeyLabel", "SpeciesCommonName", "DataCategory", "ICES_area")
+          vars = c("EcoRegion", "StockKeyLabel", "SpeciesCommonName", "DataCategory")#, "ICES_area")
         )
 
 
 
-    output$tbl <- DT::renderDT(res_mod(),
+    output$tbl <- DT::renderDT(res_mod()),
     extensions = 'Buttons', 
             options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')))
   
