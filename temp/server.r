@@ -50,58 +50,60 @@ server <- function(input, output, session) {
     # })
 
     output$map1 <- renderLeaflet({
-            leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-                # addTiles() %>%
-                addPolygons(
-                    data = shape_eco,
-                    fillColor = "white",
-                    fillOpacity = 0.5,
-                    color = "black",
-                    stroke = TRUE,
-                    weight = 1,
-                    layerId = ~Ecoregion,
-                    group = "Eco_regions",
-                    label = ~Ecoregion
-                ) %>%
-                addPolygons(
-                    data = shape_eco,
-                    fillColor = "red",
-                    fillOpacity = 0.5,
-                    weight = 1,
-                    color = "black",
-                    stroke = TRUE,
-                    layerId = ~OBJECTID,
-                    group = ~Ecoregion
-                ) %>%
-                hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
+        map_ecoregion(shape_eco, eu_shape)
+            # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+            #     # addTiles() %>%
+            #     addPolygons(
+            #         data = shape_eco,
+            #         fillColor = "white",
+            #         fillOpacity = 0.5,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         weight = 1,
+            #         layerId = ~Ecoregion,
+            #         group = "Eco_regions",
+            #         label = ~Ecoregion
+            #     ) %>%
+            #     addPolygons(
+            #         data = shape_eco,
+            #         fillColor = "red",
+            #         fillOpacity = 0.5,
+            #         weight = 1,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         layerId = ~OBJECTID,
+            #         group = ~Ecoregion
+            #     ) %>%
+            #     hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
         }) # END RENDER LEAFLET
 
         # map output Areas
         output$map2 <- renderLeaflet({
-            leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-                # addTiles() %>%
-                addPolygons(
-                    data = ices_areas,
-                    fillColor = "white",
-                    fillOpacity = 0.5,
-                    color = "black",
-                    stroke = TRUE,
-                    weight = 1,
-                    layerId = ~Area_Full,
-                    group = "ices_areas",
-                    label = ~Area_Full
-                ) %>%
-                addPolygons(
-                    data = ices_areas,
-                    fillColor = "red",
-                    fillOpacity = 0.5,
-                    weight = 1,
-                    color = "black",
-                    stroke = TRUE,
-                    layerId = ~OBJECTID,
-                    group = ~Area_Full
-                ) %>%
-                hideGroup(group = ices_areas$Area_Full) # nc$CNTY_ID
+            map_ices_areas(ices_areas, eu_shape)
+            # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+            #     # addTiles() %>%
+            #     addPolygons(
+            #         data = ices_areas,
+            #         fillColor = "white",
+            #         fillOpacity = 0.5,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         weight = 1,
+            #         layerId = ~Area_Full,
+            #         group = "ices_areas",
+            #         label = ~Area_Full
+            #     ) %>%
+            #     addPolygons(
+            #         data = ices_areas,
+            #         fillColor = "red",
+            #         fillOpacity = 0.5,
+            #         weight = 1,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         layerId = ~OBJECTID,
+            #         group = ~Area_Full
+            #     ) %>%
+            #     hideGroup(group = ices_areas$Area_Full) # nc$CNTY_ID
         }) # END RENDER LEAFLET
     ###############################################################END of MAPS
 
@@ -270,7 +272,7 @@ server <- function(input, output, session) {
 
 
 
-    output$tbl <- DT::renderDT(res_mod()),
+    output$tbl <- DT::renderDT(res_mod(),
     extensions = 'Buttons', 
             options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')))
   

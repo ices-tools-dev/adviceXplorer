@@ -143,71 +143,64 @@ map_plot_simple <- function(shape_eco, eu_shape){
 
 map_ecoregion <- function(shape_eco, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-        # output$map1 <- renderLeaflet({
-        # leaflet() %>%
-        #     addTiles() %>%
-        addPolygons(
-            data = shape_eco,
-            fillColor = "white",
-            fillOpacity = 0.5,
-            color = "black",
-            stroke = TRUE,
-            weight = 1,
-            layerId = ~Ecoregion,
-            group = "Eco_regions",
-            label = ~Ecoregion
-        ) %>%
-        addPolygons(
-            data = shape_eco,
-            fillColor = "red",
-            fillOpacity = 0.5,
-            weight = 1,
-            color = "black",
-            stroke = TRUE,
-            layerId = ~OBJECTID,
-            group = ~Ecoregion
-        ) %>%
-        addPolygons(
-            data = eu_shape,
-            color = "black",
-            weight = 1,
-            fillOpacity = 0.5,
-            fillColor = "#cfcfcf"
-        ) %>%
-        hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
-} # }) # END RENDER LEAFLET
+                # addTiles() %>%
+                addPolygons(
+                    data = shape_eco,
+                    fillColor = "white",
+                    fillOpacity = 0.5,
+                    color = "black",
+                    stroke = TRUE,
+                    weight = 1,
+                    layerId = ~Ecoregion,
+                    group = "Eco_regions",
+                    label = ~Ecoregion
+                ) %>%
+                addPolygons(
+                    data = shape_eco,
+                    fillColor = "red",
+                    fillOpacity = 0.5,
+                    weight = 1,
+                    color = "black",
+                    stroke = TRUE,
+                    layerId = ~OBJECTID,
+                    group = ~Ecoregion
+                ) %>%
+                # addPolygons(
+                #     data = eu_shape,
+                #     color = "black",
+                #     weight = 1,
+                #     fillOpacity = 0.5,
+                #     fillColor = "grey",
+                #     group = "Europe"
+                # ) %>%
+                setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
+                hideGroup(group = shape_eco$Ecoregion)
+} 
+
 map_ices_areas <- function(ices_areas, eu_shape) {
-    # map output Areas
-    # output$map2 <- renderLeaflet({
-    #     leaflet() %>%
-    #         addTiles() %>%
-    addPolygons(
-        data = ices_areas,
-        fillColor = "white",
-        fillOpacity = 0.5,
-        color = "black",
-        stroke = TRUE,
-        weight = 1,
-        layerId = ~Area_Full,
-        group = "ices_areas",
-        label = ~Area_Full
-    ) %>%
-        addPolygons(
-            data = ices_areas,
-            fillColor = "red",
-            fillOpacity = 0.5,
-            weight = 1,
-            color = "black",
-            stroke = TRUE,
-            layerId = ~OBJECTID,
-            group = ~Area_Full
-        ) %>%
-        addPolygons(
-            data = eu_shape,
-            color = "black",
-            weight = 1,
-            fillOpacity = 0.5,
-            fillColor = "#cfcfcf"
-        ) %>%
-        hideGroup(group = ices_areas$Area_Full) # nc$CNTY_ID
+    leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+                # addTiles() %>%
+                addPolygons(
+                    data = ices_areas,
+                    fillColor = "white",
+                    fillOpacity = 0.5,
+                    color = "black",
+                    stroke = TRUE,
+                    weight = 1,
+                    layerId = ~Area_Full,
+                    group = "ices_areas",
+                    label = ~Area_Full
+                ) %>%
+                addPolygons(
+                    data = ices_areas,
+                    fillColor = "red",
+                    fillOpacity = 0.5,
+                    weight = 1,
+                    color = "black",
+                    stroke = TRUE,
+                    layerId = ~OBJECTID,
+                    group = ~Area_Full
+                ) %>%
+                setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
+                hideGroup(group = ices_areas$Area_Full)
 }
