@@ -99,7 +99,7 @@ return(df_list)
 #         )$value
 
 # ### function for getting ices_areas for each stock
-library(icesVocab)
+
 getStockAreas <- function(stockCode) {
   details <- getCodeDetail(code = stockCode, code_type = "ICES_StockCode")
   areas <- details$children$codes[details$children$code_types$Key == "ICES_Area", ]
@@ -107,7 +107,8 @@ getStockAreas <- function(stockCode) {
 }
 
 
-
+# details <- getCodeDetail(code = "ane.27.9a", code_type = "ICES_StockCode")
+# details <- getCodeDetail(code = "her.27.irls", code_type = "ICES_StockCode")
 # areas <-  getStockAreas("her.27.irls")
 # areas
 # class(areas)

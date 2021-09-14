@@ -13,30 +13,36 @@ navbarPage(
         )),
     # tabsetPanel(
     tabPanel(
-        "Stock Selection",
+        "Data Filtering",
         sidebarLayout(
+            sidebarPanel = maps_panels,
+            mainPanel = selectize_panel
             # Top panel with widgets sold
             # wellPanel(
             #     textOutput("Ecoregion")
             # ),
 
             # the map itself
-            sidebarPanel(
-                div(
-                    class = "outer",
-                    tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                    # width = side_width,
-                    leafletOutput("map", width = "35%", height = "100%")
-                )
-            ),
-            mainPanel(
-                width = 8,
-                # div(class="outer",
-                # tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 500px; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                DTOutput("tbl")
-            )
+            # sidebarPanel(
+            #     div(
+            #         class = "outer",
+            #         tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
+            #         # width = side_width,
+            #         leafletOutput("map", width = "35%", height = "100%")
+            #     )
+            # ),
+            # mainPanel(
+            #     # width = 8,
+            #     # div(class="outer",
+            #     # tags$style(type = "text/css", ".outer {position: fixed; top: 61px; left: 500px; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
+            #     # DTOutput("tbl")
+            # )
         )
         # )
+    ),
+    tabPanel(
+        "Stock Selection",
+        DTOutput("tbl")
     ),
     tabPanel(
         "Stock development over time",
@@ -46,11 +52,18 @@ navbarPage(
         )
         # includeMarkdown("Instructions.Rmd")
     ),
+    tabPanel(
+        "Catch Options/Advice"
+    ),
+    tabPanel(
+        "Resources",
+        verbatimTextOutput("headline")
+    ),
     # extra tags, css etc
     tags$style(type = "text/css", "li {font-size: 20px;}"),
     tags$style(type = "text/css", "p {font-size: 21px;}"),
     tags$style(type = "text/css", "body {padding-top: 70px;}"),
-    tags$head(tags$style(HTML("#go{background-color:#dd4814}"))),
+    tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
     theme = shinytheme("united"),
     position = "fixed-top",
 

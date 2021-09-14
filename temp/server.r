@@ -1,129 +1,374 @@
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output, session) {
 
     cat(getwd())
 
     ######################### Map panel   
     # Define the palette
-    bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
-    pal <- colorBin("YlOrRd", domain = shape_eco$Shape_Area, bins = bins)
-    
+    # bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+    # pal <- colorBin("YlOrRd", domain = shape_eco$Shape_Area, bins = bins)
+    sf_cent <- st_coordinates(st_centroid(shape_eco))
+    sf_cent_map_X <- mean(sf_cent[, 1])
+    sf_cent_map_Y <- mean(sf_cent[, 2])
+    sf_cent_map <- c(sf_cent_map_X, sf_cent_map_Y)
     # Define the interactive labels
     labels <- sprintf(
         "<strong>%s Ecoregion</strong><br/>%g Shape Area ",
         shape_eco$Ecoregion, shape_eco$Shape_Area
     ) %>% lapply(htmltools::HTML)
     
-    output$map <- renderLeaflet({
+    # output$map <- renderLeaflet({
+    #     # map_ecoregion(shape_eco, eu_shape)
 
-        leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>% 
-            #addProviderTiles("Stamen.Toner") %>% 
-            addPolygons(data = shape_eco, 
-                color = "#444444", 
-                weight = 1,
-                smoothFactor = 0.5,
-                opacity = 0.7, 
-                fillOpacity = 0.5,
-                fillColor = ~ pal(shape_eco$Shape_Area),
-                layerId = ~uid, # unique id for polygons
-                highlightOptions = highlightOptions(
-                    color = "white", weight = 2,
-                    bringToFront = TRUE
-                ),
-                label = labels,
-                labelOptions = labelOptions(
-                    style = list("font-weight" = "normal", padding = "3px 8px"),
-                    textsize = "15px",
-                    direction = "auto"
-                )) %>%
-            addPolygons(
-                data = eu_shape, color = "black", weight = 1,
-                smoothFactor = 0.5,
-                opacity = 0.7, fillOpacity = 0.5,
-                fillColor = "grey") %>%  
-                setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
-            #  setView(lng = 25.783660, lat = 71.170953, zoom = 3.2) # nordKap coordinates
-    })
-    
-    # click on polygon
-    observe({ 
-        
-        event <- input$map_shape_click
-        
-        # message <- paste("Ecoregion name is:", shape_eco$Ecoregion[shape_eco$uid == event$id])
-        
-        # output$Ecoregion <- renderText(message)
+    #     # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>% 
+    #     #     #addProviderTiles("Stamen.Toner") %>% 
+    #     #     addPolygons(data = shape_eco, 
+    #     #         color = "#444444", 
+    #     #         weight = 1,
+    #     #         smoothFactor = 0.5,
+    #     #         opacity = 0.7, 
+    #     #         fillOpacity = 0.5,
+    #     #         fillColor = ~ pal(shape_eco$Shape_Area),
+    #     #         layerId = ~uid, # unique id for polygons
+    #     #         highlightOptions = highlightOptions(
+    #     #             color = "white", weight = 2,
+    #     #             bringToFront = TRUE
+    #     #         ),
+    #     #         label = labels,
+    #     #         labelOptions = labelOptions(
+    #     #             style = list("font-weight" = "normal", padding = "3px 8px"),
+    #     #             textsize = "15px",
+    #     #             direction = "auto"
+    #     #         )) %>%
+    #     #     addPolygons(
+    #     #         data = eu_shape, color = "black", weight = 1,
+    #     #         smoothFactor = 0.5,
+    #     #         opacity = 0.7, fillOpacity = 0.5,
+    #     #         fillColor = "grey") %>%  
+    #     #         setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
+    #         #  setView(lng = 25.783660, lat = 71.170953, zoom = 3.2) # nordKap coordinates
+    # })
 
-        key_subset <- as.character(shape_eco$Ecoregion[shape_eco$uid == event$id])
-        print(key_subset)
-        
-        #stock_list_all <- read.csv("./Shiny/FilteredStocklist_all.csv")
-        stock_list_all <- jsonlite::fromJSON(
-            URLencode(
-                "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory, ExpertGroup"
-            )
-        )$value
-        #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
-        stock_list_all <- stock_list_all  %>% filter(DataCategory == "1")
-        
-        ### if no polygon is clicked, just show all stocks in the table
-        if (identical(key_subset, character(0))) {
-            output$tbl <- renderDT(stock_list_all, 
-            extensions = 'Buttons', 
-            options = list(dom = 'Bfrtip', pageLength = 300,#lengthChange = TRUE,
-            buttons = c('csv')
-            )                         
-            )
-        } else {
-            # Subset based on polygon click
-            subset <- stock_list_all %>% filter(str_detect(EcoRegion, key_subset))
+    output$map1 <- renderLeaflet({
+        map_ecoregion(shape_eco, eu_shape)
+            # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+            #     # addTiles() %>%
+            #     addPolygons(
+            #         data = shape_eco,
+            #         fillColor = "white",
+            #         fillOpacity = 0.5,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         weight = 1,
+            #         layerId = ~Ecoregion,
+            #         group = "Eco_regions",
+            #         label = ~Ecoregion
+            #     ) %>%
+            #     addPolygons(
+            #         data = shape_eco,
+            #         fillColor = "red",
+            #         fillOpacity = 0.5,
+            #         weight = 1,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         layerId = ~OBJECTID,
+            #         group = ~Ecoregion
+            #     ) %>%
+            #     hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
+        }) # END RENDER LEAFLET
 
-            # reactive data frame which creates the number of actionButtons needed
-            df <- reactiveVal(
-                tibble(
-                    subset,
-                    Actions = shinyInput(
-                        FUN = actionButton,
-                        n = nrow(subset),
-                        id = "button_",
-                        label = "Advice",
-                        onclick = 'Shiny.setInputValue(\"select_button\", this.id, {priority: \"event\"})'
+        # map output Areas
+        output$map2 <- renderLeaflet({
+            map_ices_areas(ices_areas, eu_shape)
+            # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+            #     # addTiles() %>%
+            #     addPolygons(
+            #         data = ices_areas,
+            #         fillColor = "white",
+            #         fillOpacity = 0.5,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         weight = 1,
+            #         layerId = ~Area_Full,
+            #         group = "ices_areas",
+            #         label = ~Area_Full
+            #     ) %>%
+            #     addPolygons(
+            #         data = ices_areas,
+            #         fillColor = "red",
+            #         fillOpacity = 0.5,
+            #         weight = 1,
+            #         color = "black",
+            #         stroke = TRUE,
+            #         layerId = ~OBJECTID,
+            #         group = ~Area_Full
+            #     ) %>%
+            #     hideGroup(group = ices_areas$Area_Full) # nc$CNTY_ID
+        }) # END RENDER LEAFLET
+    ###############################################################END of MAPS
+
+    ################################################################# new interactive filtering first part
+
+    ############################## Interactive section Ecoregions ######################
+        # define leaflet proxy for Ecoregion map
+        proxy_1 <- leafletProxy("map1")
+
+        # create empty vector to hold all click ids
+        selected_1 <- reactiveValues(groups = vector())
+        
+        # find index
+
+
+        observeEvent(input$map1_shape_click, {
+            ## calculate index of ecoregion selected in shape_eco
+            idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
+            #print(idx_1)
+            if (input$map1_shape_click$group == "Eco_regions") {
+                selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
+                print(selected_1$groups)
+                proxy_1 %>%
+                    showGroup(group = input$map1_shape_click$id) %>%
+                    setView(
+                        lng = sf_cent[idx_1, 1],
+                        lat = sf_cent[idx_1, 2],
+                        zoom = 3
                     )
-                )
+
+                # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
+            } else {
+                selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
+                proxy_1 %>% hideGroup(group = input$map1_shape_click$group)  %>% 
+                setView(
+                        lng = sf_cent_map[1],
+                        lat = sf_cent_map[2],
+                        zoom = 1
+                    )
+            }
+            updateSelectizeInput(session,
+                inputId = "selected_locations",
+                label = "ICES Ecoregions",
+                choices = shape_eco$Ecoregion,
+                selected = selected_1$groups
             )
             
-            output$tbl <- DT::renderDT({
+        })
+        
+        observeEvent(input$selected_locations,
+            {
+                removed_via_selectInput <- setdiff(selected_1$groups, input$selected_locations)
+                added_via_selectInput <- setdiff(input$selected_locations, selected_1$groups)
 
-                df()
-                #extensions = 'Buttons', 
-                #options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')
+                if (length(removed_via_selectInput) > 0) {
+                    selected_1$groups <- input$selected_locations
+                    print(selected_1$groups)
+                    proxy_1 %>% hideGroup(group = removed_via_selectInput)
+                }
+
+                if (length(added_via_selectInput) > 0) {
+                    selected_1$groups <- input$selected_locations
+                    print(selected_1$groups)
+                    proxy_1 %>% showGroup(group = added_via_selectInput)
+                }
             },
-            # Don't escape any HTML in the table (i.e. the actionButton)
-            escape = FALSE,
-            
-            # turn off row selection otherwise you'll also select that row when you
-            # click on the actionButton 
-            selection = 'none',
+            ignoreNULL = FALSE
 
-            # add buttons to download csv
-            extensions = 'Buttons', 
-            options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv'))
+        )
+
+
+        ############################## Interactive section Areas ######################
+        # define leaflet proxy for Ecoregion map
+        proxy_2 <- leafletProxy("map2")
+
+        # create empty vector to hold all click ids
+        selected_2 <- reactiveValues(groups = vector())
+        
+        # find index
+
+
+        observeEvent(input$map2_shape_click, {
+            ## calculate index of ecoregion selected in shape_eco
+            idx_2 <- match(input$map2_shape_click$id, ices_areas$Area_Full)
+            #print(idx_2)
+            if (input$map2_shape_click$group == "ices_areas") {
+                selected_2$groups <- c(selected_2$groups, input$map2_shape_click$id)
+                proxy_2 %>%
+                    showGroup(group = input$map2_shape_click$id) #%>%
+                    # setView(
+                    #     lng = sf_cent[idx_1, 1],
+                    #     lat = sf_cent[idx_1, 2],
+                    #     zoom = 3
+                    # )
+
+                # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
+            } else {
+                selected_2$groups <- setdiff(selected_2$groups, input$map2_shape_click$group)
+                proxy_2 %>% hideGroup(group = input$map2_shape_click$group)  %>% 
+                setView(
+                        lng = sf_cent_map[1],
+                        lat = sf_cent_map[2],
+                        zoom = 1
+                    )
+            }
+            updateSelectizeInput(session,
+                inputId = "selected_areas",
+                label = "ICES Areas",
+                choices = ices_areas$Area_Full,
+                selected = selected_2$groups
             )
-        }
+            
+        })
+        
+        observeEvent(input$selected_areas,
+            {
+                removed_via_selectInput <- setdiff(selected_2$groups, input$selected_areas)
+                added_via_selectInput <- setdiff(input$selected_areas, selected_2$groups)
+
+                if (length(removed_via_selectInput) > 0) {
+                    selected_2$groups <- input$selected_areas
+                    proxy_2 %>% hideGroup(group = removed_via_selectInput)
+                }
+
+                if (length(added_via_selectInput) > 0) {
+                    selected_2$groups <- input$selected_areas
+                    proxy_2 %>% showGroup(group = added_via_selectInput)
+                }
+            },
+            ignoreNULL = FALSE
+        )
+    ########################################################### end reactive part
     
-            # When a button is clicked, employee is set to the employee name
-            #  associated with the clicked row
-    advice_action <- eventReactive(input$select_button, {
-    # take the value of input$select_button, e.g. "button_1"
-    # get the button number (1) and assign to selectedRow
-    selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
+    ########################################################### tranform the sid dataframe
+    stock_list_long <- separate_ecoregions(stock_list_all)
+    # print(tibble(stock_list_long))
+
+    ###########################################################  function to use the input from the maps and the sid filtering
+
+    eco_filter <- reactive({
+          req(input$selected_locations)
+          print(input$selected_locations)
+
+          temp_df <- data.frame()
+          for (i in 1:length(input$selected_locations)) {
+              temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
+              temp_df <- rbind(temp_df, temp_1)
+          }
+          print(tibble(temp_df))
+          stock_list_long <- temp_df
+
+        #   stock_list_long %>%
+          
+        #     filter(str_detect(stock_list_long$EcoRegion, input$selected_locations))
+        
+                })
+        
+        # res_mod <- reactive({
+        res_mod <- callModule(
+          module = selectizeGroupServer,
+          id = "my-filters",
+          # data = separate_ecoregions(stock_list_all, selected_1$groups),
+          data = eco_filter,
+          vars = c("EcoRegion", "StockKeyLabel", "SpeciesCommonName", "DataCategory")#, "ICES_area")
+        )
+
+
+
+    output$tbl <- DT::renderDT(res_mod(),
+    extensions = 'Buttons', 
+            options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')))
+  
+    # output$headline <- renderPrint({
+    # h3(paste0("You clicked value ", input$tbl_cell_clicked$value," and ", input$tbl_cell_clicked$row)) #$value
+    # # print(input$tbl_cell_clicked$value)
+    # })
     
-    # get the value of the "Name" column in the data.frame for that row
+
+
+
+
+
+#     ############################################################this part is the old filtering method 30082021
+#     # click on polygon
+    #  observeEvent(input$tbl_cell_clicked$value, { 
+         observe({
+        
+#         event <- input$map1_shape_click
+#         print(input$map1_shape_click)
+#         # message <- paste("Ecoregion name is:", shape_eco$Ecoregion[shape_eco$uid == event$id])
+        
+#         # output$Ecoregion <- renderText(message)
+
+#         key_subset <- as.character(shape_eco$Ecoregion[shape_eco$uid == event$id])
+#         print(key_subset)
+        
+#         #stock_list_all <- read.csv("./Shiny/FilteredStocklist_all.csv")
+#         stock_list_all <- jsonlite::fromJSON(
+#             URLencode(
+#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory, ExpertGroup"
+#             )
+#         )$value
+#         #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
+#         stock_list_all <- stock_list_all  %>% filter(DataCategory == "1")
+        
+#         ### if no polygon is clicked, just show all stocks in the table
+#         if (identical(key_subset, character(0))) {
+#             output$tbl <- renderDT(stock_list_all, 
+#             extensions = 'Buttons', 
+#             options = list(dom = 'Bfrtip', pageLength = 300,#lengthChange = TRUE,
+#             buttons = c('csv')
+#             )                         
+#             )
+#         } else {
+#             # Subset based on polygon click
+#             subset <- stock_list_all %>% filter(str_detect(EcoRegion, key_subset))
+
+#             # reactive data frame which creates the number of actionButtons needed
+#             df <- reactiveVal(
+#                 tibble(
+#                     subset,
+#                     Actions = shinyInput(
+#                         FUN = actionButton,
+#                         n = nrow(subset),
+#                         id = "button_",
+#                         label = "Show Advice",
+#                         onclick = 'Shiny.setInputValue(\"select_button\", this.id, {priority: \"event\"})'
+#                     )
+#                 )
+#             )
+            
+#             output$tbl <- DT::renderDT({
+
+#                 df()
+#                 #extensions = 'Buttons', 
+#                 #options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')
+#             },
+#             # Don't escape any HTML in the table (i.e. the actionButton)
+#             escape = FALSE,
+            
+#             # turn off row selection otherwise you'll also select that row when you
+#             # click on the actionButton 
+#             selection = 'none',
+
+#             # add buttons to download csv
+#             extensions = 'Buttons', 
+#             options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv'))
+#             )
+#         }
     
-    stock_name <- as.character(df()[selectedRow, "StockKeyLabel"])
+#             # When a button is clicked, employee is set to the employee name
+#             #  associated with the clicked row
+    advice_action <- eventReactive(input$tbl_cell_clicked$value, {
+#     # take the value of input$select_button, e.g. "button_1"
+#     # get the button number (1) and assign to selectedRow
+#     selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
+    
+#     # get the value of the "Name" column in the data.frame for that row
+    
+#     stock_name <- as.character(df()[selectedRow, "StockKeyLabel"])
+    stock_name <- input$tbl_cell_clicked$value
     
     #   # Dowload the data        
-    data_sag <- access_sag_data(stock_name, 2020)
+    # data_sag <- access_sag_data(stock_name, 2020)
+    data_sag <- access_sag_data(input$tbl_cell_clicked$value, 2020)
 
     
     catches <- data_sag %>% select(Year, catches, landings, discards)#,#,
@@ -131,6 +376,7 @@ server <- function(input, output) {
     f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
     SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) 
     list_df <- quality_assessment_data(stock_name)
+    #the bit below could be potentially be replaced by the sag status? summary table option?
     SAG_summary <- data_sag %>% select(Year, 
                     recruitment, high_recruitment, low_recruitment, 
                     SSB, high_SSB, low_SSB,

@@ -42,7 +42,7 @@ shinyApp(
           selectizeGroupUI(
             id = "my-filters",
             params = list(
-              EcoRegion = list(inputId = "EcoRegion", title = "EcoRegion:"),
+            #   EcoRegion = list(inputId = "EcoRegion", title = "EcoRegion:"),
               StockKeyLabel = list(inputId = "StockKeyLabel", title = "StockKeyLabel:"),
               SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "SpeciesCommonName:"),
               DataCategory = list(inputId = "DataCategory", title = "DataCategory:"),
@@ -240,6 +240,9 @@ shinyApp(
             },
             ignoreNULL = FALSE
         )
+
+
+        
         stock_list_long <- separate_ecoregions(stock_list_all)
 
         eco_filter <- reactive({
