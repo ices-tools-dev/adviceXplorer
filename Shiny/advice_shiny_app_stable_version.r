@@ -22,9 +22,6 @@ library(tm)
 library(shinyWidgets)
 
 ################################
-# set working directory
-setwd("D:/Profile/Documents/GitHub/online-advice")
-
 # sources
 source("Shiny/utilities_load_shapefiles.r")
 source("Shiny/utilities_shiny_formatting.r")
