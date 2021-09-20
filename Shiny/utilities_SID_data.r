@@ -10,10 +10,10 @@ stock_list_all <- jsonlite::fromJSON(
 
         ###loop through the stock labels and find the corresponding iceas areas, add these to a column
         for (i in 1:dim(stock_list_all)[1]) {
-          tryCatch({ # I inserted this to avoid the loop from crashing, Colin is working on the bug icesVocab::getCodeDetail
-          #print(i)
+          # tryCatch({ # I inserted this to avoid the loop from crashing, Colin is working on the bug icesVocab::getCodeDetail
+          # #print(i)
           stock_list_all$ICES_area[i] <- str_flatten(getStockAreas(stock_list_all$StockKeyLabel[i]), ", ")
-        }, error=function(e){})
+        # }, error=function(e){})
         }
 
 
@@ -25,7 +25,7 @@ separate_ecoregions <- function(stock_list_all) {
   mydf_long <- data.frame(
     StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
     EcoRegion = unlist(s),
-    # ICES_area = rep(mydf$ICES_area, sapply(s, length)),
+    ICES_area = rep(mydf$ICES_area, sapply(s, length)),
     SpeciesScientificName = rep(mydf$SpeciesScientificName, sapply(s, length)),
     SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
     DataCategory = rep(mydf$DataCategory, sapply(s, length))    
