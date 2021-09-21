@@ -82,14 +82,29 @@ mainPanel(
             id = "my-filters",
             params = list(
               # EcoRegion = list(inputId = "EcoRegion", title = "EcoRegion:"),
+              StockDatabaseID = list(inputId = "StockDatabaseID", title = "StockDatabaseID:"),
+              StockKey = list(inputId = "StockKey", title = "StockKey:"),
               StockKeyLabel = list(inputId = "StockKeyLabel", title = "StockKeyLabel:"),
+              SpeciesScientificName = list(inputId = "SpeciesScientificName", title = "SpeciesScientificName:"),
               SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "SpeciesCommonName:"),
-              DataCategory = list(inputId = "DataCategory", title = "DataCategory:")#,
+              ExpertGroup = list(inputId = "ExpertGroup", title = "ExpertGroup:"),
+              AdviceDraftingGroup = list(inputId = "AdviceDraftingGroup", title = "AdviceDraftingGroup:"),
+              DataCategory = list(inputId = "DataCategory", title = "DataCategory:"),
+              YearOfLastAssessment = list(inputId = "YearOfLastAssessment", title = "YearOfLastAssessment:"),
+              AssessmentFrequency = list(inputId = "AssessmentFrequency", title = "AssessmentFrequency:"),
+              YearOfNextAssessment = list(inputId = "YearOfNextAssessment", title = "YearOfNextAssessment:"),
+              AdviceReleaseDate = list(inputId = "AdviceReleaseDate", title = "AdviceReleaseDate:"),
+              AdviceCategory = list(inputId = "AdviceCategory", title = "AdviceCategory:"),
+              AdviceType = list(inputId = "AdviceType", title = "AdviceType:"),
+              TrophicGuild = list(inputId = "TrophicGuild", title = "TrophicGuild:"),
+              FisheriesGuild = list(inputId = "FisheriesGuild", title = "FisheriesGuild:"),
+              SizeGuild = list(inputId = "SizeGuild", title = "SizeGuild:"),
+              Published = list(inputId = "Published", title = "Published:")
               # ICES_area = list(inputId = "ICES_area", title = "ICES_area")
             ),
             inline = FALSE
           ), 
-          heading = "Filtering options",
+          heading = "Data filtering",
           status = "primary"
         )
 )

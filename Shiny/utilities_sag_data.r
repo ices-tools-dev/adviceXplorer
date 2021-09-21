@@ -120,8 +120,3 @@ getStockAreas <- function(stockCode) {
 # test <- sapply(stock_list_all$StockKeyLabel[1:10], getStockAreas)
 # test
 
-
-###### loop for the stocks
-# for(i in 1:dim(stock_list_all)[1]){
-#    stock_list_all$ICES_area[i] <- str_flatten(getStockAreas(stock_list_all$StockKeyLabel[i]), ", ") 
-# }

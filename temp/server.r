@@ -267,7 +267,10 @@ server <- function(input, output, session) {
           id = "my-filters",
           # data = separate_ecoregions(stock_list_all, selected_1$groups),
           data = eco_filter,
-          vars = c("EcoRegion", "StockKeyLabel", "SpeciesCommonName", "DataCategory")#, "ICES_area")
+          vars = c("StockDatabaseID", "StockKey","StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName", 
+          "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
+          "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
+          "FisheriesGuild", "SizeGuild", "Published")#, "ICES_area")
         )
 
 
