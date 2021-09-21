@@ -263,22 +263,43 @@ server <- function(input, output, session) {
         
         # res_mod <- reactive({
         res_mod <- callModule(
-          module = selectizeGroupServer,
-          id = "my-filters",
-          # data = separate_ecoregions(stock_list_all, selected_1$groups),
-          data = eco_filter,
-          vars = c("StockDatabaseID", "StockKey","StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName", 
-          "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
-          "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
-          "FisheriesGuild", "SizeGuild", "Published")#, "ICES_area")
+            module = selectizeGroupServer,
+            id = "my-filters",
+            # data = separate_ecoregions(stock_list_all, selected_1$groups),
+            data = eco_filter,
+            vars = c(
+                "StockDatabaseID", "StockKey", "StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName",
+                "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
+                "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
+                "FisheriesGuild", "SizeGuild", "Published"
+            ) # , "ICES_area")
         )
 
 
 
     output$tbl <- DT::renderDT(res_mod(),
-    extensions = 'Buttons', 
-            options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv')))
-  
+        extensions = "Buttons",
+        options = list(
+            dom = "Bfrtip",
+            pageLength = 300,
+            buttons = c("csv"),
+            columnDefs = list(
+                list(
+                    targets = 5,
+                    render = JS(
+                        "function(data, type, row, meta) {",
+                        "return type === 'display' && data.length > 15 ?",
+                        "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
+                        "}"
+                    )
+                )
+            )
+        )
+    )
+
+
+
+
     # output$headline <- renderPrint({
     # h3(paste0("You clicked value ", input$tbl_cell_clicked$value," and ", input$tbl_cell_clicked$row)) #$value
     # # print(input$tbl_cell_clicked$value)
