@@ -549,8 +549,8 @@ fig3 <- fig3 %>% layout(
         )
     )
 
- fig <- subplot(fig1, fig2, fig3, 
- nrows = 1, shareX = TRUE, titleX = TRUE,titleY = TRUE,  widths = c(0.33, 0.33, 0.33), margin = 0.05)#, ,
+ fig_qass <- subplot(fig1, fig2, fig3, 
+ nrows = 3, shareX = TRUE, titleX = TRUE, titleY = TRUE,  heights = c(0.33, 0.33, 0.33), margin = c(0.05,0.05,0.01,0.01))#, ,
 #  nrows = 1,
 #    widths = NULL,
 #    heights = NULL,
@@ -560,7 +560,312 @@ fig3 <- fig3 %>% layout(
 #    titleX = shareX)
 #    titleY = shareY,
 #    which_layout = "merge")
- fig
+ fig_qass
 }
 
 # quality_assessment_plots(big_data, big_data_last_year)
+
+figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings, discards, recruitment, low_recruitment, high_recruitment, low_F, F, high_F, FLim, Fpa, FMSY, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) {
+    if (all(is.na(data1[, "landings"]))) {
+        data1$landings <- data1$catches
+    }
+    # Start the plot
+    fig1 <- plot_ly(
+        data = data1,
+        x = ~years,
+        y = ~landings,
+        name = "Landings",
+        type = "bar",
+        hoverinfo = "text",
+        text = ~ paste("Year:", Year, "<br>Landings:", landings),
+        marker = list(
+            color = "#66a4cd",
+            line = list(
+                color = "black",
+                width = 0.5
+            )
+        ),
+        showlegend = TRUE
+    )
+
+    fig1 <- fig1 %>% add_trace(
+        data = data1,
+        x = ~years,
+        y = ~discards,
+        name = "Discards",
+        type = "bar",
+        hoverinfo = "text",
+        text = ~ paste("Year:", Year, "<br>Discards:", discards),
+        marker = list(
+            color = "#a00130",
+            line = list(
+                color = "black",
+                width = 0.5
+            )
+        ),
+        showlegend = TRUE
+    )
+
+    fig1 <- fig1 %>% layout(
+        title = "Catches",
+        xaxis = list(
+            title = "Years",
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format(),
+            showticklabels = TRUE
+        ),
+        barmode = "stack",
+        legend = legend_format(),
+        yaxis = list(
+            title = "Catches",
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format(),
+            showticklabels = TRUE
+        )
+    )
+
+    fig2 <- plot_ly(
+        data = data2,
+        x = ~years,
+        y = ~recruitment,
+        name = "recruitment",
+        type = "bar",
+        hoverinfo = "text",
+        text = ~ paste("Year:", years, "<br>recruitment:", recruitment),
+        marker = list(
+            color = "#cd6666",
+            line = list(
+                color = "black",
+                width = 0.5
+            )
+        ),
+        error_y = list(
+            type = "data",
+            symmetric = FALSE,
+            arrayminus = ~low_recruitment,
+            array = ~high_recruitment,
+            color = "#000000"
+        )
+        # orientation = "v",
+        # type = "bar"
+        # )
+        # error_y = list(
+        #     array = ~err,
+        #     type = "data",
+        #     color = "#000000"
+        # )
+    )
+
+    fig2 <- fig2 %>% layout(
+        title = "Recruitment",
+        xaxis = list(
+            title = "Years",
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format(),
+            showticklabels = TRUE
+        ),
+        yaxis = list(
+            title = "Recruitment",
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format(),
+            showticklabels = TRUE
+        )
+    )
+
+    fig3 <- plot_ly(
+        data = data3,
+        x = ~years,
+        y = ~high_F,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "transparent", shape = "linear"), #
+        showlegend = FALSE,
+        name = "high_F"
+    )
+    fig3 <- fig3 %>% add_trace(
+        data = data3,
+        y = ~low_F,
+        type = "scatter",
+        mode = "lines",
+        fill = "tonexty",
+        fillcolor = "rgba(255,71,26,0.2)", # "rgba(0,100,80,0.2)"
+        line = list(color = "transparent", shape = "linear"),
+        showlegend = FALSE,
+        name = "low_F"
+    )
+    fig3 <- fig3 %>% add_trace(
+        data = data3,
+        x = ~years,
+        y = ~F,
+        type = "scatter",
+        mode = "lines+markers",
+        line = list(color = "rgb(255,71,26)", shape = "linear"),
+        name = "F",
+        marker = list(size = 10, color = "rgb(255,71,26)"),
+        showlegend = TRUE
+    )
+
+    ## Add horizontal lines
+    fig3 <- fig3 %>% add_trace(
+        data = data3,
+        x = ~years,
+        y = ~FLim,
+        name = "FLim",
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dash"),
+        showlegend = TRUE
+    )
+    fig3 <- fig3 %>% add_trace(
+        data = data3,
+        x = ~years,
+        y = ~Fpa,
+        name = "Fpa",
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dot"),
+        showlegend = TRUE
+    )
+    fig3 <- fig3 %>% add_trace(
+        data = data3,
+        x = ~years,
+        y = ~FMSY,
+        name = "FMSY",
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "orange", shape = "linear", dash = "dash"),
+        showlegend = TRUE
+    )
+
+    fig3 <- fig3 %>% layout(
+        title = "F",
+        legend = legend_format(),
+        paper_bgcolor = "rgb(255,255,255)",
+        plot_bgcolor = "rgb(229,229,229)",
+        xaxis = list(
+            title = "Years",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        ),
+        yaxis = list(
+            title = "F",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
+    )
+    fig4 <- plot_ly(
+        data = data4,
+        x = ~years,
+        y = ~high_SSB,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "transparent", shape = "linear"),
+        showlegend = FALSE,
+        name = "high_SSB"
+    )
+    fig4 <- fig4 %>% add_trace(
+        data = data4,
+        x = ~years,
+        y = ~low_SSB,
+        type = "scatter",
+        mode = "lines",
+        fill = "tonexty",
+        fillcolor = "rgba(0,100,80,0.2)",
+        line = list(color = "transparent", shape = "linear"),
+        showlegend = FALSE,
+        name = "low_SSB"
+    )
+    fig4 <- fig4 %>% add_trace(
+        data = data4,
+        x = ~years,
+        y = ~SSB,
+        type = "scatter",
+        mode = "lines+markers",
+        line = list(color = "rgb(0,100,80)", shape = "linear"),
+        name = "SSB",
+        marker = list(size = 10, color = "rgb(0,100,80)"),
+        showlegend = TRUE
+    )
+
+    ## Add horizontal lines
+    fig4 <- fig4 %>% add_trace(
+        data = data4,
+        x = ~years,
+        y = ~Blim,
+        name = "Blim",
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dash"),
+        showlegend = TRUE
+    )
+    fig4 <- fig4 %>% add_trace(
+        data = data4,
+        x = ~years,
+        y = ~Bpa,
+        name = "Bpa",
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "black", shape = "linear", dash = "dot"),
+        showlegend = TRUE
+    )
+    fig4 <- fig4 %>% add_trace(
+        data = data4,
+        x = ~years,
+        y = ~MSYBtrigger,
+        name = "MSYBtrigger",
+        type = "scatter",
+        mode = "lines",
+        line = list(color = "orange", shape = "linear", dash = "dash"),
+        showlegend = TRUE
+    )
+
+    fig4 <- fig4 %>% layout(
+        title = "SSB",
+        legend = legend_format(),
+        paper_bgcolor = "rgb(255,255,255)",
+        plot_bgcolor = "rgb(229,229,229)",
+        xaxis = list(
+            title = "Years",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        ),
+        yaxis = list(
+            title = "SSB",
+            gridcolor = "rgb(255,255,255)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
+    )
+
+    fig <- subplot(fig1, fig2, fig3, fig4,
+        nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.5, 0.5), heights = c(0.5, 0.5), margin = c(0.06,0.06,0.02,0.02)
+    ) #
+    fig
+}

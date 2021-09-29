@@ -417,51 +417,67 @@ server <- function(input, output, session) {
 
     ######################### Advice panel
 
-    #### Plot 1 Landings and discards
-    output$catches <- renderPlotly({
-
+    output$all_plots <- renderPlotly({
         data_list = advice_action()
-        
-         rv <- reactiveValues(
-             catches_df = data_list$catches
-         )
 
-        figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
-    })
-    #### Plot 2 Recruitment
-    output$R <- renderPlotly({
-
-        data_list = advice_action()
-         
-         rv <- reactiveValues(
-             r_df = data_list$R
-         )
-
-        figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
-    })
-    #### Plot 3 fish mortality 
-    output$f <- renderPlotly({
-        data_list = advice_action()
-         
-         rv <- reactiveValues(
-             f_df = data_list$f
-         )
-
-        #### third plot
-        figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
-    })
-    #### Plot 4 SSB
-    output$SSB <- renderPlotly({
-
-        data_list = advice_action()
-         
-         rv <- reactiveValues(
+        rv <- reactiveValues(
+             catches_df = data_list$catches,
+             r_df = data_list$R,
+             f_df = data_list$f,
              SSB_df = data_list$SSB
-         )
+        )
+        figure_1_plots(rv$catches_df,rv$r_df,rv$f_df,rv$SSB_df,rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards,
+        rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment,rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY,
+        rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
 
-        ### forth plot
-        figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+
     })
+
+    # #### Plot 1 Landings and discards
+    # output$catches <- renderPlotly({
+
+    #     data_list = advice_action()
+        
+    #      rv <- reactiveValues(
+    #          catches_df = data_list$catches
+    #      )
+
+    #     figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
+    # })
+    # #### Plot 2 Recruitment
+    # output$R <- renderPlotly({
+
+    #     data_list = advice_action()
+         
+    #      rv <- reactiveValues(
+    #          r_df = data_list$R
+    #      )
+
+    #     figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
+    # })
+    # #### Plot 3 fish mortality 
+    # output$f <- renderPlotly({
+    #     data_list = advice_action()
+         
+    #      rv <- reactiveValues(
+    #          f_df = data_list$f
+    #      )
+
+    #     #### third plot
+    #     figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
+    # })
+    # #### Plot 4 SSB
+    # output$SSB <- renderPlotly({
+
+    #     data_list = advice_action()
+         
+    #      rv <- reactiveValues(
+    #          SSB_df = data_list$SSB
+    #      )
+
+    #     ### forth plot
+    #     figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+    # })
     #### Plot 5 quality of assessment
     output$Q_Ass <- renderPlotly({
 
@@ -477,18 +493,19 @@ server <- function(input, output, session) {
         # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
     })
     
-    output$tbl_summary <- DT::renderDT({
-        data_list = advice_action()
-        rv <- reactiveValues(
-             data_SAG = data_list$SAG_summary
-         )
-         rv$data_SAG},
-         extensions = 'Buttons', 
-            options = list(dom = 'Bfrtip', pageLength = 10,#lengthChange = TRUE,
-            buttons = c('csv')
-            )
+    # output$tbl_summary <- DT::renderDT({
+    #     data_list = advice_action()
+    #     rv <- reactiveValues(
+    #          data_SAG = data_list$SAG_summary
+    #      )
+    #      rv$data_SAG
+    #      },
+    #      extensions = 'Buttons', 
+    #         options = list(dom = 'Bfrtip', pageLength = 10,#lengthChange = TRUE,
+    #         buttons = c('csv')
+    #         )
 
-    )
+    # )
 })
 
 }
