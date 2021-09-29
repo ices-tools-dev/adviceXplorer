@@ -16,15 +16,15 @@ library(plotly)
 ## Formatting axis title (titlefont)
 titlefont_format <- function() {
     f1 <- list(
-        family = "Arial, sans-serif",
-        size = 30,
+        family = "Calibri, sans-serif",
+        size = 25,
         color = "darkgrey")
 }
 ## Formatting tick axis font (tickfont)
 tickfont_format <- function() {
     f2 <- list(
-        family = "Arial, serif",
-        size = 25,
+        family = "Calibri, serif",
+        size = 20,
         color = "black")
 }
 ## Formatting legend
@@ -32,9 +32,9 @@ legend_format <- function() {
     leg <- list(
         font = list(
         family = "sans-serif",
-        size = 25,
+        size = 20,
         color = "#000"),
-        bgcolor = "#E2E2E2",
+        bgcolor = "rgb(233,244,245)",
         bordercolor = "#FFFFFF",
         borderwidth = 2)
 }
@@ -403,11 +403,11 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
  fig1 <- fig1 %>% layout(
         # title = "SSB", 
         legend = legend_format(),
-        paper_bgcolor = "rgb(255,255,255)", 
-        plot_bgcolor = "rgb(229,229,229)",
+        paper_bgcolor = "rgb(246,250,251)", 
+        plot_bgcolor = "rgb(255,255,255)",
         xaxis = list(
             title = "Years",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -419,7 +419,7 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
         ),
         yaxis = list(
             title = "SSB",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -478,11 +478,11 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
 fig2 <- fig2 %>% layout(
         # title = "F", 
         legend = legend_format(),
-        paper_bgcolor = "rgb(255,255,255)", 
-        plot_bgcolor = "rgb(229,229,229)",
+        paper_bgcolor = "rgb(246,250,251)", 
+        plot_bgcolor = "rgb(255,255,255)",
         xaxis = list(
             title = "Years",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -494,7 +494,7 @@ fig2 <- fig2 %>% layout(
         ),
         yaxis = list(
             title = "F",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -521,11 +521,11 @@ fig2 <- fig2 %>% layout(
 fig3 <- fig3 %>% layout(
         # title = "R", 
         legend = legend_format(),
-        paper_bgcolor = "rgb(255,255,255)", 
-        plot_bgcolor = "rgb(229,229,229)",
+        paper_bgcolor = "rgb(246,250,251)", 
+        plot_bgcolor = "rgb(255,255,255)",
         xaxis = list(
             title = "Years",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -537,7 +537,7 @@ fig3 <- fig3 %>% layout(
         ),
         yaxis = list(
             title = "R",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -607,9 +607,16 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
     )
 
     fig1 <- fig1 %>% layout(
-        title = "Catches",
+        # title = "Catches",
+        paper_bgcolor = "rgb(246,250,251)",
+        plot_bgcolor = "rgb(255,255,255)",
+
         xaxis = list(
             title = "Years",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            tickcolor = "rgb(127,127,127)",
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
             showticklabels = TRUE
@@ -618,6 +625,10 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         legend = legend_format(),
         yaxis = list(
             title = "Catches",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            tickcolor = "rgb(127,127,127)",
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
             showticklabels = TRUE
@@ -628,10 +639,10 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         data = data2,
         x = ~years,
         y = ~recruitment,
-        name = "recruitment",
+        name = "Recruitment",
         type = "bar",
         hoverinfo = "text",
-        text = ~ paste("Year:", years, "<br>recruitment:", recruitment),
+        text = ~ paste("Year:", years, "<br>Recruitment:", recruitment),
         marker = list(
             color = "#cd6666",
             line = list(
@@ -644,28 +655,31 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
             symmetric = FALSE,
             arrayminus = ~low_recruitment,
             array = ~high_recruitment,
-            color = "#000000"
+            color = "rgba(169,169,169,0.5)"
         )
-        # orientation = "v",
-        # type = "bar"
-        # )
-        # error_y = list(
-        #     array = ~err,
-        #     type = "data",
-        #     color = "#000000"
-        # )
     )
 
     fig2 <- fig2 %>% layout(
-        title = "Recruitment",
+        # title = "Recruitment",
+        paper_bgcolor = "rgb(246,250,251)",
+        plot_bgcolor = "rgb(255,255,255)",
+
         xaxis = list(
             title = "Years",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            tickcolor = "rgb(127,127,127)",
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
             showticklabels = TRUE
         ),
         yaxis = list(
             title = "Recruitment",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            tickcolor = "rgb(127,127,127)",
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
             showticklabels = TRUE
@@ -738,13 +752,13 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
     )
 
     fig3 <- fig3 %>% layout(
-        title = "F",
+        # title = "F",
         legend = legend_format(),
-        paper_bgcolor = "rgb(255,255,255)",
-        plot_bgcolor = "rgb(229,229,229)",
+        paper_bgcolor = "rgb(246,250,251)",
+        plot_bgcolor = "rgb(255,255,255)",
         xaxis = list(
             title = "Years",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -756,7 +770,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         ),
         yaxis = list(
             title = "F",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -834,13 +848,13 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
     )
 
     fig4 <- fig4 %>% layout(
-        title = "SSB",
+        # title = "SSB",
         legend = legend_format(),
-        paper_bgcolor = "rgb(255,255,255)",
-        plot_bgcolor = "rgb(229,229,229)",
+        paper_bgcolor = "rgb(246,250,251)",
+        plot_bgcolor = "rgb(255,255,255)",
         xaxis = list(
             title = "Years",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,
@@ -852,7 +866,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         ),
         yaxis = list(
             title = "SSB",
-            gridcolor = "rgb(255,255,255)",
+            gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
             showticklabels = TRUE,

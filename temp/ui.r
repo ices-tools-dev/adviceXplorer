@@ -64,7 +64,7 @@ navbarPage(
     tags$style(type = "text/css", "p {font-size: 21px;}"),
     tags$style(type = "text/css", "body {padding-top: 70px;}"),
     tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
-    theme = shinytheme("united"),
+    theme = shinytheme("united"),  ##### need to work on this, the orange is part of the css theme united, check bslib in forked repo
     position = "fixed-top",
 
     tags$script(HTML("var header = $('.navbar > .container-fluid');
