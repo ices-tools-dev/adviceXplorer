@@ -579,9 +579,9 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         hoverinfo = "text",
         text = ~ paste("Year:", Year, "<br>Landings:", landings),
         marker = list(
-            color = "#66a4cd",
+            color = "#002b5f", # BMSlandings #047c6c
             line = list(
-                color = "black",
+                color = "#d0d1d6",
                 width = 0.5
             )
         ),
@@ -597,9 +597,9 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         hoverinfo = "text",
         text = ~ paste("Year:", Year, "<br>Discards:", discards),
         marker = list(
-            color = "#a00130",
+            color = "#28b3e8",
             line = list(
-                color = "black",
+                color = "#d0d1d6",
                 width = 0.5
             )
         ),
@@ -644,9 +644,9 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         hoverinfo = "text",
         text = ~ paste("Year:", years, "<br>Recruitment:", recruitment),
         marker = list(
-            color = "#cd6666",
+            color = "#28b3e8", #last yesr #92defb
             line = list(
-                color = "black",
+                color = "#d0d1d6",
                 width = 0.5
             )
         ),
@@ -702,7 +702,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         type = "scatter",
         mode = "lines",
         fill = "tonexty",
-        fillcolor = "rgba(255,71,26,0.2)", # "rgba(0,100,80,0.2)"
+        fillcolor = "#f2a497", # "rgba(0,100,80,0.2)"rgba(255,71,26,0.2)
         line = list(color = "transparent", shape = "linear"),
         showlegend = FALSE,
         name = "low_F"
@@ -713,9 +713,9 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         y = ~F,
         type = "scatter",
         mode = "lines+markers",
-        line = list(color = "rgb(255,71,26)", shape = "linear"),
+        line = list(color = "#ed5f26", shape = "linear"), #"rgb(255,71,26)"
         name = "F",
-        marker = list(size = 10, color = "rgb(255,71,26)"),
+        marker = list(size = 1, color = "#ed5f26"),
         showlegend = TRUE
     )
 
@@ -747,7 +747,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         name = "FMSY",
         type = "scatter",
         mode = "lines",
-        line = list(color = "orange", shape = "linear", dash = "dash"),
+        line = list(color = "#679dfe", shape = "linear"),#, dash = "dash"),
         showlegend = TRUE
     )
 
@@ -798,7 +798,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         type = "scatter",
         mode = "lines",
         fill = "tonexty",
-        fillcolor = "rgba(0,100,80,0.2)",
+        fillcolor = "#94b0a9", #rgba(0,100,80,0.2)
         line = list(color = "transparent", shape = "linear"),
         showlegend = FALSE,
         name = "low_SSB"
@@ -809,9 +809,9 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         y = ~SSB,
         type = "scatter",
         mode = "lines+markers",
-        line = list(color = "rgb(0,100,80)", shape = "linear"),
+        line = list(color = "#047c6c", shape = "linear"), #rgb(0,100,80)
         name = "SSB",
-        marker = list(size = 10, color = "rgb(0,100,80)"),
+        marker = list(size = 1, color = "#047c6c"),
         showlegend = TRUE
     )
 
@@ -843,7 +843,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         name = "MSYBtrigger",
         type = "scatter",
         mode = "lines",
-        line = list(color = "orange", shape = "linear", dash = "dash"),
+        line = list(color = "#679dfe", shape = "linear"),#, dash = "dash"),
         showlegend = TRUE
     )
 
