@@ -118,7 +118,7 @@ server <- function(input, output, session) {
         
         # find index
 
-
+observe({
         observeEvent(input$map1_shape_click, {
             ## calculate index of ecoregion selected in shape_eco
             idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
@@ -279,6 +279,8 @@ server <- function(input, output, session) {
 
     output$tbl <- DT::renderDT(res_mod(),
         extensions = "Buttons",
+        selection = "single",
+        caption = "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
         options = list(
             dom = "Bfrtip",
             pageLength = 300,
@@ -296,7 +298,8 @@ server <- function(input, output, session) {
             )
         )
     )
-
+    
+   
 
 
 
@@ -313,7 +316,8 @@ server <- function(input, output, session) {
 #     ############################################################this part is the old filtering method 30082021
 #     # click on polygon
     #  observeEvent(input$tbl_cell_clicked$value, { 
-         observe({
+         
+        #  observe({
         
 #         event <- input$map1_shape_click
 #         print(input$map1_shape_click)
@@ -380,7 +384,7 @@ server <- function(input, output, session) {
     
 #             # When a button is clicked, employee is set to the employee name
 #             #  associated with the clicked row
-    advice_action <- eventReactive(input$tbl_cell_clicked$value, {
+    advice_action <- eventReactive(input$tbl_rows_selected, {
 #     # take the value of input$select_button, e.g. "button_1"
 #     # get the button number (1) and assign to selectedRow
 #     selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
@@ -388,11 +392,13 @@ server <- function(input, output, session) {
 #     # get the value of the "Name" column in the data.frame for that row
     
 #     stock_name <- as.character(df()[selectedRow, "StockKeyLabel"])
-    stock_name <- input$tbl_cell_clicked$value
+    filtered_row <- res_mod()[input$tbl_rows_selected,]
+    print(filtered_row$StockKeyLabel)
+    stock_name <- filtered_row$StockKeyLabel    
     
     #   # Dowload the data        
     # data_sag <- access_sag_data(stock_name, 2020)
-    data_sag <- access_sag_data(input$tbl_cell_clicked$value, 2020)
+    data_sag <- access_sag_data(stock_name, 2020)
 
     
     catches <- data_sag %>% select(Year, catches, landings, discards)#,#,
@@ -507,5 +513,5 @@ server <- function(input, output, session) {
 
     # )
 })
-
+output$In_Construction <- renderText({ "In Construction" })
 }

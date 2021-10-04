@@ -53,7 +53,8 @@ navbarPage(
         # includeMarkdown("Instructions.Rmd")
     ),
     tabPanel(
-        "Catch Options/Advice"
+        "Catch Options/Advice",
+        verbatimTextOutput("In_Construction")
     ),
     tabPanel(
         "Resources",
