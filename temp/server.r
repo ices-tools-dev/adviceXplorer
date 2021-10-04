@@ -118,7 +118,7 @@ server <- function(input, output, session) {
         
         # find index
 
-
+observe({
         observeEvent(input$map1_shape_click, {
             ## calculate index of ecoregion selected in shape_eco
             idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
@@ -279,6 +279,8 @@ server <- function(input, output, session) {
 
     output$tbl <- DT::renderDT(res_mod(),
         extensions = "Buttons",
+        selection = "single",
+        caption = "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
         options = list(
             dom = "Bfrtip",
             pageLength = 300,
@@ -296,7 +298,8 @@ server <- function(input, output, session) {
             )
         )
     )
-
+    
+   
 
 
 
@@ -313,7 +316,8 @@ server <- function(input, output, session) {
 #     ############################################################this part is the old filtering method 30082021
 #     # click on polygon
     #  observeEvent(input$tbl_cell_clicked$value, { 
-         observe({
+         
+        #  observe({
         
 #         event <- input$map1_shape_click
 #         print(input$map1_shape_click)
@@ -380,7 +384,7 @@ server <- function(input, output, session) {
     
 #             # When a button is clicked, employee is set to the employee name
 #             #  associated with the clicked row
-    advice_action <- eventReactive(input$tbl_cell_clicked$value, {
+    advice_action <- eventReactive(input$tbl_rows_selected, {
 #     # take the value of input$select_button, e.g. "button_1"
 #     # get the button number (1) and assign to selectedRow
 #     selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
@@ -388,11 +392,13 @@ server <- function(input, output, session) {
 #     # get the value of the "Name" column in the data.frame for that row
     
 #     stock_name <- as.character(df()[selectedRow, "StockKeyLabel"])
-    stock_name <- input$tbl_cell_clicked$value
+    filtered_row <- res_mod()[input$tbl_rows_selected,]
+    print(filtered_row$StockKeyLabel)
+    stock_name <- filtered_row$StockKeyLabel    
     
     #   # Dowload the data        
     # data_sag <- access_sag_data(stock_name, 2020)
-    data_sag <- access_sag_data(input$tbl_cell_clicked$value, 2020)
+    data_sag <- access_sag_data(stock_name, 2020)
 
     
     catches <- data_sag %>% select(Year, catches, landings, discards)#,#,
@@ -417,51 +423,67 @@ server <- function(input, output, session) {
 
     ######################### Advice panel
 
-    #### Plot 1 Landings and discards
-    output$catches <- renderPlotly({
-
+    output$all_plots <- renderPlotly({
         data_list = advice_action()
-        
-         rv <- reactiveValues(
-             catches_df = data_list$catches
-         )
 
-        figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
-    })
-    #### Plot 2 Recruitment
-    output$R <- renderPlotly({
-
-        data_list = advice_action()
-         
-         rv <- reactiveValues(
-             r_df = data_list$R
-         )
-
-        figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
-    })
-    #### Plot 3 fish mortality 
-    output$f <- renderPlotly({
-        data_list = advice_action()
-         
-         rv <- reactiveValues(
-             f_df = data_list$f
-         )
-
-        #### third plot
-        figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
-    })
-    #### Plot 4 SSB
-    output$SSB <- renderPlotly({
-
-        data_list = advice_action()
-         
-         rv <- reactiveValues(
+        rv <- reactiveValues(
+             catches_df = data_list$catches,
+             r_df = data_list$R,
+             f_df = data_list$f,
              SSB_df = data_list$SSB
-         )
+        )
+        figure_1_plots(rv$catches_df,rv$r_df,rv$f_df,rv$SSB_df,rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards,
+        rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment,rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY,
+        rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
 
-        ### forth plot
-        figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+
     })
+
+    # #### Plot 1 Landings and discards
+    # output$catches <- renderPlotly({
+
+    #     data_list = advice_action()
+        
+    #      rv <- reactiveValues(
+    #          catches_df = data_list$catches
+    #      )
+
+    #     figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
+    # })
+    # #### Plot 2 Recruitment
+    # output$R <- renderPlotly({
+
+    #     data_list = advice_action()
+         
+    #      rv <- reactiveValues(
+    #          r_df = data_list$R
+    #      )
+
+    #     figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
+    # })
+    # #### Plot 3 fish mortality 
+    # output$f <- renderPlotly({
+    #     data_list = advice_action()
+         
+    #      rv <- reactiveValues(
+    #          f_df = data_list$f
+    #      )
+
+    #     #### third plot
+    #     figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
+    # })
+    # #### Plot 4 SSB
+    # output$SSB <- renderPlotly({
+
+    #     data_list = advice_action()
+         
+    #      rv <- reactiveValues(
+    #          SSB_df = data_list$SSB
+    #      )
+
+    #     ### forth plot
+    #     figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+    # })
     #### Plot 5 quality of assessment
     output$Q_Ass <- renderPlotly({
 
@@ -477,18 +499,19 @@ server <- function(input, output, session) {
         # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
     })
     
-    output$tbl_summary <- DT::renderDT({
-        data_list = advice_action()
-        rv <- reactiveValues(
-             data_SAG = data_list$SAG_summary
-         )
-         rv$data_SAG},
-         extensions = 'Buttons', 
-            options = list(dom = 'Bfrtip', pageLength = 10,#lengthChange = TRUE,
-            buttons = c('csv')
-            )
+    # output$tbl_summary <- DT::renderDT({
+    #     data_list = advice_action()
+    #     rv <- reactiveValues(
+    #          data_SAG = data_list$SAG_summary
+    #      )
+    #      rv$data_SAG
+    #      },
+    #      extensions = 'Buttons', 
+    #         options = list(dom = 'Bfrtip', pageLength = 10,#lengthChange = TRUE,
+    #         buttons = c('csv')
+    #         )
 
-    )
+    # )
 })
-
+output$In_Construction <- renderText({ "In Construction" })
 }

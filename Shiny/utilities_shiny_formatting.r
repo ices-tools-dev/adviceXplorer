@@ -3,46 +3,53 @@ side_width <- 4
 # allocations advice information panel
 allocations_infopanel <-
   sidebarPanel(
-    width = side_width
+    width = 8,
+    panel(title = "plots",
+    plotlyOutput("all_plots", height = 800),
+    h5(helpText("Stock Development over time"))
+    )
+
   )
 
 # advice plot side panel
 allocations_plotspanel <-
-  mainPanel(
-    width = 12 - side_width,
-    tabsetPanel(
-        tabPanel(
-            title = "Catches",
-            plotlyOutput("catches"),
-            h5(helpText("Figure 1: Catches"))
-            # actionButton("r_catches", "Get Stock Data")
-        ),
-        tabPanel(
-            title = "Recruitment",
-            plotlyOutput("R"),
-            h5(helpText("Figure 2: Stock recruitment"))
-            # actionButton("r_recr", "Get Stock Data")
-        ),
-        tabPanel(
-            title = "Fishing Pressure",
-            plotlyOutput("f"),
-            h5(helpText("Figure 3: Fish mortality"))
-            # actionButton("r_f", "Get Stock Data")
-        ),
-        tabPanel(
-            title = "SSB",
-            plotlyOutput("SSB"),
-            h5(helpText("Figure 4: SSB"))
-            # actionButton("r_SSB", "Get Stock Data")
-        ),
-        tabPanel(
+  sidebarPanel(
+    width = 4,
+    # tabsetPanel(
+    #     tabPanel(
+    #         title = "Catches",
+    #         plotlyOutput("catches"),
+    #         h5(helpText("Figure 1: Catches"))
+    #         # actionButton("r_catches", "Get Stock Data")
+    #     ),
+    #     tabPanel(
+    #         title = "Recruitment",
+    #         plotlyOutput("R"),
+    #         h5(helpText("Figure 2: Stock recruitment"))
+    #         # actionButton("r_recr", "Get Stock Data")
+    #     ),
+    #     tabPanel(
+    #         title = "Fishing Pressure",
+    #         plotlyOutput("f"),
+    #         h5(helpText("Figure 3: Fish mortality"))
+    #         # actionButton("r_f", "Get Stock Data")
+    #     ),
+    #     tabPanel(
+    #         title = "SSB",
+    #         plotlyOutput("SSB"),
+    #         h5(helpText("Figure 4: SSB"))
+    #         # actionButton("r_SSB", "Get Stock Data")
+    #     ),
+    #     tabPanel(
+      panel(
             title = "Quality of Assessment",
-            plotlyOutput("Q_Ass"),
-            h5(helpText("Figure 4: Quality of Assessment"))
+            plotlyOutput("Q_Ass",height = 800),
+            h5(helpText("Quality of Assessment"))
             # actionButton("r_SSB", "Get Stock Data")
-        )
-    ),
-    DTOutput("tbl_summary")
+      )
+        # )
+    # ),
+    # DTOutput("tbl_summary")
     )
 
 
