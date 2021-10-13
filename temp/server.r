@@ -4,110 +4,28 @@ server <- function(input, output, session) {
     cat(getwd())
 
     ######################### Map panel   
-    # Define the palette
-    # bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
-    # pal <- colorBin("YlOrRd", domain = shape_eco$Shape_Area, bins = bins)
+    
     sf_cent <- st_coordinates(st_centroid(shape_eco))
     sf_cent_map_X <- mean(sf_cent[, 1])
     sf_cent_map_Y <- mean(sf_cent[, 2])
     sf_cent_map <- c(sf_cent_map_X, sf_cent_map_Y)
-    # Define the interactive labels
-    labels <- sprintf(
-        "<strong>%s Ecoregion</strong><br/>%g Shape Area ",
-        shape_eco$Ecoregion, shape_eco$Shape_Area
-    ) %>% lapply(htmltools::HTML)
+    # # Define the interactive labels
+    # labels <- sprintf(
+    #     "<strong>%s Ecoregion</strong><br/>%g Shape Area ",
+    #     shape_eco$Ecoregion, shape_eco$Shape_Area
+    # ) %>% lapply(htmltools::HTML)
     
-    # output$map <- renderLeaflet({
-    #     # map_ecoregion(shape_eco, eu_shape)
-
-    #     # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>% 
-    #     #     #addProviderTiles("Stamen.Toner") %>% 
-    #     #     addPolygons(data = shape_eco, 
-    #     #         color = "#444444", 
-    #     #         weight = 1,
-    #     #         smoothFactor = 0.5,
-    #     #         opacity = 0.7, 
-    #     #         fillOpacity = 0.5,
-    #     #         fillColor = ~ pal(shape_eco$Shape_Area),
-    #     #         layerId = ~uid, # unique id for polygons
-    #     #         highlightOptions = highlightOptions(
-    #     #             color = "white", weight = 2,
-    #     #             bringToFront = TRUE
-    #     #         ),
-    #     #         label = labels,
-    #     #         labelOptions = labelOptions(
-    #     #             style = list("font-weight" = "normal", padding = "3px 8px"),
-    #     #             textsize = "15px",
-    #     #             direction = "auto"
-    #     #         )) %>%
-    #     #     addPolygons(
-    #     #         data = eu_shape, color = "black", weight = 1,
-    #     #         smoothFactor = 0.5,
-    #     #         opacity = 0.7, fillOpacity = 0.5,
-    #     #         fillColor = "grey") %>%  
-    #     #         setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
-    #         #  setView(lng = 25.783660, lat = 71.170953, zoom = 3.2) # nordKap coordinates
-    # })
-
+    
+    # Render Map 1
     output$map1 <- renderLeaflet({
         map_ecoregion(shape_eco, eu_shape)
-            # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-            #     # addTiles() %>%
-            #     addPolygons(
-            #         data = shape_eco,
-            #         fillColor = "white",
-            #         fillOpacity = 0.5,
-            #         color = "black",
-            #         stroke = TRUE,
-            #         weight = 1,
-            #         layerId = ~Ecoregion,
-            #         group = "Eco_regions",
-            #         label = ~Ecoregion
-            #     ) %>%
-            #     addPolygons(
-            #         data = shape_eco,
-            #         fillColor = "red",
-            #         fillOpacity = 0.5,
-            #         weight = 1,
-            #         color = "black",
-            #         stroke = TRUE,
-            #         layerId = ~OBJECTID,
-            #         group = ~Ecoregion
-            #     ) %>%
-            #     hideGroup(group = shape_eco$Ecoregion) # nc$CNTY_ID
-        }) # END RENDER LEAFLET
+    }) # END RENDER LEAFLET map1
 
-        # map output Areas
-        output$map2 <- renderLeaflet({
-            map_ices_areas(ices_areas, eu_shape)
-            # leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-            #     # addTiles() %>%
-            #     addPolygons(
-            #         data = ices_areas,
-            #         fillColor = "white",
-            #         fillOpacity = 0.5,
-            #         color = "black",
-            #         stroke = TRUE,
-            #         weight = 1,
-            #         layerId = ~Area_Full,
-            #         group = "ices_areas",
-            #         label = ~Area_Full
-            #     ) %>%
-            #     addPolygons(
-            #         data = ices_areas,
-            #         fillColor = "red",
-            #         fillOpacity = 0.5,
-            #         weight = 1,
-            #         color = "black",
-            #         stroke = TRUE,
-            #         layerId = ~OBJECTID,
-            #         group = ~Area_Full
-            #     ) %>%
-            #     hideGroup(group = ices_areas$Area_Full) # nc$CNTY_ID
-        }) # END RENDER LEAFLET
+    # Render Map 2
+    output$map2 <- renderLeaflet({
+        map_ices_areas(ices_areas, eu_shape)
+    }) # END RENDER LEAFLET map2
     ###############################################################END of MAPS
-
-    ################################################################# new interactive filtering first part
 
     ############################## Interactive section Ecoregions ######################
         # define leaflet proxy for Ecoregion map
@@ -118,7 +36,10 @@ server <- function(input, output, session) {
         
         # find index
 
-observe({
+observe({ # this observe wraps up the whole server code. Might need to change this
+
+
+
         observeEvent(input$map1_shape_click, {
             ## calculate index of ecoregion selected in shape_eco
             idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
@@ -171,7 +92,6 @@ observe({
                 }
             },
             ignoreNULL = FALSE
-
         )
 
 
@@ -235,7 +155,7 @@ observe({
             },
             ignoreNULL = FALSE
         )
-    ########################################################### end reactive part
+    ########################################################### end Maps reactive part
     
     ########################################################### tranform the sid dataframe
     stock_list_long <- separate_ecoregions(stock_list_all)
@@ -244,36 +164,31 @@ observe({
     ###########################################################  function to use the input from the maps and the sid filtering
 
     eco_filter <- reactive({
-          req(input$selected_locations)
-          print(input$selected_locations)
+        req(input$selected_locations)
+        print(input$selected_locations)
 
-          temp_df <- data.frame()
-          for (i in 1:length(input$selected_locations)) {
-              temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
-              temp_df <- rbind(temp_df, temp_1)
-          }
-          print(tibble(temp_df))
-          stock_list_long <- temp_df
-
-        #   stock_list_long %>%
-          
-        #     filter(str_detect(stock_list_long$EcoRegion, input$selected_locations))
+        temp_df <- data.frame()
+        for (i in 1:length(input$selected_locations)) {
+            temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
+            temp_df <- rbind(temp_df, temp_1)
+        }
+        print(tibble(temp_df))
+        stock_list_long <- temp_df
+    })
         
-                })
-        
-        # res_mod <- reactive({
-        res_mod <- callModule(
-            module = selectizeGroupServer,
-            id = "my-filters",
-            # data = separate_ecoregions(stock_list_all, selected_1$groups),
-            data = eco_filter,
-            vars = c(
-                "StockDatabaseID", "StockKey", "StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName",
-                "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
-                "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
-                "FisheriesGuild", "SizeGuild", "Published"
-            ) # , "ICES_area")
-        )
+    # res_mod <- reactive({
+    res_mod <- callModule(
+        module = selectizeGroupServer,
+        id = "my-filters",
+        # data = separate_ecoregions(stock_list_all, selected_1$groups),
+        data = eco_filter,
+        vars = c(
+            "StockDatabaseID", "StockKey", "StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName",
+            "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
+            "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
+            "FisheriesGuild", "SizeGuild", "Published"
+        ) # , "ICES_area")
+    )
 
 
 
@@ -298,20 +213,6 @@ observe({
             )
         )
     )
-    
-   
-
-
-
-    # output$headline <- renderPrint({
-    # h3(paste0("You clicked value ", input$tbl_cell_clicked$value," and ", input$tbl_cell_clicked$row)) #$value
-    # # print(input$tbl_cell_clicked$value)
-    # })
-    
-
-
-
-
 
 #     ############################################################this part is the old filtering method 30082021
 #     # click on polygon
@@ -381,43 +282,37 @@ observe({
 #             options = list(dom = 'Bfrtip', pageLength = 300,buttons = c('csv'))
 #             )
 #         }
-    
-#             # When a button is clicked, employee is set to the employee name
-#             #  associated with the clicked row
+###########################################################I am leaving this part above commented out for now (and not deleted) 
+# just because I might need some code that's in it.  
+#             
     advice_action <- eventReactive(input$tbl_rows_selected, {
-#     # take the value of input$select_button, e.g. "button_1"
-#     # get the button number (1) and assign to selectedRow
-#     selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
-    
-#     # get the value of the "Name" column in the data.frame for that row
-    
-#     stock_name <- as.character(df()[selectedRow, "StockKeyLabel"])
-    filtered_row <- res_mod()[input$tbl_rows_selected,]
-    print(filtered_row$StockKeyLabel)
-    stock_name <- filtered_row$StockKeyLabel    
-    
-    #   # Dowload the data        
-    # data_sag <- access_sag_data(stock_name, 2020)
-    data_sag <- access_sag_data(stock_name, 2020)
+        filtered_row <- res_mod()[input$tbl_rows_selected, ]
+        print(filtered_row$StockKeyLabel)
+        stock_name <- filtered_row$StockKeyLabel
 
-    
-    catches <- data_sag %>% select(Year, catches, landings, discards)#,#,
-    R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment) #%>% na.omit()
-    f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
-    SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) 
-    list_df <- quality_assessment_data(stock_name)
-    #the bit below could be potentially be replaced by the sag status? summary table option?
-    SAG_summary <- data_sag %>% select(Year, 
-                    recruitment, high_recruitment, low_recruitment, 
-                    SSB, high_SSB, low_SSB,
-                    catches, landings,
-                    F, high_F, low_F)
-    
-#     big_data <- list_df[[1]]
-# big_data_last_year <- list_df[[2]]
-
-    list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
+        #   # Dowload the data
         
+        data_sag <- access_sag_data(stock_name, 2020)
+
+
+        catches <- data_sag %>% select(Year, catches, landings, discards) 
+        R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment) # %>% na.omit()
+        f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
+        SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger)
+        list_df <- quality_assessment_data(stock_name)
+        # the bit below could be potentially be replaced by the sag status? summary table option?
+        SAG_summary <- data_sag %>% select(
+            Year,
+            recruitment, high_recruitment, low_recruitment,
+            SSB, high_SSB, low_SSB,
+            catches, landings,
+            F, high_F, low_F
+        )
+
+        #     big_data <- list_df[[1]]
+        # big_data_last_year <- list_df[[2]]
+
+        list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
     })
     
 
@@ -427,72 +322,26 @@ observe({
         data_list = advice_action()
 
         rv <- reactiveValues(
-             catches_df = data_list$catches,
-             r_df = data_list$R,
-             f_df = data_list$f,
-             SSB_df = data_list$SSB
+            catches_df = data_list$catches,
+            r_df = data_list$R,
+            f_df = data_list$f,
+            SSB_df = data_list$SSB
         )
-        figure_1_plots(rv$catches_df,rv$r_df,rv$f_df,rv$SSB_df,rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards,
-        rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment,rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY,
-        rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-
-
+        figure_1_plots(
+            rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df, rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards,
+            rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY,
+            rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger
+        )
     })
 
-    # #### Plot 1 Landings and discards
-    # output$catches <- renderPlotly({
-
-    #     data_list = advice_action()
-        
-    #      rv <- reactiveValues(
-    #          catches_df = data_list$catches
-    #      )
-
-    #     figure_1_catches(rv$catches_df, rv$catches_df$Year, rv$catches_df$catches ,rv$catches_df$landings, rv$catches_df$discards)
-    # })
-    # #### Plot 2 Recruitment
-    # output$R <- renderPlotly({
-
-    #     data_list = advice_action()
-         
-    #      rv <- reactiveValues(
-    #          r_df = data_list$R
-    #      )
-
-    #     figure_2_recruitment(rv$r_df, rv$r_df$Year, rv$r_df$recruitment,rv$r_df$low_recruitment,rv$r_df$high_recruitment)
-    # })
-    # #### Plot 3 fish mortality 
-    # output$f <- renderPlotly({
-    #     data_list = advice_action()
-         
-    #      rv <- reactiveValues(
-    #          f_df = data_list$f
-    #      )
-
-    #     #### third plot
-    #     figure_3_fish_mortality(rv$f_df, rv$f_df$Year, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY)
-    # })
-    # #### Plot 4 SSB
-    # output$SSB <- renderPlotly({
-
-    #     data_list = advice_action()
-         
-    #      rv <- reactiveValues(
-    #          SSB_df = data_list$SSB
-    #      )
-
-    #     ### forth plot
-    #     figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-    # })
     #### Plot 5 quality of assessment
     output$Q_Ass <- renderPlotly({
-
         data_list = advice_action()
-         
-         rv <- reactiveValues(
-             Q_Ass_df1 = data_list$big_data,
-             Q_Ass_df2 = data_list$big_data_last_year
-         )
+
+        rv <- reactiveValues(
+            Q_Ass_df1 = data_list$big_data,
+            Q_Ass_df2 = data_list$big_data_last_year
+        )
 
         ### forth plot
         quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2)
