@@ -565,10 +565,26 @@ fig3 <- fig3 %>% layout(
 
 # quality_assessment_plots(big_data, big_data_last_year)
 
-figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings, discards, recruitment, low_recruitment, high_recruitment, low_F, F, high_F, FLim, Fpa, FMSY, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger) {
+figure_1_plots <- function(data1, data2, data3, data4, 
+                            years, 
+                            catches, landings, discards, units, AssessmentYear,
+                            recruitment, low_recruitment, high_recruitment, recruitment_age, 
+                            low_F, F, high_F, FLim, Fpa, FMSY,Fage, fishingPressureDescription,
+                            low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) {
     if (all(is.na(data1[, "landings"]))) {
         data1$landings <- data1$catches
     }
+
+    ## Labels for axes and annotation for the plots, taken from SAG
+    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
+    R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(recruitment_age))
+    F_yaxis_label <- sprintf("%s (ages %s)",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+    SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
+    Stockcode_year_annotation <- list( showarrow = FALSE,
+                                        text = sprintf("Fishstock Place holder, %s", dplyr::last(AssessmentYear)),
+                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
+                                        yref = 'paper', y = 1, xref = "paper", x = 0.8
+                                        )
     # Start the plot
     fig1 <- plot_ly(
         data = data1,
@@ -624,7 +640,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
         barmode = "stack",
         legend = legend_format(),
         yaxis = list(
-            title = "Catches",
+            title = catches_yaxis_label,#"Catches",
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -632,7 +648,8 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
             showticklabels = TRUE
-        )
+        ),
+        annotations = list(Stockcode_year_annotation)
     )
 
     fig2 <- plot_ly(
@@ -675,7 +692,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
             showticklabels = TRUE
         ),
         yaxis = list(
-            title = "Recruitment",
+            title = R_yaxis_label,#"Recruitment",
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -769,7 +786,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
             tickfont = tickfont_format()
         ),
         yaxis = list(
-            title = "F",
+            title = F_yaxis_label, #"F",
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -865,7 +882,7 @@ figure_1_plots <- function(data1, data2, data3, data4, years, catches, landings,
             tickfont = tickfont_format()
         ),
         yaxis = list(
-            title = "SSB",
+            title = SSB_yaxis_label,#"SSB",
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
