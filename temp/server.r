@@ -295,11 +295,17 @@ observe({ # this observe wraps up the whole server code. Might need to change th
         data_sag <- access_sag_data(stock_name, 2020)
 
 
-        catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) 
+        catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
+        # stock_name_column <- data.frame(rep(stock_name, length(catches)))
+        # catches <- catches %>% add_column(stock_name_column = stock_name, .after = "units")
+
         R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
         f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
         SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
+        # SSB$stockSizeUnits <- as.character(SSB$stockSizeUnits)
+        # print(SSB)
         list_df <- quality_assessment_data(stock_name)
+        
         # the bit below could be potentially be replaced by the sag status? summary table option?
         SAG_summary <- data_sag %>% select(
             Year,
@@ -313,6 +319,7 @@ observe({ # this observe wraps up the whole server code. Might need to change th
         # big_data_last_year <- list_df[[2]]
 
         list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
+
     })
     
 
@@ -329,7 +336,7 @@ observe({ # this observe wraps up the whole server code. Might need to change th
         )
         figure_1_plots(
             rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df, 
-            rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units,  rv$catches_df$AssessmentYear,
+            rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
             rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
             rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
             rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits
@@ -346,7 +353,10 @@ observe({ # this observe wraps up the whole server code. Might need to change th
         )
 
         ### forth plot
-        quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2)
+        quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
+                                    rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits, 
+                                    rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription, 
+                                    rv$Q_Ass_df1$RecruitmentAge)
         # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
     })
     

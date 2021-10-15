@@ -356,8 +356,17 @@ figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtri
 
 
 #####################Subplots quality of assessment
-quality_assessment_plots <- function(big_data, big_data_last_year) {
-# pal <- c("red", "blue", "green")
+quality_assessment_plots <- function(big_data, big_data_last_year,
+                                        stockSizeDescription,stockSizeUnits,
+                                        Fage, fishingPressureDescription,
+                                        RecruitmentAge) {
+
+## Labels for axes and annotation for the plots, taken from SAG
+SSB_yaxis_label <- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
+F_yaxis_label <- sprintf("%s (ages %s)",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
+
+
  fig1 <- plot_ly(
      data = big_data,
      x = ~Year,
@@ -418,7 +427,7 @@ quality_assessment_plots <- function(big_data, big_data_last_year) {
             tickfont = tickfont_format()
         ),
         yaxis = list(
-            title = "SSB",
+            title = SSB_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -493,7 +502,7 @@ fig2 <- fig2 %>% layout(
             tickfont = tickfont_format()
         ),
         yaxis = list(
-            title = "F",
+            title = F_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -536,7 +545,7 @@ fig3 <- fig3 %>% layout(
             tickfont = tickfont_format()
         ),
         yaxis = list(
-            title = "R",
+            title = R_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -567,7 +576,7 @@ fig3 <- fig3 %>% layout(
 
 figure_1_plots <- function(data1, data2, data3, data4, 
                             years, 
-                            catches, landings, discards, units, AssessmentYear,
+                            catches, landings, discards, units, stock_name, AssessmentYear,
                             recruitment, low_recruitment, high_recruitment, recruitment_age, 
                             low_F, F, high_F, FLim, Fpa, FMSY,Fage, fishingPressureDescription,
                             low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) {
@@ -580,11 +589,28 @@ figure_1_plots <- function(data1, data2, data3, data4,
     R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(recruitment_age))
     F_yaxis_label <- sprintf("%s (ages %s)",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
-    Stockcode_year_annotation <- list( showarrow = FALSE,
-                                        text = sprintf("Fishstock Place holder, %s", dplyr::last(AssessmentYear)),
+    
+    Stockcode_year_annotation_1 <- list( showarrow = FALSE,
+                                        text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
                                         font = list(family = "Calibri, serif",size = 10, color = "black"),
                                         yref = 'paper', y = 1, xref = "paper", x = 0.8
                                         )
+    Stockcode_year_annotation_2 <- list( showarrow = FALSE,
+                                        text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
+                                        yref = 'paper', y = 1, xref = "paper", x = 0.95
+                                        )
+    Stockcode_year_annotation_3 <- list( showarrow = FALSE,
+                                            text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+                                            font = list(family = "Calibri, serif",size = 10, color = "black"),
+                                            yref = 'paper', y = 0.97, xref = "paper", x = 0.8
+                                            )
+    Stockcode_year_annotation_4 <- list( showarrow = FALSE,
+                                        text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
+                                        yref = 'paper', y = 0.97, xref = "paper", x = 0.95
+                                        )
+    
     # Start the plot
     fig1 <- plot_ly(
         data = data1,
@@ -649,7 +675,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
             tickfont = tickfont_format(),
             showticklabels = TRUE
         ),
-        annotations = list(Stockcode_year_annotation)
+        annotations = list(Stockcode_year_annotation_1)
     )
 
     fig2 <- plot_ly(
@@ -700,7 +726,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
             showticklabels = TRUE
-        )
+        ),
+        annotations = list(Stockcode_year_annotation_2)
     )
 
     fig3 <- plot_ly(
@@ -796,7 +823,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
             zeroline = TRUE,
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
-        )
+        ),
+        annotations = list(Stockcode_year_annotation_3)
     )
     fig4 <- plot_ly(
         data = data4,
@@ -892,7 +920,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
             zeroline = TRUE,
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
-        )
+        ),
+        annotations = list(Stockcode_year_annotation_4)
     )
 
     fig <- subplot(fig1, fig2, fig3, fig4,
