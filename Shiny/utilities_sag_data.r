@@ -44,15 +44,26 @@ for (i in years) {
     else {
         #
         data_temp <- filter(data_temp, between(Year, 2005, 2021))
-        data_temp <- data_temp %>% select(Year, recruitment, SSB, F, Bpa, Blim, MSYBtrigger, FLim, Fpa, FMSY, RecruitmentAge, AssessmentYear, StockPublishNote,Purpose)
+        data_temp <- data_temp %>% select(Year, 
+                                            recruitment, RecruitmentAge,
+                                            SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
+                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,  
+                                            AssessmentYear, StockPublishNote,Purpose)
+
+        data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+        data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
+        data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
+        data_temp$Fage <- as.character(data_temp$Fage)
+        data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
+
         datalist[[i]] <- data_temp
         # }
     }
 }
 
-
+#print(tibble(datalist))
 ### bind data in unique df
-big_data <- dplyr::bind_rows(datalist)
+big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
 
 # find last asseement year
 last_year <- tail(big_data$AssessmentYear, n=1)
