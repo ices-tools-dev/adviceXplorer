@@ -363,8 +363,8 @@ quality_assessment_plots <- function(big_data, big_data_last_year,
 
 ## Labels for axes and annotation for the plots, taken from SAG
 SSB_yaxis_label <- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
-F_yaxis_label <- sprintf("%s (ages %s)",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
-R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
+F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(RecruitmentAge))
 
 
  fig1 <- plot_ly(
@@ -385,7 +385,7 @@ R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
         name = "Blim", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash"), 
+        line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
         showlegend = TRUE
     )
     fig1 <- fig1 %>% add_trace(
@@ -395,7 +395,7 @@ R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
         name = "Bpa", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot"), 
+        line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
         showlegend = TRUE
     )
 
@@ -406,7 +406,7 @@ R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
         name = "MSYBtrigger", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "orange", shape = "linear", dash = "dash"), 
+        line = list(color = "#679dfe", shape = "linear", width = 1), 
         showlegend = TRUE
     )
  fig1 <- fig1 %>% layout(
@@ -460,7 +460,7 @@ R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
         name = "FLim", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash"), 
+        line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
         showlegend = TRUE
     )
     fig2 <- fig2 %>% add_trace(
@@ -470,7 +470,7 @@ R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
         name = "Fpa", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot"), 
+        line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
         showlegend = TRUE
     )
 
@@ -481,7 +481,7 @@ R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(RecruitmentAge))
         name = "FMSY", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "#ff5100", shape = "linear", dash = "dash"), 
+        line = list(color = "#679dfe", shape = "linear", width = 1), 
         showlegend = TRUE
     )
 fig2 <- fig2 %>% layout(
@@ -586,8 +586,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
 
     ## Labels for axes and annotation for the plots, taken from SAG
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
-    R_yaxis_label <- sprintf("Recruitment (age %s)", dplyr::last(recruitment_age))
-    F_yaxis_label <- sprintf("%s (ages %s)",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+    R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(recruitment_age))
+    F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
     
     Stockcode_year_annotation_1 <- list( showarrow = FALSE,
@@ -639,7 +639,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         hoverinfo = "text",
         text = ~ paste("Year:", Year, "<br>Discards:", discards),
         marker = list(
-            color = "#28b3e8",
+            color = "#fda500",
             line = list(
                 color = "#d0d1d6",
                 width = 0.5
@@ -771,7 +771,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "FLim",
         type = "scatter",
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash"),
+        line = list(color = "black", shape = "linear", dash = "dash", width = 2),
         showlegend = TRUE
     )
     fig3 <- fig3 %>% add_trace(
@@ -781,7 +781,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "Fpa",
         type = "scatter",
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot"),
+        line = list(color = "black", shape = "linear", dash = "dot", width = 2),
         showlegend = TRUE
     )
     fig3 <- fig3 %>% add_trace(
@@ -791,7 +791,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "FMSY",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#679dfe", shape = "linear"),#, dash = "dash"),
+        line = list(color = "#679dfe", shape = "linear", width = 1),#, dash = "dash"),
         showlegend = TRUE
     )
 
@@ -868,7 +868,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "Blim",
         type = "scatter",
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash"),
+        line = list(color = "black", shape = "linear", dash = "dash", width = 2),
         showlegend = TRUE
     )
     fig4 <- fig4 %>% add_trace(
@@ -878,7 +878,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "Bpa",
         type = "scatter",
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot"),
+        line = list(color = "black", shape = "linear", dash = "dot", width = 2),
         showlegend = TRUE
     )
     fig4 <- fig4 %>% add_trace(
@@ -888,7 +888,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "MSYBtrigger",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#679dfe", shape = "linear"),#, dash = "dash"),
+        line = list(color = "#679dfe", shape = "linear", width = 1),#, dash = "dash"),
         showlegend = TRUE
     )
 
