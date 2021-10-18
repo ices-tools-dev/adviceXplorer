@@ -11,7 +11,7 @@ navbarPage(
             style = "margin-top: -14px; padding-right:10px;padding-bottom:10px",
             height = 60
         )),
-    # tabsetPanel(
+    tabsetPanel(id = "tabset",
     tabPanel(
         "Data Filtering",
         sidebarLayout(
@@ -59,6 +59,7 @@ navbarPage(
     tabPanel(
         "Resources",
         verbatimTextOutput("headline")
+    )
     ),
     # extra tags, css etc
     tags$style(type = "text/css", "li {font-size: 20px;}"),
