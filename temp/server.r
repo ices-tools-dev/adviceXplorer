@@ -301,7 +301,34 @@ server <- function(input, output, session) {
   })
 
 
-  output$In_Construction <- renderText({
-    "In Construction"
-  })
+##### catch scenarios tab
+test <- eventReactive(query$stockkeylabel, {
+    get_Advice_View_info(query$stockkeylabel)
+})
+
+output$Advice_View <- DT::renderDT(
+    test(),
+    selection = "none",
+    caption = "Advice view info",
+    rownames= FALSE,
+    options = list(
+        dom = 't',
+      pageLength = 50)
+)
+
+# output$Advice_View <- DT::datatable(
+#     test(),
+#     selection = "none",
+#     caption = "Advice view info",
+    
+#     options = list(
+#         dom = 't',
+#       pageLength = 50,
+#       initComplete = htmlwidgets::JS(
+#           "function(settings, json) {",
+#           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
+#           "}"))
+# )
+
+
 }
