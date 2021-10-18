@@ -20,6 +20,10 @@ library(tidyverse)
 library(icesVocab)
 library(tm)
 library(shinyWidgets)
+library(shinyjs)
+
+# required if using most recent version of sf
+sf::sf_use_s2(FALSE)
 
 ################################
 # sources
@@ -37,6 +41,7 @@ source("Shiny/utilities_SID_data.r")
 
 ### run app
 # shinyApp(server = server, ui = ui)
+
 
 ### runApp function (Colin way of running the app which shows the png images in folder www)
 runApp("temp")

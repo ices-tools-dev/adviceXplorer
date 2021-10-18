@@ -48,3 +48,40 @@ separate_ecoregions <- function(stock_list_all) {
   # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
   return(mydf_long)
 }
+
+stock_list_long <- separate_ecoregions(stock_list_all)
+
+
+# Catch scenarios table
+########################################################### tranform the sid dataframe
+
+
+# stock_name <- "cod.27.47d20"
+
+get_Advice_View_info <- function(stock_name) {
+  catch_scenario_list <- jsonlite::fromJSON(
+    URLencode(
+      # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
+      sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
+    )
+  )
+
+  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
+  catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
+  catch_scenario_advice_link <- catch_scenario_list$adviceLink
+  catch_scenario_list <- subset(catch_scenario_list, select = -c(adviceSentence, adviceLink, linkToAdviceView, mpwebLink))
+
+  # reshape table from horizontal to vertical
+  library(reshape2)
+  x <- colnames(catch_scenario_list[, -1])
+  t <- melt(catch_scenario_list, measure.vars = x, variable.name = "advice View", value.name = "Values", na.rm = TRUE)
+
+  table_vert_adviceView <- subset(t, select = -c(adviceKey))
+  return(table_vert_adviceView)
+}
+# catch_scenario_table <- jsonlite::fromJSON(
+#             URLencode(
+#               sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey)
+#             )
+# )
+# tibble(catch_scenario_table)

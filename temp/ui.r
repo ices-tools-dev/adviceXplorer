@@ -11,7 +11,7 @@ navbarPage(
             style = "margin-top: -14px; padding-right:10px;padding-bottom:10px",
             height = 60
         )),
-    # tabsetPanel(
+    tabsetPanel(id = "tabset",
     tabPanel(
         "Data Filtering",
         sidebarLayout(
@@ -42,7 +42,9 @@ navbarPage(
     ),
     tabPanel(
         "Stock Selection",
-        DTOutput("tbl")
+        DTOutput("tbl")#,
+                # useShinyjs(),
+                # inlineCSS(list("table1" = "font-size: 15px"))
     ),
     tabPanel(
         "Stock development over time",
@@ -54,11 +56,20 @@ navbarPage(
     ),
     tabPanel(
         "Catch Options/Advice",
-        verbatimTextOutput("In_Construction")
+        
+            sidebarPanel(
+                width = 3,
+                DTOutput("Advice_View")#,
+                # useShinyjs(),
+                # inlineCSS(list("table2" = "font-size: 10px"))
+            )
+        
+        # verbatimTextOutput("In_Construction")
     ),
     tabPanel(
         "Resources",
         verbatimTextOutput("headline")
+    )
     ),
     # extra tags, css etc
     tags$style(type = "text/css", "li {font-size: 20px;}"),
