@@ -48,3 +48,19 @@ separate_ecoregions <- function(stock_list_all) {
   # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
   return(mydf_long)
 }
+
+########################################################### tranform the sid dataframe
+stock_list_long <- separate_ecoregions(stock_list_all)
+
+# catch_scenario_list <- jsonlite::fromJSON(
+#             URLencode(
+#                     #"https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
+#                     "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=had.27.7a"
+#             )
+# )
+
+# catch_scenario_table <- jsonlite::fromJSON(
+#             URLencode(
+#               sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey)
+#             )
+# )

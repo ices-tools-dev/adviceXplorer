@@ -4,9 +4,6 @@ msg <- function(...) {
   cat(emph, ..., emph)
 }
 
-########################################################### tranform the sid dataframe
-stock_list_long <- separate_ecoregions(stock_list_all)
-
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
@@ -245,10 +242,10 @@ server <- function(input, output, session) {
     #   # Dowload the data
     data_sag <- access_sag_data(stock_name, 2020)
 
-    catches <- data_sag %>% select(Year, catches, landings, discards)
-    R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment) # %>% na.omit()
-    f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY)
-    SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger)
+    catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
+    R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
+    f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
+    SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
     list_df <- quality_assessment_data(stock_name)
     # the bit below could be potentially be replaced by the sag status? summary table option?
     SAG_summary <- data_sag %>% select(
@@ -278,9 +275,11 @@ server <- function(input, output, session) {
       SSB_df = data_list$SSB
     )
     figure_1_plots(
-      rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df, rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards,
-      rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY,
-      rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger
+      rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df, 
+            rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
+            rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
+            rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
+            rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits
     )
   })
 
@@ -294,7 +293,10 @@ server <- function(input, output, session) {
     )
 
     ### forth plot
-    quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2)
+    quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
+                                    rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits, 
+                                    rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription, 
+                                    rv$Q_Ass_df1$RecruitmentAge)
     # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
   })
 
