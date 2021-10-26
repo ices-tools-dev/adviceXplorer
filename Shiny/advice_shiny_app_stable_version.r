@@ -21,6 +21,7 @@ library(icesVocab)
 library(tm)
 library(shinyWidgets)
 library(shinyjs)
+library(reshape2)
 
 # required if using most recent version of sf
 sf::sf_use_s2(FALSE)

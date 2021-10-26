@@ -64,11 +64,12 @@ navbarPage(
                 # inlineCSS(list("table2" = "font-size: 10px"))
             ),
             mainPanel(
-                fluidRow(
-                    column(9,
-                    verbatimTextOutput("Advice_Sentence", placeholder = FALSE)
-                    )
-                )
+                width = 9,
+                    htmlOutput("Advice_Sentence"),
+                    DTOutput("catch_scenario_table")
+                    
+                
+
             )
         
         # verbatimTextOutput("In_Construction")
