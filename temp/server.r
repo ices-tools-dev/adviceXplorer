@@ -316,6 +316,9 @@ output$Advice_View <- DT::renderDT(
       pageLength = 50)
 )
 
+# output$Advice_Sentence <- renderText(
+#   catch_scenario_advice_sentence
+# )
 # output$Advice_View <- DT::datatable(
 #     test(),
 #     selection = "none",

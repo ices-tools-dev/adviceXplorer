@@ -79,9 +79,12 @@ get_Advice_View_info <- function(stock_name) {
   table_vert_adviceView <- subset(t, select = -c(adviceKey))
   return(table_vert_adviceView)
 }
+
+
+
 # catch_scenario_table <- jsonlite::fromJSON(
 #             URLencode(
-#               sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey)
+#               sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", 1022)#catch_scenario_list$adviceKey)
 #             )
 # )
 # tibble(catch_scenario_table)
