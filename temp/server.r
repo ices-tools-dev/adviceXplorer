@@ -302,12 +302,12 @@ server <- function(input, output, session) {
 
 
 ##### catch scenarios tab
-test <- eventReactive(query$stockkeylabel, {
-    get_Advice_View_info(query$stockkeylabel)
+advice_view_info <- eventReactive(query$stockkeylabel, {
+  get_Advice_View_info(query$stockkeylabel)  
 })
 
 output$Advice_View <- DT::renderDT(
-    test(),
+    advice_view_info(),
     selection = "none",
     caption = "Advice view info",
     rownames= FALSE,
@@ -316,9 +316,30 @@ output$Advice_View <- DT::renderDT(
       pageLength = 50)
 )
 
-# output$Advice_Sentence <- renderText(
-#   catch_scenario_advice_sentence
-# )
+
+##### catch scenarios sentence
+advice_view_sentence <- eventReactive(query$stockkeylabel, {
+  get_Advice_View_sentence(query$stockkeylabel)  
+})
+output$Advice_Sentence <- renderUI({
+  HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
+})
+
+
+##### catch scenarios table
+catch_scenario_table <- eventReactive(query$stockkeylabel,{
+get_catch_scenario_table(query$stockkeylabel)
+})
+
+output$catch_scenario_table <- DT::renderDT(
+    catch_scenario_table(),
+    selection = "none",
+    caption = "Catch Scenario Table",
+    rownames= FALSE,
+    options = list(
+        dom = 't',
+      pageLength = 100)
+)
 # output$Advice_View <- DT::datatable(
 #     test(),
 #     selection = "none",

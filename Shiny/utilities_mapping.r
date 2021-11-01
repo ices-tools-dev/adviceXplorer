@@ -145,6 +145,14 @@ map_ecoregion <- function(shape_eco, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
                 # addTiles() %>%
                 addPolygons(
+                    data = eu_shape,
+                    color = "black",
+                    weight = 1,
+                    fillOpacity = 0.2,
+                    fillColor = "#fddfc2",
+                    group = "Europe"
+                ) %>%
+                addPolygons(
                     data = shape_eco,
                     fillColor = "white",
                     fillOpacity = 0.5,
@@ -165,21 +173,20 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                     layerId = ~OBJECTID,
                     group = ~Ecoregion
                 ) %>%
-                # addPolygons(
-                #     data = eu_shape,
-                #     color = "black",
-                #     weight = 1,
-                #     fillOpacity = 0.5,
-                #     fillColor = "grey",
-                #     group = "Europe"
-                # ) %>%
                 setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
                 hideGroup(group = shape_eco$Ecoregion)
 } 
 
 map_ices_areas <- function(ices_areas, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-                # addTiles() %>%
+                addPolygons(
+                    data = eu_shape,
+                    color = "black",
+                    weight = 1,
+                    fillOpacity = 0.2,
+                    fillColor = "#fddfc2",
+                    group = "Europe"
+                ) %>%
                 addPolygons(
                     data = ices_areas,
                     fillColor = "white",

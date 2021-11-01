@@ -21,6 +21,7 @@ library(icesVocab)
 library(tm)
 library(shinyWidgets)
 library(shinyjs)
+library(reshape2)
 
 # required if using most recent version of sf
 sf::sf_use_s2(FALSE)
@@ -34,6 +35,7 @@ source("Shiny/utilities_mapping.r")
 source("Shiny/utilities_sag_data.r")
 source("Shiny/utilities_shiny_Input.r")
 source("Shiny/utilities_SID_data.r")
+source("Shiny/utilities_catch_scenarios.r")
 
 # ui and server
 # source("Shiny/ui_05052021.r")
