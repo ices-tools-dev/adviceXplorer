@@ -162,7 +162,12 @@ server <- function(input, output, session) {
     req(input$selected_locations)
     print(input$selected_locations)
 
-    temp_df <- data.frame()
+    stock_list_long <- sid_table_links(stock_list_long)
+    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesScientificName)
+    # stock_list_long <- stock_list_long %>% relocate(advice_url, .before = EcoRegion)
+
+
+    temp_df <- data.frame()    
     for (i in 1:length(input$selected_locations)) {
       temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
       temp_df <- rbind(temp_df, temp_1)
@@ -188,6 +193,7 @@ server <- function(input, output, session) {
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(res_mod(),
+    escape = FALSE,
     extensions = "Buttons",
     selection = "single",
     caption = "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",

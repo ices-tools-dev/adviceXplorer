@@ -52,4 +52,13 @@ separate_ecoregions <- function(stock_list_all) {
 stock_list_long <- separate_ecoregions(stock_list_all)
 
 
+createLink <- function(StockKeyLabel, AssessmentYear) {
+  paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","'>", StockKeyLabel,"</a>")
+}
 
+sid_table_links <- function(df){
+  fish_icon <- '<img src="hke.png" height=30>'
+  df$icon <- fish_icon
+  df$advice_url <- createLink(df$StockKeyLabel, df$YearOfLastAssessment)
+  return(df)
+}
