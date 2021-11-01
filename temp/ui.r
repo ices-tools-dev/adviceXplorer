@@ -55,7 +55,7 @@ navbarPage(
         # includeMarkdown("Instructions.Rmd")
     ),
     tabPanel(
-        "Catch Options/Advice",
+        "Catch Options & Advice",
         
             sidebarPanel(
                 width = 3,
