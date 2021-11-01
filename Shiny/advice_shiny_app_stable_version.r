@@ -35,6 +35,7 @@ source("Shiny/utilities_mapping.r")
 source("Shiny/utilities_sag_data.r")
 source("Shiny/utilities_shiny_Input.r")
 source("Shiny/utilities_SID_data.r")
+source("Shiny/utilities_catch_scenarios.r")
 
 # ui and server
 # source("Shiny/ui_05052021.r")

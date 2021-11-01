@@ -322,7 +322,7 @@ advice_view_sentence <- eventReactive(query$stockkeylabel, {
   get_Advice_View_sentence(query$stockkeylabel)  
 })
 output$Advice_Sentence <- renderUI({
-  HTML(advice_view_sentence())
+  HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
 })
 
 
