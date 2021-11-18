@@ -27,7 +27,7 @@ separate_ecoregions <- function(stock_list_all) {
     StockKey = rep(mydf$StockKey, sapply(s, length)),
     StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
     EcoRegion = unlist(s),
-    # ICES_area = rep(mydf$ICES_area, sapply(s, length)),
+    ICES_area = rep(mydf$ICES_area, sapply(s, length)),
     SpeciesScientificName = rep(mydf$SpeciesScientificName, sapply(s, length)),
     SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
     ExpertGroup = rep(mydf$ExpertGroup, sapply(s, length)),
@@ -52,13 +52,19 @@ separate_ecoregions <- function(stock_list_all) {
 stock_list_long <- separate_ecoregions(stock_list_all)
 
 
-createLink <- function(StockKeyLabel, AssessmentYear) {
+createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
   paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","'>", StockKeyLabel,"</a>")
+}
+
+createLink_expert_group <- function(ExpertGroup) {
+  # paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","'>", StockKeyLabel,"</a>")
+  paste0("<a href='","https://www.ices.dk/community/groups/Pages/", ExpertGroup, ".aspx", "'>", ExpertGroup,"</a>")
 }
 
 sid_table_links <- function(df){
   fish_icon <- '<img src="hke.png" height=30>'
   df$icon <- fish_icon
-  df$advice_url <- createLink(df$StockKeyLabel, df$YearOfLastAssessment)
+  df$advice_url <- createLink_advice_pdf(df$StockKeyLabel, df$YearOfLastAssessment)
+  df$group_url <- createLink_expert_group(df$ExpertGroup)
   return(df)
 }
