@@ -66,6 +66,8 @@ navbarPage(
             mainPanel(
                 width = 9,
                     htmlOutput("Advice_Sentence"),
+                    plotlyOutput("catch_scenario_plot_1"),
+                    plotlyOutput("catch_scenario_plot_2"),
                     DTOutput("catch_scenario_table")
                     
                 

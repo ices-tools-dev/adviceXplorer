@@ -929,3 +929,98 @@ figure_1_plots <- function(data1, data2, data3, data4,
     ) #
     fig
 }
+
+
+####### plots 1 catch scenarios
+catch_scenarios_plot1 <- function(tmp) {
+    # tmp <- get_catch_scenario_table(stock_name = "cod.27.47d20") #ple.27.7d
+    tmp$Year <- 2022
+
+    tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
+
+    colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
+    tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
+
+    sc <- head(tmp2$cat)
+
+    tmp3 <- tmp2 %>% mutate(
+        F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
+        SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
+        TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
+        TACchange = rescale(TACchange, to = c(0, 1), from = range(c(-100, 100))),
+        ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(-100, 100))),
+        SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(-100, 100))),
+    )
+
+    zz <- ggplotly(
+        ggradar(tmp3 %>% select(-Year), values.radar = c("0", "0.5", "1"))
+    )
+    zz
+}
+
+catch_scenarios_plot2 <- function(tmp) {
+    tmp$Year <- 2022
+
+    tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
+
+    colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
+    tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
+
+    sc <- head(tmp2$cat)
+
+
+    fig_F <- plot_ly(arrange(tmp2, F),
+        x = ~TotCatch, y = ~F, mode = "lines+markers", text = ~cat,
+        marker = list(size = 20)
+    )
+    fig_F <- fig_F %>% add_annotations(
+        x = ~TotCatch, y = ~F,
+        text = ~cat,
+        textfont = list(color = "#000000", size = 30),
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowhead = 4,
+        arrowsize = .5,
+        ax = c(20, -20),
+        ay = c(-80, 40, 80)
+    )
+     fig_F <- fig_F %>% layout(
+        xaxis = list(
+             title = "Total Catch"),
+        yaxis= list(
+             title = "F")
+     )
+
+
+
+    fig_SSB <- plot_ly(arrange(tmp2, F),
+        x = ~TotCatch, y = ~SSB, mode = "lines+markers", text = ~cat,
+        marker = list(size = 20)
+    )
+    fig_SSB <- fig_SSB %>% add_annotations(
+        x = ~TotCatch, y = ~SSB,
+        text = ~cat,
+        textfont = list(color = "#000000", size = 30),
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowhead = 4,
+        arrowsize = .5,
+        ax = c(20, -20),
+        ay = c(-80, 40, 80)
+    )
+    fig_SSB <- fig_SSB %>% layout(
+        xaxis = list(
+             title = "Total Catch"),
+        yaxis= list(
+             title = "SSB")
+     )
+
+    fig <- subplot(fig_F, fig_SSB,
+        nrows = 1, shareX = TRUE, titleX = TRUE, titleY = TRUE#, heights = c(1, 1)
+    ) # widths = c(0.5, 0.5), heights = c(0.5, 0.5), margin = c(0.06,0.06,0.02,0.02)
+    # ))
+
+    fig
+}
