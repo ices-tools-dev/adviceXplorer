@@ -69,7 +69,7 @@ navbarPage(
                     div(
                     class = "outer",
                     tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-                    plotlyOutput("catch_scenario_plot_1",width = "100%", height = "150%")),
+                    plotlyOutput("catch_scenario_plot_1",width = "100%", height = "100%")),
                     # plotlyOutput("catch_scenario_plot_2"),
                     div(
                     class = "outer",
