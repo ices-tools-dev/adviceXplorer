@@ -24,6 +24,8 @@ library(shinyjs)
 library(reshape2)
 library(scales)
 library(ggradar)
+library(icesFO)
+library(icesTAF)
 
 # required if using most recent version of sf
 sf::sf_use_s2(FALSE)
@@ -38,6 +40,13 @@ source("Shiny/utilities_sag_data.r")
 source("Shiny/utilities_shiny_Input.r")
 source("Shiny/utilities_SID_data.r")
 source("Shiny/utilities_catch_scenarios.r")
+
+## run the file below if it is the first time you use the app, 
+## it will take several minutes to dowload all the DAG data for the past
+## 5 years. However, the app will run faster afterwards as a result.
+# source("Shiny/update_SAG_data.r")
+
+
 
 # ui and server
 # source("Shiny/ui_05052021.r")

@@ -246,13 +246,13 @@ server <- function(input, output, session) {
     msg("downloading:", stock_name)
 
     #   # Dowload the data
-    data_sag <- access_sag_data(stock_name, 2020)
+    data_sag <- access_sag_data_local(stock_name, 2020)
 
     catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
     R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
     f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
     SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
-    list_df <- quality_assessment_data(stock_name)
+    list_df <- quality_assessment_data_local(stock_name)
     # the bit below could be potentially be replaced by the sag status? summary table option?
     SAG_summary <- data_sag %>% select(
       Year,
