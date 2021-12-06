@@ -41,10 +41,15 @@ source("Shiny/utilities_shiny_Input.r")
 source("Shiny/utilities_SID_data.r")
 source("Shiny/utilities_catch_scenarios.r")
 
-## run the file below if it is the first time you use the app, 
-## it will take several minutes to dowload all the DAG data for the past
-## 5 years. However, the app will run faster afterwards as a result.
-# source("Shiny/update_SAG_data.r")
+## If this code is run for the first time and the SAG data in not present on the local machine
+## the following line will download the last 5 years of SAG data (summary and ref points).
+## This process will take several minutes but, once the data is in the local folder, 
+## the app will run much faster. 
+if (!file.exists("SAG_ 2021/SAG_summary.csv")) {
+    source("Shiny/update_SAG_data.r")
+}
+
+
 
 
 
