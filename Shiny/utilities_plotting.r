@@ -934,26 +934,26 @@ figure_1_plots <- function(data1, data2, data3, data4,
 ####### plots 1 catch scenarios
 catch_scenarios_plot1 <- function(tmp) {
     # tmp <- get_catch_scenario_table(stock_name = "cod.27.47d20") #ple.27.7d
-    tmp$Year <- 2022
+    # tmp$Year <- 2022
 
-    tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
+    # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
 
-    colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
-    tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
+    # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
+    # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
 
-    sc <- head(tmp2$cat)
+    # sc <- head(tmp2$cat)
 
-    tmp3 <- tmp2 %>% mutate(
+    tmp3 <- tmp %>% mutate(
         F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
         SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
         TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
-        TACchange = rescale(TACchange, to = c(0, 1), from = range(c(-100, 100))),
-        ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(-100, 100))),
-        SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(-100, 100))),
+        TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
+        ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
+        SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
     )
     tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
     zz <- ggplotly(
-        ggradar(tmp3 %>% select(-Year), values.radar = c("0", "0.5", "1"))
+        ggradar(tmp3 %>% select(-Year), values.radar = c("0", "0.5", "1"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
     )
     zz
     
@@ -1026,18 +1026,23 @@ catch_scenarios_plot1 <- function(tmp) {
 #     fig
 # }
 
+
 catch_scenarios_plot2 <- function(tmp) {
-    tmp$Year <- 2022
+    # tmp$Year <- 2022
 
-    tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
+    # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
 
-    colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
-    tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
+    # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
+    # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
 
-    sc <- head(tmp2$cat)
+    # sc <- head(tmp2$cat)
+    labels <- sprintf(
+            "Catch Scenario: %s", tmp$cat
+        ) %>% lapply(htmltools::HTML)
+    F0 <- tmp[tmp$cat == "F = 0", ]
+    Basis <- tmp[tmp$cat == "MSY approach: SSB (2021) = Blim",]
 
-
-    fig_catch <- plot_ly(arrange(tmp2, F)) %>%
+    fig_catch <- plot_ly(arrange(tmp, F)) %>%
         add_trace(
             x = ~ jitter(TotCatch, 1, amount = NULL),
             y = ~ jitter(F, 1, amount = NULL),
@@ -1063,7 +1068,7 @@ catch_scenarios_plot2 <- function(tmp) {
         name = "SSB",
         yaxis = "y2"
     )
-
+    
     a <- list(
         x = F0$TotCatch,
         y = F0$F,

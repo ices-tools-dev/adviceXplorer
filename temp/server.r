@@ -359,6 +359,6 @@ output$catch_scenario_table <- DT::renderDT(
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
-output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(standardize_catch_scenario_table(catch_scenario_table())))
+output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(standardize_catch_scenario_table(catch_scenario_table())))
 }
