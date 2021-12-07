@@ -163,8 +163,15 @@ server <- function(input, output, session) {
     print(input$selected_locations)
 
     stock_list_long <- sid_table_links(stock_list_long)
-    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesScientificName)
-    # stock_list_long <- stock_list_long %>% relocate(advice_url, .before = EcoRegion)
+    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
+    stock_list_long <- stock_list_long %>% 
+      # relocate(advice_url, .before = EcoRegion) %>%
+      relocate(group_url, .before = DataCategory) %>%
+      select(-c(ExpertGroup)) %>%
+      # rename(StockCode = StockKeyLabel) %>%
+      rename(ExpertGroup = group_url) %>%
+      rename(AdvicePdfUrl = advice_url)
+
 
 
     temp_df <- data.frame()    
@@ -183,11 +190,12 @@ server <- function(input, output, session) {
     # data = separate_ecoregions(stock_list_all, selected_1$groups),
     data = eco_filter,
     vars = c(
-      "StockDatabaseID", "StockKey", "StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName",
-      "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
-      "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
-      "FisheriesGuild", "SizeGuild", "Published"
-    ) # , "ICES_area")
+      "StockKeyLabel",  "SpeciesCommonName",
+      "ExpertGroup",  "DataCategory", "YearOfLastAssessment", 
+       "AdviceCategory", "Published"
+    ) # , "ICES_area","StockDatabaseID", "StockKey","SpeciesScientificName",
+    #"AdviceDraftingGroup","AssessmentFrequency","YearOfNextAssessment", "AdviceReleaseDate",
+    #"AdviceType", "TrophicGuild","FisheriesGuild", "SizeGuild",)
   )
 
   ###########################################################  Render table in stock selection tab
@@ -203,7 +211,7 @@ server <- function(input, output, session) {
       buttons = c("csv"),
       columnDefs = list(
         list(
-          targets = 5,
+          targets = 3,
           render = JS(
             "function(data, type, row, meta) {",
             "return type === 'display' && data.length > 15 ?",
