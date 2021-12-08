@@ -165,12 +165,12 @@ server <- function(input, output, session) {
     stock_list_long <- sid_table_links(stock_list_long)
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>% 
-      # relocate(advice_url, .before = EcoRegion) %>%
+      relocate(advice_url, .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
-      select(-c(ExpertGroup)) %>%
+      # select(-c(ExpertGroup)) %>%
       # rename(StockCode = StockKeyLabel) %>%
-      rename(ExpertGroup = group_url) %>%
-      rename(AdvicePdfUrl = advice_url)
+      rename(ExpertGroupUrl = group_url) %>%
+      rename(StockCode = advice_url)
 
 
 
@@ -211,14 +211,15 @@ server <- function(input, output, session) {
       buttons = c("csv"),
       columnDefs = list(
         list(
-          targets = 3,
+          targets = 4,
           render = JS(
             "function(data, type, row, meta) {",
             "return type === 'display' && data.length > 15 ?",
             "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
             "}"
           )
-        )
+        ),
+        list(visible = FALSE, targets = c(1,6))
       )
     )
   )

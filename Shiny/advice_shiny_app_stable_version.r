@@ -49,10 +49,6 @@ if (!file.exists("SAG_ 2021/SAG_summary.csv")) {
     source("Shiny/update_SAG_data.r")
 }
 
-
-
-
-
 # ui and server
 # source("Shiny/ui_05052021.r")
 # source("Shiny/server_18052021.r")
