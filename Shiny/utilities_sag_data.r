@@ -16,6 +16,23 @@ access_sag_data <- function(stock_code, year) {
     #print(data_sag %>% tibble())
 }
 
+
+access_sag_data_local <- function(stock_code, year) {
+
+    # Dowload the data
+    df_summary <- read.csv(sprintf("D:/Profile/Documents/GitHub/online-advice/SAG_ %s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
+    SAGsummary <- df_summary %>% filter(fishstock == stock_code)
+    
+    df_refpts <- read.csv(sprintf("D:/Profile/Documents/GitHub/online-advice/SAG_ %s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
+    SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
+    
+
+    data_sag <- cbind(SAGsummary, SAGrefpts)
+    data_sag <- subset(data_sag, select = -fishstock)
+    data_sag <- filter(data_sag, StockPublishNote == "Stock published")
+    return(data_sag)
+    #print(data_sag %>% tibble())
+}
 # stock_list_all <- jsonlite::fromJSON(
 #             URLencode(
 #                 #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020&$select=AssessmentKey,DataCategory,StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, ExpertGroup"
@@ -86,6 +103,68 @@ df_list <- list(big_data, big_data_last_year)
 return(df_list)
 }
 
+
+
+
+
+# function to dowload the quality assessemnt data
+quality_assessment_data_local <- function(stock_code){
+
+years <- c(2021, 2020, 2019, 2018, 2017)
+datalist = list()
+
+for (year in years) {
+    print(year)
+    data_temp <- try(access_sag_data_local(stock_code, year)) # "had.27.6b"
+
+    ###############
+    if (isTRUE(class(data_temp) == "try-error")) {
+        next
+    }
+    else {
+        #
+        data_temp <- filter(data_temp, between(Year, 2005, 2021))
+        data_temp <- data_temp %>% select(Year, 
+                                            recruitment, RecruitmentAge,
+                                            SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
+                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,  
+                                            AssessmentYear, StockPublishNote,Purpose)
+
+        data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+        data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
+        data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
+        data_temp$Fage <- as.character(data_temp$Fage)
+        data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
+
+        datalist[[year]] <- data_temp
+        # }
+    }
+}
+
+#print(tibble(datalist))
+### bind data in unique df
+big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
+
+# find last asseement year
+last_year <- tail(big_data$AssessmentYear, n=1)
+
+# subset last year
+big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
+
+# take out non published data from before 2021 in big data
+big_data <- filter(big_data, StockPublishNote == "Stock published")
+big_data <- filter(big_data, Purpose == "Advice")
+# put together the published data from before 2021 with the unpublished from 2021
+big_data <- rbind(big_data, big_data_last_year)
+big_data <- big_data  %>% distinct()
+
+#make assessmentYear as factor
+big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
+
+df_list <- list(big_data, big_data_last_year)
+return(df_list)
+}
 # list_df <- quality_assessment_data("had.27.7b-k")
 # list_df
 
@@ -131,3 +210,31 @@ getStockAreas <- function(stockCode) {
 # test <- sapply(stock_list_all$StockKeyLabel[1:10], getStockAreas)
 # test
 
+
+
+
+
+
+
+
+
+# library(icesSAG)
+# library(icesFO)
+# library(icesTAF)
+# update_SAG <- function(year){
+#     mkdir(paste("SAG_", year))
+#     summary <- load_sag_summary(year)
+#     write.taf(summary, file = "SAG_summary.csv", dir = paste("SAG_", year))
+
+#     refpts <- load_sag_refpts(year)
+#     write.taf(refpts, file = "SAG_refpts.csv", dir = paste("SAG_", year))
+# }
+
+
+# ## Ideally, this function would run every hour on the server to update sag
+# ## it will take several minuts to run it locally for all the years, for now I will leave this
+# # function commented out, so it does not waste time when teh app is run locally
+# years <- c(2021, 2020, 2019, 2018, 2017)
+# for (year in years) {
+#     update_SAG(year)
+# }

@@ -163,8 +163,15 @@ server <- function(input, output, session) {
     print(input$selected_locations)
 
     stock_list_long <- sid_table_links(stock_list_long)
-    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesScientificName)
-    # stock_list_long <- stock_list_long %>% relocate(advice_url, .before = EcoRegion)
+    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
+    stock_list_long <- stock_list_long %>% 
+      relocate(advice_url, .before = EcoRegion) %>%
+      relocate(group_url, .before = DataCategory) %>%
+      # select(-c(ExpertGroup)) %>%
+      # rename(StockCode = StockKeyLabel) %>%
+      rename(ExpertGroupUrl = group_url) %>%
+      rename(StockCode = advice_url)
+
 
 
     temp_df <- data.frame()    
@@ -183,11 +190,12 @@ server <- function(input, output, session) {
     # data = separate_ecoregions(stock_list_all, selected_1$groups),
     data = eco_filter,
     vars = c(
-      "StockDatabaseID", "StockKey", "StockKeyLabel", "SpeciesScientificName", "SpeciesCommonName",
-      "ExpertGroup", "AdviceDraftingGroup", "DataCategory", "YearOfLastAssessment", "AssessmentFrequency",
-      "YearOfNextAssessment", "AdviceReleaseDate", "AdviceCategory", "AdviceType", "TrophicGuild",
-      "FisheriesGuild", "SizeGuild", "Published"
-    ) # , "ICES_area")
+      "StockKeyLabel",  "SpeciesCommonName",
+      "ExpertGroup",  "DataCategory", "YearOfLastAssessment", 
+       "AdviceCategory", "Published"
+    ) # , "ICES_area","StockDatabaseID", "StockKey","SpeciesScientificName",
+    #"AdviceDraftingGroup","AssessmentFrequency","YearOfNextAssessment", "AdviceReleaseDate",
+    #"AdviceType", "TrophicGuild","FisheriesGuild", "SizeGuild",)
   )
 
   ###########################################################  Render table in stock selection tab
@@ -203,14 +211,15 @@ server <- function(input, output, session) {
       buttons = c("csv"),
       columnDefs = list(
         list(
-          targets = 5,
+          targets = 4,
           render = JS(
             "function(data, type, row, meta) {",
             "return type === 'display' && data.length > 15 ?",
             "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
             "}"
           )
-        )
+        ),
+        list(visible = FALSE, targets = c(1,6))
       )
     )
   )
@@ -246,13 +255,13 @@ server <- function(input, output, session) {
     msg("downloading:", stock_name)
 
     #   # Dowload the data
-    data_sag <- access_sag_data(stock_name, 2020)
+    data_sag <- access_sag_data_local(stock_name, 2020)
 
     catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
     R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
     f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
     SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
-    list_df <- quality_assessment_data(stock_name)
+    list_df <- quality_assessment_data_local(stock_name)
     # the bit below could be potentially be replaced by the sag status? summary table option?
     SAG_summary <- data_sag %>% select(
       Year,
