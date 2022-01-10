@@ -2,7 +2,8 @@
 navbarPage(
     # tab title
     windowTitle = "TAF Advice Tool",
-    
+    id = "tabset",
+    fluid = TRUE,
     # navbar title
     title =
         shiny::div(img(
@@ -10,7 +11,7 @@ navbarPage(
             style = "margin-top: -14px; padding-right:10px;padding-bottom:10px",
             height = 60
         )),
-    tabsetPanel(id = "tabset",
+    #tabsetPanel(#id = "tabset",
     tabPanel(
         "Data Filtering",
         sidebarLayout(
@@ -77,8 +78,8 @@ navbarPage(
     tabPanel(
         "Resources",
         verbatimTextOutput("headline")
-    )
-    ),# close tabsetpanel
+    ),
+    #),# close tabsetpanel
     
     # extra tags, css etc
     tags$style(type = "text/css", "li {font-size: 20px;}"),
