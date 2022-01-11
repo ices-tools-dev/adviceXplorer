@@ -155,12 +155,22 @@ server <- function(input, output, session) {
     ignoreNULL = FALSE
   )
   ########################################################### end Maps reactive part
-
+  updateSelectizeInput(session,
+      inputId = "selected_years",
+      label = "Year SID/SAG",
+      choices = Years$Year,
+      selected = 2021
+    )
   ###########################################################  function to use the input from the maps and the sid filtering
 
   eco_filter <- reactive({
-    req(input$selected_locations)
-    print(input$selected_locations)
+    req(input$selected_locations, input$selected_years)
+    # print(input$selected_locations)
+    ###
+    stock_list_all <- download_SID(input$selected_years)
+    stock_list_long <- separate_ecoregions(stock_list_all)
+    ###
+
 
     stock_list_long <- sid_table_links(stock_list_long)
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
@@ -255,7 +265,7 @@ server <- function(input, output, session) {
     msg("downloading:", stock_name)
 
     #   # Dowload the data
-    data_sag <- access_sag_data_local(stock_name, 2020)
+    data_sag <- access_sag_data_local(stock_name, input$selected_years)
 
     catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
     R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
