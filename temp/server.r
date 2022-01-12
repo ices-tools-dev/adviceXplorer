@@ -155,24 +155,28 @@ server <- function(input, output, session) {
     ignoreNULL = FALSE
   )
   ########################################################### end Maps reactive part
+  
+  ###########################################################  function to use the input from the maps and the sid filtering
+  # Update the year of selection
   updateSelectizeInput(session,
       inputId = "selected_years",
       label = "Year SID/SAG",
       choices = Years$Year,
       selected = 2021
     )
-  ###########################################################  function to use the input from the maps and the sid filtering
+
 
   eco_filter <- reactive({
     req(input$selected_locations, input$selected_years)
     # print(input$selected_locations)
-    ###
+    
+    ### download SID 
     stock_list_all <- download_SID(input$selected_years)
+    ### modifify SID table, 1 row == 1 Ecoregion
     stock_list_long <- separate_ecoregions(stock_list_all)
-    ###
-
-
+    ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
+    ### reshuffle some columns
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>% 
       relocate(advice_url, .before = EcoRegion) %>%
@@ -237,11 +241,16 @@ server <- function(input, output, session) {
   ## process selection
   observeEvent(input$tbl_rows_selected, {
     filtered_row <- res_mod()[input$tbl_rows_selected, ]
-    updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
+    # updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
+
+    ###
+    updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel,"&","Year=", input$selected_years), mode = "push") ####
+    ###
 
     query$query_from_table <- TRUE
 
     msg("stock selected from table:", filtered_row$StockKeyLabel)
+    msg("year of SAG/SID selected from table:", input$selected_years) #####
   })
 
 
@@ -250,22 +259,28 @@ server <- function(input, output, session) {
     # read url string
     query_string <- getQueryString()
     names(query_string) <- tolower(names(query_string))
+    print(names(query_string))
     query$stockkeylabel <- query_string$stockkeylabel
+    query$year <- query_string$year ####
+    
 
     msg("stock selected from url:", query$stockkeylabel)
+    msg("year of SAG/SID selected from url:", query$year) #####
 
     if (!is.null(query$stockkeylabel) && !query$query_from_table) {
       updateNavbarPage(session, "tabset", selected = "Stock development over time")
     }
   })
 
-  advice_action <- eventReactive(query$stockkeylabel, {
+  advice_action <- eventReactive(req(query$stockkeylabel, query$year), {
 
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)
 
+    year <- query$year #####
+
     #   # Dowload the data
-    data_sag <- access_sag_data_local(stock_name, input$selected_years)
+    data_sag <- access_sag_data_local(stock_name, year) #####
 
     catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
     R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
