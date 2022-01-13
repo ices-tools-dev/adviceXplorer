@@ -370,8 +370,8 @@ output$Advice_Sentence <- renderUI({
 
 
 ##### catch scenarios table
-catch_scenario_table <- eventReactive(query$stockkeylabel,{
-get_catch_scenario_table(query$stockkeylabel)
+catch_scenario_table <- eventReactive(query$stockkeylabel, {
+  get_catch_scenario_table(query$stockkeylabel)
 })
 
 output$catch_scenario_table <- DT::renderDT(
