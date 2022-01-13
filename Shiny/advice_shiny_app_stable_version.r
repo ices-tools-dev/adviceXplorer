@@ -32,13 +32,13 @@ sf::sf_use_s2(FALSE)
 
 ################################
 # sources
+source("Shiny/utilities_SID_data.r")
 source("Shiny/utilities_load_shapefiles.r")
 source("Shiny/utilities_shiny_formatting.r")
 source("Shiny/utilities_plotting.r")
 source("Shiny/utilities_mapping.r")
 source("Shiny/utilities_sag_data.r")
 source("Shiny/utilities_shiny_Input.r")
-source("Shiny/utilities_SID_data.r")
 source("Shiny/utilities_catch_scenarios.r")
 
 ## If this code is run for the first time and the SAG data in not present on the local machine

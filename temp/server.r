@@ -157,13 +157,16 @@ server <- function(input, output, session) {
   ########################################################### end Maps reactive part
   
   ###########################################################  function to use the input from the maps and the sid filtering
+  
+  
   # Update the year of selection
+  
   updateSelectizeInput(session,
-      inputId = "selected_years",
-      label = "Year SID/SAG",
-      choices = Years$Year,
-      selected = 2021
-    )
+    inputId = "selected_years",
+    label = "Year SID/SAG",
+    choices = Years$Year,
+    selected = 2021
+  )
 
 
   eco_filter <- reactive({
