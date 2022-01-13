@@ -1,6 +1,6 @@
 #### Create an array of years fron 2017 to 2021
-  Year <- c(2017, 2018, 2019, 2020, 2021)
-  Years <- data.frame(Year)
+Year <- c(2017, 2018, 2019, 2020, 2021)
+Years <- data.frame(Year)
 
 #### create a function to get SID
 
@@ -15,18 +15,21 @@ download_SID <- function(Year) {
   #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
   stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
 
-  ### loop through the stock labels and find the corresponding iceas areas, add these to a column
-  for (i in 1:dim(stock_list_all)[1]) {
-    tryCatch(
-      { # I inserted this to avoid the loop from crashing, Colin is working on the bug icesVocab::getCodeDetail
-        # print(i)
-        stock_list_all$ICES_area[i] <- str_flatten(getStockAreas(stock_list_all$StockKeyLabel[i]), ", ")
-      },
-      error = function(e) {}
-    )
-  }
+  # ### loop through the stock labels and find the corresponding iceas areas, add these to a column
+  # for (i in 1:dim(stock_list_all)[1]) {
+  #   tryCatch(
+  #     { # I inserted this to avoid the loop from crashing, Colin is working on the bug icesVocab::getCodeDetail
+  #       # print(i)
+  #       stock_list_all$ICES_area[i] <- str_flatten(getStockAreas(stock_list_all$StockKeyLabel[i]), ", ")
+  #     },
+  #     error = function(e) {}
+  #   )
+  # }
   return(stock_list_all)
 }
+
+
+
 # #### load the SID list of stocks, filter for cat 1 and then run the function to get ices_areas for each stock # nolint
 # stock_list_all <- jsonlite::fromJSON(
 #             URLencode(
@@ -56,7 +59,7 @@ separate_ecoregions <- function(stock_list_all) {
     # StockKey = rep(mydf$StockKey, sapply(s, length)),
     StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
     EcoRegion = unlist(s),
-    ICES_area = rep(mydf$ICES_area, sapply(s, length)),
+    # ICES_area = rep(mydf$ICES_area, sapply(s, length)),
     # SpeciesScientificName = rep(mydf$SpeciesScientificName, sapply(s, length)),
     SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
     ExpertGroup = rep(mydf$ExpertGroup, sapply(s, length)),

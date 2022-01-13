@@ -227,16 +227,16 @@ server <- function(input, output, session) {
       pageLength = 300,
       buttons = c("csv"),
       columnDefs = list(
-        list(
-          targets = 4,
-          render = JS(
-            "function(data, type, row, meta) {",
-            "return type === 'display' && data.length > 15 ?",
-            "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
-            "}"
-          )
-        ),
-        list(visible = FALSE, targets = c(1,6))
+        # list(
+        #   targets = 4,
+        #   render = JS(
+        #     "function(data, type, row, meta) {",
+        #     "return type === 'display' && data.length > 15 ?",
+        #     "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
+        #     "}"
+        #   )
+        # ),
+        list(visible = FALSE, targets = c(1, 6))
       )
     )
   )
