@@ -84,6 +84,17 @@ mainPanel(
             options = list(
               placeholder = 'Select ICES Area(s)')
         ),
+        #######
+        selectizeInput(
+            inputId = "selected_years",
+            label = "Year SID/SAG",
+            choices = Years$Year,
+            selected = 2021,
+            multiple = FALSE,
+            options = list(
+              placeholder = 'Select ICES Area(s)')
+        ),
+        #######
         
           selectizeGroupUI(
             id = "my-filters",
