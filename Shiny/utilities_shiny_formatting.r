@@ -53,12 +53,32 @@ allocations_plotspanel <-
     )
 
 
+# maps_panels <-
+  # sidebarPanel(
+  #   width = 8,
+  #   tabsetPanel(
+  #     tabPanel("ICES Ecoregions", leafletOutput("map1", height = 800)),
+  #     tabPanel("ICES Areas", leafletOutput("map2", height = 800))
+  #   )
+  # )
 maps_panels <-
   sidebarPanel(
     width = 8,
     tabsetPanel(
-      tabPanel("ICES Ecoregions", leafletOutput("map1", height = 800)),
-      tabPanel("ICES Areas", leafletOutput("map2", height = 800))
+      tabPanel(
+        "ICES Ecoregions",
+        fillPage(
+          tags$style(type = "text/css", "#map1 {height: calc(100vh - 200px) !important;}"),
+          leafletOutput("map1", height = "100%", width = "100%")
+        )
+      ),
+      tabPanel(
+        "ICES Areas",
+        fillPage(
+          tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
+          leafletOutput("map2", height = "100%", width = "100%")
+        )
+      )
     )
   )
 
