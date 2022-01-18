@@ -40,7 +40,7 @@ navbarPage(
         "Catch Options & Advice",
         
             sidebarPanel(
-                width = 3,
+                width = 3, style = "max-height: 90vh; overflow-y: auto;",#style = "overflow-y:scroll; max-height: 600px; position:relative;",
                 DTOutput("Advice_View")#,
                 # useShinyjs(),
                 # inlineCSS(list("table2" = "font-size: 10px"))
@@ -65,7 +65,7 @@ navbarPage(
             #         DTOutput("catch_scenario_table",width = "100%", height = "100%"))
             #         )
             mainPanel(
-                width = 9,
+                width = 9, style = "max-height: 90vh; overflow-y: auto;",
                 htmlOutput("Advice_Sentence"),
                 plotlyOutput("catch_scenario_plot_1"),
                 plotlyOutput("catch_scenario_plot_2"),
