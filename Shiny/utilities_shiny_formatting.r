@@ -90,7 +90,7 @@ maps_panels <-
 
 selectize_panel <-
   mainPanel(
-    width = 4,
+    width = 4, style = "max-height: 90vh; overflow-y: auto;",
     panel(
       selectizeInput(
         inputId = "selected_locations",

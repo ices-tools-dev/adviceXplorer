@@ -22,7 +22,7 @@ navbarPage(
     ),
     
     tabPanel(
-        "Stock Selection",
+        "Stock Selection", style = "max-height: 90vh; overflow-y: auto;",
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))
