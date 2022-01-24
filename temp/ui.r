@@ -67,8 +67,16 @@ navbarPage(
             mainPanel(
                 width = 9, style = "max-height: 90vh; overflow-y: auto;",
                 htmlOutput("Advice_Sentence"),
-                plotlyOutput("catch_scenario_plot_1"),
-                plotlyOutput("catch_scenario_plot_2"),
+                tabsetPanel(
+                    tabPanel(
+                        "option_plot1",
+                        plotlyOutput("catch_scenario_plot_1")
+                    ),
+                    tabPanel(
+                        "option_plot2",
+                        plotlyOutput("catch_scenario_plot_2")
+                    )
+                ),
                 DTOutput("catch_scenario_table")
             )
         
