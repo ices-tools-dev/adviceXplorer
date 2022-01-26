@@ -943,6 +943,11 @@ catch_scenarios_plot1 <- function(tmp) {
 
     # sc <- head(tmp2$cat)
 
+
+    ### problem here, some catch tables have 1 or more NAs columns, we could use
+    #not_all_na <- function(x) any(!is.na(x))
+    #temp %>% select(where(not_all_na))
+    # then we need to make the rescale function not variable-name dependent but general.
     tmp3 <- tmp %>% mutate(
         F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
         SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
@@ -952,8 +957,11 @@ catch_scenarios_plot1 <- function(tmp) {
         SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
     )
     tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
+    
+    
+    
     zz <- ggplotly(
-        ggradar(tmp3 %>% select(-Year), values.radar = c("0", "0.5", "1"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+        ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
     )
     zz
     
@@ -1049,7 +1057,7 @@ catch_scenarios_plot2 <- function(tmp) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(size = 20),
+            marker = list(size = 15),
             name = "F"
         )
     ay <- list(
@@ -1064,7 +1072,7 @@ catch_scenarios_plot2 <- function(tmp) {
         type = "scatter",
         mode = "lines+markers",
         text = labels,
-        marker = list(size = 20),
+        marker = list(size = 15),
         name = "SSB",
         yaxis = "y2"
     )
