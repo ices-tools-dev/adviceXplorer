@@ -157,7 +157,13 @@ standardize_catch_scenario_table <- function(tmp) {
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$cat <- tmp[,c(subset)]
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
+  
+  # cS_Purpose"
+  pattern <- c("cS_Purpose")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  # tmp_unified$cat <- tmp[,c(subset)]
+  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+  
   # Ftotal"
   pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -227,7 +233,7 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
 # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "F", "TotCatch", "TACchange", "ADVICEchange", "SSB", "SSBchange")
+  colnames(tmp_unified) <- c("Year", "cat","cS_Purpose", "F", "TotCatch", "TACchange", "ADVICEchange", "SSB", "SSBchange")
 
 #   tmp_unified <- tmp_unified %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0, SSB = 0)))
 

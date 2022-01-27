@@ -19,7 +19,7 @@ get_catch_scenario_table <- function(stock_name) {
       names_glue = "{aK_Label} ({yearLabel})",
       values_from = value
     ) %>%
-    select(-adviceKey, -cS_Basis, -aR_ID) #%>%
+    select(-adviceKey,  -aR_ID) #%>%-cS_Basis,
     # by(
     #   .$cS_Purpose,
     #   function(x) {
@@ -44,6 +44,12 @@ standardize_catch_scenario_table <- function(tmp) {
   
   # cS_Label"
   pattern <- c("cS_Label")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  # tmp_unified$cat <- tmp[,c(subset)]
+  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+
+  # cS_Purpose"
+  pattern <- c("cS_Purpose")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$cat <- tmp[,c(subset)]
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
@@ -117,7 +123,7 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
 # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "F", "TotCatch", "TACchange", "ADVICEchange", "SSB", "SSBchange")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "TotCatch", "TACchange", "ADVICEchange", "SSB", "SSBchange")
 
 #   tmp_unified <- tmp_unified %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0, SSB = 0)))
 
@@ -130,8 +136,40 @@ stocks <- c("her.27.irls", "cod.27.5a", "had.27.7a", "ple.27.7a", "had.27.6b", "
 "had.27.46a20", "whg.27.47d", "sol.27.4", "san.sa.3r", "her.27.20-24", "her.27.nirs", "her.27.3a47d", "cod.27.47d20", 
 "san.sa.1r", "san.sa.2r", "san.sa.4", "spr.27.3a4", "wit.27.3a47d", "tur.27.4", "ple.27.420", "ple.27.7d", "nop.27.3a4",
 "had.27.1-2", "pok.27.1-2")
-catch_tab <- get_catch_scenario_table("pok.27.1-2")
+catch_tab <- get_catch_scenario_table("wit.27.3a47d")
 tibble(catch_tab)
 catch_tab_stand <- standardize_catch_scenario_table(catch_tab)
 tibble(catch_tab_stand)
 names(catch_tab)
+
+
+not_all_na <- function(x) any(!is.na(x))
+catch_tab_stand <- catch_tab_stand %>% select(where(not_all_na))
+rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
+catch_tab_stand_scaled <- catch_tab_stand %>% select(-Year) %>% mutate_if(is.numeric, rescale_function)
+catch_tab_stand_scaled <- catch_tab_stand_scaled %>% relocate("SSB", .before = "SSBchange")
+zz <- ggplotly(
+        ggradar(catch_tab_stand_scaled %>% select(-cS_Purpose), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+    )
+    zz
+### problem here, some catch tables have 1 or more NAs columns, we could use
+    #not_all_na <- function(x) any(!is.na(x))
+    #temp %>% select(where(not_all_na))
+    # then we need to make the rescale function not variable-name dependent but general.
+    tmp <- catch_tab_stand
+    tmp3 <- tmp %>% mutate(
+        F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
+        SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
+        TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
+        # TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
+        ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
+        SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
+    )
+    tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
+    
+    
+    
+    zz <- ggplotly(
+        ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+    )
+    zz

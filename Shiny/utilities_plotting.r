@@ -943,28 +943,41 @@ catch_scenarios_plot1 <- function(tmp) {
 
     # sc <- head(tmp2$cat)
 
+    not_all_na <- function(x) any(!is.na(x))
+    tmp <- tmp %>% select(where(not_all_na))
+    
+    
+    rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
 
-    ### problem here, some catch tables have 1 or more NAs columns, we could use
-    #not_all_na <- function(x) any(!is.na(x))
-    #temp %>% select(where(not_all_na))
-    # then we need to make the rescale function not variable-name dependent but general.
-    tmp3 <- tmp %>% mutate(
-        F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
-        SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
-        TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
-        TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
-        ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
-        SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
-    )
-    tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
-    
-    
-    
+
+    tmp_scaled <- tmp %>%
+        select(-Year) %>%
+        mutate_if(is.numeric, rescale_function)
+    tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSBchange")
     zz <- ggplotly(
-        ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+        ggradar(tmp_scaled %>% select(-cS_Purpose), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
     )
     zz
-    
+    ### problem here, some catch tables have 1 or more NAs columns, we could use
+    # not_all_na <- function(x) any(!is.na(x))
+    # temp %>% select(where(not_all_na))
+    # then we need to make the rescale function not variable-name dependent but general.
+    # tmp3 <- tmp %>% mutate(
+    #     F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
+    #     SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
+    #     TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
+    #     TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
+    #     ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
+    #     SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
+    # )
+    # tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
+
+
+
+    # zz <- ggplotly(
+    #     ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+    # )
+    # zz
 }
 
 # catch_scenarios_plot2 <- function(tmp) {
@@ -1048,7 +1061,7 @@ catch_scenarios_plot2 <- function(tmp) {
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
     F0 <- tmp[tmp$cat == "F = 0", ]
-    Basis <- tmp[tmp$cat == "MSY approach: SSB (2021) = Blim",]
+    Basis <- tmp[tmp$cS_Purpose == "BasisAdvice",]
 
     fig_catch <- plot_ly(arrange(tmp, F)) %>%
         add_trace(
