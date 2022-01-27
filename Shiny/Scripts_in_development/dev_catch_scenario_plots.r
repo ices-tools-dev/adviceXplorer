@@ -173,10 +173,67 @@ catch_tab_stand <- catch_tab_stand %>% select(where(not_all_na))
 rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
 catch_tab_stand_scaled <- catch_tab_stand %>% select(-Year) %>% mutate_if(is.numeric, rescale_function)
 catch_tab_stand_scaled <- catch_tab_stand_scaled %>% relocate("SSB", .before = "SSBchange")
-zz <- ggplotly(
-        ggradar(catch_tab_stand_scaled %>% select(-cS_Purpose), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+# zz <- ggplotly(
+#         ggradar(catch_tab_stand_scaled %>% select(-cS_Purpose), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+#     )
+#     zz
+
+    zz <- ggplotly(
+        ggradar(catch_tab_stand_scaled %>% select(-cS_Purpose), 
+        values.radar = c("0%", "50%", "100%"), 
+        axis.label.size = 10, 
+        axis.line.colour = "grey", 
+        legend.title = "Catch Scenarios:",
+        legend.position = "bottom")
     )
     zz
+
+zz <- ggplotly(
+  ggradar(catch_tab_stand_scaled %>% select(-cS_Purpose),
+    base.size = 10,
+    font.radar = "sans",
+    values.radar = c("0%", "50%", "100%"),
+    # axis.labels = colnames(catch_tab_stand_scaled)[-1],
+    # grid.min = 0,
+    # grid.mid = 0.5,
+    # grid.max = 1,
+    # centre.y = grid.min - ((1 / 9) * (grid.max - grid.min)),
+    # plot.extent.x.sf = 1,
+    # plot.extent.y.sf = 1.2,
+    # x.centre.range = 0.02 * (grid.max - centre.y),
+    # label.centre.y = FALSE,
+    # grid.line.width = 0.5,
+    gridline.min.linetype = "longdash",
+    gridline.mid.linetype = "longdash",
+    gridline.max.linetype = "longdash",
+    gridline.min.colour = "grey",
+    gridline.mid.colour = "#007A87",
+    gridline.max.colour = "grey",
+    grid.label.size = 6,
+    # gridline.label.offset = -0.1 * (grid.max - centre.y),
+    label.gridline.min = TRUE,
+    label.gridline.mid = TRUE,
+    label.gridline.max = TRUE,
+    axis.label.offset = 1.20,
+    axis.label.size = 10,
+    axis.line.colour = "grey",
+    group.line.width = 1.5,
+    group.point.size = 6,
+    group.colours = NULL,
+    background.circle.colour = "#D7D6D1",
+    background.circle.transparency = 0.2,
+    plot.legend = TRUE, #if (nrow(catch_tab_stand_scaled) > 1) TRUE else FALSE,
+    legend.title = "Catch Scenarios:",
+    plot.title = "",
+    legend.text.size = 12,
+    legend.position = "right"
+  )
+  
+)
+zz <- zz %>% layout(autosize = T,  margin=list( l = 500, r = 500, b = 0, t = 0,  pad = 1))
+
+zz
+
 ### problem here, some catch tables have 1 or more NAs columns, we could use
     #not_all_na <- function(x) any(!is.na(x))
     #temp %>% select(where(not_all_na))
