@@ -1057,16 +1057,19 @@ catch_scenarios_plot2 <- function(tmp) {
     # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
 
     # sc <- head(tmp2$cat)
+    tmp <- arrange(tmp, F)
+
     labels <- sprintf(
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
+    
     F0 <- tmp[tmp$cat == "F = 0", ]
     Basis <- tmp[tmp$cS_Purpose == "BasisAdvice",]
 
-    fig_catch <- plot_ly(arrange(tmp, F)) %>%
+    fig_catch <- plot_ly(tmp) %>%
         add_trace(
-            x = ~ jitter(TotCatch, 1, amount = NULL),
-            y = ~ jitter(F, 1, amount = NULL),
+            x = ~ TotCatch,
+            y = ~ F,
             type = "scatter",
             mode = "lines+markers",
             text = labels,
@@ -1074,18 +1077,20 @@ catch_scenarios_plot2 <- function(tmp) {
             name = "F"
         )
     ay <- list(
-        tickfont = list(color = "red"),
+        tickfont = list(color = "#ff7300", size = 20),
         overlaying = "y",
         side = "right",
-        title = "<b>SSB</b>"
+        title = "<b>SSB</b>",
+        titlefont = list(color = "#ff7300", size = 30),
+        tickfont = list(size = 30)
     )
     fig_catch <- fig_catch %>% add_trace(
-        x = ~ jitter(TotCatch, 1, amount = NULL),
-        y = ~ jitter(SSB, 1, amount = NULL),
+        x = ~ TotCatch,
+        y = ~ SSB,
         type = "scatter",
         mode = "lines+markers",
         text = labels,
-        marker = list(size = 15),
+        marker = list(size = 15, color = "#ff7300"),
         name = "SSB",
         yaxis = "y2"
     )
@@ -1098,27 +1103,27 @@ catch_scenarios_plot2 <- function(tmp) {
         yref = "y",
         showarrow = TRUE,
         arrowhead = 15,
-        ax = 200,
-        ay = 50,
+        ax = 10,
+        ay = -100,
         font = list(
             color = "#000000",
             family = "sans serif",
-            size = 30
+            size = 25
         )
     )
     b <- list(
         x = Basis$TotCatch,
         y = Basis$F,
-        text = Basis$cat,
+        text = Basis$cS_Purpose,
         xref = "x",
         yref = "y",
         showarrow = TRUE,
         arrowhead = 15,
-        ax = 200,
-        ay = 50, font = list(
+        ax = 10,
+        ay = -100, font = list(
             color = "#000000",
             family = "sans serif",
-            size = 30
+            size = 25
         )
     )
 
@@ -1152,8 +1157,8 @@ catch_scenarios_plot2 <- function(tmp) {
     # )
     fig_catch <- fig_catch %>% layout(
         yaxis2 = ay,
-        xaxis = list(title = "<b>Total Catch</b>"),
-        yaxis = list(title = "<b>F</b>") # ,
+        xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)) # ,tickfont = list(color = "red", size = 20)
         #   annotations = a
     )
     fig_catch <- fig_catch %>% layout(
@@ -1162,9 +1167,13 @@ catch_scenarios_plot2 <- function(tmp) {
     fig_catch <- fig_catch %>% layout(
         annotations = b
     )
+    fig_catch <- fig_catch %>% layout(
+      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.5, y = 1)
+    )
     # fig_catch <- fig_catch %>% layout(
     #     annotations = d
     # )
+    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 4))
 
     fig_catch
 }

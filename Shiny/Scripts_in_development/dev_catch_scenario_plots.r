@@ -132,11 +132,36 @@ standardize_catch_scenario_table <- function(tmp) {
 }
 
 ##############################################
-stocks <- c("her.27.irls", "cod.27.5a", "had.27.7a", "ple.27.7a", "had.27.6b", "had.27.7b-k", "cod.21.1", "pok.27.3a46",
-"had.27.46a20", "whg.27.47d", "sol.27.4", "san.sa.3r", "her.27.20-24", "her.27.nirs", "her.27.3a47d", "cod.27.47d20", 
-"san.sa.1r", "san.sa.2r", "san.sa.4", "spr.27.3a4", "wit.27.3a47d", "tur.27.4", "ple.27.420", "ple.27.7d", "nop.27.3a4",
-"had.27.1-2", "pok.27.1-2")
-catch_tab <- get_catch_scenario_table("wit.27.3a47d")
+stocks <- c(
+  "cod.27.5a",
+  "cod.21.1",
+  "cod.27.47d20",
+  "had.27.7a",
+  "had.27.6b",
+  "had.27.7b-k",
+  "had.27.46a20",
+  "had.27.1-2",
+  "her.27.irls",
+  "her.27.20-24",
+  "her.27.nirs",
+  "her.27.3a47d",
+  "nop.27.3a4",
+  "ple.27.420",
+  "ple.27.7d",
+  "ple.27.7a",
+  "pok.27.3a46",
+  "pok.27.1-2",
+  "san.sa.1r",
+  "san.sa.2r",
+  "san.sa.3r",
+  "san.sa.4",
+  "sol.27.4",
+  "spr.27.3a4",
+  "tur.27.4",
+  "whg.27.47d",
+  "wit.27.3a47d"
+)
+catch_tab <- get_catch_scenario_table("cod.27.47d20")
 tibble(catch_tab)
 catch_tab_stand <- standardize_catch_scenario_table(catch_tab)
 tibble(catch_tab_stand)
@@ -156,20 +181,164 @@ zz <- ggplotly(
     #not_all_na <- function(x) any(!is.na(x))
     #temp %>% select(where(not_all_na))
     # then we need to make the rescale function not variable-name dependent but general.
-    tmp <- catch_tab_stand
-    tmp3 <- tmp %>% mutate(
-        F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
-        SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
-        TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
-        # TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
-        ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
-        SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
+    # tmp <- catch_tab_stand
+    # tmp3 <- tmp %>% mutate(
+    #     F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
+    #     SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
+    #     TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
+    #     # TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
+    #     ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
+    #     SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
+    # )
+    # tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
+    
+    
+    
+    # zz <- ggplotly(
+    #     ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+    # )
+    # zz
+
+
+catch_scenarios_plot2 <- function(tmp) {
+    # tmp$Year <- 2022
+
+    # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
+
+    # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
+    # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
+
+    # sc <- head(tmp2$cat)
+    tmp <- arrange(tmp, F)
+
+    labels <- sprintf(
+            "Catch Scenario: %s", tmp$cat
+        ) %>% lapply(htmltools::HTML)
+    
+    F0 <- tmp[tmp$cat == "F = 0", ]
+    Basis <- tmp[tmp$cS_Purpose == "BasisAdvice",]
+
+    fig_catch <- plot_ly(tmp) %>%
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ F,
+            type = "scatter",
+            mode = "lines+markers",
+            text = labels,
+            marker = list(size = 15),
+            name = "F"
+        )
+    ay <- list(
+        tickfont = list(color = "#ff7300", size = 20),
+        overlaying = "y",
+        side = "right",
+        title = "<b>SSB</b>",
+        titlefont = list(color = "#ff7300", size = 30),
+        tickfont = list(size = 30)
     )
-    tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
-    
-    
-    
-    zz <- ggplotly(
-        ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
+    fig_catch <- fig_catch %>% add_trace(
+        x = ~ TotCatch,
+        y = ~ SSB,
+        type = "scatter",
+        mode = "lines+markers",
+        text = labels,
+        marker = list(size = 15, color = "#ff7300"),
+        name = "SSB",
+        yaxis = "y2"
     )
-    zz
+    
+    a <- list(
+        x = F0$TotCatch,
+        y = F0$F,
+        text = F0$cat,
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowhead = 15,
+        ax = 10,
+        ay = -100,
+        font = list(
+            color = "#000000",
+            family = "sans serif",
+            size = 25
+        )
+    )
+    b <- list(
+        x = Basis$TotCatch,
+        y = Basis$F,
+        text = Basis$cS_Purpose,
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowhead = 15,
+        ax = 10,
+        ay = -100, font = list(
+            color = "#000000",
+            family = "sans serif",
+            size = 25
+        )
+    )
+
+    # c <- list(
+    #   x = F0$TotCatch,
+    #   y = F0$SSB,
+    #   text = F0$cat,
+    #   xref = "x",
+    #   yref = "y",
+    #   showarrow = TRUE,
+    #   arrowhead = 15,
+    #   ax = 200,
+    #   ay = 50,
+    #   font = list(color = '#000000',
+    #                               family = 'sans serif',
+    #                               size = 30)
+    # )
+    # d <- list(
+    #   x = Basis$TotCatch,
+    #   y = Basis$SSB,
+    #   text = Basis$cat,
+    #   xref = "x",
+    #   yref = "y",
+    #   showarrow = TRUE,
+    #   arrowhead = 15,
+    #   ax = 200,
+    #   ay = 50,
+    #   font = list(color = '#000000',
+    #                               family = 'sans serif',
+    #                               size = 30)
+    # )
+    fig_catch <- fig_catch %>% layout(
+        yaxis2 = ay,
+        xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)) # ,tickfont = list(color = "red", size = 20)
+        #   annotations = a
+    )
+    fig_catch <- fig_catch %>% layout(
+        annotations = a
+    )
+    fig_catch <- fig_catch %>% layout(
+        annotations = b
+    )
+    fig_catch <- fig_catch %>% layout(
+      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.5, y = 1)
+    )
+    # fig_catch <- fig_catch %>% layout(
+    #     annotations = d
+    # )
+    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 4))
+
+    fig_catch
+}
+tmp <- catch_tab_stand
+catch_scenarios_plot2(catch_tab_stand)
+
+
+# pattern <- c("F = 0")
+# subset <- grepl(pattern, tmp$cat)
+#   # tmp_unified$F <- tmp[,c(subset)]
+#   if (!any(subset)) {
+#       tmp_unified <- tmp_unified %>% add_column(F = NA)
+#   } else {
+#       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+#   }
+  
