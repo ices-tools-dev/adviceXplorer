@@ -36,7 +36,8 @@ legend_format <- function() {
         color = "#000"),
         bgcolor = "rgb(233,244,245)",
         bordercolor = "#FFFFFF",
-        borderwidth = 2)
+        borderwidth = 2,
+        orientation = 'h')
 }
 
 ################## Plot 1 - Catches ################
@@ -771,7 +772,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "FLim",
         type = "scatter",
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash", width = 2),
+        line = list(color = "#7e7e7e", shape = "linear", dash = "dash", width = 2), #black
         showlegend = TRUE
     )
     fig3 <- fig3 %>% add_trace(
@@ -781,7 +782,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "Fpa",
         type = "scatter",
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot", width = 2),
+        line = list(color = "#7e7e7e", shape = "linear", dash = "dot", width = 2),
         showlegend = TRUE
     )
     fig3 <- fig3 %>% add_trace(
@@ -791,7 +792,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "FMSY",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#679dfe", shape = "linear", width = 1),#, dash = "dash"),
+        line = list(color = "#af1111", shape = "linear", width = 1),#, dash = "dash"), #679dfe old blue like the one MSYBtrigger
         showlegend = TRUE
     )
 
