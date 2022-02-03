@@ -367,7 +367,9 @@ SSB_yaxis_label <- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::
 F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
 R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(RecruitmentAge))
 
-
+# print(length(unique(big_data$AssessmentYear)))
+# print(length(unique(big_data_last_year$AssessmentYear)))
+palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd",
  fig1 <- plot_ly(
      data = big_data,
      x = ~Year,
@@ -377,7 +379,8 @@ R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(Recruitm
      mode = "lines+markers",
     #  line = list(shape = "spline"),
      connectgaps = FALSE,
-     color = ~AssessmentYear
+     color = ~AssessmentYear,
+     colors = palette_bw
  )
  fig1 <- fig1 %>% add_trace(
         data = big_data_last_year, ###select for last reference points last year
@@ -407,7 +410,7 @@ R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(Recruitm
         name = "MSYBtrigger", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "#679dfe", shape = "linear", width = 1), 
+        line = list(color = "#689dff", shape = "linear", width = 1), 
         showlegend = TRUE
     )
  fig1 <- fig1 %>% layout(
@@ -451,6 +454,7 @@ R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(Recruitm
     #  line = list(shape = "spline"),
      connectgaps = FALSE,
      color = ~AssessmentYear,
+     colors = palette_bw,
      showlegend = FALSE
  )
  ## Add horizontal lines
@@ -461,7 +465,7 @@ R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(Recruitm
         name = "FLim", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
+        line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), 
         showlegend = TRUE
     )
     fig2 <- fig2 %>% add_trace(
@@ -471,7 +475,7 @@ R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(Recruitm
         name = "Fpa", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
+        line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), 
         showlegend = TRUE
     )
 
@@ -482,7 +486,7 @@ R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(Recruitm
         name = "FMSY", 
         type = "scatter", 
         mode = "lines",
-        line = list(color = "#679dfe", shape = "linear", width = 1), 
+        line = list(color = "#00AC67", shape = "linear", width = 1), 
         showlegend = TRUE
     )
 fig2 <- fig2 %>% layout(
@@ -526,6 +530,7 @@ fig2 <- fig2 %>% layout(
     #  line = list(shape = "spline"),
      connectgaps = FALSE,
      color = ~AssessmentYear,
+     colors = palette_bw,
      showlegend = FALSE
  )
 fig3 <- fig3 %>% layout(
@@ -772,7 +777,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "FLim",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#7e7e7e", shape = "linear", dash = "dash", width = 2), #black
+        line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), #black
         showlegend = TRUE
     )
     fig3 <- fig3 %>% add_trace(
@@ -782,7 +787,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "Fpa",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#7e7e7e", shape = "linear", dash = "dot", width = 2),
+        line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), #7e7e7e
         showlegend = TRUE
     )
     fig3 <- fig3 %>% add_trace(
@@ -792,7 +797,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "FMSY",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#af1111", shape = "linear", width = 1),#, dash = "dash"), #679dfe old blue like the one MSYBtrigger
+        line = list(color = "#00AC67", shape = "linear", width = 1),#, dash = "dash"), #679dfe old blue like the one MSYBtrigger  af1111
         showlegend = TRUE
     )
 
@@ -889,7 +894,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         name = "MSYBtrigger",
         type = "scatter",
         mode = "lines",
-        line = list(color = "#679dfe", shape = "linear", width = 1),#, dash = "dash"),
+        line = list(color = "#689dff", shape = "linear", width = 1),#, dash = "dash"), 
         showlegend = TRUE
     )
 
