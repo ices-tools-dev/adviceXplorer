@@ -37,7 +37,11 @@ legend_format <- function() {
         bgcolor = "rgb(233,244,245)",
         bordercolor = "#FFFFFF",
         borderwidth = 2,
-        orientation = 'h')
+        orientation = 'v')
+        # yanchor = "bottom",
+        # xanchor = "center",
+        # x = 0.5,
+        # y = 0.1)
 }
 
 ################## Plot 1 - Catches ################
