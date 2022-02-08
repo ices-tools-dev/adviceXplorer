@@ -305,7 +305,7 @@ server <- function(input, output, session) {
     list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
   })
 
-  ######################### Advice panel
+  ######################### Stock development over time
 
   output$all_plots <- renderPlotly({
     data_list <- advice_action()
@@ -371,7 +371,7 @@ output$Advice_Sentence <- renderUI({
 
 ##### catch scenarios table
 catch_scenario_table <- eventReactive(query$stockkeylabel, {
-  get_catch_scenario_table(query$stockkeylabel)
+  standardize_catch_scenario_table(get_catch_scenario_table(query$stockkeylabel))
 })
 
 output$catch_scenario_table <- DT::renderDT(
@@ -396,6 +396,6 @@ output$catch_scenario_table <- DT::renderDT(
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(standardize_catch_scenario_table(catch_scenario_table())))
-output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(standardize_catch_scenario_table(catch_scenario_table())))
+output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
+output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
 }
