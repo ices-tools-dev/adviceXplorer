@@ -1122,10 +1122,10 @@ catch_scenarios_plot2 <- function(tmp) {
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
     
-    F0 <- tmp[tmp$cat == "F = 0", ]
+    # F0 <- tmp[tmp$cat == "F = 0", ] taking this out because spmetimes F0 is not present
     Basis <- tmp[tmp$cS_Purpose == "BasisAdvice",]
 
-    fig_catch <- plot_ly(tmp) %>%
+    fig_catch <- plot_ly(tmp, source = "ranking") %>%
         add_trace(
             x = ~ TotCatch,
             y = ~ F,
@@ -1154,22 +1154,22 @@ catch_scenarios_plot2 <- function(tmp) {
         yaxis = "y2"
     )
     
-    a <- list(
-        x = F0$TotCatch,
-        y = F0$F,
-        text = F0$cat,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowhead = 15,
-        ax = 10,
-        ay = -100,
-        font = list(
-            color = "#000000",
-            family = "sans serif",
-            size = 25
-        )
-    )
+    # a <- list(
+    #     x = F0$TotCatch,
+    #     y = F0$F,
+    #     text = F0$cat,
+    #     xref = "x",
+    #     yref = "y",
+    #     showarrow = TRUE,
+    #     arrowhead = 15,
+    #     ax = 10,
+    #     ay = -100,
+    #     font = list(
+    #         color = "#000000",
+    #         family = "sans serif",
+    #         size = 25
+    #     )
+    # )
     b <- list(
         x = Basis$TotCatch,
         y = Basis$F,
@@ -1217,22 +1217,43 @@ catch_scenarios_plot2 <- function(tmp) {
     fig_catch <- fig_catch %>% layout(
         yaxis2 = ay,
         xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)) # ,tickfont = list(color = "red", size = 20)
+        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+        hovermode = 'compare'
+         # ,tickfont = list(color = "red", size = 20)
         #   annotations = a
     )
-    fig_catch <- fig_catch %>% layout(
-        annotations = a
-    )
+    # fig_catch <- fig_catch %>% layout(
+    #     annotations = a
+    # )
     fig_catch <- fig_catch %>% layout(
         annotations = b
     )
     fig_catch <- fig_catch %>% layout(
       legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.5, y = 1)
     )
+    
     # fig_catch <- fig_catch %>% layout(
     #     annotations = d
     # )
-    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 4))
+    
+    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 8))
 
-    fig_catch
+    # fig_catch
+}
+
+TAC_timeline <- function(catches_data, catch_scenario_table) {
+    catches_data <- catches_data %>% select(Year, catches)
+    catches_data <- catches_data %>% add_column(cat = "Historical_TAC")
+    catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
+    catches_data <- setNames(catches_data, names(catch_scenario_table))
+    final_df <- rbind(catches_data, catch_scenario_table)
+
+    catch_time <- plot_ly(final_df,source = "ranking",
+        x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", showlegend = T, # linetype = ~cat,
+        color = ~cat
+    )
+    catch_time <- catch_time %>% layout(
+        xaxis = list(title = "<b>Years</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+        yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 30), tickfont = list(size = 30))
+    )
 }

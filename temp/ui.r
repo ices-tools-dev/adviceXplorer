@@ -11,6 +11,12 @@ navbarPage(
             style = "margin-top: -14px; padding-right:10px;padding-bottom:10px",
             height = 60
         )),
+
+    useShinyjs(),
+    tags$head(tags$style(HTML
+                         ("#table tr:hover {
+	                          background-color: rgba(240, 136, 33, 0.4) !important;
+                            }"))),
     #tabsetPanel(#id = "tabset",
     tabPanel(
         "Data Filtering",
@@ -38,7 +44,7 @@ navbarPage(
     
     tabPanel(
         "Catch Options & Advice",
-        
+        sidebarLayout(
             sidebarPanel(
                 width = 3, style = "max-height: 90vh; overflow-y: auto;",#style = "overflow-y:scroll; max-height: 600px; position:relative;",
                 DTOutput("Advice_View")#,
@@ -79,14 +85,26 @@ navbarPage(
                 ),
                 DTOutput("catch_scenario_table")
             )
-        
-        # verbatimTextOutput("In_Construction")
+        )
     ),
     
-
+    
     tabPanel(
-        "Resources",
-        verbatimTextOutput("headline")
+        "Catch Option & Advice 2",
+        sidebarLayout(
+            sidebarPanel(
+                    width = 6, style = "max-height: 90vh; overflow-y: auto;",
+                    plotlyOutput("catch_scenario_plot_3"),
+                    plotlyOutput("TAC_timeline")
+            ),
+            mainPanel(
+                width = 6, style = "max-height: 90vh; overflow-y: auto;",
+                DTOutput("table")
+
+            )
+        )
+        
+        # verbatimTextOutput("headline")
     ),
     #),# close tabsetpanel
     

@@ -398,4 +398,43 @@ output$catch_scenario_table <- DT::renderDT(
 # )
 output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
 output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+
+output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
+
+output$table <- DT::renderDT(
+    arrange(catch_scenario_table(),F) %>% select(-Year),
+    selection="single", class="display",
+    caption = "Catch Scenario Table",
+    rownames= FALSE,
+    options = list(
+        dom = 't',
+      pageLength = 100
+      # columnDefs = list(list(visible=FALSE, targets=c(1)))
+      ),
+      callback = JS("
+                              table.on('mouseover', 'td', function() {
+                              $(this).parent().addClass('hover')
+                              });
+                              table.on('mouseout', 'td', function() {
+                              $(this).parent().removeClass('hover')
+                              });
+                         return table;
+                          ")
+)
+
+# tableProxy ##
+table_proxy = dataTableProxy('table')
+
+selected_scenario <- reactive({
+      if (is.null(event_data("plotly_hover", source = "ranking")))
+        return(NULL)
+      event_data("plotly_hover", source = "ranking")
+      })
+    
+    observe({
+      selectRows(table_proxy, selected=(selected_scenario()[[2]]+1))
+    })
+    
+  
 }
