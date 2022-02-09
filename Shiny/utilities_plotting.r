@@ -1257,3 +1257,31 @@ TAC_timeline <- function(catches_data, catch_scenario_table) {
         yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 30), tickfont = list(size = 30))
     )
 }
+
+
+get_advice_timeline <- function(stock_code) {
+    timeL <- get_Advice_View_info(stock_code)
+
+    release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
+    applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
+    applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
+
+    release_date <- strptime(as.character(release_date), "%d/%m/%Y")
+    release_date <- format(release_date, "%Y-%m-%d")
+    applicable_from <- strptime(as.character(applicable_from), "%d/%m/%Y")
+    applicable_from <- format(applicable_from, "%Y-%m-%d")
+    applicable_until <- strptime(as.character(applicable_until), "%d/%m/%Y")
+    applicable_until <- format(applicable_until, "%Y-%m-%d")
+
+
+
+    data <- data.frame(
+        id      = 1:2,
+        content = c("Advice Release Date", "Advice Applicable Between"),
+        start   = c(release_date, applicable_from),
+        end     = c(NA, applicable_until)
+    )
+
+
+    return(data)
+}

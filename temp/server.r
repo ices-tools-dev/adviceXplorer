@@ -399,8 +399,17 @@ output$catch_scenario_table <- DT::renderDT(
 output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
 output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
 
+
+##### new tab in development left side
+output$Advice_Sentence2 <- renderUI({
+  HTML(paste0(br(),"<b>","<font size=", 3, ">", advice_view_sentence(),"</font>","</b>", br()))
+})
+
 output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
 output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
+
+### right side
+output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel)))
 
 output$table <- DT::renderDT(
     arrange(catch_scenario_table(),F) %>% select(-Year),

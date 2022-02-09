@@ -94,11 +94,13 @@ navbarPage(
         sidebarLayout(
             sidebarPanel(
                     width = 6, style = "max-height: 90vh; overflow-y: auto;",
+                    htmlOutput("Advice_Sentence2"),
                     plotlyOutput("catch_scenario_plot_3"),
                     plotlyOutput("TAC_timeline")
             ),
             mainPanel(
                 width = 6, style = "max-height: 90vh; overflow-y: auto;",
+                timevisOutput("advice_timeline"),
                 DTOutput("table")
 
             )
