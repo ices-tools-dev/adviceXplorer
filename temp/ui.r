@@ -92,6 +92,8 @@ navbarPage(
     tabPanel(
         "Catch Option & Advice 2",
         sidebarLayout(
+            # sidebarPanel = catch_scenarios_left_panel,
+            # mainPanel = catch_scenarios_right_panel
             sidebarPanel(
                     width = 6, style = "max-height: 90vh; overflow-y: auto;",
                     htmlOutput("Advice_Sentence2"),
@@ -121,3 +123,5 @@ navbarPage(
 header.append('<div style=\"float:right\"><a href=\"https://github.com/ices-tools-dev/online-advice\"><img src=\"GitHub-Mark-32px.png\" alt=\"alt\" style=\"margin-top: -14px; padding-right:5px;padding-top:25px;\"></a></div>');
 console.log(header)"))
 )
+
+
