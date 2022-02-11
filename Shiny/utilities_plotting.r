@@ -1218,7 +1218,7 @@ catch_scenarios_plot2 <- function(tmp) {
         yaxis2 = ay,
         xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
         yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        hovermode = 'compare'
+        hovermode = 'x'
          # ,tickfont = list(color = "red", size = 20)
         #   annotations = a
     )

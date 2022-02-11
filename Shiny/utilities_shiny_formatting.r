@@ -162,21 +162,21 @@ selectize_panel <-
 #   panel(
 #     title = "Headline advice",
 #     fillPage(
-#       tags$style(type = "text/css", "#Advice_Sentence2 {height: 20%; width: 50%}"),
+#       tags$style(type = "text/css", "#Advice_Sentence2 {height: calc(20vh - 10px); calc(100vw - 10px); overflow-y: auto; !important;}"),
 #       htmlOutput("Advice_Sentence2")
 #     )
 #   ),
 #   panel(
 #     title = "Catch_scenario_F_SSB",
 #     fillPage(
-#       tags$style(type = "text/css", "#catch_scenario_plot_3 {height: 50%; width: 50%}"),
+#       tags$style(type = "text/css", "#catch_scenario_plot_3 {height:calc(40vh - 10px); width: calc(100vw - 10px); overflow-y: auto; !important;}"),
 #       plotlyOutput("catch_scenario_plot_3")
 #     )
 #   ),
 #   panel(
 #     title = "TAC_timeline",
 #     fillPage(
-#       tags$style(type = "text/css", "#TAC_timeline {height: 40%; width: 50%}"),
+#       tags$style(type = "text/css", "#TAC_timeline {height:calc(40vh - 10px); width: calc(100vw - 10px); overflow-y: auto; !important;}"),
 #       plotlyOutput("TAC_timeline")
 #     )
 #   )
@@ -188,14 +188,14 @@ selectize_panel <-
 #   panel(
 #     title = "Advice timeline",
 #     fillPage(
-#       tags$style(type = "text/css", "#advice_timeline {height: 20%; width: 50%}"),
+#       tags$style(type = "text/css", "#advice_timeline {height: calc(20vh - 10px); calc(100vw - 10px)}"),
 #       timevisOutput("advice_timeline")
 #     )
 #   ),
 #   panel(
 #     title = "Catch scenario table",
 #     fillPage(
-#       tags$style(type = "text/css", "#table {height: 80%; width: 50%}"),
+#       tags$style(type = "text/css", "#table {height: calc(80vh - 10px); calc(100vw - 10px)}"),
 #       DTOutput("table")
 #     )
 #   )
@@ -204,17 +204,17 @@ selectize_panel <-
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6,
   fillPage(
-    # tags$style("max-height: 50vh; overflow-y: auto; {height: calc(100vh - 200px) !important;}"),
+    tags$style("max-height: 100vh; overflow-y: auto; {height:calc(100vh - 10px); width: calc(100vw - 10px); !important;}"),
     htmlOutput("Advice_Sentence2", height = "20%", width = "100%"),
-    plotlyOutput("catch_scenario_plot_3", height = "20%", width = "100%"),
-    plotlyOutput("TAC_timeline", height = "40%", width = "100%")
+    plotlyOutput("catch_scenario_plot_3", height = "100%", width = "100%"),
+    plotlyOutput("TAC_timeline", height = "100%", width = "100%")
   )
 )
 catch_scenarios_right_panel <- mainPanel(
   width = 6,
   fillPage(
-    # tags$style("max-height: 50vh; overflow-y: auto;"),
-    timevisOutput("advice_timeline", height = "20%", width = "100%"),
-    DTOutput("table", height = "80%", width = "100%")
+    tags$style("max-height: 100vh; overflow-y: auto; {height:calc(100vh - 10px); width: calc(100vw - 10px); !important;}"),
+    timevisOutput("advice_timeline", height = "100%", width = "100%"),
+    DTOutput("table", height = "100%", width = "100%")
   )
 )
