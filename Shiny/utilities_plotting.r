@@ -1248,10 +1248,18 @@ TAC_timeline <- function(catches_data, catch_scenario_table) {
     catches_data <- setNames(catches_data, names(catch_scenario_table))
     final_df <- rbind(catches_data, catch_scenario_table)
 
-    catch_time <- plot_ly(final_df,source = "ranking",
+
+    # mypalette <- terrain.colors(length(unique(final_df$cat)))
+    catch_time <- plot_ly(final_df, source = "ranking",
         x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", showlegend = T, # linetype = ~cat,
-        color = ~cat
-    )
+        color = ~cat#, colors = mypalette)
+     )
+    
+    # catch_time <- plot_ly(final_df) %>%
+    #     add_trace(data = final_df %>% filter(cat =="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat == "Historical", colors = "black") %>%
+    #     add_trace(data = final_df %>% filter(cat !="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat != "Historical", colors = mypalette)
+    
+    
     catch_time <- catch_time %>% layout(
         xaxis = list(title = "<b>Years</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
         yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 30), tickfont = list(size = 30))
