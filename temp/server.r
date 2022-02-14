@@ -402,7 +402,7 @@ output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenari
 
 ##### new tab in development left side
 output$Advice_Sentence2 <- renderUI({
-  HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>", br(),  br()))
+  HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 })
 
 output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
