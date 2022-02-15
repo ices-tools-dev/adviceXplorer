@@ -93,19 +93,19 @@ navbarPage(
         "Catch Option & Advice 2",
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
-            # mainPanel = catch_scenarios_right_panel
+            mainPanel = catch_scenarios_right_panel
             # sidebarPanel(
             #         width = 6, style = "max-height: 90vh; overflow-y: auto;",
             #         htmlOutput("Advice_Sentence2"),
             #         plotlyOutput("catch_scenario_plot_3"),
             #         plotlyOutput("TAC_timeline")
             # ),
-            mainPanel(
-                width = 6, style = "max-height: 90vh; overflow-y: auto;",
-                timevisOutput("advice_timeline"),
-                DTOutput("table")
+            # mainPanel(
+            #     width = 6, style = "max-height: 90vh; overflow-y: auto;",
+            #     timevisOutput("advice_timeline"),
+            #     DTOutput("table")
 
-            )
+            # )
         )
         
         # verbatimTextOutput("headline")

@@ -50,23 +50,23 @@ server <- function(input, output, session) {
       selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
       print(selected_1$groups)
       proxy_1 %>%
-        showGroup(group = input$map1_shape_click$id) %>%
-        setView(
-          lng = sf_cent[idx_1, 1],
-          lat = sf_cent[idx_1, 2],
-          zoom = 3
-        )
+        showGroup(group = input$map1_shape_click$id) #%>%
+        # setView( ## zoom in
+        #   lng = sf_cent[idx_1, 1],
+        #   lat = sf_cent[idx_1, 2],
+        #   zoom = 3
+        # )
 
       # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
     } else {
       selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
       proxy_1 %>%
-        hideGroup(group = input$map1_shape_click$group) %>%
-        setView(
-          lng = sf_cent_map[1],
-          lat = sf_cent_map[2],
-          zoom = 1
-        )
+        hideGroup(group = input$map1_shape_click$group) #%>%
+        # setView( ## zoom out
+        #   lng = sf_cent_map[1],
+        #   lat = sf_cent_map[2],
+        #   zoom = 1
+        # )
     }
     updateSelectizeInput(session,
       inputId = "selected_locations",
@@ -409,7 +409,7 @@ output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenari
 output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
 
 ### right side
-output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel)))
+output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected)))
 
 output$table <- DT::renderDT(
     arrange(catch_scenario_table(),F) %>% select(-Year),
@@ -444,6 +444,16 @@ selected_scenario <- reactive({
     observe({
       selectRows(table_proxy, selected=(selected_scenario()[[2]]+1))
     })
+
+
+
+
+ observeEvent(input$tbl_rows_selected, {
+    filtered_row <- res_mod()[input$tbl_rows_selected, ]
+    WG <- filtered_row$ExpertGroupUrl
+    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+    print(WG)
     
-  
+})
+
 }

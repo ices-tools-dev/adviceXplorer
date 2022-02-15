@@ -183,23 +183,23 @@ catch_scenarios_left_panel <- sidebarPanel(
 )
 
 
-# catch_scenarios_right_panel <- mainPanel(
-#   width = 6,
-#   panel(
-#     title = "Advice timeline",
-#     fillPage(
-#       tags$style(type = "text/css", "#advice_timeline {height: calc(20vh - 10px); calc(100vw - 10px)}"),
-#       timevisOutput("advice_timeline")
-#     )
-#   ),
-#   panel(
-#     title = "Catch scenario table",
-#     fillPage(
-#       tags$style(type = "text/css", "#table {height: calc(80vh - 10px); calc(100vw - 10px)}"),
-#       DTOutput("table")
-#     )
-#   )
-# )
+catch_scenarios_right_panel <- sidebarPanel(
+  width = 6, style = "max-height: 95vh; overflow-y: auto;",
+  panel(
+    title = "Advice timeline",
+    fillPage(
+      tags$style(type = "text/css", "#advice_timeline overflow-y: auto; !important;"), #{height: calc(20vh - 10px); calc(100vw - 10px)}
+      timevisOutput("advice_timeline", height = "5%", width = "100%")
+    )
+  ),
+  panel(
+    title = "Catch scenario table",
+    fillPage(
+      tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
+      DTOutput("table", height = "90%", width = "100%")
+    )
+  )
+)
 
 # catch_scenarios_left_panel <- sidebarPanel(
 #   width = 6, style = "max-height: 90vh; overflow-y: auto;",
