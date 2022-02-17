@@ -224,8 +224,9 @@ server <- function(input, output, session) {
     caption = "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
     options = list(
       dom = "Bfrtip",
-      pageLength = 300,
+      pageLength = 1000,
       buttons = c("csv"),
+      rownames = FALSE,
       columnDefs = list(
         # list(
         #   targets = 4,
@@ -236,7 +237,16 @@ server <- function(input, output, session) {
         #     "}"
         #   )
         # ),
-        list(visible = FALSE, targets = c(1, 6))
+        # list(
+        #   targets = 2,
+        #   render = JS(
+        #     "function(.zoom.hover) {",
+        #     "transform: scale(1.5); ",
+        #     "}"
+        #   )
+
+        # ),
+        list(visible = FALSE, targets = c(0, 1, 6))
       )
     )
   )
