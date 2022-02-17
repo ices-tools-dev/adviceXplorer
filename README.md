@@ -10,3 +10,6 @@ If it is your first time using online-advice, the app will download on your loca
 
 The utilities files and the shape file are in the Shiny folder in which some code is kept for development.
 The official ui and server scripts are the ones in the temp folder.
+
+Source for fish illustrations: Food and Agriculture Organization of the United Nations, Original Scientific Illustrations Archive. Reproduced with permission
+Source for placeholder fish icon: <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a>
