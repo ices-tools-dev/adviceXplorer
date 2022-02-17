@@ -99,7 +99,7 @@ match_stockcode_to_illustration <- function(StockKeyLabel, df) {
   colnames(df_temp) <- "Ill_file"
   
   for (i in 1:dim(df)[1]) {
-    temp <- list.files("D:/Profile/Documents/GitHub/online-advice/temp/www", pattern = substr(df$StockKeyLabel[i], 1, 3))
+    temp <- list.files("../temp/www", pattern = substr(df$StockKeyLabel[i], 1, 3))
     if (identical(temp, character(0))) {
       temp <- "fish.png"
     }
