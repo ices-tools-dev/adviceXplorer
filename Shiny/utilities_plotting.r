@@ -1122,10 +1122,10 @@ catch_scenarios_plot2 <- function(tmp) {
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
     
-    F0 <- tmp[tmp$cat == "F = 0", ]
+    # F0 <- tmp[tmp$cat == "F = 0", ] taking this out because spmetimes F0 is not present
     Basis <- tmp[tmp$cS_Purpose == "BasisAdvice",]
 
-    fig_catch <- plot_ly(tmp) %>%
+    fig_catch <- plot_ly(tmp, source = "ranking") %>%
         add_trace(
             x = ~ TotCatch,
             y = ~ F,
@@ -1154,22 +1154,22 @@ catch_scenarios_plot2 <- function(tmp) {
         yaxis = "y2"
     )
     
-    a <- list(
-        x = F0$TotCatch,
-        y = F0$F,
-        text = F0$cat,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowhead = 15,
-        ax = 10,
-        ay = -100,
-        font = list(
-            color = "#000000",
-            family = "sans serif",
-            size = 25
-        )
-    )
+    # a <- list(
+    #     x = F0$TotCatch,
+    #     y = F0$F,
+    #     text = F0$cat,
+    #     xref = "x",
+    #     yref = "y",
+    #     showarrow = TRUE,
+    #     arrowhead = 15,
+    #     ax = 10,
+    #     ay = -100,
+    #     font = list(
+    #         color = "#000000",
+    #         family = "sans serif",
+    #         size = 25
+    #     )
+    # )
     b <- list(
         x = Basis$TotCatch,
         y = Basis$F,
@@ -1217,22 +1217,102 @@ catch_scenarios_plot2 <- function(tmp) {
     fig_catch <- fig_catch %>% layout(
         yaxis2 = ay,
         xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)) # ,tickfont = list(color = "red", size = 20)
+        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+        hovermode = 'x'
+         # ,tickfont = list(color = "red", size = 20)
         #   annotations = a
     )
-    fig_catch <- fig_catch %>% layout(
-        annotations = a
-    )
+    # fig_catch <- fig_catch %>% layout(
+    #     annotations = a
+    # )
     fig_catch <- fig_catch %>% layout(
         annotations = b
     )
     fig_catch <- fig_catch %>% layout(
-      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.5, y = 1)
+      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.5, y = 0.1)
     )
+    
     # fig_catch <- fig_catch %>% layout(
     #     annotations = d
     # )
-    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 4))
+    
+    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 8))
 
-    fig_catch
+    # fig_catch
+}
+
+TAC_timeline <- function(catches_data, catch_scenario_table) {
+    catches_data <- catches_data %>% select(Year, catches)
+    catches_data <- catches_data %>% add_column(cat = "Historical_TAC")
+    catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
+    catches_data <- setNames(catches_data, names(catch_scenario_table))
+    final_df <- rbind(catches_data, catch_scenario_table)
+
+
+    # mypalette <- terrain.colors(length(unique(final_df$cat)))
+    catch_time <- plot_ly(final_df, source = "ranking",
+        x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", showlegend = T, # linetype = ~cat,
+        color = ~cat#, colors = mypalette)
+     )
+    
+    # catch_time <- plot_ly(final_df) %>%
+    #     add_trace(data = final_df %>% filter(cat =="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat == "Historical", colors = "black") %>%
+    #     add_trace(data = final_df %>% filter(cat !="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat != "Historical", colors = mypalette)
+    
+    
+    catch_time <- catch_time %>% layout(
+        xaxis = list(title = "<b>Years</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+        yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 30), tickfont = list(size = 30))
+    )
+}
+
+
+get_advice_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
+    ## this gets the initial dates from the advice view
+    timeL <- get_Advice_View_info(stock_code)
+
+    release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
+    applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
+    applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
+
+    ## This block formats the dates from dd/mm/yyy to Yyyy-mm-dd
+    release_date <- strptime(as.character(release_date), "%d/%m/%Y")
+    release_date <- format(release_date, "%Y-%m-%d")
+    applicable_from <- strptime(as.character(applicable_from), "%d/%m/%Y")
+    applicable_from <- format(applicable_from, "%Y-%m-%d")
+    applicable_until <- strptime(as.character(applicable_until), "%d/%m/%Y")
+    applicable_until <- format(applicable_until, "%Y-%m-%d")
+
+
+    ## This block gets the name of the working group from the currently selected row
+    filtered_row <- tbl_sid[tbl_rows_selected, ]
+    WG <- filtered_row$ExpertGroupUrl
+    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+
+    ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
+    page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
+    
+    start_date <- page %>%
+        html_nodes("td") %>%
+        html_text()
+
+    title_meeting <- start_date[1]
+    ## This block extracts and formats the dates as above
+    start_WG <- strapplyc(start_date[2], "\\d+/\\d+/\\d+", simplify = TRUE)
+    end_WG <- strapplyc(start_date[3], "\\d+/\\d+/\\d+", simplify = TRUE)
+    start_WG <- strptime(as.character(start_WG), "%d/%m/%Y")
+    start_WG <- format(start_WG, "%Y-%m-%d")
+    end_WG <- strptime(as.character(end_WG), "%d/%m/%Y")
+    end_WG <- format(end_WG, "%Y-%m-%d")
+
+    ## This blocks create the df that timevis will display
+    data <- data.frame(
+        id      = 1:3,
+        content = c("Advice Release Date", "Advice Applicable Between", title_meeting),
+        start   = c(release_date, applicable_from, start_WG),
+        end     = c(NA, applicable_until, end_WG)
+    )
+
+
+    return(data)
 }

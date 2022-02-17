@@ -93,9 +93,27 @@ createLink_expert_group <- function(ExpertGroup) {
   paste0("<a href='","https://www.ices.dk/community/groups/Pages/", ExpertGroup, ".aspx", "' target='_blank'>", ExpertGroup,"</a>")
 }
 
+match_stockcode_to_illustration <- function(StockKeyLabel, df) {
+  
+  df_temp <- data.frame(matrix(NA, nrow = dim(df)[1], ncol = 1))
+  colnames(df_temp) <- "Ill_file"
+  
+  for (i in 1:dim(df)[1]) {
+    temp <- list.files("../temp/www", pattern = substr(df$StockKeyLabel[i], 1, 3))
+    if (identical(temp, character(0))) {
+      temp <- "fish.png"
+    }
+    # a$stock[i] <- df$StockKeyLabel[i]
+    df_temp$Ill_file[i] <- temp
+    # print(df$StockKeyLabel[i])
+  }
+  return(df_temp$Ill_file)
+}
+
 sid_table_links <- function(df){
-  fish_icon <- '<img src="hke.png" height=30>'
-  df$icon <- fish_icon
+  
+  df$icon <- paste0('<img src=', "'", match_stockcode_to_illustration(df$StockKeyLabel, df), "'", ' height=40>') 
+  # reference fish icon place holder <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a>
   df$advice_url <- createLink_advice_pdf(df$StockKeyLabel, df$YearOfLastAssessment)
   df$group_url <- createLink_expert_group(df$ExpertGroup)
   return(df)

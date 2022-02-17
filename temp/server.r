@@ -50,23 +50,23 @@ server <- function(input, output, session) {
       selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
       print(selected_1$groups)
       proxy_1 %>%
-        showGroup(group = input$map1_shape_click$id) %>%
-        setView(
-          lng = sf_cent[idx_1, 1],
-          lat = sf_cent[idx_1, 2],
-          zoom = 3
-        )
+        showGroup(group = input$map1_shape_click$id) #%>%
+        # setView( ## zoom in
+        #   lng = sf_cent[idx_1, 1],
+        #   lat = sf_cent[idx_1, 2],
+        #   zoom = 3
+        # )
 
       # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
     } else {
       selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
       proxy_1 %>%
-        hideGroup(group = input$map1_shape_click$group) %>%
-        setView(
-          lng = sf_cent_map[1],
-          lat = sf_cent_map[2],
-          zoom = 1
-        )
+        hideGroup(group = input$map1_shape_click$group) #%>%
+        # setView( ## zoom out
+        #   lng = sf_cent_map[1],
+        #   lat = sf_cent_map[2],
+        #   zoom = 1
+        # )
     }
     updateSelectizeInput(session,
       inputId = "selected_locations",
@@ -305,7 +305,7 @@ server <- function(input, output, session) {
     list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
   })
 
-  ######################### Advice panel
+  ######################### Stock development over time
 
   output$all_plots <- renderPlotly({
     data_list <- advice_action()
@@ -371,7 +371,7 @@ output$Advice_Sentence <- renderUI({
 
 ##### catch scenarios table
 catch_scenario_table <- eventReactive(query$stockkeylabel, {
-  get_catch_scenario_table(query$stockkeylabel)
+  standardize_catch_scenario_table(get_catch_scenario_table(query$stockkeylabel))
 })
 
 output$catch_scenario_table <- DT::renderDT(
@@ -396,6 +396,64 @@ output$catch_scenario_table <- DT::renderDT(
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(standardize_catch_scenario_table(catch_scenario_table())))
-output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(standardize_catch_scenario_table(catch_scenario_table())))
+output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
+output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+
+
+##### new tab in development left side
+output$Advice_Sentence2 <- renderUI({
+  HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+})
+
+output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
+
+### right side
+output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected)))
+
+output$table <- DT::renderDT(
+    arrange(catch_scenario_table(),F) %>% select(-Year),
+    selection="single", class="display",
+    caption = "Catch Scenario Table",
+    rownames= FALSE,
+    options = list(
+        dom = 't',
+      pageLength = 100
+      # columnDefs = list(list(visible=FALSE, targets=c(1)))
+      ),
+      callback = JS("
+                              table.on('mouseover', 'td', function() {
+                              $(this).parent().addClass('hover')
+                              });
+                              table.on('mouseout', 'td', function() {
+                              $(this).parent().removeClass('hover')
+                              });
+                         return table;
+                          ")
+)
+
+# tableProxy ##
+table_proxy = dataTableProxy('table')
+
+selected_scenario <- reactive({
+      if (is.null(event_data("plotly_hover", source = "ranking")))
+        return(NULL)
+      event_data("plotly_hover", source = "ranking")
+      })
+    
+    observe({
+      selectRows(table_proxy, selected=(selected_scenario()[[2]]+1))
+    })
+
+
+
+
+ observeEvent(input$tbl_rows_selected, {
+    filtered_row <- res_mod()[input$tbl_rows_selected, ]
+    WG <- filtered_row$ExpertGroupUrl
+    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+    print(WG)
+    
+})
+
 }
