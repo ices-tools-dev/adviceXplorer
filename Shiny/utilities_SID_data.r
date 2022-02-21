@@ -2,6 +2,40 @@
 Year <- c(2017, 2018, 2019, 2020, 2021)
 Years <- data.frame(Year)
 
+
+# this list is temporary, it is just to limit the searches to the stocks already in advice_view
+advice_view_stocks <- c(
+  "cod.27.5a",
+  "cod.21.1",
+  "cod.27.47d20",
+  "had.27.7a",
+  "had.27.6b",
+  "had.27.7b-k",
+  "had.27.46a20",
+  "had.27.1-2",
+  "her.27.irls",
+  "her.27.20-24",
+  "her.27.nirs",
+  "her.27.3a47d",
+  "nop.27.3a4",
+  "ple.27.420",
+  "ple.27.7d",
+  "ple.27.7a",
+  "pok.27.3a46",
+  "pok.27.1-2",
+  "san.sa.1r",
+  "san.sa.2r",
+  "san.sa.3r",
+  "san.sa.4",
+  "sol.27.4",
+  "spr.27.3a4",
+  "tur.27.4",
+  "whg.27.47d",
+  "wit.27.3a47d"
+)
+
+
+
 #### create a function to get SID
 
 download_SID <- function(Year) {
@@ -15,6 +49,7 @@ download_SID <- function(Year) {
   #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
   stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
 
+  stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks)
   # ### loop through the stock labels and find the corresponding iceas areas, add these to a column
   # for (i in 1:dim(stock_list_all)[1]) {
   #   tryCatch(

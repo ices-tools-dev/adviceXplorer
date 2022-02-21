@@ -1,3 +1,4 @@
+options(icesSAG.use_token = TRUE)
 update_SAG <- function(year){
     mkdir(paste("SAG_", year))
     summary <- load_sag_summary(year)

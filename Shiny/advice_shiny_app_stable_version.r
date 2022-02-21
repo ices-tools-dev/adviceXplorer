@@ -29,6 +29,7 @@ library(icesTAF)
 library(timevis)
 library(rvest)
 library(gsubfn)
+library(stringr)
 
 # required if using most recent version of sf
 sf::sf_use_s2(FALSE)

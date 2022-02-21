@@ -122,7 +122,7 @@ navbarPage(
     tags$style(type = "text/css", "p {font-size: 21px;}"),
     tags$style(type = "text/css", "body {padding-top: 70px;}"),
     tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
-    theme = shinytheme("united"),  ##### need to work on this, the orange is part of the css theme united, check bslib in forked repo
+    theme = shinytheme("cerulean"),  ##### need to work on this, the orange is part of the css theme united, check bslib in forked repo
     position = "fixed-top",
     tags$script(HTML("var header = $('.navbar > .container-fluid');
 header.append('<div style=\"float:right\"><a href=\"https://github.com/ices-tools-dev/online-advice\"><img src=\"GitHub-Mark-32px.png\" alt=\"alt\" style=\"margin-top: -14px; padding-right:5px;padding-top:25px;\"></a></div>');

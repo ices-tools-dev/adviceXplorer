@@ -1123,7 +1123,7 @@ catch_scenarios_plot2 <- function(tmp) {
         ) %>% lapply(htmltools::HTML)
     
     # F0 <- tmp[tmp$cat == "F = 0", ] taking this out because spmetimes F0 is not present
-    Basis <- tmp[tmp$cS_Purpose == "BasisAdvice",]
+    Basis <- tmp[tmp$cS_Purpose == "BasisOfAdvice",]
 
     fig_catch <- plot_ly(tmp, source = "ranking") %>%
         add_trace(
@@ -1229,7 +1229,7 @@ catch_scenarios_plot2 <- function(tmp) {
         annotations = b
     )
     fig_catch <- fig_catch %>% layout(
-      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.5, y = 0.1)
+      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.1, y = 0.5)
     )
     
     # fig_catch <- fig_catch %>% layout(
