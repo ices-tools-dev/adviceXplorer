@@ -225,7 +225,13 @@ server <- function(input, output, session) {
     options = list(
       dom = "Bfrtip",
       pageLength = 1000,
-      buttons = c("csv"),
+      # buttons = c("csv","xls"),
+      buttons =
+        list("copy", "print", list(
+          extend = "collection",
+          buttons = c("csv", "excel"),
+          text = "Download"
+        )),
       # rownames = FALSE,
       columnDefs = list(
         # list(
@@ -438,17 +444,23 @@ output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$sto
 output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected)))
 
 output$table <- DT::renderDT(
-    arrange(catch_scenario_table(),F) %>% select(-Year),
-    selection="single", 
-    class="display",
-    caption = "Catch Scenario Table",
-    rownames= FALSE,
-    options = list(
-        dom = 't',
-      pageLength = 100
-      # columnDefs = list(list(visible=FALSE, targets=c(1)))
-      ),
-      callback = JS("table.on('mouseover', 'td', function() {
+  arrange(catch_scenario_table(), F) %>% select(-Year),
+  selection = "single",
+  class = "display",
+  caption = "Catch Scenario Table",
+  rownames = FALSE,
+  options = list(
+    dom = "Bfrtip",
+    pageLength = 100,
+    buttons =
+      list("copy", "print", list(
+        extend = "collection",
+        buttons = c("csv", "excel"),
+        text = "Download"
+      ))
+    # columnDefs = list(list(visible=FALSE, targets=c(1)))
+  ),
+  callback = JS("table.on('mouseover', 'td', function() {
                               $(this).parent().addClass('hover')
                               });
                               table.on('mouseout', 'td', function() {
