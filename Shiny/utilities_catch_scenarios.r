@@ -233,10 +233,11 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
 # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat","cS_Purpose", "F", "TotCatch", "TACchange", "ADVICEchange", "SSB", "SSBchange")
+  colnames(tmp_unified) <- c("Year", "cat","cS_Purpose", "F", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
 
 #   tmp_unified <- tmp_unified %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0, SSB = 0)))
-  tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "BasisOfAdvice")
+  tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
+  tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
 
   return(tmp_unified)
   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
