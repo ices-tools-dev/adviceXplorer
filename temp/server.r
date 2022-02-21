@@ -226,7 +226,7 @@ server <- function(input, output, session) {
       dom = "Bfrtip",
       pageLength = 1000,
       buttons = c("csv"),
-      rownames = FALSE,
+      # rownames = FALSE,
       columnDefs = list(
         # list(
         #   targets = 4,
@@ -249,6 +249,22 @@ server <- function(input, output, session) {
         list(visible = FALSE, targets = c(0, 1, 6))
       )
     )
+    # callback=JS(
+    #   'table.on("mouseover","td", function() {
+    #   $(".small-img").hover(function() {
+    #       $(this).css("transform", "scale(3, 3)");
+    #     }, function(){
+    #           $(this).css("transform", "none");
+    #     });
+    #   })')
+    # callback = JS("table.on('mouseover', 'tr', function() {
+    #                           $(.small-img).hover(function() {
+    #                             $(this).css(transform,scale(3,3));
+    #                             }, function() {
+    #                               $(this).css(transform, none);
+    #                               });
+    #                               })"
+    #                           )
   )
 
   ## process selection
@@ -423,7 +439,8 @@ output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockk
 
 output$table <- DT::renderDT(
     arrange(catch_scenario_table(),F) %>% select(-Year),
-    selection="single", class="display",
+    selection="single", 
+    class="display",
     caption = "Catch Scenario Table",
     rownames= FALSE,
     options = list(
@@ -431,8 +448,7 @@ output$table <- DT::renderDT(
       pageLength = 100
       # columnDefs = list(list(visible=FALSE, targets=c(1)))
       ),
-      callback = JS("
-                              table.on('mouseover', 'td', function() {
+      callback = JS("table.on('mouseover', 'td', function() {
                               $(this).parent().addClass('hover')
                               });
                               table.on('mouseout', 'td', function() {

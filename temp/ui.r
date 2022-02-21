@@ -17,6 +17,11 @@ navbarPage(
                          ("#table tr:hover {
 	                          background-color: rgba(240, 136, 33, 0.4) !important;
                             }"))),
+
+    # tags$head(tags$style(HTML(
+    #     "img.small-img {
+    #     max-width: 75px;
+    #     }"))),
     #tabsetPanel(#id = "tabset",
     tabPanel(
         "Data Filtering",
