@@ -141,7 +141,7 @@ get_catch_scenario_table <- function(stock_name) {
 # }
 
 standardize_catch_scenario_table <- function(tmp) {
-  tmp$Year <- 2022
+  tmp$Year <- 2021
   ###################################### code tests to try to accept as many catch scen tables headings
 
   tmp_unified <- data.frame()

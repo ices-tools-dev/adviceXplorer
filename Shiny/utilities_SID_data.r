@@ -42,6 +42,7 @@ download_SID <- function(Year) {
   stock_list_all <- jsonlite::fromJSON(
     URLencode(
       sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published", Year)
+      # sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s", Year)
       # "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
       # "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published"
     )
@@ -50,6 +51,9 @@ download_SID <- function(Year) {
   stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
 
   stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks)
+  
+  
+  
   # ### loop through the stock labels and find the corresponding iceas areas, add these to a column
   # for (i in 1:dim(stock_list_all)[1]) {
   #   tryCatch(
@@ -116,7 +120,7 @@ separate_ecoregions <- function(stock_list_all) {
   return(mydf_long)
 }
 
-# stock_list_long <- separate_ecoregions(stock_list_all)
+
 
 
 createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
