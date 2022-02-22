@@ -20,10 +20,10 @@ access_sag_data <- function(stock_code, year) {
 access_sag_data_local <- function(stock_code, year) {
 
     # Dowload the data
-    df_summary <- read.csv(sprintf("D:/Profile/Documents/GitHub/online-advice/SAG_ %s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
+    df_summary <- read.csv(sprintf("../SAG_ %s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
     SAGsummary <- df_summary %>% filter(fishstock == stock_code)
     
-    df_refpts <- read.csv(sprintf("D:/Profile/Documents/GitHub/online-advice/SAG_ %s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
+    df_refpts <- read.csv(sprintf("../SAG_ %s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
     SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
     
 
