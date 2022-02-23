@@ -1243,27 +1243,58 @@ catch_scenarios_plot2 <- function(tmp) {
 
 TAC_timeline <- function(catches_data, catch_scenario_table) {
     catches_data <- catches_data %>% select(Year, catches)
-    catches_data <- catches_data %>% add_column(cat = "Historical_TAC")
+    catches_data <- catches_data %>% add_column(cat = "Historical Catches")
     catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
+
+    catches_data_year_before <- catches_data
+    catches_data_year_before$Year <- 2020
+    catches_data_year_before$TotCatch <- catches_data$catches[catches_data$Year == 2020]
+
     catches_data <- setNames(catches_data, names(catch_scenario_table))
-    final_df <- rbind(catches_data, catch_scenario_table)
+    final_df <- rbind(catches_data,catches_data_year_before, catch_scenario_table)
+
+    catch_time <- plot_ly(final_df,
+        x = ~Year,
+        y = ~TotCatch
+    ) %>%
+        filter(cat %in% input$scenarios) %>%
+        group_by(cat) %>%
+        add_trace(
+            x = ~Year,
+            y = ~TotCatch,
+            type = "scatter",
+            mode = "lines+markers",
+            color = ~cat
+        )
+    catch_time <- catch_time %>% layout(
+        xaxis = list(
+            title = "<b>Years</b>",
+            titlefont = list(size = 25),
+            tickfont = list(size = 20)
+        ),
+        yaxis = list(
+            title = "<b>Catches (tonnes)</b>",
+            titlefont = list(size = 25),
+            tickfont = list(size = 20)
+        )
+    )
 
 
     # mypalette <- terrain.colors(length(unique(final_df$cat)))
-    catch_time <- plot_ly(final_df, source = "ranking",
-        x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", showlegend = T, # linetype = ~cat,
-        color = ~cat#, colors = mypalette)
-     )
+    # catch_time <- plot_ly(final_df, #source = "ranking",
+    #     x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", showlegend = T, # linetype = ~cat,
+    #     color = ~cat#, colors = mypalette)
+    #  )
     
-    # catch_time <- plot_ly(final_df) %>%
-    #     add_trace(data = final_df %>% filter(cat =="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat == "Historical", colors = "black") %>%
-    #     add_trace(data = final_df %>% filter(cat !="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat != "Historical", colors = mypalette)
+    # # catch_time <- plot_ly(final_df) %>%
+    # #     add_trace(data = final_df %>% filter(cat =="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat == "Historical", colors = "black") %>%
+    # #     add_trace(data = final_df %>% filter(cat !="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat != "Historical", colors = mypalette)
     
     
-    catch_time <- catch_time %>% layout(
-        xaxis = list(title = "<b>Years</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 30), tickfont = list(size = 30))
-    )
+    # catch_time <- catch_time %>% layout(
+    #     xaxis = list(title = "<b>Years</b>", titlefont = list(size = 25), tickfont = list(size = 20)),
+    #     yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 25), tickfont = list(size = 20))
+    # )
 }
 
 
