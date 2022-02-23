@@ -462,13 +462,13 @@ output$catch_scenarios <- renderUI({
       )
 })
 
-output$TAC_timeline <- renderPlotly({
-    plot_ly(test_table(), x = ~Year, y = ~TotCatch) %>%
-      filter(cat %in% input$catch_choice) %>%
-      group_by(cat) %>%
-      add_trace(x = ~Year, y = ~TotCatch, type = 'scatter', mode = 'lines+markers', color = ~cat)
-  })
-# output$TAC_timeline <- renderPlotly(TAC_timeline(catches_AND_scenarios_table(),input$catch_scenarios))
+# output$TAC_timeline <- renderPlotly({
+#     plot_ly(test_table(), x = ~Year, y = ~TotCatch) %>%
+#       filter(cat %in% input$catch_choice) %>%
+#       group_by(cat) %>%
+#       add_trace(x = ~Year, y = ~TotCatch, type = 'scatter', mode = 'lines+markers', color = ~cat)
+#   })
+output$TAC_timeline <- renderPlotly(TAC_timeline(test_table(),input$catch_choice))
 # output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
 
 ### right side
