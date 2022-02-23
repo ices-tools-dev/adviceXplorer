@@ -1241,23 +1241,33 @@ catch_scenarios_plot2 <- function(tmp) {
     # fig_catch
 }
 
-TAC_timeline <- function(catches_data, catch_scenario_table) {
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     catches_data <- catches_data %>% select(Year, catches)
     catches_data <- catches_data %>% add_column(cat = "Historical Catches")
     catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
-    catches_data_year_before <- catches_data
+    catches_data_year_before <- catch_scenario_table
     catches_data_year_before$Year <- 2020
     catches_data_year_before$TotCatch <- catches_data$catches[catches_data$Year == 2020]
 
+    # print(catches_data)
+    # print(catch_scenario_table)
+    # print(catches_data_year_before)
+
     catches_data <- setNames(catches_data, names(catch_scenario_table))
-    final_df <- rbind(catches_data,catches_data_year_before, catch_scenario_table)
+    final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
+    return(final_df)
+}
+
+
+TAC_timeline <- function(final_df, catch_scenarios) {
+    
 
     catch_time <- plot_ly(final_df,
         x = ~Year,
         y = ~TotCatch
     ) %>%
-        filter(cat %in% input$scenarios) %>%
+        filter(cat %in% catch_scenarios) %>%
         group_by(cat) %>%
         add_trace(
             x = ~Year,

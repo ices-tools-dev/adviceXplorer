@@ -437,8 +437,39 @@ output$Advice_Sentence2 <- renderUI({
   HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 })
 
+### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
-output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
+
+# catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
+# # print(query$stockkeylabel)
+#   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+# })
+
+test_table <- eventReactive(catch_scenario_table(),{
+  req(query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+})
+output$catch_scenarios <- renderUI({
+  # req(query$stockkeylabel, query$year, catch_scenario_table())
+  # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+  
+  selectizeInput(
+        inputId = "catch_choice",
+        label = "Select a scenario",
+        choices = unique(test_table()$cat),
+        selected = "Historical Catches",
+        multiple = TRUE
+      )
+})
+
+output$TAC_timeline <- renderPlotly({
+    plot_ly(test_table(), x = ~Year, y = ~TotCatch) %>%
+      filter(cat %in% input$catch_choice) %>%
+      group_by(cat) %>%
+      add_trace(x = ~Year, y = ~TotCatch, type = 'scatter', mode = 'lines+markers', color = ~cat)
+  })
+# output$TAC_timeline <- renderPlotly(TAC_timeline(catches_AND_scenarios_table(),input$catch_scenarios))
+# output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
 
 ### right side
 output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected)))

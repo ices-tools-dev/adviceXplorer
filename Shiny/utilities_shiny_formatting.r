@@ -178,13 +178,15 @@ catch_scenarios_left_panel <- sidebarPanel(
     fillPage(
       tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
 
+      
       # selectizeInput(
-      #   inputId = "scenarios",
+      #   inputId = "catch_scenarios",
       #   label = "Select a scenario",
-      #   choices = unique(final_df$cat),
-      #   selected = "Historical Catches",
+      #   choices = NULL,
+      #   selected = NULL,
       #   multiple = TRUE
       # ),
+      uiOutput("catch_scenarios"),
       plotlyOutput("TAC_timeline", height = "45%", width = "100%")
     )
   )
