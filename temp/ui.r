@@ -8,8 +8,8 @@ navbarPage(
     title =
         shiny::div(img(
             src = "ICES_logo.PNG",
-            style = "margin-top: -14px; padding-right:10px;padding-bottom:10px",
-            height = 60
+            style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
+            height = 50
         )),
 
     useShinyjs(),
