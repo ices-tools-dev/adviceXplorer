@@ -438,7 +438,15 @@ output$Advice_Sentence2 <- renderUI({
 })
 
 ### F_SSB and chatches plot linked to table
-output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+output$catch_scenario_plot_3 <- renderPlotly({
+  data_list <- advice_action()
+  rv <- reactiveValues(
+    catches_df = data_list$catches,
+    f_df = data_list$f,
+    SSB_df = data_list$SSB
+  )
+  catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+})
 
 # catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
 # # print(query$stockkeylabel)
@@ -462,14 +470,15 @@ output$catch_scenarios <- renderUI({
       )
 })
 
-# output$TAC_timeline <- renderPlotly({
-#     plot_ly(test_table(), x = ~Year, y = ~TotCatch) %>%
-#       filter(cat %in% input$catch_choice) %>%
-#       group_by(cat) %>%
-#       add_trace(x = ~Year, y = ~TotCatch, type = 'scatter', mode = 'lines+markers', color = ~cat)
-#   })
-output$TAC_timeline <- renderPlotly(TAC_timeline(test_table(),input$catch_choice))
-# output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
+
+output$TAC_timeline <- renderPlotly({
+  data_list <- advice_action()
+  rv <- reactiveValues(
+    catches_df = data_list$catches,
+  )
+  TAC_timeline(test_table(), input$catch_choice, rv$catches_df$units)
+})
+
 
 ### right side
 output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected)))
