@@ -141,7 +141,7 @@ get_catch_scenario_table <- function(stock_name) {
 # }
 
 standardize_catch_scenario_table <- function(tmp) {
-  tmp$Year <- 2022
+  tmp$Year <- 2021
   ###################################### code tests to try to accept as many catch scen tables headings
 
   tmp_unified <- data.frame()
@@ -241,4 +241,24 @@ standardize_catch_scenario_table <- function(tmp) {
 
   return(tmp_unified)
   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
+}
+
+
+
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
+    catches_data <- catches_data %>% select(Year, catches)
+    catches_data <- catches_data %>% add_column(cat = "Historical Catches")
+    catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
+
+    catches_data_year_before <- catch_scenario_table
+    catches_data_year_before$Year <- 2020
+    catches_data_year_before$TotCatch <- catches_data$catches[catches_data$Year == 2020]
+
+    # print(catches_data)
+    # print(catch_scenario_table)
+    # print(catches_data_year_before)
+
+    catches_data <- setNames(catches_data, names(catch_scenario_table))
+    final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
+    return(final_df)
 }

@@ -437,8 +437,48 @@ output$Advice_Sentence2 <- renderUI({
   HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 })
 
-output$catch_scenario_plot_3 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
-output$TAC_timeline <- renderPlotly(TAC_timeline(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table()))
+### F_SSB and chatches plot linked to table
+output$catch_scenario_plot_3 <- renderPlotly({
+  data_list <- advice_action()
+  rv <- reactiveValues(
+    catches_df = data_list$catches,
+    f_df = data_list$f,
+    SSB_df = data_list$SSB
+  )
+  catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+})
+
+# catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
+# # print(query$stockkeylabel)
+#   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+# })
+
+test_table <- eventReactive(catch_scenario_table(),{
+  req(query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+})
+output$catch_scenarios <- renderUI({
+  # req(query$stockkeylabel, query$year, catch_scenario_table())
+  # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+  
+  selectizeInput(
+        inputId = "catch_choice",
+        label = "Select a scenario",
+        choices = unique(test_table()$cat),
+        selected = "Historical Catches",
+        multiple = TRUE
+      )
+})
+
+
+output$TAC_timeline <- renderPlotly({
+  data_list <- advice_action()
+  rv <- reactiveValues(
+    catches_df = data_list$catches,
+  )
+  TAC_timeline(test_table(), input$catch_choice, rv$catches_df$units)
+})
+
 
 ### right side
 output$advice_timeline <- renderTimevis(timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected)))

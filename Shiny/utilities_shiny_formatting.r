@@ -158,7 +158,7 @@ selectize_panel <-
 
 
 catch_scenarios_left_panel <- sidebarPanel(
-  width = 6, style = "max-height: 95vh; overflow-y: auto;",
+  width = 6, style = "max-height: 90vh; overflow-y: auto;",
   panel(
     title = "Headline advice",
     fillPage(
@@ -170,14 +170,24 @@ catch_scenarios_left_panel <- sidebarPanel(
     title = "Catch_scenario_F_SSB",
     fillPage(
       tags$style(type = "text/css", "#catch_scenario_plot_3  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-      plotlyOutput("catch_scenario_plot_3", height = "45%", width = "100%")
+      plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%")
     )
   ),
   panel(
     title = "TAC_timeline",
     fillPage(
-      tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), #{height:calc(20vh - 10px); width: calc(100vw - 10px);
-      plotlyOutput("TAC_timeline", height = "45%", width = "100%")
+      tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+
+      
+      # selectizeInput(
+      #   inputId = "catch_scenarios",
+      #   label = "Select a scenario",
+      #   choices = NULL,
+      #   selected = NULL,
+      #   multiple = TRUE
+      # ),
+      uiOutput("catch_scenarios"),
+      plotlyOutput("TAC_timeline", height = "20%", width = "100%")
     )
   )
 )

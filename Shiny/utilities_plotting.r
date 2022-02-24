@@ -963,7 +963,7 @@ catch_scenarios_plot1 <- function(tmp) {
     tmp_scaled <- tmp %>%
         select(-Year) %>%
         mutate_if(is.numeric, rescale_function)
-    tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSBchange")
+    tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSB change")
     # zz <- ggplotly(
     #     ggradar(tmp_scaled %>% select(-cS_Purpose), 
     #     values.radar = c("0%", "50%", "100%"), 
@@ -1107,14 +1107,16 @@ catch_scenarios_plot1 <- function(tmp) {
 # }
 
 
-catch_scenarios_plot2 <- function(tmp) {
+catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSizeDescription, stockSizeUnits, units) {
     # tmp$Year <- 2022
 
     # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
 
     # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
     # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
-
+    F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+    SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
+    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
     # sc <- head(tmp2$cat)
     tmp <- arrange(tmp, F)
 
@@ -1136,12 +1138,13 @@ catch_scenarios_plot2 <- function(tmp) {
             name = "F"
         )
     ay <- list(
-        tickfont = list(color = "#ff7300", size = 20),
+        # tickfont = list(color = "#000000", size = 20),
         overlaying = "y",
         side = "right",
-        title = "<b>SSB</b>",
-        titlefont = list(color = "#ff7300", size = 30),
-        tickfont = list(size = 30)
+        title = SSB_yaxis_label,
+        # titlefont = list(color = "#ff7300", size = 30),
+        titlefont = titlefont_format(),
+        tickfont = tickfont_format()
     )
     fig_catch <- fig_catch %>% add_trace(
         x = ~ TotCatch,
@@ -1177,12 +1180,13 @@ catch_scenarios_plot2 <- function(tmp) {
         xref = "x",
         yref = "y",
         showarrow = TRUE,
+        arrowcolor = "#999999",
         arrowhead = 15,
-        ax = 10,
-        ay = -100, font = list(
-            color = "#000000",
+        ax = 7,
+        ay = -50, font = list(
+            color = "#999999",
             family = "sans serif",
-            size = 25
+            size = 20
         )
     )
 
@@ -1214,55 +1218,127 @@ catch_scenarios_plot2 <- function(tmp) {
     #                               family = 'sans serif',
     #                               size = 30)
     # )
+
     fig_catch <- fig_catch %>% layout(
+        # title = "Catches",
+        paper_bgcolor = "rgb(246,250,251)",
+        plot_bgcolor = "rgb(255,255,255)",
+        hovermode = "x",
         yaxis2 = ay,
-        xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        yaxis = list(title = "<b>F</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        hovermode = 'x'
-         # ,tickfont = list(color = "red", size = 20)
-        #   annotations = a
+        annotations = b,
+        legend = list(
+            font = list(size = 20, 
+            color = "black"),
+            bgcolor = "rgba(255,255,255, 0.2)",
+            x = 0.1,
+            y = 0.5
+        ),
+        autosize = T,
+        margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
+        xaxis = list(
+            title = catches_yaxis_label,
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format(),
+            showticklabels = TRUE
+        ),
+        yaxis = list(
+            title = F_yaxis_label, # "SSB",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
     )
+
     # fig_catch <- fig_catch %>% layout(
-    #     annotations = a
+    #     yaxis2 = ay,
+    #     # xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
+    #     yaxis = list(title = F_yaxis_label, titlefont = list(size = 30), tickfont = list(size = 30)),
+    #     hovermode = 'x'
+    #      # ,tickfont = list(color = "red", size = 20)
+    #     #   annotations = a
     # )
-    fig_catch <- fig_catch %>% layout(
-        annotations = b
-    )
-    fig_catch <- fig_catch %>% layout(
-      legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.1, y = 0.5)
-    )
-    
+    # # fig_catch <- fig_catch %>% layout(
+    # #     annotations = a
+    # # )
     # fig_catch <- fig_catch %>% layout(
-    #     annotations = d
+    #     annotations = b
+    # )
+    # fig_catch <- fig_catch %>% layout(
+    #   legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.1, y = 0.5)
     # )
     
-    fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 8))
+    # # fig_catch <- fig_catch %>% layout(
+    # #     annotations = d
+    # # )
+    
+    # fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 8))
 
     # fig_catch
 }
 
-TAC_timeline <- function(catches_data, catch_scenario_table) {
-    catches_data <- catches_data %>% select(Year, catches)
-    catches_data <- catches_data %>% add_column(cat = "Historical_TAC")
-    catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
-    catches_data <- setNames(catches_data, names(catch_scenario_table))
-    final_df <- rbind(catches_data, catch_scenario_table)
 
+TAC_timeline <- function(final_df, catch_scenarios, units) {
+    
+    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
 
-    # mypalette <- terrain.colors(length(unique(final_df$cat)))
-    catch_time <- plot_ly(final_df, source = "ranking",
-        x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", showlegend = T, # linetype = ~cat,
-        color = ~cat#, colors = mypalette)
-     )
-    
-    # catch_time <- plot_ly(final_df) %>%
-    #     add_trace(data = final_df %>% filter(cat =="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat == "Historical", colors = "black") %>%
-    #     add_trace(data = final_df %>% filter(cat !="Historical"), x = ~Year, y = ~TotCatch, type = "scatter", mode = "lines+markers", color = ~cat != "Historical", colors = mypalette)
-    
+    catch_time <- plot_ly(final_df,
+        x = ~Year,
+        y = ~TotCatch
+    ) %>%
+        filter(cat %in% catch_scenarios) %>%
+        group_by(cat) %>%
+        add_trace(
+            x = ~Year,
+            y = ~TotCatch,
+            type = "scatter",
+            mode = "lines+markers",
+            color = ~cat
+        )
+    # catch_time <- catch_time %>% layout(
+    #     xaxis = list(
+    #         title = "<b>Years</b>",
+    #         titlefont = list(size = 25),
+    #         tickfont = list(size = 20)
+    #     ),
     
     catch_time <- catch_time %>% layout(
-        xaxis = list(title = "<b>Years</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-        yaxis = list(title = "<b>Catches (tonnes)</b>", titlefont = list(size = 30), tickfont = list(size = 30))
+        # title = "Catches",
+        paper_bgcolor = "rgb(246,250,251)",
+        plot_bgcolor = "rgb(255,255,255)",
+
+        xaxis = list(
+            title = "Years",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format(),
+            showticklabels = TRUE
+        ),
+    # )
+        yaxis = list(
+            title = catches_yaxis_label, # "SSB",
+            gridcolor = "rgb(235,235,235)",
+            showgrid = TRUE,
+            showline = TRUE,
+            showticklabels = TRUE,
+            tickcolor = "rgb(127,127,127)",
+            ticks = "outside",
+            zeroline = TRUE,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
     )
 }
 
