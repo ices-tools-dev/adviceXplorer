@@ -1388,7 +1388,7 @@ get_advice_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
         start   = c(release_date, applicable_from, start_WG),
         end     = c(NA, applicable_until, end_WG)
     )
-
+    
 
     return(data)
 }
