@@ -1,3 +1,32 @@
+#' Returns data from the ICES Stock Assessment database.
+#'
+#' Downloads summary and reference points from the ICES Stock Assessment database for a specific year
+#' and places the two csv files in a year-specific folder called "SAG_xxxx" (for example: "SAG_2021")
+#'
+#' @param year the year required#'
+#'
+#' @return 2 csv files
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' years <- c(2021, 2020, 2019, 2018, 2017)
+#' for (year in years) {
+#'    update_SAG(year)
+#' }
+#' }
+#'
+#' @references
+#'
+#' The ICES stock assessment graphs Database web sevices: \url{http://standardgraphs.ices.dk/stockList.aspx}
+#' ICES Transparent Assessment Framework: \url{https://taf.ices.dk}
+#'
+#' @export
+#' 
 options(icesSAG.use_token = TRUE)
 update_SAG <- function(year){
     mkdir(paste("SAG_", year))

@@ -1,18 +1,5 @@
 ### Plotting utilities
 
-## Libraries
-library(htmlwidgets)
-library(dplyr)
-library(ggplot2)
-library(dygraphs)
-library(htmltools)
-library(widgetframe)
-library(icesSAG)
-library(plotly)
-
-
-
-
 ## Formatting axis title (titlefont)
 titlefont_format <- function() {
     f1 <- list(
@@ -44,6 +31,30 @@ legend_format <- function() {
         # y = 0.1)
 }
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ################## Plot 1 - Catches ################
 figure_1_catches <- function(data, years, catches, landings, discards) {
     #Make sure that if the column landings is empy, the column catches is plotted
@@ -94,7 +105,30 @@ figure_1_catches <- function(data, years, catches, landings, discards) {
 
 # figure_1_catches(catches, catches$Year, catches$landings, catches$discards)
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ################## Plot 2 - Recruitment ################
 figure_2_recruitment <- function(data, years, recruitment, low_recruitment, high_recruitment){
     fig2 <- plot_ly(
@@ -149,7 +183,30 @@ figure_2_recruitment <- function(data, years, recruitment, low_recruitment, high
 }
 # figure_2_recruitment(R, R$Year, R$recruitment,R$low_recruitment,R$high_recruitment)
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ################## Plot 3 - Fish Mortality ################
 figure_3_fish_mortality <- function(data, years, low_F, F, high_F, FLim, Fpa, FMSY){
     fig3 <- plot_ly(
@@ -252,7 +309,30 @@ figure_3_fish_mortality <- function(data, years, low_F, F, high_F, FLim, Fpa, FM
     }
 
 # figure_3_fish_mortality(f, f$Year, f$low_F, f$F, f$high_F, f$FLim, f$Fpa, f$FMSY)
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ################## Plot 4 - SBB ################
 figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger){
     fig4 <- plot_ly(
@@ -359,7 +439,30 @@ figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtri
 #figure_4_SSB(SSB, SSB$Year, SSB$low_SSB, SSB$SSB, SSB$high_SSB, SSB$Blim, SSB$Bpa, SSB$MSYBtrigger)
 
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 #####################Subplots quality of assessment
 quality_assessment_plots <- function(big_data, big_data_last_year,
                                         stockSizeDescription,stockSizeUnits,
@@ -584,6 +687,31 @@ fig3 <- fig3 %>% layout(
 
 # quality_assessment_plots(big_data, big_data_last_year)
 
+
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 figure_1_plots <- function(data1, data2, data3, data4, 
                             years, 
                             catches, landings, discards, units, stock_name, AssessmentYear,
@@ -940,7 +1068,30 @@ figure_1_plots <- function(data1, data2, data3, data4,
     fig
 }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ####### plots 1 catch scenarios
 catch_scenarios_plot1 <- function(tmp) {
     # tmp <- get_catch_scenario_table(stock_name = "cod.27.47d20") #ple.27.7d
@@ -1106,14 +1257,32 @@ catch_scenarios_plot1 <- function(tmp) {
 #     fig
 # }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSizeDescription, stockSizeUnits, units) {
-    # tmp$Year <- 2022
-
-    # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
-
-    # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
-    # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
+    
     F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
@@ -1259,34 +1428,33 @@ catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSi
         )
     )
 
-    # fig_catch <- fig_catch %>% layout(
-    #     yaxis2 = ay,
-    #     # xaxis = list(title = "<b>Total Catch</b>", titlefont = list(size = 30), tickfont = list(size = 30)),
-    #     yaxis = list(title = F_yaxis_label, titlefont = list(size = 30), tickfont = list(size = 30)),
-    #     hovermode = 'x'
-    #      # ,tickfont = list(color = "red", size = 20)
-    #     #   annotations = a
-    # )
-    # # fig_catch <- fig_catch %>% layout(
-    # #     annotations = a
-    # # )
-    # fig_catch <- fig_catch %>% layout(
-    #     annotations = b
-    # )
-    # fig_catch <- fig_catch %>% layout(
-    #   legend = list(font = list(size = 20, color = "#000"), bgcolor = "#ffffff", x = 0.1, y = 0.5)
-    # )
     
-    # # fig_catch <- fig_catch %>% layout(
-    # #     annotations = d
-    # # )
-    
-    # fig_catch <- fig_catch %>% layout(autosize = T,  margin=list( l = 120, r = 120, b = 120, t = 50,  pad = 8))
-
-    # fig_catch
 }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 TAC_timeline <- function(final_df, catch_scenarios, units) {
     
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
@@ -1342,7 +1510,30 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
     )
 }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 get_advice_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
     ## this gets the initial dates from the advice view
     timeL <- get_Advice_View_info(stock_code)

@@ -16,6 +16,30 @@ labels_ices_areas <- sprintf(
     ices_areas$Area_Full, ices_areas$Area_km2
 ) %>% lapply(htmltools::HTML)
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ## Map plot (this function has iceas ecor R and iceas areas as separate layers)
 map_plot <- function(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_areas) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
@@ -81,6 +105,30 @@ map_plot <- function(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_a
 }
 # map_plot(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_areas)
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 ## this second map function has only ecoregion, the map will be the updated using proxy,
 ## the colors are simpler also
 map_plot_simple <- function(shape_eco, eu_shape){
@@ -140,7 +188,30 @@ map_plot_simple <- function(shape_eco, eu_shape){
 
 
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 map_ecoregion <- function(shape_eco, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
                 # addTiles() %>%
@@ -177,6 +248,30 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                 hideGroup(group = shape_eco$Ecoregion)
 } 
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 map_ices_areas <- function(ices_areas, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
                 addPolygons(

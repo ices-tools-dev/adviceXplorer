@@ -1,5 +1,29 @@
 options(icesSAG.use_token = TRUE)
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 access_sag_data <- function(stock_code, year) {
 
     # Dowload the data
@@ -16,7 +40,30 @@ access_sag_data <- function(stock_code, year) {
     #print(data_sag %>% tibble())
 }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 access_sag_data_local <- function(stock_code, year) {
 
     # Dowload the data
@@ -33,17 +80,32 @@ access_sag_data_local <- function(stock_code, year) {
     return(data_sag)
     #print(data_sag %>% tibble())
 }
-# stock_list_all <- jsonlite::fromJSON(
-#             URLencode(
-#                 #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020&$select=AssessmentKey,DataCategory,StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, ExpertGroup"
-#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021"
-#                 #"http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$DataCategory eq 1"
-#             )
-#         )$value
-# stock_list_cat1 <- stock_list_all  %>% filter(DataCategory == "1")
-# stock_list_all  %>% tibble()
 
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 # function to dowload the quality assessemnt data
 quality_assessment_data <- function(stock_code){
 
@@ -106,7 +168,30 @@ return(df_list)
 
 
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 # function to dowload the quality assessemnt data
 quality_assessment_data_local <- function(stock_code){
 
@@ -165,31 +250,35 @@ big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear
 df_list <- list(big_data, big_data_last_year)
 return(df_list)
 }
-# list_df <- quality_assessment_data("had.27.7b-k")
-# list_df
-
-# # # # list_df_copy <-  filter(list_df[[1]], StockPublishNote == "Stock published")
-# df <-access_sag_data("had.27.7b-k", 2020)
-# df
 
 
-# stock_list_all <- jsonlite::fromJSON(
-#             URLencode(
-#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2021&$select=StockKey, StockKeyLabel, EcoRegion, SpeciesScientificName,  SpeciesCommonName, DataCategory"
-#             )
-#         )$value
 
-# stock_list_all  %>% tibble()
-# freq_Eco_region <- data.frame(table(stock_list_all$EcoRegion))
 
-# stock_list_all <- jsonlite::fromJSON(
-#             URLencode(
-#                 "http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq 2020"
-#             )
-#         )$value
 
-# ### function for getting ices_areas for each stock
-
+#' Returns ....# ### function for getting ices_areas for each stock
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 getStockAreas <- function(stockCode) {
   details <- getCodeDetail(code = stockCode, code_type = "ICES_StockCode")
   areas <- details$children$codes[details$children$code_types$Key == "ICES_Area", ]
@@ -210,31 +299,3 @@ getStockAreas <- function(stockCode) {
 # test <- sapply(stock_list_all$StockKeyLabel[1:10], getStockAreas)
 # test
 
-
-
-
-
-
-
-
-
-# library(icesSAG)
-# library(icesFO)
-# library(icesTAF)
-# update_SAG <- function(year){
-#     mkdir(paste("SAG_", year))
-#     summary <- load_sag_summary(year)
-#     write.taf(summary, file = "SAG_summary.csv", dir = paste("SAG_", year))
-
-#     refpts <- load_sag_refpts(year)
-#     write.taf(refpts, file = "SAG_refpts.csv", dir = paste("SAG_", year))
-# }
-
-
-# ## Ideally, this function would run every hour on the server to update sag
-# ## it will take several minuts to run it locally for all the years, for now I will leave this
-# # function commented out, so it does not waste time when teh app is run locally
-# years <- c(2021, 2020, 2019, 2018, 2017)
-# for (year in years) {
-#     update_SAG(year)
-# }

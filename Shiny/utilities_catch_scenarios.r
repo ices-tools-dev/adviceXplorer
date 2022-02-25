@@ -1,9 +1,29 @@
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 # Catch scenarios table
 ########################################################### tranform the sid dataframe
-
-
-# stock_name <- "cod.27.47d20"
-
 get_Advice_View_info <- function(stock_name) {
   catch_scenario_list <- jsonlite::fromJSON(
     URLencode(
@@ -26,6 +46,30 @@ get_Advice_View_info <- function(stock_name) {
   return(table_vert_adviceView)
 }
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 get_Advice_View_sentence <- function(stock_name) {
   catch_scenario_list <- jsonlite::fromJSON(
     URLencode(
@@ -39,7 +83,30 @@ catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
 return(catch_scenario_advice_sentence)
 }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 get_catch_scenario_table <- function(stock_name) {
   catch_scenario_list <- jsonlite::fromJSON(
     URLencode(
@@ -71,75 +138,32 @@ get_catch_scenario_table <- function(stock_name) {
     # unclass()
   return(catch_scenario_table)
 }
-# tibble(catch_scenario_table)
 
 
-
-
-# standardize_catch_scenario_table <- function(tmp) {
-#   tmp$Year <- 2022
-#   ###################################### code tests to try to accept as many catch scen tables headings
-
-#   tmp_unified <- data.frame()
-#   # Year
-#   pattern <- c("Year")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-
-#   tmp_unified <- tmp[, c(subset)]
-#   # tmp_unified <-unlist(tmp[,c(subset)],use.names = FALSE)
-#   # cS_Label"
-#   pattern <- c("cS_Label")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-#   # tmp_unified$cat <- tmp[,c(subset)]
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-#   # Ftotal"
-#   pattern <- c("Ftotal", "F_total", "F total")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-#   # tmp_unified$F <- tmp[,c(subset)]
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-#   # Total catch"
-#   pattern <- c("Total catch")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-#   # tmp_unified$TotCatch <- tmp[,c(subset)]
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-#   # % TAC change"
-#   pattern <- c("% TAC change", "TAC", "TAC change", "% TAC")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-#   # tmp_unified$TACchange <- tmp[,c(subset)]
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-#   # % Advice change"
-#   pattern <- c("% Advice change", "Advice change")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-#   # tmp_unified$ADVICEchange <- tmp[,c(subset)]
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-#   # SSB"
-#   pattern <- c("SSB (2021)")
-#   subset <- which(names(tmp) == pattern)
-#   if (length(subset) == 0) {
-#     pattern <- c("SSB (2020)")
-#     subset <- which(names(tmp) == pattern)
-#   }
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-
-#   # % SSB change "
-#   pattern <- c("% SSB change", "SSB change")
-#   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-#   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
-
-#   colnames(tmp_unified) <- c("Year", "cat", "F", "TotCatch", "TACchange", "ADVICEchange", "SSB", "SSBchange")
-
-#   tmp_unified <- tmp_unified %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0, SSB = 0)))
-
-#   return(tmp_unified)
-#   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
-# }
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 standardize_catch_scenario_table <- function(tmp) {
   tmp$Year <- 2021
   ###################################### code tests to try to accept as many catch scen tables headings
@@ -174,7 +198,6 @@ standardize_catch_scenario_table <- function(tmp) {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
   }
   
-
   # Total catch"
   pattern <- c("Total catch")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -206,7 +229,6 @@ standardize_catch_scenario_table <- function(tmp) {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
   }
   
-
   # SSB"
   pattern <- c("SSB (2021)")
   subset <- which(names(tmp) == pattern)
@@ -221,8 +243,6 @@ standardize_catch_scenario_table <- function(tmp) {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
   }
   
-
-
   # % SSB change "
   pattern <- c("% SSB change", "SSB change")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -244,7 +264,30 @@ standardize_catch_scenario_table <- function(tmp) {
 }
 
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     catches_data <- catches_data %>% select(Year, catches)
     catches_data <- catches_data %>% add_column(cat = "Historical Catches")
