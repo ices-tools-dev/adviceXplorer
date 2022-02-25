@@ -13,11 +13,23 @@ navbarPage(
         )),
 
     useShinyjs(),
-    tags$head(tags$style(HTML
-                         ("#table tr:hover {
+    tags$head(
+        tags$style
+        (HTML
+                         ("
+                         #table tr:hover {
 	                          background-color: rgba(240, 136, 33, 0.4) !important;
-                            }"))),
-
+                            }
+                            .leaflet-container {
+                                 background: #ffffff; 
+                                 }
+                            "
+                            )
+                            )
+                            ),
+#     tags$head(
+#     tags$style(HTML(".leaflet-container { background: #f00; }"))
+#   )
     # tags$head(tags$style(HTML(
     #     "img.small-img {
     #     max-width: 75px;
