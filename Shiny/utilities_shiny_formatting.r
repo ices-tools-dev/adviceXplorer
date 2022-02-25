@@ -7,7 +7,7 @@ allocations_infopanel <-
     panel(
       title = "plots",
       fillPage(
-        tags$style(type = "text/css", "#all_plots {height: calc(100vh - 200px) !important;}"),
+        tags$style(type = "text/css", "#all_plots {height: calc(99vh - 200px) !important;}"),
         plotlyOutput("all_plots", height = "100%", width = "100%")
       ),
       h5(helpText("Stock Development over time"))
@@ -47,7 +47,7 @@ allocations_plotspanel <-
       panel(
         title = "Quality of Assessment",
         fillPage(
-          tags$style(type = "text/css", "#Q_Ass {height: calc(100vh - 200px) !important;}"),
+          tags$style(type = "text/css", "#Q_Ass {height: calc(99vh - 200px) !important;}"),
           plotlyOutput("Q_Ass", height = "100%", width = "100%")
         ),
         h5(helpText("Quality of Assessment"))
@@ -158,7 +158,7 @@ selectize_panel <-
 
 
 catch_scenarios_left_panel <- sidebarPanel(
-  width = 6, style = "max-height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
     title = "Headline advice",
     fillPage(
@@ -177,15 +177,6 @@ catch_scenarios_left_panel <- sidebarPanel(
     title = "TAC_timeline",
     fillPage(
       tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-
-      
-      # selectizeInput(
-      #   inputId = "catch_scenarios",
-      #   label = "Select a scenario",
-      #   choices = NULL,
-      #   selected = NULL,
-      #   multiple = TRUE
-      # ),
       uiOutput("catch_scenarios"),
       plotlyOutput("TAC_timeline", height = "20%", width = "100%")
     )
@@ -194,7 +185,7 @@ catch_scenarios_left_panel <- sidebarPanel(
 
 
 catch_scenarios_right_panel <- sidebarPanel(
-  width = 6, style = "max-height: 95vh; overflow-y: auto;",
+  width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
     title = "Advice timeline",
     fillPage(

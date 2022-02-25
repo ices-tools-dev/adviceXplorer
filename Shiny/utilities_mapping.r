@@ -219,14 +219,14 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                     data = eu_shape,
                     color = "black",
                     weight = 1,
-                    fillOpacity = 0.2,
-                    fillColor = "#fddfc2",
+                    fillOpacity = 0.8,
+                    fillColor = "#E8EAEA",#"#fddfc2",
                     group = "Europe"
                 ) %>%
                 addPolygons(
                     data = shape_eco,
-                    fillColor = "white",
-                    fillOpacity = 0.5,
+                    fillColor = "#71B5BC",
+                    fillOpacity = 0.1,
                     color = "black",
                     stroke = TRUE,
                     weight = 1,
@@ -236,8 +236,8 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                 ) %>%
                 addPolygons(
                     data = shape_eco,
-                    fillColor = "red",
-                    fillOpacity = 0.5,
+                    fillColor = "#F15D2A",
+                    fillOpacity = 0.7,
                     weight = 1,
                     color = "black",
                     stroke = TRUE,
@@ -295,8 +295,8 @@ map_ices_areas <- function(ices_areas, eu_shape) {
                 ) %>%
                 addPolygons(
                     data = ices_areas,
-                    fillColor = "red",
-                    fillOpacity = 0.5,
+                    fillColor = "#F15D2A",
+                    fillOpacity = 0.7,
                     weight = 1,
                     color = "black",
                     stroke = TRUE,
