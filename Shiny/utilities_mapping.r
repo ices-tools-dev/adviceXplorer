@@ -219,14 +219,14 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                     data = eu_shape,
                     color = "black",
                     weight = 1,
-                    fillOpacity = 0.8,
-                    fillColor = "#E8EAEA",#"#fddfc2",
+                    fillOpacity = 0.4,
+                    fillColor = "#fddfc2", #"#E8EAEA"
                     group = "Europe"
                 ) %>%
                 addPolygons(
                     data = shape_eco,
                     fillColor = "#71B5BC",
-                    fillOpacity = 0.1,
+                    fillOpacity = 0.08,
                     color = "black",
                     stroke = TRUE,
                     weight = 1,

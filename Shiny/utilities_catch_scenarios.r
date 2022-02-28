@@ -305,3 +305,46 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
     return(final_df)
 }
+
+
+
+make_app_citation <- function() {
+  string_citation <- HTML(
+    paste0(
+      "<b>","<font size=", 5, ">", "Data Usage","</font>","</b>","<br/>",
+  "<font size=", 3, ">", 
+  "The ICES Online Advice Shiny app diplays data collected from the following sources:
+  <ul><li>", a("GIS", href= "https://gis.ices.dk/sf/index.html"),"</li>",
+  "<li>",  a("SID", href= "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"),"</li>",
+  "<li>",  a("SAG", href= "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"),"</li>",
+  "<li>",  "Advice View","</li></ul>","</font>",
+  br(),
+  "<b>","<font size=", 5, ">", "Citation","</font>","</b>","<br/>",
+  "<font size=", 3, ">", 
+  "Please refer to ICES Data Policy for full conditions and guidance on citation.<br/>
+  When publishing results from the app the minimum citation should include: <br/>
+  <br/>
+  <i>International Council for the Exploration of the Sea (ICES). (",  Sys.Date(), "). Page title. ICES Online Advice.  
+  https://www.ices.dk/Pages/default.aspx<i/>", "</font>",
+  "<br/>"
+  )
+  )
+  
+  
+  # br(), make_app_citation(), "</font>","</b>", br()))
+
+
+
+
+  # string_citation <- paste0("The ICES Online Advice Data from published advice can be downloaded, please refer to ICES Data Policy for full conditions 
+  # and guidance on citation.<br/>
+  # When publishing results from the app the minimum citation should include: <br/>
+  # <br/>
+  # <i>International Council for the Exploration of the Sea (ICES). (",  Sys.Date(), "). Page title. ICES Online Advice.  
+  # https://www.ices.dk/Pages/default.aspx<i/>
+  #  <br/>
+  # <br/>
+  #   ")
+return(string_citation)
+}
+# a("text", href= "https://www.ices.dk/Pages/default.aspx")
