@@ -429,7 +429,16 @@ output$catch_scenario_table <- DT::renderDT(
 #           "}"))
 # )
 output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
-output$catch_scenario_plot_2 <- renderPlotly(catch_scenarios_plot2(catch_scenario_table()))
+
+output$catch_scenario_plot_2 <- renderPlotly({
+  data_list <- advice_action()
+  rv <- reactiveValues(
+    catches_df = data_list$catches,
+    f_df = data_list$f,
+    SSB_df = data_list$SSB
+  )
+  catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+})
 
 
 ##### new tab in development left side
@@ -555,5 +564,14 @@ selected_scenario <- reactive({
     print(WG)
     
 })
+
+output$citation <- renderUI({
+  make_app_citation()
+  # HTML(paste0(br(),"<b>","<font size=", 3, ">",br(), make_app_citation(), "</font>","</b>", br()))
+})
+
+
+
+
 
 }

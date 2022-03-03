@@ -127,6 +127,12 @@ navbarPage(
         
         # verbatimTextOutput("headline")
     ),
+    tabPanel(
+        "Usage & Citation",
+        htmlOutput("citation")
+        
+        # verbatimTextOutput("headline")
+    ),
     #),# close tabsetpanel
     
     # extra tags, css etc
