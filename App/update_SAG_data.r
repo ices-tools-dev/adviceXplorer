@@ -29,12 +29,12 @@
 #' 
 options(icesSAG.use_token = TRUE)
 update_SAG <- function(year){
-    mkdir(paste("SAG_", year))
+    mkdir(paste("Data/SAG_", year))
     summary <- load_sag_summary(year)
-    write.taf(summary, file = "SAG_summary.csv", dir = paste("SAG_", year))
+    write.taf(summary, file = "SAG_summary.csv", dir = paste("Data/SAG_", year))
 
     refpts <- load_sag_refpts(year)
-    write.taf(refpts, file = "SAG_refpts.csv", dir = paste("SAG_", year))
+    write.taf(refpts, file = "SAG_refpts.csv", dir = paste("Data/SAG_", year))
 }
 
 

@@ -133,6 +133,37 @@ data <- data.frame(
 timevis(data)
 
 
+
+########################
+
+tv <- timevis(
+   data.frame(
+    content = "Today",
+     start = Sys.Date()
+   )
+ )
+
+ style <- "
+ .vis-timeline {
+   border-color: #269026;
+   background-color: rgb(246,250,251);
+   font-size: 20px;
+   font-family: Sans-serif;
+   color: #9AC2B7;
+ }
+
+ .vis-item {
+   border: 1px solid #E8EAEA;
+   font-size: 20pt;
+   background: #9AC2B7;
+   font-family: Sans-serif;
+   padding: 5px;
+ }
+ "
+tv <- tagList(tags$style(style), tv)
+ htmltools::html_print(tv)
+ 
+
 ### scraping function to retrieve the dates of the next WG meeeting for a stock
 library(rvest)
 

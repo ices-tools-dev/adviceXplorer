@@ -4,10 +4,10 @@ ecoregion = "Celtic Seas Ecoregion"
     eu_shape <- eu$europe_shape
 
 # Load the lighter version of the ecoregions shapefile
-shape_eco <- st_read(dsn = "Shiny/test_lowres", 
+shape_eco <- st_read(dsn = "Data/test_lowres", 
     layer = "ecoR_lowres")
 
-shape_ices_areas <- st_read(dsn = "Shiny/ICES_areas_low_res", 
+shape_ices_areas <- st_read(dsn = "Data/ICES_areas_low_res", 
     layer = "ICES_areas_low_res")
 ices_areas <- st_transform(shape_ices_areas, crs = 4326)
 

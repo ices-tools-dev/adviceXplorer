@@ -1,0 +1,11 @@
+name: online-single-stock-advice
+title: Online single-stock advice
+username:
+account: lamoni
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5804492
+bundleId: 5656138
+url: https://lamoni.shinyapps.io/online-single-stock-advice/
+when: 1646740342.01806
+lastSyncTime: 1646740342.01806

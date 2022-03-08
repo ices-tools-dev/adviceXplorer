@@ -1,3 +1,45 @@
+############# Libraries ############
+library(glue)
+library(sf)
+library(leaflet)
+library(fisheryO)
+library(DT)
+library(tidyverse)
+library(icesVocab)
+library(tm)
+library(shinyWidgets)
+library(shinyjs)
+library(reshape2)
+library(scales)
+library(ggradar)
+library(icesFO)
+library(icesTAF)
+library(timevis)
+library(rvest)
+library(gsubfn)
+library(stringr)
+library(htmlwidgets)
+library(dplyr)
+library(ggplot2)
+library(dygraphs)
+library(htmltools)
+library(widgetframe)
+library(icesSAG)
+library(plotly)
+library(shinythemes)
+
+########## Load utilities ############
+source("utilities_SID_data.r")
+source("utilities_load_shapefiles.r")
+
+source("utilities_plotting.r")
+source("utilities_mapping.r")
+source("utilities_sag_data.r")
+source("utilities_shiny_Input.r")
+source("utilities_catch_scenarios.r")
+
+source("utilities_shiny_formatting.r")
+# source("utilities_load_shapefiles.r")
 
 navbarPage(
     # tab title

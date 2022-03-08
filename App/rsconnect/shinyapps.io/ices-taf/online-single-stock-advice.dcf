@@ -1,0 +1,11 @@
+name: online-single-stock-advice
+title: Online single-stock advice
+username:
+account: ices-taf
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5804545
+bundleId: 5656161
+url: https://ices-taf.shinyapps.io/online-single-stock-advice/
+when: 1646740979.46682
+lastSyncTime: 1646740979.46682
