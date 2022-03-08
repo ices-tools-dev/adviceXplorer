@@ -6,7 +6,7 @@ options(icesSAG.use_token = TRUE)
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -15,15 +15,15 @@ options(icesSAG.use_token = TRUE)
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 access_sag_data <- function(stock_code, year) {
 
     # Dowload the data
@@ -46,7 +46,7 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -55,24 +55,24 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 access_sag_data_local <- function(stock_code, year) {
 
     # Dowload the data
-    df_summary <- read.csv(sprintf("Data/SAG_ %s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
+    df_summary <- read.csv(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
     SAGsummary <- df_summary %>% filter(fishstock == stock_code)
-    
-    df_refpts <- read.csv(sprintf("Data/SAG_ %s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
+
+    df_refpts <- read.csv(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
     SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
-    
+
 
     data_sag <- cbind(SAGsummary, SAGrefpts)
     data_sag <- subset(data_sag, select = -fishstock)
@@ -88,7 +88,7 @@ access_sag_data_local <- function(stock_code, year) {
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -97,15 +97,15 @@ access_sag_data_local <- function(stock_code, year) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 # function to dowload the quality assessemnt data
 quality_assessment_data <- function(stock_code){
 
@@ -123,10 +123,10 @@ for (i in years) {
     else {
         #
         data_temp <- filter(data_temp, between(Year, 2005, 2021))
-        data_temp <- data_temp %>% select(Year, 
+        data_temp <- data_temp %>% select(Year,
                                             recruitment, RecruitmentAge,
                                             SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
-                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,  
+                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
                                             AssessmentYear, StockPublishNote,Purpose)
 
         data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
@@ -174,7 +174,7 @@ return(df_list)
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -183,15 +183,15 @@ return(df_list)
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 # function to dowload the quality assessemnt data
 quality_assessment_data_local <- function(stock_code){
 
@@ -209,10 +209,10 @@ for (year in years) {
     else {
         #
         data_temp <- filter(data_temp, between(Year, 2005, 2021))
-        data_temp <- data_temp %>% select(Year, 
+        data_temp <- data_temp %>% select(Year,
                                             recruitment, RecruitmentAge,
                                             SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
-                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,  
+                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
                                             AssessmentYear, StockPublishNote,Purpose)
 
         data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
@@ -261,7 +261,7 @@ return(df_list)
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -270,15 +270,15 @@ return(df_list)
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 getStockAreas <- function(stockCode) {
   details <- getCodeDetail(code = stockCode, code_type = "ICES_StockCode")
   areas <- details$children$codes[details$children$code_types$Key == "ICES_Area", ]
@@ -298,4 +298,3 @@ getStockAreas <- function(stockCode) {
 # library(plyr)
 # test <- sapply(stock_list_all$StockKeyLabel[1:10], getStockAreas)
 # test
-
