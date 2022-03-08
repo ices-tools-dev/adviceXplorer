@@ -18,7 +18,7 @@ sf::sf_use_s2(FALSE)
 ## the following line will download the last 5 years of SAG data (summary and ref points).
 ## This process will take several minutes but, once the data is in the local folder, 
 ## the app will run much faster. 
-if (!file.exists("Data/SAG_ 2021/SAG_summary.csv")) {
+if (!file.exists("Data/SAG_2021/SAG_summary.csv")) {
     source("update_SAG_data.r")
 }
 
