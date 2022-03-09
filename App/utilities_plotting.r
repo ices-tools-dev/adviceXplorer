@@ -31,6 +31,17 @@ legend_format <- function() {
         # y = 0.1)
 }
 
+watermark <- function() {
+    images <- list(
+            source = "ICES_logo.png",
+            xref = "paper",
+            yref = "paper",
+            x= 0.02,
+            y= 0.98,
+            sizex = 0.1,
+            sizey = 0.1,
+            opacity = 0.5)
+}
 #' Returns ....
 #'
 #' Downloads ...
@@ -525,6 +536,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         legend = legend_format(),
         paper_bgcolor = "rgb(246,250,251)", 
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
+
         xaxis = list(
             title = "Years",
             gridcolor = "rgb(235,235,235)",
@@ -601,6 +614,8 @@ fig2 <- fig2 %>% layout(
         legend = legend_format(),
         paper_bgcolor = "rgb(246,250,251)", 
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
+
         xaxis = list(
             title = "Years",
             gridcolor = "rgb(235,235,235)",
@@ -646,6 +661,9 @@ fig3 <- fig3 %>% layout(
         legend = legend_format(),
         paper_bgcolor = "rgb(246,250,251)", 
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
+
+
         xaxis = list(
             title = "Years",
             gridcolor = "rgb(235,235,235)",
@@ -791,6 +809,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         # title = "Catches",
         paper_bgcolor = "rgb(246,250,251)",
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
 
         xaxis = list(
             title = "Years",
@@ -845,6 +864,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
         # title = "Recruitment",
         paper_bgcolor = "rgb(246,250,251)",
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
 
         xaxis = list(
             title = "Years",
@@ -939,6 +959,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         legend = legend_format(),
         paper_bgcolor = "rgb(246,250,251)",
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
+
         xaxis = list(
             title = "Years",
             gridcolor = "rgb(235,235,235)",
@@ -1037,6 +1059,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         legend = legend_format(),
         paper_bgcolor = "rgb(246,250,251)",
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
+
         xaxis = list(
             title = "Years",
             gridcolor = "rgb(235,235,235)",
@@ -1404,6 +1428,15 @@ catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSi
             x = 0.1,
             y = 0.5
         ),
+        images = list(
+            source = "ICES_logo.png",
+            xref = "paper",
+            yref = "paper",
+            x= 0.1,
+            y= 1,
+            sizex = 0.1,
+            sizey = 0.1,
+            opacity = 0.5),
         autosize = T,
         margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
         xaxis = list(
@@ -1486,6 +1519,7 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
         # title = "Catches",
         paper_bgcolor = "rgb(246,250,251)",
         plot_bgcolor = "rgb(255,255,255)",
+        images = watermark(),
 
         xaxis = list(
             title = "Years",
