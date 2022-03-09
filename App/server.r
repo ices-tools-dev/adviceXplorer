@@ -302,7 +302,7 @@ server <- function(input, output, session) {
 
     ###
     #updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel, "&", "Year=", input$selected_years), mode = "push") ####
-    updateQueryString(paste0("?assessmentKey=", filtered_row$assessmentKey), mode = "push") ####
+    updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
 
     ###
 
@@ -337,8 +337,13 @@ server <- function(input, output, session) {
     }
   })
 
-  advice_action <- eventReactive(req(query$stockkeylabel, query$year), {
 
+  advice_action <- eventReactive(req(query$assessmentkey), {
+
+    info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    query$stockkeylabel <- info$StockKeyLabel
+    query$year <- info$AssessmentYear ####
+    
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)
 
