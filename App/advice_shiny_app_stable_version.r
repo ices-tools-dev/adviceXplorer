@@ -1,4 +1,3 @@
 
 library(shiny)
-
-runApp()
+runApp("App")
