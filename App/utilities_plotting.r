@@ -622,6 +622,7 @@ fig2 <- fig2 %>% layout(
             tickcolor = "rgb(127,127,127)",
             ticks = "outside",
             zeroline = TRUE,
+            rangemode = "tozero",
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
@@ -959,6 +960,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
             tickcolor = "rgb(127,127,127)",
             ticks = "outside",
             zeroline = TRUE,
+            rangemode = "tozero",
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         ),
@@ -1423,6 +1425,7 @@ catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSi
             tickcolor = "rgb(127,127,127)",
             ticks = "outside",
             zeroline = TRUE,
+            rangemode = "tozero",
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
