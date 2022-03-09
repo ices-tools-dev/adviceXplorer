@@ -139,7 +139,7 @@ separate_ecoregions <- function(stock_list_all) {
     # FisheriesGuild = rep(mydf$FisheriesGuild, sapply(s, length)),
     # SizeGuild = rep(mydf$SizeGuild, sapply(s, length)),
     Published = rep(mydf$Published, sapply(s, length)),
-    AssessmentKey = rep(mydf$AssessmentKey,sapply(s, length))
+    AssessmentKey = rep(mydf$AssessmentKey, sapply(s, length))
   )
   # req(EcoRegion_filter)
   # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))

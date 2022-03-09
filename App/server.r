@@ -16,8 +16,8 @@ sf::sf_use_s2(FALSE)
 
 ## If this code is run for the first time and the SAG data in not present on the local machine
 ## the following line will download the last 5 years of SAG data (summary and ref points).
-## This process will take several minutes but, once the data is in the local folder, 
-## the app will run much faster. 
+## This process will take several minutes but, once the data is in the local folder,
+## the app will run much faster.
 if (!file.exists("Data/SAG_2021/SAG_summary.csv")) {
     source("update_SAG_data.r")
 }
@@ -175,12 +175,12 @@ server <- function(input, output, session) {
     ignoreNULL = FALSE
   )
   ########################################################### end Maps reactive part
-  
+
   ###########################################################  function to use the input from the maps and the sid filtering
-  
-  
+
+
   # Update the year of selection
-  
+
   updateSelectizeInput(session,
     inputId = "selected_years",
     label = "Year SID/SAG",
@@ -192,8 +192,8 @@ server <- function(input, output, session) {
   eco_filter <- reactive({
     req(input$selected_locations, input$selected_years)
     # print(input$selected_locations)
-    
-    ### download SID 
+
+    ### download SID
     stock_list_all <- download_SID(input$selected_years)
     ### modifify SID table, 1 row == 1 Ecoregion
     stock_list_long <- separate_ecoregions(stock_list_all)
@@ -201,7 +201,7 @@ server <- function(input, output, session) {
     stock_list_long <- sid_table_links(stock_list_long)
     ### reshuffle some columns
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
-    stock_list_long <- stock_list_long %>% 
+    stock_list_long <- stock_list_long %>%
       relocate(advice_url, .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
       # select(-c(ExpertGroup)) %>%
@@ -211,7 +211,7 @@ server <- function(input, output, session) {
 
 
 
-    temp_df <- data.frame()    
+    temp_df <- data.frame()
     for (i in 1:length(input$selected_locations)) {
       temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
       temp_df <- rbind(temp_df, temp_1)
@@ -228,7 +228,7 @@ server <- function(input, output, session) {
     data = eco_filter,
     vars = c(
       "StockKeyLabel",  "SpeciesCommonName",
-      "ExpertGroup",  "DataCategory", "YearOfLastAssessment", 
+      "ExpertGroup",  "DataCategory", "YearOfLastAssessment",
        "AdviceCategory", "Published"
     ) # , "ICES_area","StockDatabaseID", "StockKey","SpeciesScientificName",
     #"AdviceDraftingGroup","AssessmentFrequency","YearOfNextAssessment", "AdviceReleaseDate",
@@ -298,8 +298,12 @@ server <- function(input, output, session) {
     filtered_row <- res_mod()[input$tbl_rows_selected, ]
     # updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
 
+    print(filtered_row)
+
     ###
-    updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel,"&","Year=", input$selected_years), mode = "push") ####
+    #updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel, "&", "Year=", input$selected_years), mode = "push") ####
+    updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
+
     ###
 
     query$query_from_table <- TRUE
@@ -315,20 +319,31 @@ server <- function(input, output, session) {
     query_string <- getQueryString()
     names(query_string) <- tolower(names(query_string))
     print(names(query_string))
-    query$stockkeylabel <- query_string$stockkeylabel
-    query$year <- query_string$year ####
-    
+    #query$stockkeylabel <- query_string$stockkeylabel
+    #query$year <- query_string$year ####
 
-    msg("stock selected from url:", query$stockkeylabel)
-    msg("year of SAG/SID selected from url:", query$year) #####
+    query$assessmentkey <- query_string$assessmentkey
 
-    if (!is.null(query$stockkeylabel) && !query$query_from_table) {
+    if (!is.null(query$assessmentkey) && !query$query_from_table) {
+      info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+
+      query$stockkeylabel <- info$StockKeyLabel
+      query$year <- info$AssessmentYear ####
+
+      msg("stock selected from url:", query$stockkeylabel)
+      msg("year of SAG/SID selected from url:", query$year) #####
+
       updateNavbarPage(session, "tabset", selected = "Stock development over time")
     }
   })
 
-  advice_action <- eventReactive(req(query$stockkeylabel, query$year), {
 
+  advice_action <- eventReactive(req(query$assessmentkey), {
+
+    info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    query$stockkeylabel <- info$StockKeyLabel
+    query$year <- info$AssessmentYear ####
+    
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)
 
@@ -370,7 +385,7 @@ server <- function(input, output, session) {
       SSB_df = data_list$SSB
     )
     figure_1_plots(
-      rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df, 
+      rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df,
             rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
             rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
             rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
@@ -389,8 +404,8 @@ server <- function(input, output, session) {
 
     ### forth plot
     quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
-                                    rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits, 
-                                    rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription, 
+                                    rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits,
+                                    rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription,
                                     rv$Q_Ass_df1$RecruitmentAge)
     # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
   })
@@ -398,7 +413,7 @@ server <- function(input, output, session) {
 
 ##### catch scenarios tab
 advice_view_info <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_info(query$stockkeylabel)  
+  get_Advice_View_info(query$stockkeylabel)
 })
 
 output$Advice_View <- DT::renderDT(
@@ -414,7 +429,7 @@ output$Advice_View <- DT::renderDT(
 
 ##### catch scenarios sentence
 advice_view_sentence <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_sentence(query$stockkeylabel)  
+  get_Advice_View_sentence(query$stockkeylabel)
 })
 output$Advice_Sentence <- renderUI({
   HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
@@ -439,7 +454,7 @@ output$catch_scenario_table <- DT::renderDT(
 #     test(),
 #     selection = "none",
 #     caption = "Advice view info",
-    
+
 #     options = list(
 #         dom = 't',
 #       pageLength = 50,
@@ -489,7 +504,7 @@ test_table <- eventReactive(catch_scenario_table(),{
 output$catch_scenarios <- renderUI({
   # req(query$stockkeylabel, query$year, catch_scenario_table())
   # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-  
+
   selectizeInput(
         inputId = "catch_choice",
         label = "Select a scenario",
@@ -530,7 +545,7 @@ output$advice_timeline <- renderTimevis({
 #  }
 #  "
 #   tagList(tags$style(style), tv)
-  
+
   # htmltools::html_print(tv)
 })
 
@@ -569,7 +584,7 @@ selected_scenario <- reactive({
         return(NULL)
       event_data("plotly_hover", source = "ranking")
       })
-    
+
     observe({
       selectRows(table_proxy, selected=(selected_scenario()[[2]]+1))
     })
@@ -582,7 +597,7 @@ selected_scenario <- reactive({
     WG <- filtered_row$ExpertGroupUrl
     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
     print(WG)
-    
+
 })
 
 output$citation <- renderUI({
