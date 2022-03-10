@@ -12,7 +12,7 @@ msg <- function(...) {
 # required if using most recent version of sf
 sf::sf_use_s2(FALSE)
 
-
+options(icesSAG.use_token = FALSE)
 
 ## If this code is run for the first time and the SAG data in not present on the local machine
 ## the following line will download the last 5 years of SAG data (summary and ref points).
