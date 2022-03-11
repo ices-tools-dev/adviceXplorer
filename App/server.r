@@ -207,7 +207,7 @@ server <- function(input, output, session) {
       # select(-c(ExpertGroup)) %>%
       # rename(StockCode = StockKeyLabel) %>%
       rename(ExpertGroupUrl = group_url) %>%
-      rename(StockCode = advice_url)
+      rename("Advice pdf" = advice_url)
 
 
 
@@ -272,7 +272,7 @@ server <- function(input, output, session) {
         #   )
 
         # ),
-        list(visible = FALSE, targets = c(0, 1, 6, 12))
+        list(visible = FALSE, targets = c(0, 6, 12))
       )
     )
     # callback=JS(

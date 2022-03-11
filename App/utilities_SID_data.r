@@ -172,10 +172,16 @@ separate_ecoregions <- function(stock_list_all) {
 #'
 #' @export
 #' 
+# createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
+#   paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>", StockKeyLabel,"</a>")
+# }
+
 createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
-  paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>", StockKeyLabel,"</a>")
+  paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>",
+  "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
 }
 
+#
 #' Returns ....
 #'
 #' Downloads ...
