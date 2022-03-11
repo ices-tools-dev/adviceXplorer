@@ -41,24 +41,35 @@ source("utilities_catch_scenarios.r")
 source("utilities_shiny_formatting.r")
 # source("utilities_load_shapefiles.r")
 
+
+
+title_html <- tags$a(
+    href = "https://www.ices.dk/",
+    target = "_blank",
+        tags$img(
+            src = "ICES_logo.PNG",
+            style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
+            height = "50px"
+        )
+)
 navbarPage(
     # tab title
     windowTitle = "TAF Advice Tool",
     id = "tabset",
     fluid = TRUE,
     # navbar title
-    title =
-        shiny::div(
-            a(
-            img(
-            src = "ICES_logo.PNG",
-            # a = "https://www.ices.dk/",
-            style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
-            height = 50
-                ),
-            href = "https://www.ices.dk/",
-            target ="_blank" 
-            )),
+    title = title_html,
+        # shiny::div(
+        #     a(
+        #     img(
+        #     src = "ICES_logo.PNG",
+        #     # a = "https://www.ices.dk/",
+        #     style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
+        #     height = 50
+        #         ),
+        #     href = "https://www.ices.dk/",
+        #     target ="_blank" 
+        #     )),
 
     useShinyjs(),
     tags$head(
