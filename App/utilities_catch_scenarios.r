@@ -324,27 +324,11 @@ make_app_citation <- function() {
   "Please refer to ICES Data Policy for full conditions and guidance on citation.<br/>
   When publishing results from the app the minimum citation should include: <br/>
   <br/>
-  <i>International Council for the Exploration of the Sea (ICES). (",  Sys.Date(), "). Page title. ICES Online Advice.  
-  https://www.ices.dk/Pages/default.aspx<i/>", "</font>",
+  <i>International Council for the Exploration of the Sea (ICES). (",  Sys.Date(), "). ICES Single-Stock Online Advice.  
+  https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(),"<i/>", "</font>",
   "<br/>"
   )
   )
   
-  
-  # br(), make_app_citation(), "</font>","</b>", br()))
-
-
-
-
-  # string_citation <- paste0("The ICES Online Advice Data from published advice can be downloaded, please refer to ICES Data Policy for full conditions 
-  # and guidance on citation.<br/>
-  # When publishing results from the app the minimum citation should include: <br/>
-  # <br/>
-  # <i>International Council for the Exploration of the Sea (ICES). (",  Sys.Date(), "). Page title. ICES Online Advice.  
-  # https://www.ices.dk/Pages/default.aspx<i/>
-  #  <br/>
-  # <br/>
-  #   ")
 return(string_citation)
 }
-# a("text", href= "https://www.ices.dk/Pages/default.aspx")
