@@ -307,28 +307,51 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
 }
 
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 make_app_citation <- function() {
   string_citation <- HTML(
     paste0(
-      "<b>","<font size=", 5, ">", "Data Usage","</font>","</b>","<br/>",
-  "<font size=", 3, ">", 
-  "The ICES Online Advice Shiny app diplays data collected from the following sources:
-  <ul><li>", a("GIS", href= "https://gis.ices.dk/sf/index.html"),"</li>",
-  "<li>",  a("SID", href= "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"),"</li>",
-  "<li>",  a("SAG", href= "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"),"</li>",
-  "<li>",  "Advice View","</li></ul>","</font>",
-  br(),
-  "<b>","<font size=", 5, ">", "Citation","</font>","</b>","<br/>",
-  "<font size=", 3, ">", 
-  "Please refer to ICES Data Policy for full conditions and guidance on citation.<br/>
-  When publishing results from the app the minimum citation should include: <br/>
-  <br/>
-  <i>International Council for the Exploration of the Sea (ICES). (",  Sys.Date(), "). ICES Single-Stock Online Advice.  
-  https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(),"<i/>", "</font>",
-  "<br/>"
+      "<b>", "<font size=", 5, ">", "Data Usage", "</font>", "</b>", "<br/>",
+      "<font size=", 3, ">",
+      "The ICES Online Advice Shiny app diplays data collected from the following sources:
+  <ul><li>", a("GIS", href = "https://gis.ices.dk/sf/index.html"), "</li>",
+      "<li>", a("SID", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
+      "<li>", a("SAG", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"), "</li>",
+      "<li>", "Advice View", "</li></ul>", "</font>",
+      br(),
+      "<b>", "<font size=", 5, ">", "Citation", "</font>", "</b>", "<br/>",
+      "<font size=", 3, ">",
+      "Please refer to ICES Data Policy for full conditions and guidance on citation.<br/>
+      When publishing results from the app the minimum citation should include: <br/>
+      <br/>
+      <i>International Council for the Exploration of the Sea (ICES). (", Sys.Date(), "). ICES Single-Stock Online Advice.
+      https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "<i/>", "</font>",
+      "<br/>"
+    )
   )
-  )
-  
-return(string_citation)
+
+  return(string_citation)
 }
