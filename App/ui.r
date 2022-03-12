@@ -31,15 +31,13 @@ library(shinythemes)
 ########## Load utilities ############
 source("utilities_SID_data.r")
 source("utilities_load_shapefiles.r")
-
 source("utilities_plotting.r")
 source("utilities_mapping.r")
 source("utilities_sag_data.r")
 source("utilities_shiny_Input.r")
 source("utilities_catch_scenarios.r")
-
 source("utilities_shiny_formatting.r")
-# source("utilities_load_shapefiles.r")
+
 
 
 
@@ -47,45 +45,41 @@ title_html <- tags$a(
     href = "https://www.ices.dk/",
     target = "_blank",
         tags$img(
-            src = "ICES_logo.PNG",
+            src = "https://www.ices.dk/SiteCollectionImages/ICES%20logos/NEGATIVE%20ICES-logo.png",
             style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
             height = "50px"
         )
 )
+tagList(    
+    tags$head(tags$script(type="text/javascript", src = "code.js")),
+
 navbarPage(
+
     # tab title
-    windowTitle = "TAF Advice Tool",
+    windowTitle = "Online Advice",
     id = "tabset",
     fluid = TRUE,
     # navbar title
     title = title_html,
-        # shiny::div(
-        #     a(
-        #     img(
-        #     src = "ICES_logo.PNG",
-        #     # a = "https://www.ices.dk/",
-        #     style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
-        #     height = 50
-        #         ),
-        #     href = "https://www.ices.dk/",
-        #     target ="_blank" 
-        #     )),
+    
 
-    useShinyjs(),
-    tags$head(
-        tags$style
-        (HTML
-                         ("
-                         #table tr:hover {
-	                          background-color: rgba(240, 136, 33, 0.4) !important;
-                            }
-                            .leaflet-container {
-                                 background: #ffffff; 
-                                 }
-                            "
-                            )
-                            )
-                            ),
+    
+    # tags$head(
+    #     tags$style
+    #     (HTML
+    #                      ("
+    #                      #table tr:hover {
+	#                           background-color: rgba(240, 136, 33, 0.4) !important;
+    #                         }
+    #                         .leaflet-container {
+    #                              background: #ffffff; 
+    #                              }
+    #                         "
+    #                         )
+    #                         )
+    #                         ),
+
+
 #     tags$head(
 #     tags$style(HTML(".leaflet-container { background: #f00; }"))
 #   )
@@ -195,15 +189,17 @@ navbarPage(
     #),# close tabsetpanel
     
     # extra tags, css etc
-    tags$style(type = "text/css", "li {font-size: 20px;}"),
-    tags$style(type = "text/css", "p {font-size: 21px;}"),
-    tags$style(type = "text/css", "body {padding-top: 70px;}"),
-    tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
+    useShinyjs(),
+    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
+    
+    
+    # tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
     theme = shinytheme("cerulean"),  ##### need to work on this, the orange is part of the css theme united, check bslib in forked repo
     position = "fixed-top",
-    tags$script(HTML("var header = $('.navbar > .container-fluid');
-                    header.append('<div style=\"float:right\"><a href=\"https://github.com/ices-tools-dev/online-advice\"><img src=\"GitHub-Mark-32px.png\" alt=\"alt\" style=\"margin-top: -14px; padding-right:5px;padding-top:25px;\"></a></div>')
-                    console.log(header)"))
+    # tags$script(HTML("var header = $('.navbar > .container-fluid');
+    #                 header.append('<div style=\"float:right\"><a href=\"https://github.com/ices-tools-dev/online-advice\"><img src=\"GitHub-Mark-32px.png\" alt=\"alt\" style=\"margin-top: -14px; padding-right:5px;padding-top:25px;\"></a></div>')
+    #                 console.log(header)"))
+)   
 )
 
 

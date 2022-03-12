@@ -1,0 +1,19 @@
+p {
+    font-size: 21px;
+}
+
+li {
+    font-size: 20px;
+}
+
+body {
+    padding-top: 70px;
+  }
+
+#table tr:hover {
+    background-color: rgba(240, 136, 33, 0.4) !important;
+  }
+
+.leaflet-container {
+    background: #ffffff; 
+    }
