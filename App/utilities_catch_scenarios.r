@@ -334,17 +334,27 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
 make_app_citation <- function() {
   string_citation <- HTML(
     paste0(
-      "<b>", "<font size=", 5, ">", "Data Usage", "</font>", "</b>", "<br/>",
+      br(),
+      "<b>", "<font size=", 5, ">", "Data Policy", "</font>", "</b>", "<br/>",
       "<font size=", 3, ">",
+      # img(src = "by.png", height = "100px"),
+      "<img src= 'by.png'", " height= '100px'/>","<br/>",
+      br(),
+      "Under the revised ", "<a href='","https://www.ices.dk/data/guidelines-and-policy/Pages/ICES-data-policy.aspx", "' target='_blank'>", "ICES Data Policy","</a>",
+      " all public data are under the Creative Commons licence ",
+      "<a href='","https://creativecommons.org/licenses/by/4.0/", "' target='_blank'>", "(CC BY 4.0).","</a>","<br/>",
+      br(),
       "The ICES Online Advice Shiny app diplays data collected from the following sources:
   <ul><li>", a("GIS", href = "https://gis.ices.dk/sf/index.html"), "</li>",
       "<li>", a("SID", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
       "<li>", a("SAG", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"), "</li>",
       "<li>", "Advice View", "</li></ul>", "</font>",
       br(),
+      br(),
       "<b>", "<font size=", 5, ">", "Citation", "</font>", "</b>", "<br/>",
       "<font size=", 3, ">",
-      "Please refer to ICES Data Policy for full conditions and guidance on citation.<br/>
+      "Please refer to ", "<a href='","https://www.ices.dk/data/guidelines-and-policy/Pages/ICES-data-policy.aspx", "' target='_blank'>", "ICES Data Policy","</a>", 
+      " for full conditions and guidance on citation.<br/>
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
       <i>International Council for the Exploration of the Sea (ICES). (", Sys.Date(), "). ICES Single-Stock Online Advice.
