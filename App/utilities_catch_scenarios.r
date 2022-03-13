@@ -357,9 +357,15 @@ make_app_citation <- function() {
       " for full conditions and guidance on citation.<br/>
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
-      <i>International Council for the Exploration of the Sea (ICES). (", Sys.Date(), "). ICES Single-Stock Online Advice.
-      https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "<i/>", "</font>",
-      "<br/>"
+      International Council for the Exploration of the Sea (ICES). (", Sys.Date(), "). ICES Single-Stock Online Advice.
+      https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "</font><br/>",
+      br(),
+      "<b>", "<font size=", 5, ">", "Contact & Feedback", "</font>", "</b>", "<br/>",
+      "<font size=", 3, ">",
+      "You can contact us via ", "<a href = ", "'mailto: luca.lamoni@ices.dk'", ">email</a>", "<br/>",
+      "You can submit an issue to our GitHub ", "<a href='","https://github.com/ices-tools-dev/online-advice/issues", "' target='_blank'>", "repository.","</a>",
+      "</font>"
+
     )
   )
 
