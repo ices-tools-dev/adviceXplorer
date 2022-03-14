@@ -153,7 +153,8 @@ selectize_panel <-
       ),
       heading = "Data filtering",
       status = "primary"
-    )
+    ),
+    shiny::actionButton('button', 'press the button', onclick = "$(tab).removeClass('disabled')")
   )
 
 

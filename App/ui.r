@@ -191,6 +191,17 @@ navbarPage(
     # extra tags, css etc
     useShinyjs(),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
+    tags$script(
+    '
+    var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
+    $(function(){
+      $(tab.parent()).on("click", "li.disabled", function(e) {
+        e.preventDefault();
+        return false;
+      });
+    });
+    '
+  ),
     
     
     # tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
