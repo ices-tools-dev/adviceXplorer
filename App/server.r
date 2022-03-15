@@ -27,10 +27,20 @@ if (!file.exists("Data/SAG_2021/SAG_summary.csv")) {
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
-
+  ## pop up with intructions test
+  shinyalert(title= "Welcome to Online Advice", 
+            text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>",
+            "<img src= 'Animation.gif'", " height= '400px'/>" ),
+            type = "info",
+            html=TRUE,
+            closeOnClickOutside = TRUE,
+            confirmButtonText = "Let's go!",
+            size = "m",
+            )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
+  
   ######################### Map panel
 
   sf_cent <- st_coordinates(suppressWarnings(st_centroid(shape_eco)))
@@ -63,12 +73,17 @@ server <- function(input, output, session) {
 
   # find index
   observeEvent(input$map1_shape_click, {
+
+    ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
+    runjs("$(tab).removeClass('disabled');")
+    
     ## calculate index of ecoregion selected in shape_eco
     idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
     # print(idx_1)
     if (input$map1_shape_click$group == "Eco_regions") {
       selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
-      print(selected_1$groups)
+      # print(selected_1$groups)
+      # print("check########")
       proxy_1 %>%
         showGroup(group = input$map1_shape_click$id) #%>%
         # setView( ## zoom in
@@ -94,6 +109,7 @@ server <- function(input, output, session) {
       choices = shape_eco$Ecoregion,
       selected = selected_1$groups
     )
+    
   })
 
   observeEvent(input$selected_locations,
