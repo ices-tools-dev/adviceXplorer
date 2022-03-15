@@ -73,6 +73,10 @@ server <- function(input, output, session) {
 
   # find index
   observeEvent(input$map1_shape_click, {
+    
+    ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
+    runjs("$(tab).removeClass('disabled');")
+    
     ## calculate index of ecoregion selected in shape_eco
     idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
     # print(idx_1)
