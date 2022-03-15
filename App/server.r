@@ -27,10 +27,20 @@ if (!file.exists("Data/SAG_2021/SAG_summary.csv")) {
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
-
+  ## pop up with intructions test
+  shinyalert(title= "Welcome to Online Advice", 
+            text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>",
+            "<img src= 'Animation.gif'", " height= '400px'/>" ),
+            type = "info",
+            html=TRUE,
+            closeOnClickOutside = TRUE,
+            confirmButtonText = "Let's go!",
+            size = "l",
+            )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
+  
   ######################### Map panel
 
   sf_cent <- st_coordinates(suppressWarnings(st_centroid(shape_eco)))

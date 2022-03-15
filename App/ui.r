@@ -27,6 +27,7 @@ library(widgetframe)
 library(icesSAG)
 library(plotly)
 library(shinythemes)
+library(shinyalert)
 
 ########## Load utilities ############
 source("utilities_SID_data.r")
