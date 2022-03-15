@@ -35,7 +35,7 @@ server <- function(input, output, session) {
             html=TRUE,
             closeOnClickOutside = TRUE,
             confirmButtonText = "Let's go!",
-            size = "l",
+            size = "m",
             )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
@@ -78,7 +78,8 @@ server <- function(input, output, session) {
     # print(idx_1)
     if (input$map1_shape_click$group == "Eco_regions") {
       selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
-      print(selected_1$groups)
+      # print(selected_1$groups)
+      # print("check########")
       proxy_1 %>%
         showGroup(group = input$map1_shape_click$id) #%>%
         # setView( ## zoom in
