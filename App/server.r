@@ -74,8 +74,7 @@ server <- function(input, output, session) {
   # find index
   observeEvent(input$map1_shape_click, {
 
-    ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-    runjs("$(tab).removeClass('disabled');")
+    
     
     ## calculate index of ecoregion selected in shape_eco
     idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
@@ -85,12 +84,16 @@ server <- function(input, output, session) {
       # print(selected_1$groups)
       # print("check########")
       proxy_1 %>%
-        showGroup(group = input$map1_shape_click$id) #%>%
+        showGroup(group = input$map1_shape_click$id) 
         # setView( ## zoom in
         #   lng = sf_cent[idx_1, 1],
         #   lat = sf_cent[idx_1, 2],
         #   zoom = 3
         # )
+      
+      ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
+      runjs("$(tab).removeClass('disabled');")#%>%
+        
 
       # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
     } else {
@@ -102,6 +105,7 @@ server <- function(input, output, session) {
         #   lat = sf_cent_map[2],
         #   zoom = 1
         # )
+        
     }
     updateSelectizeInput(session,
       inputId = "selected_locations",
@@ -127,6 +131,9 @@ server <- function(input, output, session) {
         selected_1$groups <- input$selected_locations
         print(selected_1$groups)
         proxy_1 %>% showGroup(group = added_via_selectInput)
+        
+        ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
+        runjs("$(tab).removeClass('disabled');")
       }
     },
     ignoreNULL = FALSE
