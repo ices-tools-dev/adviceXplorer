@@ -7,16 +7,16 @@ ecoregion = "Celtic Seas Ecoregion"
 shape_eco <- st_read(dsn = "Data/test_lowres", 
     layer = "ecoR_lowres")
 
-shape_ices_areas <- st_read(dsn = "Data/ICES_areas_low_res", 
-    layer = "ICES_areas_low_res")
-ices_areas <- st_transform(shape_ices_areas, crs = 4326)
+# shape_ices_areas <- st_read(dsn = "Data/ICES_areas_low_res", 
+#     layer = "ICES_areas_low_res")
+# ices_areas <- st_transform(shape_ices_areas, crs = 4326)
 
 # Change one Ecoregion name (this comes handy when we filter the stock list table)
 levels(shape_eco$Ecoregion)[match("Icelandic Waters",levels(shape_eco$Ecoregion))] <- "Iceland Sea"
 
 # Add an id to each ecoregion (this potentially can be eliminated because the ecoregions in the shape file have already an id)
 shape_eco$uid <- paste0("P", 1:17)
-ices_areas$uid <- paste0("A", 1:66)
+# ices_areas$uid <- paste0("A", 1:66)
 
 
 minZoom = 0
