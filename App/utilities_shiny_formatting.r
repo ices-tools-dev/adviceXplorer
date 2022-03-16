@@ -70,22 +70,22 @@ allocations_plotspanel <-
 maps_panels <-
   sidebarPanel(
     width = 8,
-    tabsetPanel(
+    # tabsetPanel(
       tabPanel(
         "ICES Ecoregions",
         fillPage(
-          tags$style(type = "text/css", "#map1 {height: calc(100vh - 200px) !important;}"),
+          tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
           leafletOutput("map1", height = "100%", width = "100%")
         )
-      ),
-      tabPanel(
-        "ICES Areas",
-        fillPage(
-          tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
-          leafletOutput("map2", height = "100%", width = "100%")
-        )
-      )
-    )
+      )#,
+      # tabPanel(
+      #   "ICES Areas",
+      #   fillPage(
+      #     tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
+      #     leafletOutput("map2", height = "100%", width = "100%")
+      #   )
+      # )
+    # )
   )
 
 selectize_panel <-
@@ -102,16 +102,16 @@ selectize_panel <-
           placeholder = "Select Ecoregion(s)"
         )
       ),
-      selectizeInput(
-        inputId = "selected_areas",
-        label = "ICES Areas",
-        choices = ices_areas$Area_Full,
-        selected = NULL,
-        multiple = TRUE,
-        options = list(
-          placeholder = "Select ICES Area(s)"
-        )
-      ),
+      # selectizeInput(
+      #   inputId = "selected_areas",
+      #   label = "ICES Areas",
+      #   choices = ices_areas$Area_Full,
+      #   selected = NULL,
+      #   multiple = TRUE,
+      #   options = list(
+      #     placeholder = "Select ICES Area(s)"
+      #   )
+      # ),
       #######
       selectizeInput(
         inputId = "selected_years",

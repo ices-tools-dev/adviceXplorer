@@ -139,64 +139,64 @@ server <- function(input, output, session) {
     ignoreNULL = FALSE
   )
 
-  ############################## Interactive section Areas ######################
-  # define leaflet proxy for Ecoregion map
-  proxy_2 <- leafletProxy("map2")
+  # ############################## Interactive section Areas ######################
+  # # define leaflet proxy for Ecoregion map
+  # proxy_2 <- leafletProxy("map2")
 
-  # create empty vector to hold all click ids
-  selected_2 <- reactiveValues(groups = vector())
+  # # create empty vector to hold all click ids
+  # selected_2 <- reactiveValues(groups = vector())
 
-  # find index
-  observeEvent(input$map2_shape_click, {
-    ## calculate index of ecoregion selected in shape_eco
-    idx_2 <- match(input$map2_shape_click$id, ices_areas$Area_Full)
-    # print(idx_2)
-    if (input$map2_shape_click$group == "ices_areas") {
-      selected_2$groups <- c(selected_2$groups, input$map2_shape_click$id)
-      proxy_2 %>%
-        showGroup(group = input$map2_shape_click$id) # %>%
-      # setView(
-      #     lng = sf_cent[idx_1, 1],
-      #     lat = sf_cent[idx_1, 2],
-      #     zoom = 3
-      # )
+  # # find index
+  # observeEvent(input$map2_shape_click, {
+  #   ## calculate index of ecoregion selected in shape_eco
+  #   idx_2 <- match(input$map2_shape_click$id, ices_areas$Area_Full)
+  #   # print(idx_2)
+  #   if (input$map2_shape_click$group == "ices_areas") {
+  #     selected_2$groups <- c(selected_2$groups, input$map2_shape_click$id)
+  #     proxy_2 %>%
+  #       showGroup(group = input$map2_shape_click$id) # %>%
+  #     # setView(
+  #     #     lng = sf_cent[idx_1, 1],
+  #     #     lat = sf_cent[idx_1, 2],
+  #     #     zoom = 3
+  #     # )
 
-      # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
-    } else {
-      selected_2$groups <- setdiff(selected_2$groups, input$map2_shape_click$group)
-      proxy_2 %>%
-        hideGroup(group = input$map2_shape_click$group) %>%
-        setView(
-          lng = sf_cent_map[1],
-          lat = sf_cent_map[2],
-          zoom = 1
-        )
-    }
-    updateSelectizeInput(session,
-      inputId = "selected_areas",
-      label = "ICES Areas",
-      choices = ices_areas$Area_Full,
-      selected = selected_2$groups
-    )
-  })
+  #     # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
+  #   } else {
+  #     selected_2$groups <- setdiff(selected_2$groups, input$map2_shape_click$group)
+  #     proxy_2 %>%
+  #       hideGroup(group = input$map2_shape_click$group) %>%
+  #       setView(
+  #         lng = sf_cent_map[1],
+  #         lat = sf_cent_map[2],
+  #         zoom = 1
+  #       )
+  #   }
+  #   updateSelectizeInput(session,
+  #     inputId = "selected_areas",
+  #     label = "ICES Areas",
+  #     choices = ices_areas$Area_Full,
+  #     selected = selected_2$groups
+  #   )
+  # })
 
-  observeEvent(input$selected_areas,
-    {
-      removed_via_selectInput <- setdiff(selected_2$groups, input$selected_areas)
-      added_via_selectInput <- setdiff(input$selected_areas, selected_2$groups)
+  # observeEvent(input$selected_areas,
+  #   {
+  #     removed_via_selectInput <- setdiff(selected_2$groups, input$selected_areas)
+  #     added_via_selectInput <- setdiff(input$selected_areas, selected_2$groups)
 
-      if (length(removed_via_selectInput) > 0) {
-        selected_2$groups <- input$selected_areas
-        proxy_2 %>% hideGroup(group = removed_via_selectInput)
-      }
+  #     if (length(removed_via_selectInput) > 0) {
+  #       selected_2$groups <- input$selected_areas
+  #       proxy_2 %>% hideGroup(group = removed_via_selectInput)
+  #     }
 
-      if (length(added_via_selectInput) > 0) {
-        selected_2$groups <- input$selected_areas
-        proxy_2 %>% showGroup(group = added_via_selectInput)
-      }
-    },
-    ignoreNULL = FALSE
-  )
+  #     if (length(added_via_selectInput) > 0) {
+  #       selected_2$groups <- input$selected_areas
+  #       proxy_2 %>% showGroup(group = added_via_selectInput)
+  #     }
+  #   },
+  #   ignoreNULL = FALSE
+  # )
   ########################################################### end Maps reactive part
 
   ###########################################################  function to use the input from the maps and the sid filtering
