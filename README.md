@@ -15,3 +15,4 @@ The official ui and server scripts are the ones in the temp folder.
 <i>Source for fish illustrations: Food and Agriculture Organization of the United Nations, Original Scientific Illustrations Archive. Reproduced with permission <br/>
 Source for placeholder fish icon: <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a><i/>
 Source for pdf icon: <a href="https://www.flaticon.com/free-icons/pdf" title="pdf icons">Pdf icons created by Creative Stall Premium - Flaticon</a>
+Source for database icon: <a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by srip - Flaticon</a>

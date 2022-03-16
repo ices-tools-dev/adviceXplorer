@@ -171,11 +171,7 @@ separate_ecoregions <- function(stock_list_all) {
 #' 
 #'
 #' @export
-#' 
-# createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
-#   paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>", StockKeyLabel,"</a>")
-# }
-
+#'
 createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
   paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>",
   "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
@@ -275,6 +271,36 @@ match_stockcode_to_illustration <- function(StockKeyLabel, df) {
 #' 
 #'
 #' @export
+#'
+createLink_SAG_db <- function(assessmentKey) {
+  paste0("<a href='","https://standardgraphs.ices.dk/ViewCharts.aspx?key=", assessmentKey,"' target='_blank'>",
+  "<img src= 'database.png'", " height= '30px'/>", "</a>")
+}
+
+
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
 #' 
 sid_table_links <- function(df){
   
@@ -282,5 +308,6 @@ sid_table_links <- function(df){
   # reference fish icon place holder <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a>
   df$advice_url <- createLink_advice_pdf(df$StockKeyLabel, df$YearOfLastAssessment)
   df$group_url <- createLink_expert_group(df$ExpertGroup)
+  df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
   return(df)
 }
