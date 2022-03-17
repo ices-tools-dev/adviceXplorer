@@ -2,7 +2,7 @@
 bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
 bins2 <- c(2000, 10000, 100000, 300000, 500000, 700000, 1000000, 1500000, Inf)
 pal_ecoR <- colorBin("YlOrRd", domain = shape_eco$Shape_Area, bins = bins)
-pal_ICES_areas <- colorBin("YlOrRd", domain = ices_areas$Area_km2, bins = bins2)
+# pal_ICES_areas <- colorBin("YlOrRd", domain = ices_areas$Area_km2, bins = bins2)
 
 # Define the interactive labels
 labels_ecoR <- sprintf(
@@ -10,11 +10,11 @@ labels_ecoR <- sprintf(
     shape_eco$Ecoregion, shape_eco$Shape_Area
 ) %>% lapply(htmltools::HTML)
 
-# Define interactive labels for iceas areas
-labels_ices_areas <- sprintf(
-    "<strong>%s ICES area</strong><br/>%g Shape Area ",
-    ices_areas$Area_Full, ices_areas$Area_km2
-) %>% lapply(htmltools::HTML)
+# # Define interactive labels for iceas areas
+# labels_ices_areas <- sprintf(
+#     "<strong>%s ICES area</strong><br/>%g Shape Area ",
+#     ices_areas$Area_Full, ices_areas$Area_km2
+# ) %>% lapply(htmltools::HTML)
 
 #' Returns ....
 #'

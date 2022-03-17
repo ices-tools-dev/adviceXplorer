@@ -58,10 +58,10 @@ server <- function(input, output, session) {
     map_ecoregion(shape_eco, eu_shape)
   }) # END RENDER LEAFLET map1
 
-  # Render Map 2
-  output$map2 <- renderLeaflet({
-    map_ices_areas(ices_areas, eu_shape)
-  }) # END RENDER LEAFLET map2
+  # # Render Map 2
+  # output$map2 <- renderLeaflet({
+  #   map_ices_areas(ices_areas, eu_shape)
+  # }) # END RENDER LEAFLET map2
   ############################################################### END of MAPS
 
   ############################## Interactive section Ecoregions ######################
