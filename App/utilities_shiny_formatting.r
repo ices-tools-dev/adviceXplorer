@@ -95,7 +95,7 @@ selectize_panel <-
       selectizeInput(
         inputId = "selected_locations",
         label = "ICES Ecoregions",
-        choices = shape_eco$Ecoregion,
+        choices = sort(shape_eco$Ecoregion),
         selected = NULL,
         multiple = TRUE,
         options = list(

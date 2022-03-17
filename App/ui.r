@@ -29,6 +29,8 @@ library(plotly)
 library(shinythemes)
 library(shinyalert)
 
+
+
 ########## Load utilities ############
 source("utilities_SID_data.r")
 source("utilities_load_shapefiles.r")
@@ -52,7 +54,8 @@ title_html <- tags$a(
             height = "50px"
         )
 )
-tagList(    
+tagList(
+    useShinyjs(),    
     tags$head(tags$script(type="text/javascript", src = "code.js")),
 
 navbarPage(
@@ -191,7 +194,7 @@ navbarPage(
     #),# close tabsetpanel
     
     # extra tags, css etc
-    useShinyjs(),
+    
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     tags$script(
     '
