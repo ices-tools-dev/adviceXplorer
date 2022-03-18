@@ -29,7 +29,7 @@ server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
   ## pop up with intructions test
   shinyalert(title= "Welcome to Online Advice", 
-            text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>",
+            text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
             "<img src= 'Animation.gif'", " height= '400px'/>" ),
             type = "info",
             html=TRUE,
@@ -230,7 +230,9 @@ server <- function(input, output, session) {
       # select(-c(ExpertGroup)) %>%
       # rename(StockCode = StockKeyLabel) %>%
       rename(ExpertGroupUrl = group_url) %>%
-      rename("Advice pdf" = advice_url)
+      rename("Advice pdf" = advice_url) %>% 
+      relocate("Advice pdf", .before = AssessmentKey)
+      
 
 
 
@@ -257,14 +259,22 @@ server <- function(input, output, session) {
     #"AdviceDraftingGroup","AssessmentFrequency","YearOfNextAssessment", "AdviceReleaseDate",
     #"AdviceType", "TrophicGuild","FisheriesGuild", "SizeGuild",)
   )
-
+  
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(res_mod(),
     escape = FALSE,
     extensions = "Buttons",
     selection = "single",
-    caption = "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
+    caption = shinyalert(title= "Stock Selection", 
+            text = paste0( "<b>","To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>","<br/>","<br/>",
+            "<img src= 'stock_selection.gif'", " height= '400px'/>" ),
+            type = "info",
+            html=TRUE,
+            closeOnClickOutside = TRUE,
+            confirmButtonText = "Let's go!",
+            size = "m",
+            ),#"Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
     options = list(
       dom = "Bfrtip",
       pageLength = 1000,
@@ -321,7 +331,7 @@ server <- function(input, output, session) {
     filtered_row <- res_mod()[input$tbl_rows_selected, ]
     # updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
 
-    print(filtered_row)
+    # print(filtered_row)
 
     ###
     #updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel, "&", "Year=", input$selected_years), mode = "push") ####
@@ -341,7 +351,7 @@ server <- function(input, output, session) {
     # read url string
     query_string <- getQueryString()
     names(query_string) <- tolower(names(query_string))
-    print(names(query_string))
+    # print(names(query_string))
     #query$stockkeylabel <- query_string$stockkeylabel
     #query$year <- query_string$year ####
 
