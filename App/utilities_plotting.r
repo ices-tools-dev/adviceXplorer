@@ -905,9 +905,10 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         fill = "tonexty",
+        name = "95 %",
         fillcolor = "#f2a497", # "rgba(0,100,80,0.2)"rgba(255,71,26,0.2)
         line = list(color = "transparent", shape = "linear"),
-        showlegend = FALSE,
+        showlegend = TRUE,
         name = "low_F"
     )
     fig3 <- fig3 %>% add_trace(
@@ -1005,9 +1006,10 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         fill = "tonexty",
+        name = "95 %",
         fillcolor = "#94b0a9", #rgba(0,100,80,0.2)
         line = list(color = "transparent", shape = "linear"),
-        showlegend = FALSE,
+        showlegend = TRUE,
         name = "low_SSB"
     )
     fig4 <- fig4 %>% add_trace(
