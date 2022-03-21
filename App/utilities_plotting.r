@@ -21,10 +21,17 @@ legend_format <- function() {
         family = "sans-serif",
         size = 20,
         color = "#000"),
+        grouptitlefont = list(
+            color = "black",
+            family = "sans-serif",
+            size = 24
+        ),
         bgcolor = "rgb(233,244,245)",
         bordercolor = "#FFFFFF",
         borderwidth = 2,
-        orientation = 'v')
+        orientation = 'v',
+        tracegroupgap = 30,
+        traceorder = "grouped")
         # yanchor = "bottom",
         # xanchor = "center",
         # x = 0.5,
@@ -84,7 +91,8 @@ figure_1_catches <- function(data, years, catches, landings, discards) {
         marker = list(color = '#66a4cd',
                       line = list(color = 'black',
                                   width = 0.5)),
-        showlegend = TRUE)
+        showlegend = TRUE,
+        legendgroup = "A")
 
     fig1 <- fig1 %>% add_trace(
         data = data,
@@ -97,7 +105,8 @@ figure_1_catches <- function(data, years, catches, landings, discards) {
         marker = list(color = '#a00130',
                         line = list(color = 'black',
                                     width = 0.5)),
-        showlegend = TRUE)
+        showlegend = TRUE,
+        legendgroup = "A")
 
     fig1 <- fig1 %>% layout(title = "Catches",
             xaxis = list(title = "Years",
@@ -162,7 +171,8 @@ figure_2_recruitment <- function(data, years, recruitment, low_recruitment, high
                 symmetric = FALSE,
                 arrayminus = ~low_recruitment,
                 array = ~ high_recruitment,
-                color = "#000000")
+                color = "#000000"),
+                legendgroup = "A"
                 #orientation = "v",
                 #type = "bar"
             #)
@@ -498,7 +508,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
     #  line = list(shape = "spline"),
      connectgaps = FALSE,
      color = ~AssessmentYear,
-     colors = palette_bw
+     colors = palette_bw,
+     legendgroup = "A"
  )
  fig1 <- fig1 %>% add_trace(
         data = big_data_last_year, ###select for last reference points last year
@@ -508,7 +519,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         type = "scatter", 
         mode = "lines",
         line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
     fig1 <- fig1 %>% add_trace(
         data = big_data_last_year, 
@@ -518,7 +530,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         type = "scatter", 
         mode = "lines",
         line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
 
     fig1 <- fig1 %>% add_trace(
@@ -529,7 +542,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         type = "scatter", 
         mode = "lines",
         line = list(color = "#689dff", shape = "linear", width = 1), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
  fig1 <- fig1 %>% layout(
         # title = "SSB", 
@@ -575,7 +589,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
      connectgaps = FALSE,
      color = ~AssessmentYear,
      colors = palette_bw,
-     showlegend = FALSE
+     showlegend = FALSE,
+     legendgroup = "A"
  )
  ## Add horizontal lines
     fig2 <- fig2 %>% add_trace(
@@ -586,7 +601,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         type = "scatter", 
         mode = "lines",
         line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
     fig2 <- fig2 %>% add_trace(
         data = big_data_last_year, 
@@ -596,7 +612,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         type = "scatter", 
         mode = "lines",
         line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
 
     fig2 <- fig2 %>% add_trace(
@@ -607,7 +624,8 @@ palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd
         type = "scatter", 
         mode = "lines",
         line = list(color = "#00AC67", shape = "linear", width = 1), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
 fig2 <- fig2 %>% layout(
         # title = "F", 
@@ -654,7 +672,8 @@ fig2 <- fig2 %>% layout(
      connectgaps = FALSE,
      color = ~AssessmentYear,
      colors = palette_bw,
-     showlegend = FALSE
+     showlegend = FALSE,
+     legendgroup = "A"
  )
 fig3 <- fig3 %>% layout(
         # title = "R", 
@@ -767,7 +786,9 @@ figure_1_plots <- function(data1, data2, data3, data4,
                                         font = list(family = "Calibri, serif",size = 10, color = "black"),
                                         yref = 'paper', y = 0.97, xref = "paper", x = 0.95
                                         )
+
     
+
     # Start the plot
     fig1 <- plot_ly(
         data = data1,
@@ -784,7 +805,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
                 width = 0.5
             )
         ),
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "A"
     )
 
     fig1 <- fig1 %>% add_trace(
@@ -802,7 +824,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
                 width = 0.5
             )
         ),
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "A"
     )
 
     fig1 <- fig1 %>% layout(
@@ -857,7 +880,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
             arrayminus = ~low_recruitment,
             array = ~high_recruitment,
             color = "rgba(169,169,169,0.5)"
-        )
+        ),
+        legendgroup = "A"
     )
 
     fig2 <- fig2 %>% layout(
@@ -897,7 +921,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         mode = "lines",
         line = list(color = "transparent", shape = "linear"), #
         showlegend = FALSE,
-        name = "high_F"
+        name = "DATA",
+        legendgroup = "A"
     )
     fig3 <- fig3 %>% add_trace(
         data = data3,
@@ -909,7 +934,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         fillcolor = "#f2a497", # "rgba(0,100,80,0.2)"rgba(255,71,26,0.2)
         line = list(color = "transparent", shape = "linear"),
         showlegend = TRUE,
-        name = "low_F"
+        name = "low_F",
+        legendgroup = "A"
     )
     fig3 <- fig3 %>% add_trace(
         data = data3,
@@ -920,7 +946,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         line = list(color = "#ed5f26", shape = "linear"), #"rgb(255,71,26)"
         name = "F",
         marker = list(size = 1, color = "#ed5f26"),
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "A"
     )
 
     ## Add horizontal lines
@@ -932,7 +959,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), #black
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
     fig3 <- fig3 %>% add_trace(
         data = data3,
@@ -942,7 +970,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), #7e7e7e
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
     fig3 <- fig3 %>% add_trace(
         data = data3,
@@ -952,7 +981,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         line = list(color = "#00AC67", shape = "linear", width = 1),#, dash = "dash"), #679dfe old blue like the one MSYBtrigger  af1111
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
 
     fig3 <- fig3 %>% layout(
@@ -1010,7 +1040,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         fillcolor = "#94b0a9", #rgba(0,100,80,0.2)
         line = list(color = "transparent", shape = "linear"),
         showlegend = TRUE,
-        name = "low_SSB"
+        name = "low_SSB",
+        legendgroup = "A"
     )
     fig4 <- fig4 %>% add_trace(
         data = data4,
@@ -1021,7 +1052,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         line = list(color = "#047c6c", shape = "linear"), #rgb(0,100,80)
         name = "SSB",
         marker = list(size = 1, color = "#047c6c"),
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "A"
     )
 
     ## Add horizontal lines
@@ -1033,7 +1065,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         line = list(color = "black", shape = "linear", dash = "dash", width = 2),
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
     fig4 <- fig4 %>% add_trace(
         data = data4,
@@ -1043,7 +1076,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         line = list(color = "black", shape = "linear", dash = "dot", width = 2),
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
     fig4 <- fig4 %>% add_trace(
         data = data4,
@@ -1053,7 +1087,8 @@ figure_1_plots <- function(data1, data2, data3, data4,
         type = "scatter",
         mode = "lines",
         line = list(color = "#689dff", shape = "linear", width = 1),#, dash = "dash"), 
-        showlegend = TRUE
+        showlegend = TRUE,
+        legendgroup = "B"
     )
 
     fig4 <- fig4 %>% layout(
@@ -1093,8 +1128,18 @@ figure_1_plots <- function(data1, data2, data3, data4,
     fig <- subplot(fig1, fig2, fig3, fig4,
         nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.5, 0.5), heights = c(0.5, 0.5), margin = c(0.06,0.06,0.02,0.02)
     ) #
+
+    # RefPoints_annotation <- list( showarrow = FALSE,
+    #                                     text = "Reference points",
+    #                                     font = list(family = "Calibri, serif",size = 20, color = "black"),
+    #                                     yref = 'paper', y =0.6, xref = "paper", x = 1.2
+    #                                   )
+
+    # fig <- fig %>%layout(annotations =  RefPoints_annotation)                                 
     fig
 }
+
+
 
 #' Returns ....
 #'
