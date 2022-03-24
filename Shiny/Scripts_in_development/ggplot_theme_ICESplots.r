@@ -25,7 +25,7 @@ access_sag_data <- function(stock_code, year) {
 # download data
 
 df <- access_sag_data("ple.27.420", 2021)
-
+df
 # create the theme
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F")) {
     font <- "Calibri, sans-serif" # assign font family up front
@@ -63,6 +63,8 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F")) {
                     color <- "#28b3e8"
                 } else if (type == "F") {
                     color <- "#ed5f26"
+                } else if (type == "SSB") {
+                    color <- "#047c6c"
                 }
             ), # raise slightly
             # grid elements
@@ -135,35 +137,35 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F")) {
                 # }
             )
         )
+    } else if (type == "SSB") {
+        # mycolors <- c("#ed5f26")#, "#f2a497")
+        theme_ICES_plots <- list(
+            tmp,
+            labs(
+                title = "Spawning Stock Biomass", #sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
+                y =  sprintf("%s in millions %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+            ),
+            scale_color_manual(values = c("#047c6c")),
+            scale_fill_manual(values = c("#94b0a9")),
+            expand_limits(y = 0),
+            scale_y_continuous(
+                expand = expansion(mult = c(0, 0.1)),
+                labels = function(l) {
+                    trans <- l / 1000000
+                }
+            )
+        )
     }
 
-
-    # theme_ICES_plots <- list(
-    #     tmp,
-    #     labs(
-    # title = "Catches",
-    # y = sprintf("Catches in 1000 %s", dplyr::last(df$units))),
-    #     scale_fill_manual(values = mycolors),
-    #     scale_y_continuous(
-    #         expand = expansion(mult = c(0, 0.1)),
-    #         labels = function(l) {
-    #             if (type == "catches") {
-    #                 trans <- l / 1000
-    #             } else if (type == "recruitment") {
-    #                 trans <- l / 1000000
-    #             }
-    #         }
-    #     )
-    # )
     return(theme_ICES_plots)
 }
 
 
-# define labs
-text_labels <- labs(
-    title = "Catches",
-    y = sprintf("Catches in 1000 %s", dplyr::last(df$units))
-)
+# # define labs
+# text_labels <- labs(
+#     title = "Catches",
+#     y = sprintf("Catches in 1000 %s", dplyr::last(df$units))
+# )
 
 
 # selecting ddata and plotting
@@ -232,6 +234,24 @@ p3
 fig3 <- ggplotly(p3) %>%
 layout(legend = list(orientation = "h", y=-.1, yanchor="bottom", x = 0.4, title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
 
+p4 <- df %>%
+    select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>% drop_na(SSB,high_SSB) %>% 
+    #    gather(type, count, discards:landings) %>%
+    ggplot(., aes(x = Year, y =  SSB, color= "SSB")) +
+    geom_hline(yintercept = tail(df$Blim), linetype = 'dashed', colour = "#a1a1a1", size = 2) +
+    geom_hline(yintercept = tail(df$Bpa), linetype = 'dotted', colour = "#a1a1a1", size = 2) +
+    geom_hline(yintercept = tail(df$MSYBtrigger), linetype = 'solid', colour = "#689dff", size = 2) +
+    geom_ribbon(aes(ymin = low_SSB, ymax = high_SSB, fill = "2*sd"), linetype = "blank", size  = 0) + #, alpha = 0.2
+    geom_line(size = 1.5) +
+    
+    theme_ICES_plots(type = "SSB")
+   
+# plot <- p + text_labels
+# plot
+p4
+#converting
+fig4 <- ggplotly(p4) %>%
+layout(legend = list(orientation = "h", y=-.1, yanchor="bottom", x = 0.2, title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
 
 
 
@@ -245,8 +265,8 @@ layout(legend = list(orientation = "h", y=-.1, yanchor="bottom", x = 0.4, title 
 
 
 
-fig4 <- fig1
-fig <- subplot(fig1, fig2, fig3, fig4,
+
+fig <- subplot(list(fig1, fig2, fig3, fig4),
         nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.5, 0.5), heights = c(0.5, 0.5), margin = c(0.06,0.06,0.02,0.02)
     )
 fig
