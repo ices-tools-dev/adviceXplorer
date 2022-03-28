@@ -4,7 +4,7 @@ library(dplyr)
 library(tidyr)
 library(plotly)
 library(purrr)
-
+library(stringr)
 
 access_sag_data <- function(stock_code, year) {
 
@@ -172,13 +172,13 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
 }
 
 
-clean_plotly_legend <- function(plotly_obj) {
-    for (i in 1:length(plotly_obj$x$data)) {
-        if (!is.null(plotly_obj$x$data[[i]]$name)) {
-            plotly_obj$x$data[[i]]$name <- gsub("\\(", "", str_split(plotly_obj$x$data[[i]]$name, ",")[[1]][1])
-        }
-    }
-}
+# clean_plotly_legend <- function(plotly_obj) {
+#     for (i in 1:length(plotly_obj$x$data)) {
+#         if (!is.null(plotly_obj$x$data[[i]]$name)) {
+#             plotly_obj$x$data[[i]]$name <- gsub("\\(", "", str_split(plotly_obj$x$data[[i]]$name, ",")[[1]][1])
+#         }
+#     }
+# }
 # # define labs
 # text_labels <- labs(
 #     title = "Catches",
@@ -200,10 +200,10 @@ p1 <- df %>%
 p1
 #converting
 fig1 <- ggplotly(p1) %>%
-layout(legend = list(orientation = "h", y= -.1, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")))
+layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")))
 
 
-# clean_plotly_legend(fig1)
+clean_plotly_legend(fig1)
 
 
 ######################################recruitment###################################################
@@ -234,7 +234,7 @@ p2 <- df %>%
 p2
 #converting
 fig2 <- ggplotly(p2) %>%
-layout(legend = list(orientation = "h", y= -.1, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")))
+layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")))
 # fig2 <- clean_plotly_legend(fig2)
 
 p3 <- df %>%
@@ -262,7 +262,7 @@ p3 <- df %>%
 p3
 #converting
 fig3 <- ggplotly(p3) %>%
-layout(legend = list(orientation = "h", y= -.1, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
+layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
 for (i in 1:length(fig3$x$data)){
     if (!is.null(fig3$x$data[[i]]$name)){
         fig3$x$data[[i]]$name =  gsub("\\(","",str_split(fig3$x$data[[i]]$name,",")[[1]][1])
@@ -290,14 +290,15 @@ p4 <- df %>%
 p4
 #converting
 fig4 <- ggplotly(p4) %>%
-layout(legend = list(orientation = "h", y= -.1, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
+layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
+
 for (i in 1:length(fig4$x$data)){
     if (!is.null(fig4$x$data[[i]]$name)){
         fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
     }
 }
 
-
+# clean_plotly_legend(fig4)
 # library(gridExtra)
 # gring <- grid.arrange(p1,p2,p3,p4, nrow = 2)
 
@@ -305,94 +306,134 @@ for (i in 1:length(fig4$x$data)){
 # ggplotly(gring)
 
 
-fig <- subplot(list(fig1, fig2, fig3, fig4),
-        nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.4, 0.4), heights = c(0.4, 0.4), margin = c(0.1,0.1,0.1,0.1)
-    )
-fig
+# fig <- subplot(list(fig1, fig2, fig3, fig4),
+#         nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.4, 0.4), heights = c(0.4, 0.4), margin = c(0.1,0.1,0.1,0.1)
+#     )
+# fig
 
 
-clean_pltly_legend <- function(.pltly_obj, .new_legend = c()) {
-  # Cleans up a plotly object legend, particularly when ggplot is facetted
+# clean_pltly_legend <- function(.pltly_obj, .new_legend = c()) {
+#   # Cleans up a plotly object legend, particularly when ggplot is facetted
   
-  assign_leg_grp <- function(.legend_group, .leg_nms) {
-    # Assigns a legend group from the list of possible entries
-    # Used to modify the legend settings for a plotly object
+#   assign_leg_grp <- function(.legend_group, .leg_nms) {
+#     # Assigns a legend group from the list of possible entries
+#     # Used to modify the legend settings for a plotly object
     
-    leg_nms_rem <- .leg_nms
+#     leg_nms_rem <- .leg_nms
     
-    parse_leg_nms <- function(.leg_options) {
-      # Assigns a .leg_name, if possible
-      # .leg_options is a 2-element list: 1 = original value; 2 = remaining options
+#     parse_leg_nms <- function(.leg_options) {
+#       # Assigns a .leg_name, if possible
+#       # .leg_options is a 2-element list: 1 = original value; 2 = remaining options
       
-      if (is.na(.leg_options)) {
-        .leg_options
-      } else if(length(leg_nms_rem) == 0) {
-        # No more legend names to assign
-        .leg_options
-      } else {
-        # Transfer the first element of the remaining options
-        leg_nm_new <- leg_nms_rem[[1]]
-        leg_nms_rem <<- leg_nms_rem[-1]
+#       if (is.na(.leg_options)) {
+#         .leg_options
+#       } else if(length(leg_nms_rem) == 0) {
+#         # No more legend names to assign
+#         .leg_options
+#       } else {
+#         # Transfer the first element of the remaining options
+#         leg_nm_new <- leg_nms_rem[[1]]
+#         leg_nms_rem <<- leg_nms_rem[-1]
         
-        leg_nm_new
-      }
+#         leg_nm_new
+#       }
       
-    }
+#     }
     
-    .legend_group %>% 
-      map(~ parse_leg_nms(.))
+#     .legend_group %>% 
+#       map(~ parse_leg_nms(.))
     
-  }
+#   }
   
-  simplify_leg_grps <- function(.legendgroup_vec) {
-    # Simplifies legend groups by removing brackets, position numbers and then de-duplicating
+#   simplify_leg_grps <- function(.legendgroup_vec) {
+#     # Simplifies legend groups by removing brackets, position numbers and then de-duplicating
     
-    leg_grp_cln <-
-      map_chr(.legendgroup_vec, ~ str_replace_all(., c("^\\(" = "", ",\\d+\\)$" = "")))
+#     leg_grp_cln <-
+#       map_chr(.legendgroup_vec, ~ str_replace_all(., c("^\\(" = "", ",\\d+\\)$" = "")))
     
-    modify_if(leg_grp_cln, duplicated(leg_grp_cln), ~ NA_character_)
+#     modify_if(leg_grp_cln, duplicated(leg_grp_cln), ~ NA_character_)
     
-  }
+#   }
   
-  pltly_obj_data <-
-    .pltly_obj$x$data
+#   pltly_obj_data <-
+#     .pltly_obj$x$data
   
-  pltly_leg_grp <-
-    # pltly_leg_grp is a character vector where each element represents a legend group. Element is NA if legend group not required or doesn't exist
-    pltly_obj_data%>% 
-    map(~ pluck(., "legendgroup")) %>% 
-    map_chr(~ if (is.null(.)) {NA_character_} else {.}) %>%
-    # Elements where showlegend = FALSE have legendgroup = NULL. 
+#   pltly_leg_grp <-
+#     # pltly_leg_grp is a character vector where each element represents a legend group. Element is NA if legend group not required or doesn't exist
+#     pltly_obj_data%>% 
+#     map(~ pluck(., "legendgroup")) %>% 
+#     map_chr(~ if (is.null(.)) {NA_character_} else {.}) %>%
+#     # Elements where showlegend = FALSE have legendgroup = NULL. 
     
-    simplify_leg_grps() %>% 
+#     simplify_leg_grps() %>% 
     
-    assign_leg_grp(.new_legend) 
+#     assign_leg_grp(.new_legend) 
   
-  pltly_obj_data_new <-
-    pltly_obj_data %>% 
-    map2(pltly_leg_grp, ~ list_modify(.x, legendgroup = .y)) %>%
-    map2(pltly_leg_grp, ~ list_modify(.x, name = .y)) %>%
-    map2(pltly_leg_grp, ~ list_modify(.x, showlegend = !is.na(.y)))
-  # i.e. showlegend set to FALSE when is.na(pltly_leg_grp), TRUE when not is.na(pltly_leg_grp)
+#   pltly_obj_data_new <-
+#     pltly_obj_data %>% 
+#     map2(pltly_leg_grp, ~ list_modify(.x, legendgroup = .y)) %>%
+#     map2(pltly_leg_grp, ~ list_modify(.x, name = .y)) %>%
+#     map2(pltly_leg_grp, ~ list_modify(.x, showlegend = !is.na(.y)))
+#   # i.e. showlegend set to FALSE when is.na(pltly_leg_grp), TRUE when not is.na(pltly_leg_grp)
   
-  .pltly_obj$x$data <- pltly_obj_data_new
+#   .pltly_obj$x$data <- pltly_obj_data_new
   
-  .pltly_obj
+#   .pltly_obj
   
-}
+# }
 
-f1 <- clean_pltly_legend(fig1, .new_legend = c("discards","landings"))
-f2 <- clean_pltly_legend(fig2, .new_legend = c("recruitment"))
-f3 <- clean_pltly_legend(fig4, .new_legend = c("2*sd","SSB","Blim","Bpa","MSYtrigger"))
-f4 <- clean_pltly_legend(fig3, .new_legend = c("2*sd","F","FMSY","Flim","Fpa"))
+# f1 <- clean_pltly_legend(fig1, .new_legend = c("discards","landings"))
+# f2 <- clean_pltly_legend(fig2, .new_legend = c("recruitment"))
+# f3 <- clean_pltly_legend(fig4, .new_legend = c("2*sd","SSB","Blim","Bpa","MSYtrigger"))
+# f4 <- clean_pltly_legend(fig3, .new_legend = c("2*sd","F","FMSY","Flim","Fpa"))
 
-fig_sub <- subplot(list(f1, f2, f3, f4),
-        nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.4, 0.4), heights = c(0.4, 0.4), margin = c(0.1,0.1,0.1,0.1)
-    )
-fig
+# fig_sub <- subplot(list(f1, f2, f3, f4),
+#         nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.4, 0.4), heights = c(0.4, 0.4), margin = c(0.1,0.1,0.1,0.1)
+#     )
+# fig
 
 # for (i in 1:length(fig4$x$data)){
 #     if (!is.null(fig4$x$data[[i]]$name)){
 #         fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
 #     }
 # }
+library(shiny)
+
+# Define UI ----
+ui <- fluidPage(
+    style = "max-height: 90vh; overflow-y: auto;",
+    panel(
+    fluidRow(
+        column(width = 6, 
+        plotlyOutput("plot1", height = "100%", width = "100%")),
+        column(width = 6,
+        plotlyOutput("plot2", height = "100%", width = "100%")),
+        
+    ),
+    fluidRow(
+        column(width = 6, 
+        plotlyOutput("plot3", height = "100%", width = "100%")),
+        column(width = 6,
+        plotlyOutput("plot4", height = "100%", width = "100%")),
+    )
+    )
+)
+
+# Define server logic ----
+server <- function(input, output) {
+  output$plot1 <- renderPlotly(
+      fig1
+  )
+  output$plot2 <- renderPlotly(
+      fig2
+  )
+  output$plot3 <- renderPlotly(
+      fig3
+  )
+  output$plot4 <- renderPlotly(
+      fig4
+  )
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
