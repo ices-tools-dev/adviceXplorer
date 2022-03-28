@@ -562,29 +562,41 @@ library(shinyWidgets)
 ui <- fluidPage(
     
     panel(
-        style = "max-height: 90vh; overflow-y: auto;",
+        style = "height: 95vh; overflow-y: auto;",
         fluidRow(
             column(
-                width = 6,
+                width = 6, style = "height: 45vh;",
                 plotlyOutput("plot1", height = "100%", width = "100%")
             ),
             column(
-                width = 6,
+                width = 6, style = "height: 45vh;",
                 plotlyOutput("plot2", height = "100%", width = "100%")
             ),
         ),
         fluidRow(
             column(
-                width = 6,
+                width = 6, style = "height: 45vh;",
                 plotlyOutput("plot3", height = "100%", width = "100%")
             ),
             column(
-                width = 6,
+                width = 6, style = "height: 45vh;",
                 plotlyOutput("plot4", height = "100%", width = "100%")
             ),
         )
     )
 )
+
+# ui<- fluidPage(
+#     tabPanel(
+#         "Stock development over time",
+#         sidebarLayout(
+#              mainPanel = plots_panel,
+#             sidebarPanel = allocations_plotspanel
+           
+#         )
+#         # includeMarkdown("Instructions.Rmd")
+#     )
+# )
 
 # Define server logic ----
 server <- function(input, output) {
@@ -604,3 +616,56 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
+
+
+# plots_panel <-
+#   mainPanel(
+#     width = 8,
+#     panel(
+#       title = "plots",
+#     #   fillPage(
+#     #     tags$style(type = "text/css", "{height: calc(99vh - 200px) !important;}"),
+#         fluidRow(
+#             column(
+#                 width = 6,
+#                 plotlyOutput("plot1", height = "100%", width = "100%")
+#             ),
+#             column(
+#                 width = 6,
+#                 plotlyOutput("plot2", height = "100%", width = "100%")
+#             ),
+#         ),
+#         fluidRow(
+#             column(
+#                 width = 6,
+#                 plotlyOutput("plot3", height = "100%", width = "100%")
+#             ),
+#             column(
+#                 width = 6,
+#                 plotlyOutput("plot4", height = "100%", width = "100%")
+#             ),
+#         )
+
+#       ),
+#       h5(helpText("Stock Development over time"))
+#     # )
+#   )
+
+# # advice plot side panel
+# allocations_plotspanel <-
+#   sidebarPanel(
+#     width = 4,
+
+#       panel(
+#         title = "Quality of Assessment",
+#         # fillPage(
+#         #   tags$style(type = "text/css", "#plot4 {height: calc(99vh - 200px) !important;}"),
+#           plotlyOutput("plot4", height = "100%", width = "100%")
+#         ),
+#         h5(helpText("Quality of Assessment"))
+#         # actionButton("r_SSB", "Get Stock Data")
+#     #   )
+#         # )
+#     # ),
+#     # DTOutput("tbl_summary")
+#     )
