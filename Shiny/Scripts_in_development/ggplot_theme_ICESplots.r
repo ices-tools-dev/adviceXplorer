@@ -24,7 +24,7 @@ access_sag_data <- function(stock_code, year) {
 
 # download data
 
-df <- access_sag_data("cod.27.47d20", 2021)
+df <- access_sag_data("ple.27.420", 2021)
 df
 # create the theme
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
@@ -95,7 +95,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
                 title = "Catches",
                 y = sprintf("Catches in 1000 %s", dplyr::last(df$units))
             ),
-            scale_fill_manual(values = c("#fda500", "#002b5f")),
+            scale_fill_manual(values = c("landings" = "#002b5f", "discards"="#fda500")),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) {
@@ -188,109 +188,267 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
 
 # selecting ddata and plotting
 ##################################catches#########################################################
-p1 <- df %>% 
-   select(Year, landings,  discards, units) %>% 
-   gather(type, count, discards:landings) %>% 
-   ggplot(., aes(x=Year, y=count, fill=type)) +
-   geom_bar(position="stack", stat="identity") +
-   theme_ICES_plots(type = "catches")
-   
-# plot <- p + text_labels
-# plot
+p1 <- df %>%
+    select(Year, landings, discards, units) %>%
+    gather(type, count, discards:landings) %>%
+    ggplot(., aes(
+        x = Year,
+        y = count,
+        fill = type,
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>", type, ": </b>", count
+            ), HTML
+        )
+    )) +
+    geom_bar(position = "stack", stat = "identity") +
+    theme_ICES_plots(type = "catches")
+
+
 p1
-#converting
-fig1 <- ggplotly(p1) %>%
-layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")))
-
-
-clean_plotly_legend(fig1)
+# converting
+fig1 <- ggplotly(p1, tooltip = "text") %>%
+    layout(legend = list(
+        orientation = "h",
+        y = -.3,
+        yanchor = "bottom",
+        x = 0.5,
+        xanchor = "center",
+        title = list(text = "")
+    ))
 
 
 ######################################recruitment###################################################
-# define labs
-# text_labels <- labs(
-#     title = sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-#     y = "Recruitment in billions" #sprintf("Catches in 1000 %s", dplyr::last(df$units))
-# )
-
 
 p2 <- df %>%
     select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age) %>%
     #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y = recruitment, fill = "recruitment")) +
+    ggplot(., aes(
+        x = Year,
+        y = recruitment,
+        fill = "recruitment",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>Recruitment: </b>", recruitment
+            ), HTML
+        )
+    )) +
     geom_bar(stat = "identity") +
-    geom_errorbar(aes(ymin = low_recruitment, ymax = high_recruitment), #, color = "2*sd"
-        width = .2#,
-        # position = position_dodge(.9)        
+    geom_errorbar(aes(
+        ymin = low_recruitment,
+        ymax = high_recruitment,
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>High recruitment: </b>", high_recruitment,
+                "<br>",
+                "<b>Low recruitment: </b>", low_recruitment
+            ), HTML
+        )
+    ), # , color = "2*sd"
+    width = .2
     ) +
-    # scale_color_manual(values = c("#666666")) +
-    # guides(colour = guide_legend(override.aes = list(linetype = c("solid"), 
-    #                                                shape = c(15))))
-    # scale_fill_manual(values = mycolors)
     theme_ICES_plots(type = "recruitment")
-   
-# plot <- p + text_labels
-# plot
+
 p2
 #converting
-fig2 <- ggplotly(p2) %>%
-layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")))
-# fig2 <- clean_plotly_legend(fig2)
+fig2 <- ggplotly(p2, tooltip = "text") %>%
+    layout(legend = list(
+        orientation = "h",
+        y = -.3,
+        yanchor = "bottom",
+        x = 0.5,
+        xanchor = "center",
+        title = list(text = "")
+    ))
+
 
 p3 <- df %>%
-    select(Year, F, low_F, high_F, FLim, Fpa, FMSY,Fage, fishingPressureDescription) %>% drop_na(F) %>% 
+    select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription) %>%
+    drop_na(F) %>%
     #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y =  F)) +
-     #, alpha = 0.2
-    
-    
-    geom_ribbon(aes(ymin = low_F, ymax = high_F, fill = "2*sd"), linetype = "blank", size  =0) +
-    
-    geom_line(aes(x = Year, y =  F, color= "F"), size = 1.5) +
-    
-    geom_hline(aes(yintercept = tail(FMSY,1), colour = "FMSY", linetype = "FMSY", size = "FMSY")) +
-    geom_hline(aes(yintercept = tail(FLim,1), colour = "FLim", linetype = "FLim",size = "FLim")) +
-    geom_hline(aes(yintercept = tail(Fpa,1), colour = "Fpa", linetype = "Fpa",size = "Fpa")) +
-    
-    
-    
-    
+    ggplot(., aes(x = Year, y = F)) +
+    # , alpha = 0.2
+
+
+    geom_ribbon(aes(
+        ymin = low_F,
+        ymax = high_F,
+        fill = "2*sd",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>F: </b>", F,
+                "<br>",
+                "<b>High F: </b>", high_F,
+                "<br>",
+                "<b>Low F: </b>", low_F
+            ), HTML
+        )
+    ), linetype = "blank", size = 0) +
+    geom_line(aes(
+        x = Year,
+        y = F,
+        color = "F",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>F: </b>", F
+            ), HTML
+        )
+    ), size = 1.5) +
+    geom_hline(aes(
+        yintercept = tail(FMSY, 1),
+        colour = "FMSY",
+        linetype = "FMSY",
+        size = "FMSY",
+        text = map(
+            paste0(
+                "<b>FMSY: </b>", tail(FMSY, 1)
+            ), HTML
+        )
+    )) +
+    geom_hline(aes(
+        yintercept = tail(FLim, 1),
+        colour = "FLim",
+        linetype = "FLim",
+        size = "FLim",
+        text = map(
+            paste0(
+                "<b>FLim: </b>", tail(FLim, 1)
+            ), HTML
+        )
+    )) +
+    geom_hline(aes(
+        yintercept = tail(Fpa, 1),
+        colour = "Fpa",
+        linetype = "Fpa",
+        size = "Fpa",
+        text = map(
+            paste0(
+                "<b>Fpa: </b>", tail(Fpa, 1)
+            ), HTML
+        )
+    )) +
     theme_ICES_plots(type = "F")
    
 # plot <- p + text_labels
 # plot
 p3
 #converting
-fig3 <- ggplotly(p3) %>%
-layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
-for (i in 1:length(fig3$x$data)){
-    if (!is.null(fig3$x$data[[i]]$name)){
-        fig3$x$data[[i]]$name =  gsub("\\(","",str_split(fig3$x$data[[i]]$name,",")[[1]][1])
+fig3 <- ggplotly(p3, tooltip = "text") %>%
+    layout(
+        legend = list(
+            orientation = "h",
+            y = -.3, yanchor = "bottom",
+            x = 0.5, xanchor = "center",
+            title = list(text = "")
+        ),
+        xaxis = list(zeroline = TRUE)
+    ) 
+for (i in 1:length(fig3$x$data)) {
+    if (!is.null(fig3$x$data[[i]]$name)) {
+        fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
     }
 }
 
 
 p4 <- df %>%
-    select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>% drop_na(SSB,high_SSB) %>% 
+    select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
+    drop_na(SSB, high_SSB) %>%
     #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y =  SSB)) +
-
-    
-    geom_ribbon(aes(ymin = low_SSB, ymax = high_SSB, fill = "2*sd"), linetype = "blank", size  = 0) + #, alpha = 0.2
-    geom_line(aes(x = Year, y =  SSB,, color= "SSB"),size = 1.5) +
-    
-    geom_hline(aes(yintercept = tail(Blim,1), linetype = 'Blim', colour = "Blim", size = "Blim")) +
-    geom_hline(aes(yintercept = tail(Bpa,1), linetype = 'Bpa', colour = "Bpa", size = "Bpa")) +
-    geom_hline(aes(yintercept = tail(MSYBtrigger,1), linetype = 'MSYBtrigger', colour = "MSYBtrigger", size = "MSYBtrigger")) +
-
+    ggplot(., aes(x = Year, y = SSB)) +
+    geom_ribbon(aes(
+        ymin = low_SSB,
+        ymax = high_SSB,
+        fill = "2*sd",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>SSB: </b>", SSB,
+                "<br>",
+                "<b>High SSB: </b>", high_SSB,
+                "<br>",
+                "<b>Low SSB: </b>", low_SSB
+            ), HTML
+        )
+    ),
+    linetype = "blank",
+    size = 0
+    ) +
+    geom_line(aes(
+        x = Year,
+        y = SSB,
+        color = "SSB",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>SSB: </b>", SSB
+            ), HTML
+        )
+    ),
+    size = 1.5
+    ) +
+    geom_hline(aes(
+        yintercept = tail(Blim, 1),
+        linetype = "Blim",
+        colour = "Blim",
+        size = "Blim",
+        text = map(
+            paste0(
+                "<b>Blim: </b>", tail(Blim, 1)
+            ), HTML
+        )
+    )) +
+    geom_hline(aes(
+        yintercept = tail(Bpa, 1),
+        linetype = "Bpa",
+        colour = "Bpa",
+        size = "Bpa",
+        text = map(
+            paste0(
+                "<b>Bpa: </b>", tail(Bpa, 1)
+            ), HTML
+        )
+    )) +
+    geom_hline(aes(
+        yintercept = tail(MSYBtrigger, 1),
+        linetype = "MSYBtrigger",
+        colour = "MSYBtrigger",
+        size = "MSYBtrigger",
+        text = map(
+            paste0(
+                "<b>MSYBtrigger: </b>", tail(MSYBtrigger, 1)
+            ), HTML
+        )
+    )) +
     theme_ICES_plots(type = "SSB")
    
 # plot <- p + text_labels
 # plot
 p4
 #converting
-fig4 <- ggplotly(p4) %>%
-layout(legend = list(orientation = "h", y= -.3, yanchor="bottom", x = 0.5, xanchor = "center", title = list(text = "")),xaxis = list(zeroline = TRUE)) # nolint
+fig4 <- ggplotly(p4, tooltip = "text") %>%
+    layout(
+        legend = list(
+            orientation = "h",
+            y = -.3,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = "")
+        ),
+        xaxis = list(zeroline = TRUE)
+    ) # nolint
 
 for (i in 1:length(fig4$x$data)){
     if (!is.null(fig4$x$data[[i]]$name)){
@@ -398,24 +556,33 @@ for (i in 1:length(fig4$x$data)){
 #     }
 # }
 library(shiny)
+library(shinyWidgets)
 
 # Define UI ----
 ui <- fluidPage(
-    style = "max-height: 90vh; overflow-y: auto;",
+    
     panel(
-    fluidRow(
-        column(width = 6, 
-        plotlyOutput("plot1", height = "100%", width = "100%")),
-        column(width = 6,
-        plotlyOutput("plot2", height = "100%", width = "100%")),
-        
-    ),
-    fluidRow(
-        column(width = 6, 
-        plotlyOutput("plot3", height = "100%", width = "100%")),
-        column(width = 6,
-        plotlyOutput("plot4", height = "100%", width = "100%")),
-    )
+        style = "max-height: 90vh; overflow-y: auto;",
+        fluidRow(
+            column(
+                width = 6,
+                plotlyOutput("plot1", height = "100%", width = "100%")
+            ),
+            column(
+                width = 6,
+                plotlyOutput("plot2", height = "100%", width = "100%")
+            ),
+        ),
+        fluidRow(
+            column(
+                width = 6,
+                plotlyOutput("plot3", height = "100%", width = "100%")
+            ),
+            column(
+                width = 6,
+                plotlyOutput("plot4", height = "100%", width = "100%")
+            ),
+        )
     )
 )
 
