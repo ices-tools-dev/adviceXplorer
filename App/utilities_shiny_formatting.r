@@ -98,6 +98,7 @@ selectize_panel <-
         choices = sort(shape_eco$Ecoregion),
         selected = NULL,
         multiple = TRUE,
+        width = "100%",
         options = list(
           placeholder = "Select Ecoregion(s)"
         )
@@ -119,6 +120,7 @@ selectize_panel <-
         choices = Years$Year,
         selected = 2021,
         multiple = FALSE,
+        width = "100%",
         options = list(
           placeholder = "Select ICES Area(s)"
         )
