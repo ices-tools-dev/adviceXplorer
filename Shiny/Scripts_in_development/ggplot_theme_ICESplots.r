@@ -24,7 +24,7 @@ access_sag_data <- function(stock_code, year) {
 
 # download data
 
-df <- access_sag_data("ple.27.420", 2021)
+df <- access_sag_data("tur.27.4", 2021)
 df
 # create the theme
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
@@ -130,7 +130,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
             ),
             scale_color_manual(values = c("F" = "#ed5f26","FMSY" = "#00AC67","FLim" = "#a1a1a1","Fpa" = "#a1a1a1")),
             scale_linetype_manual(values = c("F" = "solid", "FLim" = 'dashed',"Fpa" = "dotted","FMSY" = "solid")),
-            scale_size_manual(values = c("F" = 2, "FLim" = 1, "Fpa" = 1.5, "FMSY" = 1)),
+            scale_size_manual(values = c("F" = 2, "FLim" = 1.5, "Fpa" = 1.5, "FMSY" = 1)),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
             scale_y_continuous(
@@ -152,7 +152,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
 
             scale_color_manual(values = c("SSB" = "#047c6c","MSYBtrigger" = "#689dff","Blim" = "#a1a1a1","Bpa" = "#a1a1a1")),
             scale_linetype_manual(values = c("SSB" = "solid", "Blim" = 'dashed',"Bpa" = "dotted","MSYBtrigger" = "solid")),
-            scale_size_manual(values = c("SSB" = 2, "Blim" = 1, "Bpa" = 1.5, "MSYBtrigger" = 1)),
+            scale_size_manual(values = c("SSB" = 2, "Blim" = 1.5, "Bpa" = 1.5, "MSYBtrigger" = 1)),
             scale_fill_manual(values = c("#94b0a9")),
 
 
@@ -304,8 +304,9 @@ p3 <- df %>%
             ), HTML
         )
     ), size = 1.5) +
-    geom_hline(aes(
-        yintercept = tail(FMSY, 1),
+    geom_line(aes(
+        x = Year,
+        y = FMSY,
         colour = "FMSY",
         linetype = "FMSY",
         size = "FMSY",
@@ -315,8 +316,9 @@ p3 <- df %>%
             ), HTML
         )
     )) +
-    geom_hline(aes(
-        yintercept = tail(FLim, 1),
+    geom_line(aes(
+        x = Year,
+        y = FLim,
         colour = "FLim",
         linetype = "FLim",
         size = "FLim",
@@ -326,8 +328,9 @@ p3 <- df %>%
             ), HTML
         )
     )) +
-    geom_hline(aes(
-        yintercept = tail(Fpa, 1),
+    geom_line(aes(
+        x = Year,
+        y = Fpa,
         colour = "Fpa",
         linetype = "Fpa",
         size = "Fpa",
@@ -336,8 +339,41 @@ p3 <- df %>%
                 "<b>Fpa: </b>", tail(Fpa, 1)
             ), HTML
         )
+    # geom_hline(aes(
+    #     yintercept = tail(FMSY, 1),
+    #     colour = "FMSY",
+    #     linetype = "FMSY",
+    #     size = "FMSY",
+    #     text = map(
+    #         paste0(
+    #             "<b>FMSY: </b>", tail(FMSY, 1)
+    #         ), HTML
+    #     )
+    # )) +
+    # geom_hline(aes(
+    #     yintercept = tail(FLim, 1),
+    #     colour = "FLim",
+    #     linetype = "FLim",
+    #     size = "FLim",
+    #     text = map(
+    #         paste0(
+    #             "<b>FLim: </b>", tail(FLim, 1)
+    #         ), HTML
+    #     )
+    # )) +
+    # geom_hline(aes(
+    #     yintercept = tail(Fpa, 1),
+    #     colour = "Fpa",
+    #     linetype = "Fpa",
+    #     size = "Fpa",
+    #     text = map(
+    #         paste0(
+    #             "<b>Fpa: </b>", tail(Fpa, 1)
+    #         ), HTML
+    #     )
     )) +
-    theme_ICES_plots(type = "F")
+    theme_ICES_plots(type = "F") 
+    
    
 # plot <- p + text_labels
 # plot
