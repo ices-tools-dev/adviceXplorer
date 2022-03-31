@@ -27,7 +27,7 @@ access_sag_data <- function(stock_code, year) {
 df <- access_sag_data("tur.27.4", 2021)
 df
 # create the theme
-theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
+theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R")) {
     font <- "Calibri, sans-serif" # assign font family up front
 
     # scale_color_manual(values = mycolors)
@@ -59,11 +59,11 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
                 vjust = 2,
                 if (type == "catches") {
                     color <- "#002b5f"
-                } else if (type == "recruitment") {
+                } else if (type == "recruitment" | type == "quality_R") {
                     color <- "#28b3e8"
-                } else if (type == "F") {
+                } else if (type == "F" | type == "quality_F") {
                     color <- "#ed5f26"
-                } else if (type == "SSB") {
+                } else if (type == "SSB" | type == "quality_SSB") {
                     color <- "#047c6c"
                 }
             ), # raise slightly
@@ -95,7 +95,10 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
                 title = "Catches",
                 y = sprintf("Catches in 1000 %s", dplyr::last(df$units))
             ),
-            scale_fill_manual(values = c("landings" = "#002b5f", "discards"="#fda500")),
+            scale_fill_manual(values = c(
+                "landings" = "#002b5f",
+                "discards" = "#fda500"
+            )),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) {
@@ -111,7 +114,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
                 title = sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
                 y = "Recruitment in billions" # sprintf("Catches in 1000 %s", dplyr::last(df$units))
             ),
-            scale_fill_manual(values =  c("recruitment" = "#28b3e8")),
+            scale_fill_manual(values = c("recruitment" = "#28b3e8")),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) {
@@ -124,17 +127,32 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = "Fishing pressure", #sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-                y = sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)), # sprintf("Catches in 1000 %s", dplyr::last(df$units))
+                title = "Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
+                y = sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)), # sprintf("Catches in 1000 %s", dplyr::last(df$units))
                 x = "Year"
             ),
-            scale_color_manual(values = c("F" = "#ed5f26","FMSY" = "#00AC67","FLim" = "#a1a1a1","Fpa" = "#a1a1a1")),
-            scale_linetype_manual(values = c("F" = "solid", "FLim" = 'dashed',"Fpa" = "dotted","FMSY" = "solid")),
-            scale_size_manual(values = c("F" = 2, "FLim" = 1.5, "Fpa" = 1.5, "FMSY" = 1)),
+            scale_color_manual(values = c(
+                "F" = "#ed5f26",
+                "FMSY" = "#00AC67",
+                "FLim" = "#a1a1a1",
+                "Fpa" = "#a1a1a1"
+            )),
+            scale_linetype_manual(values = c(
+                "F" = "solid",
+                "FLim" = "dashed",
+                "Fpa" = "dotted",
+                "FMSY" = "solid"
+            )),
+            scale_size_manual(values = c(
+                "F" = 2,
+                "FLim" = 1.1,
+                "Fpa" = 1.5,
+                "FMSY" = .8
+            )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
             scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1))#,
+                expand = expansion(mult = c(0, 0.1)) # ,
                 # labels = function(l) {
                 #     trans <- l / 1000000
                 # }
@@ -145,15 +163,171 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB")) {
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = "Spawning Stock Biomass", #sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-                y =  sprintf("%s in millions %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits)),
+                title = "Spawning Stock Biomass", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
+                y = sprintf("%s in millions %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits)),
                 x = "Year"
             ),
-
-            scale_color_manual(values = c("SSB" = "#047c6c","MSYBtrigger" = "#689dff","Blim" = "#a1a1a1","Bpa" = "#a1a1a1")),
-            scale_linetype_manual(values = c("SSB" = "solid", "Blim" = 'dashed',"Bpa" = "dotted","MSYBtrigger" = "solid")),
-            scale_size_manual(values = c("SSB" = 2, "Blim" = 1.5, "Bpa" = 1.5, "MSYBtrigger" = 1)),
+            scale_color_manual(values = c(
+                "SSB" = "#047c6c",
+                "MSYBtrigger" = "#689dff",
+                "Blim" = "#a1a1a1",
+                "Bpa" = "#a1a1a1"
+            )),
+            scale_linetype_manual(values = c(
+                "SSB" = "solid",
+                "Blim" = "dashed",
+                "Bpa" = "dotted",
+                "MSYBtrigger" = "solid"
+            )),
+            scale_size_manual(values = c(
+                "SSB" = 2,
+                "Blim" = 1.1,
+                "Bpa" = 1.5,
+                "MSYBtrigger" = .8
+            )),
             scale_fill_manual(values = c("#94b0a9")),
+
+
+            # scale_color_manual(values = c("#047c6c")),
+            # scale_fill_manual(values = c("#94b0a9")),
+            expand_limits(y = 0),
+            scale_y_continuous(
+                expand = expansion(mult = c(0, 0.1)),
+                labels = function(l) {
+                    trans <- l / 1000000
+                }
+            )
+        )
+    } else if (type == "quality_SSB") {
+        theme_ICES_plots <- list(
+            tmp,
+            labs(
+                title = sprintf("%s in 1000 %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits)),
+                y = "",
+                x = ""
+            ),
+            scale_color_manual(values = c(
+                "2021" = "#047c6c",
+                "2020" = "#252525",
+                "2019" = "#525252",
+                "2018" = "#737373",
+                "2017" = "#969696",
+                "MSYBtrigger" = "#689dff",
+                "Blim" = "#a1a1a1",
+                "Bpa" = "#a1a1a1"
+            )),
+            scale_linetype_manual(values = c(
+                "2021" = "solid",
+                "2020" = "solid",
+                "2019" = "solid",
+                "2018" = "solid",
+                "2017" = "solid",
+                "Blim" = "dashed",
+                "Bpa" = "dotted",
+                "MSYBtrigger" = "solid"
+            )),
+            scale_size_manual(values = c(
+                "2021" = 1,
+                "2020" = 1,
+                "2019" = 1,
+                "2018" = 1,
+                "2017" = 1,
+                "Blim" = 1.1,
+                "Bpa" = 1.5,
+                "MSYBtrigger" = .8
+            )),
+            # scale_fill_manual(values = c("#94b0a9")),
+
+
+            # scale_color_manual(values = c("#047c6c")),
+            # scale_fill_manual(values = c("#94b0a9")),
+            expand_limits(y = 0),
+            scale_y_continuous(
+                expand = expansion(mult = c(0, 0.1)),
+                labels = function(l) {
+                    trans <- l / 1000
+                }
+            )
+        )
+    } else if (type == "quality_F") {
+        theme_ICES_plots <- list(
+            tmp,
+            labs(
+                title = sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)),
+                y = "",
+                x = ""
+            ),
+            scale_color_manual(values = c(
+                "2021" = "#ed5f26",
+                "2020" = "#252525",
+                "2019" = "#525252",
+                "2018" = "#737373",
+                "2017" = "#969696",
+                "FMSY" = "#00AC67",
+                "FLim" = "#a1a1a1",
+                "Fpa" = "#a1a1a1"
+            )),
+            scale_linetype_manual(values = c(
+                "2021" = "solid",
+                "2020" = "solid",
+                "2019" = "solid",
+                "2018" = "solid",
+                "2017" = "solid",
+                "FLim" = "dashed",
+                "Fpa" = "dotted",
+                "FMSY" = "solid"
+            )),
+            scale_size_manual(values = c(
+                "2021" = 1,
+                "2020" = 1,
+                "2019" = 1,
+                "2018" = 1,
+                "2017" = 1,
+                "FLim" = 1.1,
+                "Fpa" = 1.5,
+                "FMSY" = .8
+            )),
+            # scale_fill_manual(values = c("#94b0a9")),
+
+
+            # scale_color_manual(values = c("#047c6c")),
+            # scale_fill_manual(values = c("#94b0a9")),
+            expand_limits(y = 0),
+            scale_y_continuous(
+                expand = expansion(mult = c(0, 0.1))
+                
+            )
+        )
+    } else if (type == "quality_R") {
+        theme_ICES_plots <- list(
+            tmp,
+            labs(
+                title = sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge)),
+                y = "",
+                x = ""
+            ),
+            scale_color_manual(values = c(
+                "2021" = "#28b3e8",
+                "2020" = "#252525",
+                "2019" = "#525252",
+                "2018" = "#737373",
+                "2017" = "#969696"                
+            )),
+            scale_linetype_manual(values = c(
+                "2021" = "solid",
+                "2020" = "solid",
+                "2019" = "solid",
+                "2018" = "solid",
+                "2017" = "solid"                
+            )),
+            scale_size_manual(values = c(
+                "2021" = 1,
+                "2020" = 1,
+                "2019" = 1,
+                "2018" = 1,
+                "2017" = 1                
+            )),
+            # scale_fill_manual(values = c("#94b0a9")),
 
 
             # scale_color_manual(values = c("#047c6c")),
@@ -434,8 +608,9 @@ p4 <- df %>%
     ),
     size = 1.5
     ) +
-    geom_hline(aes(
-        yintercept = tail(Blim, 1),
+    geom_line(aes(
+        x = Year,
+        y = Blim,
         linetype = "Blim",
         colour = "Blim",
         size = "Blim",
@@ -445,8 +620,9 @@ p4 <- df %>%
             ), HTML
         )
     )) +
-    geom_hline(aes(
-        yintercept = tail(Bpa, 1),
+    geom_line(aes(
+        x = Year,
+        y = Bpa,
         linetype = "Bpa",
         colour = "Bpa",
         size = "Bpa",
@@ -456,8 +632,9 @@ p4 <- df %>%
             ), HTML
         )
     )) +
-    geom_hline(aes(
-        yintercept = tail(MSYBtrigger, 1),
+    geom_line(aes(
+        x = Year,
+        y = MSYBtrigger,
         linetype = "MSYBtrigger",
         colour = "MSYBtrigger",
         size = "MSYBtrigger",
@@ -591,6 +768,299 @@ for (i in 1:length(fig4$x$data)){
 #         fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
 #     }
 # }
+
+quality_assessment_data <- function(stock_code){
+
+years <- c(2021, 2020, 2019, 2018, 2017)
+datalist = list()
+
+for (i in years) {
+    print(i)
+    data_temp <- try(access_sag_data(stock_code, i)) # "had.27.6b"
+
+    ###############
+    if (isTRUE(class(data_temp) == "try-error")) {
+        next
+    }
+    else {
+        #
+        data_temp <- filter(data_temp, between(Year, 2005, 2021))
+        data_temp <- data_temp %>% select(Year,
+                                            recruitment, RecruitmentAge,
+                                            SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
+                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
+                                            AssessmentYear, StockPublishNote,Purpose)
+
+        data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+        data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
+        data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
+        data_temp$Fage <- as.character(data_temp$Fage)
+        data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
+
+        datalist[[i]] <- data_temp
+        # }
+    }
+}
+
+
+#print(tibble(datalist))
+### bind data in unique df
+big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
+
+# find last asseement year
+last_year <- tail(big_data$AssessmentYear, n=1)
+
+# subset last year
+big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
+
+# take out non published data from before 2021 in big data
+big_data <- filter(big_data, StockPublishNote == "Stock published")
+big_data <- filter(big_data, Purpose == "Advice")
+# put together the published data from before 2021 with the unpublished from 2021
+big_data <- rbind(big_data, big_data_last_year)
+big_data <- big_data  %>% distinct()
+
+#make assessmentYear as factor
+big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
+
+df_list <- list(big_data, big_data_last_year)
+return(df_list)
+}
+
+#download quality of assessment data
+df_qual <- quality_assessment_data("tur.27.4")
+
+
+#plot
+p5 <- df_qual[[1]] %>%
+    select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
+    # drop_na(SSB, high_SSB) %>%
+    #    gather(type, count, discards:landings) %>%
+    ggplot(., aes(x = Year, y = SSB, color  = AssessmentYear)) +
+    
+    geom_line(aes(
+        x = Year,
+        y = SSB,
+        color = AssessmentYear,
+        size = "SSB",
+        linetype = "SSB",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>Assessment year: </b>", AssessmentYear,
+                "<br>",
+                "<b>", stockSizeDescription, ": </b>", SSB," ", stockSizeUnits
+            ), HTML
+        )
+    )#,
+    # size = 1,
+    # linetype = "solid",
+    ) +
+    geom_line(aes(
+        x = Year,
+        y = Blim,
+        linetype = "Blim",
+        colour = "Blim",
+        size = "Blim",
+        text = map(
+            paste0(
+                "<b>Blim: </b>", tail(Blim, 1)
+            ), HTML
+        )
+    )) +
+    geom_line(aes(
+        x = Year,
+        y = Bpa,
+        linetype = "Bpa",
+        colour = "Bpa",
+        size = "Bpa",
+        text = map(
+            paste0(
+                "<b>Bpa: </b>", tail(Bpa, 1)
+            ), HTML
+        )
+    )) +
+    geom_line(aes(
+        x = Year,
+        y = MSYBtrigger,
+        linetype = "MSYBtrigger",
+        colour = "MSYBtrigger",
+        size = "MSYBtrigger",
+        text = map(
+            paste0(
+                "<b>MSYBtrigger: </b>", tail(MSYBtrigger, 1)
+            ), HTML
+        )
+    )) +
+    theme_ICES_plots(type = "quality_SSB")
+   
+# plot <- p + text_labels
+# plot
+p5
+#converting
+fig5 <- ggplotly(p5, tooltip = "text") %>%
+    layout(
+        legend = list(
+            orientation = "h",
+            y = -.3,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = "")
+        ),
+        xaxis = list(zeroline = TRUE)
+    ) # nolint
+
+for (i in 1:length(fig5$x$data)){
+    if (!is.null(fig5$x$data[[i]]$name)){
+        fig5$x$data[[i]]$name =  gsub("\\(","",str_split(fig5$x$data[[i]]$name,",")[[1]][1])
+    }
+}
+
+#F
+
+p6 <- df_qual[[1]] %>%
+    select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear) %>%
+    # drop_na(SSB, high_SSB) %>%
+    #    gather(type, count, discards:landings) %>%
+    ggplot(., aes(x = Year, y = F, color  = AssessmentYear)) +
+    
+    geom_line(aes(
+        x = Year,
+        y = F,
+        color = AssessmentYear,
+        size = "F",
+        linetype = "F",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>Assessment year: </b>", AssessmentYear,
+                "<br>",
+                "<b>", fishingPressureDescription, ": </b>", F
+            ), HTML
+        )
+    )#,
+    # size = 1,
+    # linetype = "solid",
+    ) +
+    geom_line(aes(
+        x = Year,
+        y = FLim,
+        linetype = "FLim",
+        colour = "FLim",
+        size = "FLim",
+        text = map(
+            paste0(
+                "<b>FLim: </b>", FLim
+            ), HTML
+        )
+    )) +
+    geom_line(aes(
+        x = Year,
+        y = Fpa,
+        linetype = "Fpa",
+        colour = "Fpa",
+        size = "Fpa",
+        text = map(
+            paste0(
+                "<b>Fpa: </b>", Fpa
+            ), HTML
+        )
+    )) +
+    geom_line(aes(
+        x = Year,
+        y = FMSY,
+        linetype = "FMSY",
+        colour = "FMSY",
+        size = "FMSY",
+        text = map(
+            paste0(
+                "<b>FMSY: </b>", FMSY
+            ), HTML
+        )
+    )) +
+    theme_ICES_plots(type = "quality_F")
+   
+# plot <- p + text_labels
+# plot
+p6
+#converting
+fig6 <- ggplotly(p6, tooltip = "text") %>%
+    layout(
+        legend = list(
+            orientation = "h",
+            y = -.3,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = "")
+        ),
+        xaxis = list(zeroline = TRUE)
+    ) # nolint
+
+for (i in 1:length(fig6$x$data)){
+    if (!is.null(fig6$x$data[[i]]$name)){
+        fig6$x$data[[i]]$name =  gsub("\\(","",str_split(fig6$x$data[[i]]$name,",")[[1]][1])
+    }
+}
+
+#Rec
+p7 <- df_qual[[1]] %>%
+    select(Year, recruitment, RecruitmentAge, AssessmentYear) %>%
+    # drop_na(SSB, high_SSB) %>%
+    #    gather(type, count, discards:landings) %>%
+    ggplot(., aes(x = Year, y = recruitment, color  = AssessmentYear)) +
+    
+    geom_line(aes(
+        x = Year,
+        y = recruitment,
+        color = AssessmentYear,
+        size = "recruitment",
+        linetype = "recruitment",
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>Assessment year: </b>", AssessmentYear,
+                "<br>",
+                "<b>Recruitment: </b>", recruitment
+            ), HTML
+        )
+    )#,
+    # size = 1,
+    # linetype = "solid",
+    ) +
+    
+    theme_ICES_plots(type = "quality_R")
+   
+# plot <- p + text_labels
+# plot
+p7
+#converting
+fig7 <- ggplotly(p7, tooltip = "text") %>%
+    layout(
+        legend = list(
+            orientation = "h",
+            y = -.3,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = "")
+        ),
+        xaxis = list(zeroline = TRUE)
+    ) # nolint
+
+for (i in 1:length(fig7$x$data)){
+    if (!is.null(fig7$x$data[[i]]$name)){
+        fig7$x$data[[i]]$name =  gsub("\\(","",str_split(fig7$x$data[[i]]$name,",")[[1]][1])
+    }
+}
+
+
+
 library(shiny)
 library(shinyWidgets)
 
