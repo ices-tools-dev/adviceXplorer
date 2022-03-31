@@ -1066,32 +1066,59 @@ library(shinyWidgets)
 
 # Define UI ----
 ui <- fluidPage(
-    
-    panel(
-        style = "height: 95vh; overflow-y: auto;",
-        fluidRow(
-            column(
-                width = 6, style = "height: 45vh;",
-                plotlyOutput("plot1", height = "100%", width = "100%")
-            ),
-            column(
-                width = 6, style = "height: 45vh;",
-                plotlyOutput("plot2", height = "100%", width = "100%")
-            ),
+    sidebarLayout(
+        sidebarPanel(
+            width = 8,
+            panel(
+                style = "height: 95vh; overflow-y: auto;",
+                fluidRow(
+                    column(
+                        width = 6, style = "height: 45vh;",
+                        plotlyOutput("plot1", height = "100%", width = "100%")
+                    ),
+                    column(
+                        width = 6, style = "height: 45vh;",
+                        plotlyOutput("plot2", height = "100%", width = "100%")
+                    ),
+                ),
+                fluidRow(
+                    column(
+                        width = 6, style = "height: 45vh;",
+                        plotlyOutput("plot3", height = "100%", width = "100%")
+                    ),
+                    column(
+                        width = 6, style = "height: 45vh;",
+                        plotlyOutput("plot4", height = "100%", width = "100%")
+                    ),
+                )
+            )
         ),
-        fluidRow(
-            column(
-                width = 6, style = "height: 45vh;",
-                plotlyOutput("plot3", height = "100%", width = "100%")
-            ),
-            column(
-                width = 6, style = "height: 45vh;",
-                plotlyOutput("plot4", height = "100%", width = "100%")
-            ),
+        sidebarPanel(
+            width = 4,
+            panel(
+                style = "height: 95vh; overflow-y: auto;",
+                fluidRow(
+                    column(
+                        width = 12, style = "height: 30vh;",
+                        plotlyOutput("plot5", height = "100%", width = "100%")
+                    )
+                ),
+                fluidRow(
+                    column(
+                        width = 12, style = "height: 30vh;",
+                        plotlyOutput("plot6", height = "100%", width = "100%")
+                    )
+                ),
+                fluidRow(
+                    column(
+                        width = 12, style = "height: 30vh;",
+                        plotlyOutput("plot7", height = "100%", width = "100%")
+                    )
+                ),
+            )
         )
     )
 )
-
 # ui<- fluidPage(
 #     tabPanel(
 #         "Stock development over time",
@@ -1117,6 +1144,15 @@ server <- function(input, output) {
   )
   output$plot4 <- renderPlotly(
       fig4
+  )
+  output$plot5 <- renderPlotly(
+      fig5
+  )
+  output$plot6 <- renderPlotly(
+      fig6
+  )
+  output$plot7 <- renderPlotly(
+      fig7
   )
 }
 
