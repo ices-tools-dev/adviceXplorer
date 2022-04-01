@@ -24,7 +24,7 @@ access_sag_data <- function(stock_code, year) {
 
 # download data
 
-df <- access_sag_data("tur.27.4", 2021)
+df <- access_sag_data("cod.27.47d20", 2021)
 df
 # create the theme
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R")) {
@@ -36,7 +36,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
         theme(
             axis.title = element_text( # axis titles
                 family = font, # font family
-                size = 25,
+                size = 20,
                 colour = "darkgrey",
                 vjust = -2
             ),
@@ -53,10 +53,11 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             ),
             plot.title = element_text( # title
                 family = font, # set font family
-                size = 25, # set font size
+                size = 23, # set font size
                 face = "bold", # bold typeface
                 hjust = 0, # left align
-                vjust = 2,
+                vjust = 1,
+                margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
                 if (type == "catches") {
                     color <- "#002b5f"
                 } else if (type == "recruitment" | type == "quality_R") {
@@ -78,11 +79,13 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             # legend
             legend.text = element_text(
                 family = "sans-serif",
-                size = 20,
+                size = 15,
                 color = "black"
+                
             ),
             legend.title = element_blank(),
             legend.position = "bottom"
+            
         )
 
     #   axis.text.x = element_text(            #margin for axis text
@@ -133,21 +136,21 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             ),
             scale_color_manual(values = c(
                 "F" = "#ed5f26",
-                "FMSY" = "#00AC67",
-                "FLim" = "#a1a1a1",
-                "Fpa" = "#a1a1a1"
+                "F<sub>MSY</sub>" = "#00AC67",
+                "F<sub>Lim</sub>" = "#a1a1a1",
+                "F<sub>pa</sub>" = "#a1a1a1"
             )),
             scale_linetype_manual(values = c(
                 "F" = "solid",
-                "FLim" = "dashed",
-                "Fpa" = "dotted",
-                "FMSY" = "solid"
+                "F<sub>Lim</sub>" = "dashed",
+                "F<sub>pa</sub>" = "dotted",
+                "F<sub>MSY</sub>" = "solid"
             )),
             scale_size_manual(values = c(
                 "F" = 2,
-                "FLim" = 1.1,
-                "Fpa" = 1.5,
-                "FMSY" = .8
+                "F<sub>Lim</sub>" = 1.1,
+                "F<sub>pa</sub>" = 1.5,
+                "F<sub>MSY</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -169,21 +172,21 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             ),
             scale_color_manual(values = c(
                 "SSB" = "#047c6c",
-                "MSYBtrigger" = "#689dff",
-                "Blim" = "#a1a1a1",
-                "Bpa" = "#a1a1a1"
+                "MSY B<sub>trigger</sub>" = "#689dff",
+                "B<sub>Lim</sub>" = "#a1a1a1",
+                "B<sub>pa</sub>" = "#a1a1a1"
             )),
             scale_linetype_manual(values = c(
                 "SSB" = "solid",
-                "Blim" = "dashed",
-                "Bpa" = "dotted",
-                "MSYBtrigger" = "solid"
+                "B<sub>Lim</sub>" = "dashed",
+                "B<sub>pa</sub>" = "dotted",
+                "MSY B<sub>trigger</sub>" = "solid"
             )),
             scale_size_manual(values = c(
                 "SSB" = 2,
-                "Blim" = 1.1,
-                "Bpa" = 1.5,
-                "MSYBtrigger" = .8
+                "B<sub>Lim</sub>" = 1.1,
+                "B<sub>pa</sub>" = 1.5,
+                "MSY B<sub>trigger</sub>" = .8
             )),
             scale_fill_manual(values = c("#94b0a9")),
 
@@ -208,33 +211,33 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             ),
             scale_color_manual(values = c(
                 "2021" = "#047c6c",
-                "2020" = "#252525",
-                "2019" = "#525252",
-                "2018" = "#737373",
-                "2017" = "#969696",
-                "MSYBtrigger" = "#689dff",
-                "Blim" = "#a1a1a1",
-                "Bpa" = "#a1a1a1"
+                # "2020" = "#252525",
+                # "2019" = "#525252",
+                # "2018" = "#737373",
+                # "2017" = "#969696",
+                "MSY B<sub>trigger</sub>" = "#689dff",
+                "B<sub>Lim</sub>" = "#a1a1a1",
+                "B<sub>pa</sub>" = "#a1a1a1"
             )),
             scale_linetype_manual(values = c(
                 "2021" = "solid",
-                "2020" = "solid",
-                "2019" = "solid",
-                "2018" = "solid",
-                "2017" = "solid",
-                "Blim" = "dashed",
-                "Bpa" = "dotted",
-                "MSYBtrigger" = "solid"
+                # "2020" = "solid",
+                # "2019" = "solid",
+                # "2018" = "solid",
+                # "2017" = "solid",
+                "B<sub>Lim</sub>" = "dashed",
+                "B<sub>pa</sub>" = "dotted",
+                "MSY B<sub>trigger</sub>" = "solid"
             )),
             scale_size_manual(values = c(
                 "2021" = 1,
-                "2020" = 1,
-                "2019" = 1,
-                "2018" = 1,
-                "2017" = 1,
-                "Blim" = 1.1,
-                "Bpa" = 1.5,
-                "MSYBtrigger" = .8
+                # "2020" = 1,
+                # "2019" = 1,
+                # "2018" = 1,
+                # "2017" = 1,
+                "B<sub>Lim</sub>" = 1.1,
+                "B<sub>pa</sub>" = 1.5,
+                "MSY B<sub>trigger</sub>" = .8
             )),
             # scale_fill_manual(values = c("#94b0a9")),
 
@@ -263,9 +266,9 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2019" = "#525252",
                 "2018" = "#737373",
                 "2017" = "#969696",
-                "FMSY" = "#00AC67",
-                "FLim" = "#a1a1a1",
-                "Fpa" = "#a1a1a1"
+                "F<sub>MSY</sub>" = "#00AC67",
+                "F<sub>Lim</sub>" = "#a1a1a1",
+                "F<sub>pa</sub>" = "#a1a1a1"
             )),
             scale_linetype_manual(values = c(
                 "2021" = "solid",
@@ -273,9 +276,9 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2019" = "solid",
                 "2018" = "solid",
                 "2017" = "solid",
-                "FLim" = "dashed",
-                "Fpa" = "dotted",
-                "FMSY" = "solid"
+                "F<sub>Lim</sub>" = "dashed",
+                "F<sub>pa</sub>" = "dotted",
+                "F<sub>MSY</sub>" = "solid"
             )),
             scale_size_manual(values = c(
                 "2021" = 1,
@@ -283,9 +286,9 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2019" = 1,
                 "2018" = 1,
                 "2017" = 1,
-                "FLim" = 1.1,
-                "Fpa" = 1.5,
-                "FMSY" = .8
+                "F<sub>Lim</sub>" = 1.1,
+                "F<sub>pa</sub>" = 1.5,
+                "F<sub>MSY</sub>" = .8
             )),
             # scale_fill_manual(values = c("#94b0a9")),
 
@@ -481,36 +484,36 @@ p3 <- df %>%
     geom_line(aes(
         x = Year,
         y = FMSY,
-        colour = "FMSY",
-        linetype = "FMSY",
-        size = "FMSY",
+        colour = "F<sub>MSY</sub>",
+        linetype = "F<sub>MSY</sub>",
+        size = "F<sub>MSY</sub>",
         text = map(
             paste0(
-                "<b>FMSY: </b>", tail(FMSY, 1)
+                "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
             ), HTML
         )
     )) +
     geom_line(aes(
         x = Year,
         y = FLim,
-        colour = "FLim",
-        linetype = "FLim",
-        size = "FLim",
+        colour = "F<sub>Lim</sub>",
+        linetype = "F<sub>Lim</sub>",
+        size = "F<sub>Lim</sub>",
         text = map(
             paste0(
-                "<b>FLim: </b>", tail(FLim, 1)
+                "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
             ), HTML
         )
     )) +
     geom_line(aes(
         x = Year,
         y = Fpa,
-        colour = "Fpa",
-        linetype = "Fpa",
-        size = "Fpa",
+        colour = "F<sub>pa</sub>",
+        linetype = "F<sub>pa</sub>",
+        size = "F<sub>pa</sub>",
         text = map(
             paste0(
-                "<b>Fpa: </b>", tail(Fpa, 1)
+                "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
             ), HTML
         )
     # geom_hline(aes(
@@ -557,7 +560,8 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.3, yanchor = "bottom",
+            itemwidth = 50,
+            y = -.5, yanchor = "bottom",
             x = 0.5, xanchor = "center",
             title = list(text = "")
         ),
@@ -611,36 +615,36 @@ p4 <- df %>%
     geom_line(aes(
         x = Year,
         y = Blim,
-        linetype = "Blim",
-        colour = "Blim",
-        size = "Blim",
+        linetype = "B<sub>Lim</sub>",
+        colour = "B<sub>Lim</sub>",
+        size = "B<sub>Lim</sub>",
         text = map(
             paste0(
-                "<b>Blim: </b>", tail(Blim, 1)
+                "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
             ), HTML
         )
     )) +
     geom_line(aes(
         x = Year,
         y = Bpa,
-        linetype = "Bpa",
-        colour = "Bpa",
-        size = "Bpa",
+        linetype = "B<sub>pa</sub>",
+        colour = "B<sub>pa</sub>",
+        size = "B<sub>pa</sub>",
         text = map(
             paste0(
-                "<b>Bpa: </b>", tail(Bpa, 1)
+                "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
             ), HTML
         )
     )) +
     geom_line(aes(
         x = Year,
         y = MSYBtrigger,
-        linetype = "MSYBtrigger",
-        colour = "MSYBtrigger",
-        size = "MSYBtrigger",
+        linetype = "MSY B<sub>trigger</sub>",
+        colour = "MSY B<sub>trigger</sub>",
+        size = "MSY B<sub>trigger</sub>",
         text = map(
             paste0(
-                "<b>MSYBtrigger: </b>", tail(MSYBtrigger, 1)
+                "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
             ), HTML
         )
     )) +
@@ -652,12 +656,15 @@ p4
 #converting
 fig4 <- ggplotly(p4, tooltip = "text") %>%
     layout(
+        autosize = T,
         legend = list(
+            itemsizing = "trace",
             orientation = "h",
-            y = -.3,
+            y = -.5,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
+            itemwidth = 50,
             title = list(text = "")
         ),
         xaxis = list(zeroline = TRUE)
@@ -676,7 +683,7 @@ for (i in 1:length(fig4$x$data)){
 
 # ggplotly(gring)
 
-
+# fig <- subplot(list(fig1, fig2, fig3, fig4))
 # fig <- subplot(list(fig1, fig2, fig3, fig4),
 #         nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.4, 0.4), heights = c(0.4, 0.4), margin = c(0.1,0.1,0.1,0.1)
 #     )
@@ -829,7 +836,7 @@ return(df_list)
 }
 
 #download quality of assessment data
-df_qual <- quality_assessment_data("tur.27.4")
+df_qual <- quality_assessment_data("cod.27.47d20")
 
 
 #plot
@@ -858,43 +865,41 @@ p5 <- df_qual[[1]] %>%
     # size = 1,
     # linetype = "solid",
     ) +
-    geom_line(aes(
-        x = Year,
-        y = Blim,
-        linetype = "Blim",
-        colour = "Blim",
-        size = "Blim",
+    geom_hline(aes(
+        yintercept = tail(Blim, 1),
+        linetype = "B<sub>Lim</sub>",
+        colour = "B<sub>Lim</sub>",
+        size = "B<sub>Lim</sub>",
         text = map(
             paste0(
-                "<b>Blim: </b>", tail(Blim, 1)
+                "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
             ), HTML
         )
     )) +
-    geom_line(aes(
-        x = Year,
-        y = Bpa,
-        linetype = "Bpa",
-        colour = "Bpa",
-        size = "Bpa",
+    geom_hline(aes(
+        yintercept = tail(Bpa, 1),
+        linetype = "B<sub>pa</sub>",
+        colour = "B<sub>pa</sub>",
+        size = "B<sub>pa</sub>",
         text = map(
             paste0(
-                "<b>Bpa: </b>", tail(Bpa, 1)
+                "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
             ), HTML
         )
     )) +
-    geom_line(aes(
-        x = Year,
-        y = MSYBtrigger,
-        linetype = "MSYBtrigger",
-        colour = "MSYBtrigger",
-        size = "MSYBtrigger",
+    geom_hline(aes(
+        yintercept = tail(MSYBtrigger, 1),
+        linetype = "MSY B<sub>trigger</sub>",
+        colour = "MSY B<sub>trigger</sub>",
+        size = "MSY B<sub>trigger</sub>",
         text = map(
             paste0(
-                "<b>MSYBtrigger: </b>", tail(MSYBtrigger, 1)
+                "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
             ), HTML
         )
     )) +
-    theme_ICES_plots(type = "quality_SSB")
+    theme_ICES_plots(type = "quality_SSB") +
+    theme(legend.position = "none")
    
 # plot <- p + text_labels
 # plot
@@ -904,7 +909,7 @@ fig5 <- ggplotly(p5, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.3,
+            y = -.4,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -946,43 +951,41 @@ p6 <- df_qual[[1]] %>%
     # size = 1,
     # linetype = "solid",
     ) +
-    geom_line(aes(
-        x = Year,
-        y = FLim,
-        linetype = "FLim",
-        colour = "FLim",
-        size = "FLim",
+    geom_hline(aes(
+        yintercept = tail(FLim, 1),
+        linetype = "F<sub>Lim</sub>",
+        colour = "F<sub>Lim</sub>",
+        size = "F<sub>Lim</sub>",
         text = map(
             paste0(
-                "<b>FLim: </b>", FLim
+                "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
             ), HTML
         )
     )) +
-    geom_line(aes(
-        x = Year,
-        y = Fpa,
-        linetype = "Fpa",
-        colour = "Fpa",
-        size = "Fpa",
+    geom_hline(aes(
+        yintercept = tail(Fpa, 1),
+        linetype = "F<sub>pa</sub>",
+        colour = "F<sub>pa</sub>",
+        size = "F<sub>pa</sub>",
         text = map(
             paste0(
-                "<b>Fpa: </b>", Fpa
+                "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
             ), HTML
         )
     )) +
-    geom_line(aes(
-        x = Year,
-        y = FMSY,
-        linetype = "FMSY",
-        colour = "FMSY",
-        size = "FMSY",
+    geom_hline(aes(
+        yintercept = tail(FMSY, 1),
+        linetype = "F<sub>MSY</sub>",
+        colour = "F<sub>MSY</sub>",
+        size = "F<sub>MSY</sub>",
         text = map(
             paste0(
-                "<b>FMSY: </b>", FMSY
+                "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
             ), HTML
         )
     )) +
-    theme_ICES_plots(type = "quality_F")
+    theme_ICES_plots(type = "quality_F") +
+    theme(legend.position = "none")
    
 # plot <- p + text_labels
 # plot
@@ -992,7 +995,7 @@ fig6 <- ggplotly(p6, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.3,
+            y = -.4,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -1010,7 +1013,7 @@ for (i in 1:length(fig6$x$data)){
 #Rec
 p7 <- df_qual[[1]] %>%
     select(Year, recruitment, RecruitmentAge, AssessmentYear) %>%
-    # drop_na(SSB, high_SSB) %>%
+    drop_na(recruitment) %>%
     #    gather(type, count, discards:landings) %>%
     ggplot(., aes(x = Year, y = recruitment, color  = AssessmentYear)) +
     
@@ -1034,7 +1037,8 @@ p7 <- df_qual[[1]] %>%
     # linetype = "solid",
     ) +
     
-    theme_ICES_plots(type = "quality_R")
+    theme_ICES_plots(type = "quality_R") +
+    theme(legend.position = "none")
    
 # plot <- p + text_labels
 # plot
@@ -1044,7 +1048,7 @@ fig7 <- ggplotly(p7, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.3,
+            y = -.4,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -1058,6 +1062,26 @@ for (i in 1:length(fig7$x$data)){
         fig7$x$data[[i]]$name =  gsub("\\(","",str_split(fig7$x$data[[i]]$name,",")[[1]][1])
     }
 }
+
+
+
+# layout_ggplotly <- function(gg, x = -0.1, y = -0.05, x_legend=1.05, y_legend=0.95, mar=list(l=50, r=150)){
+#   # The 1 and 2 goes into the list that contains the options for the x and y axis labels respectively
+#   gg[['x']][['layout']][['annotations']][[1]][['y']] <- x
+#   gg[['x']][['layout']][['annotations']][[2]][['x']] <- y
+#   gg[['x']][['layout']][['annotations']][[11]][['x']] <- x_legend # the legend title was the 11-th list element in my case!
+#   gg[['x']][['layout']][['legend']][['y']] <- y_legend
+#   gg[['x']][['layout']][['legend']][['x']] <- x_legend
+#   gg %>% layout(margin = mar)
+# }
+
+# layout_ggplotly(fig7)
+
+# fig7[['x']][['layout']][["margin"]][["t"]] <- 50
+# fig7[['x']][['layout']][["margin"]][["b"]] <- 10
+# fig7[['x']][['layout']][['legend']][['x']]
+
+
 
 
 
@@ -1160,6 +1184,24 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 
 
+
+# library("gridExtra")
+# library("ggpubr")
+# figure <- grid.arrange(p1, p2, p3, p4,
+#                     # labels = c("A", "B", "C"),
+#                     ncol = 2, nrow = 2)
+# figure
+
+# ggplotly(figure, width = 1000, height = 500)
+
+# m <- list(
+#   l = 10,
+#   r = 10,
+#   b = 30,
+#   t = 30,
+#   pad = 4
+# )
+# (autosize = F, width = 500, height = 500, margin = m)
 # plots_panel <-
 #   mainPanel(
 #     width = 8,
