@@ -143,12 +143,12 @@ selectize_panel <-
           # AssessmentFrequency = list(inputId = "AssessmentFrequency", title = "AssessmentFrequency:"),
           # YearOfNextAssessment = list(inputId = "YearOfNextAssessment", title = "YearOfNextAssessment:"),
           # AdviceReleaseDate = list(inputId = "AdviceReleaseDate", title = "AdviceReleaseDate:"),
-          AdviceCategory = list(inputId = "AdviceCategory", title = "AdviceCategory:"),
+          AdviceCategory = list(inputId = "AdviceCategory", title = "AdviceCategory:")
           # AdviceType = list(inputId = "AdviceType", title = "AdviceType:"),
           # TrophicGuild = list(inputId = "TrophicGuild", title = "TrophicGuild:"),
           # FisheriesGuild = list(inputId = "FisheriesGuild", title = "FisheriesGuild:"),
           # SizeGuild = list(inputId = "SizeGuild", title = "SizeGuild:"),
-          Published = list(inputId = "Published", title = "Published:")
+          # Published = list(inputId = "Published", title = "Published:")
           # ICES_area = list(inputId = "ICES_area", title = "ICES_area")
         ),
         inline = FALSE

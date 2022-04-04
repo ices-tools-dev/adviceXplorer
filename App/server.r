@@ -206,7 +206,7 @@ server <- function(input, output, session) {
 
   updateSelectizeInput(session,
     inputId = "selected_years",
-    label = "Year SID/SAG",
+    label = "Year",
     choices = Years$Year,
     selected = 2021
   )
@@ -254,7 +254,7 @@ server <- function(input, output, session) {
     vars = c(
       "StockKeyLabel",  "SpeciesCommonName",
       "ExpertGroup",  "DataCategory", "YearOfLastAssessment",
-       "AdviceCategory", "Published"
+       "AdviceCategory"#, "Published"
     ) # , "ICES_area","StockDatabaseID", "StockKey","SpeciesScientificName",
     #"AdviceDraftingGroup","AssessmentFrequency","YearOfNextAssessment", "AdviceReleaseDate",
     #"AdviceType", "TrophicGuild","FisheriesGuild", "SizeGuild",)
@@ -305,7 +305,7 @@ server <- function(input, output, session) {
         #   )
 
         # ),
-        list(visible = FALSE, targets = c(0, 6, 12))
+        list(visible = FALSE, targets = c(0, 6, 11))
       )
     )
     # callback=JS(
