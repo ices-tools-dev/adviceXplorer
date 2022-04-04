@@ -1475,15 +1475,6 @@ catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSi
             x = 0.1,
             y = 0.5
         ),
-        images = list(
-            source = "ICES_logo.png",
-            xref = "paper",
-            yref = "paper",
-            x= 0.1,
-            y= 1,
-            sizex = 0.1,
-            sizey = 0.1,
-            opacity = 0.5),
         autosize = T,
         margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
         xaxis = list(

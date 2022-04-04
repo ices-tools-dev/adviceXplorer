@@ -46,7 +46,7 @@ source("utilities_resources.r")
 
 
 title_html <- tags$a(
-    href = "https://www.ices.dk/",
+    href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
     target = "_blank",
         tags$img(
             src = "https://www.ices.dk/SiteCollectionImages/ICES%20logos/NEGATIVE%20ICES-logo.png",
