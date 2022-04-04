@@ -305,7 +305,7 @@ server <- function(input, output, session) {
         #   )
 
         # ),
-        list(visible = FALSE, targets = c(0, 6, 11))
+        list(visible = FALSE, targets = c(0, 5, 11))
       )
     )
     # callback=JS(
