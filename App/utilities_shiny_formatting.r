@@ -116,7 +116,7 @@ selectize_panel <-
       #######
       selectizeInput(
         inputId = "selected_years",
-        label = "Year SID/SAG",
+        label = "Year",
         choices = Years$Year,
         selected = 2021,
         multiple = FALSE,
