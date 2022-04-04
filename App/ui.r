@@ -117,55 +117,55 @@ navbarPage(
         # includeMarkdown("Instructions.Rmd")
     ),
     
-    tabPanel(
-        "Catch Options & Advice",
-        sidebarLayout(
-            sidebarPanel(
-                width = 3, style = "max-height: 90vh; overflow-y: auto;",#style = "overflow-y:scroll; max-height: 600px; position:relative;",
-                DTOutput("Advice_View")#,
-                # useShinyjs(),
-                # inlineCSS(list("table2" = "font-size: 10px"))
-            ),
-            # browser(),
-            # mainPanel(# this is not running 
-            #     width = 9,
-            #         htmlOutput("Advice_Sentence"),
-            #         div(
-            #         class = "outer",
-            #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-            #         plotlyOutput("catch_scenario_plot_1", width = "100%", height = "100%")),
-            #         # plotlyOutput("catch_scenario_plot_2"),
-            #         div(
-            #         class = "outer",
-            #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-            #         plotlyOutput("catch_scenario_plot_2",width = "100%", height = "100%")),
-            #         # DTOutput("catch_scenario_table")
-            #         div(
-            #         class = "outer",
-            #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-            #         DTOutput("catch_scenario_table",width = "100%", height = "100%"))
-            #         )
-            mainPanel(
-                width = 9, style = "max-height: 90vh; overflow-y: auto;",
-                htmlOutput("Advice_Sentence"),
-                tabsetPanel(
-                    tabPanel(
-                        "option_plot1",
-                        plotlyOutput("catch_scenario_plot_1")
-                    ),
-                    tabPanel(
-                        "option_plot2",
-                        plotlyOutput("catch_scenario_plot_2")
-                    )
-                ),
-                DTOutput("catch_scenario_table")
-            )
-        )
-    ),
+    # tabPanel(
+    #     "Catch Options & Advice",
+    #     sidebarLayout(
+    #         sidebarPanel(
+    #             width = 3, style = "max-height: 90vh; overflow-y: auto;",#style = "overflow-y:scroll; max-height: 600px; position:relative;",
+    #             DTOutput("Advice_View")#,
+    #             # useShinyjs(),
+    #             # inlineCSS(list("table2" = "font-size: 10px"))
+    #         ),
+    #         # browser(),
+    #         # mainPanel(# this is not running 
+    #         #     width = 9,
+    #         #         htmlOutput("Advice_Sentence"),
+    #         #         div(
+    #         #         class = "outer",
+    #         #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
+    #         #         plotlyOutput("catch_scenario_plot_1", width = "100%", height = "100%")),
+    #         #         # plotlyOutput("catch_scenario_plot_2"),
+    #         #         div(
+    #         #         class = "outer",
+    #         #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
+    #         #         plotlyOutput("catch_scenario_plot_2",width = "100%", height = "100%")),
+    #         #         # DTOutput("catch_scenario_table")
+    #         #         div(
+    #         #         class = "outer",
+    #         #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
+    #         #         DTOutput("catch_scenario_table",width = "100%", height = "100%"))
+    #         #         )
+    #         mainPanel(
+    #             width = 9, style = "max-height: 90vh; overflow-y: auto;",
+    #             htmlOutput("Advice_Sentence"),
+    #             tabsetPanel(
+    #                 tabPanel(
+    #                     "option_plot1",
+    #                     plotlyOutput("catch_scenario_plot_1")
+    #                 ),
+    #                 tabPanel(
+    #                     "option_plot2",
+    #                     plotlyOutput("catch_scenario_plot_2")
+    #                 )
+    #             ),
+    #             DTOutput("catch_scenario_table")
+    #         )
+    #     )
+    # ),
     
     
     tabPanel(
-        "Catch Option & Advice 2",
+        "Catch Option & Advice",
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
             mainPanel = catch_scenarios_right_panel
