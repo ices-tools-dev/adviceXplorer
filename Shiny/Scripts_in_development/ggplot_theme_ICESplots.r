@@ -147,10 +147,10 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "F<sub>MSY</sub>" = "solid"
             )),
             scale_size_manual(values = c(
-                "F" = 2,
-                "F<sub>Lim</sub>" = 1.1,
-                "F<sub>pa</sub>" = 1.5,
-                "F<sub>MSY</sub>" = .8
+                "F" = 1.5,
+                "F<sub>Lim</sub>" = .8,
+                "F<sub>pa</sub>" = 1,
+                "F<sub>MSY</sub>" = .5
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -183,10 +183,10 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "MSY B<sub>trigger</sub>" = "solid"
             )),
             scale_size_manual(values = c(
-                "SSB" = 2,
-                "B<sub>Lim</sub>" = 1.1,
-                "B<sub>pa</sub>" = 1.5,
-                "MSY B<sub>trigger</sub>" = .8
+                "SSB" = 1.5,
+                "B<sub>Lim</sub>" = .8,
+                "B<sub>pa</sub>" = 1,
+                "MSY B<sub>trigger</sub>" = .5
             )),
             scale_fill_manual(values = c("#94b0a9")),
 
@@ -211,10 +211,10 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             ),
             scale_color_manual(values = c(
                 "2021" = "#047c6c",
-                # "2020" = "#252525",
-                # "2019" = "#525252",
-                # "2018" = "#737373",
-                # "2017" = "#969696",
+                "2020" = "#252525",
+                "2019" = "#525252",
+                "2018" = "#737373",
+                "2017" = "#969696",
                 "MSY B<sub>trigger</sub>" = "#689dff",
                 "B<sub>Lim</sub>" = "#a1a1a1",
                 "B<sub>pa</sub>" = "#a1a1a1"
@@ -258,7 +258,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             labs(
                 title = sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)),
                 y = "",
-                x = ""
+                x = "Year"
             ),
             scale_color_manual(values = c(
                 "2021" = "#ed5f26",
@@ -428,7 +428,7 @@ p2 <- df %>%
             ), HTML
         )
     ), # , color = "2*sd"
-    width = .2
+    width = .3
     ) +
     theme_ICES_plots(type = "recruitment")
 
@@ -560,7 +560,8 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            itemwidth = 50,
+            itemwidth = 20,
+            itemsizing= "trace",
             y = -.5, yanchor = "bottom",
             x = 0.5, xanchor = "center",
             title = list(text = "")
@@ -664,7 +665,8 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
-            itemwidth = 50,
+            itemwidth = 20,
+            itemsizing= "trace",
             title = list(text = "")
         ),
         xaxis = list(zeroline = TRUE)
@@ -898,8 +900,8 @@ p5 <- df_qual[[1]] %>%
             ), HTML
         )
     )) +
-    theme_ICES_plots(type = "quality_SSB") +
-    theme(legend.position = "none")
+    theme_ICES_plots(type = "quality_SSB")
+    # theme(legend.position = "none")
    
 # plot <- p + text_labels
 # plot
@@ -909,7 +911,7 @@ fig5 <- ggplotly(p5, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.4,
+            y = -.25,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -984,8 +986,8 @@ p6 <- df_qual[[1]] %>%
             ), HTML
         )
     )) +
-    theme_ICES_plots(type = "quality_F") +
-    theme(legend.position = "none")
+    theme_ICES_plots(type = "quality_F")
+    # theme(legend.position = "none")
    
 # plot <- p + text_labels
 # plot
@@ -995,7 +997,7 @@ fig6 <- ggplotly(p6, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.4,
+            y = -.25,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -1037,8 +1039,8 @@ p7 <- df_qual[[1]] %>%
     # linetype = "solid",
     ) +
     
-    theme_ICES_plots(type = "quality_R") +
-    theme(legend.position = "none")
+    theme_ICES_plots(type = "quality_R")
+    # theme(legend.position = "none")
    
 # plot <- p + text_labels
 # plot
@@ -1048,7 +1050,7 @@ fig7 <- ggplotly(p7, tooltip = "text") %>%
     layout(
         legend = list(
             orientation = "h",
-            y = -.4,
+            y = -.25,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -1088,13 +1090,80 @@ for (i in 1:length(fig7$x$data)){
 library(shiny)
 library(shinyWidgets)
 
+title_html <- tags$a(
+    href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
+    target = "_blank",
+        tags$img(
+            src = "https://www.ices.dk/SiteCollectionImages/ICES%20logos/NEGATIVE%20ICES-logo.png",
+            style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",
+            height = "50px"
+        )
+)
+
+ui <- navbarPage(
+
+    # tab title
+    windowTitle = "Online Advice",
+    id = "tabset",
+    fluid = TRUE,
+    # navbar title
+    title = title_html,
+    navbarMenu("Plots",
+    tabPanel("Historical",
+    panel(
+                style = "height: 90vh; overflow-y: auto;",
+                fluidRow(
+                    column(
+                        width = 6, style = "height: 43vh;",
+                        plotlyOutput("plot1", height = "100%", width = "100%")
+                    ),
+                    column(
+                        width = 6, style = "height: 43vh;",
+                        plotlyOutput("plot2", height = "100%", width = "100%")
+                    ),
+                ),
+                fluidRow(
+                    column(
+                        width = 6, style = "height: 43vh;",
+                        plotlyOutput("plot3", height = "100%", width = "100%")
+                    ),
+                    column(
+                        width = 6, style = "height: 43vh;",
+                        plotlyOutput("plot4", height = "100%", width = "100%")
+                    ),
+                )
+            )
+    ),
+tabPanel("Quality",
+panel(
+                style = "height: 90vh; overflow-y: auto;",
+                fluidRow(
+                    column(
+                        width = 4, style = "height: 85vh;",
+                        plotlyOutput("plot5", height = "100%", width = "100%"),
+                    ),
+                    column(
+                        width = 4, style = "height: 85vh;",
+                        plotlyOutput("plot6", height = "100%", width = "100%")
+                    ),
+                    column(
+                        width = 4, style = "height: 85vh;",
+                        plotlyOutput("plot7", height = "100%", width = "100%")
+                    )
+                )
+                
+            )
+        )
+    )
+)
+
 # Define UI ----
 ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
-            width = 8,
+            width = 9,
             panel(
-                style = "height: 95vh; overflow-y: auto;",
+                style = "height: 94vh; overflow-y: auto;",
                 fluidRow(
                     column(
                         width = 6, style = "height: 45vh;",
@@ -1118,9 +1187,9 @@ ui <- fluidPage(
             )
         ),
         sidebarPanel(
-            width = 4,
+            width = 3,
             panel(
-                style = "height: 95vh; overflow-y: auto;",
+                style = "height: 94vh; overflow-y: auto;",
                 fluidRow(
                     column(
                         width = 12, style = "height: 30vh;",
