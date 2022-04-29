@@ -24,7 +24,7 @@ access_sag_data <- function(stock_code, year) {
 
 # download data
 
-df <- access_sag_data("cod.27.47d20", 2021)
+df <- access_sag_data("tur.27.4", 2021)
 df
 # create the theme
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R")) {
@@ -221,23 +221,23 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             )),
             scale_linetype_manual(values = c(
                 "2021" = "solid",
-                # "2020" = "solid",
-                # "2019" = "solid",
-                # "2018" = "solid",
-                # "2017" = "solid",
+                "2020" = "solid",
+                "2019" = "solid",
+                "2018" = "solid",
+                "2017" = "solid",
                 "B<sub>Lim</sub>" = "dashed",
                 "B<sub>pa</sub>" = "dotted",
                 "MSY B<sub>trigger</sub>" = "solid"
             )),
             scale_size_manual(values = c(
                 "2021" = 1,
-                # "2020" = 1,
-                # "2019" = 1,
-                # "2018" = 1,
-                # "2017" = 1,
-                "B<sub>Lim</sub>" = 1.1,
-                "B<sub>pa</sub>" = 1.5,
-                "MSY B<sub>trigger</sub>" = .8
+                "2020" = 1,
+                "2019" = 1,
+                "2018" = 1,
+                "2017" = 1,
+                "B<sub>Lim</sub>" = .8,
+                "B<sub>pa</sub>" = 1,
+                "MSY B<sub>trigger</sub>" = .5
             )),
             # scale_fill_manual(values = c("#94b0a9")),
 
@@ -286,9 +286,9 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2019" = 1,
                 "2018" = 1,
                 "2017" = 1,
-                "F<sub>Lim</sub>" = 1.1,
-                "F<sub>pa</sub>" = 1.5,
-                "F<sub>MSY</sub>" = .8
+                "F<sub>Lim</sub>" = .8,
+                "F<sub>pa</sub>" = 1,
+                "F<sub>MSY</sub>" = .5
             )),
             # scale_fill_manual(values = c("#94b0a9")),
 
@@ -361,7 +361,13 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 #     title = "Catches",
 #     y = sprintf("Catches in 1000 %s", dplyr::last(df$units))
 # )
-
+#### SAG stamp
+SAGstamp <- list( showarrow = FALSE,
+                                        text = "hom.27.2a4a5b6a7a-ce-k8_2021_16773_2022429010501",
+                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
+                                        yref = 'paper', y = 1, xref = "paper", x = 1,
+                                        yanchor = "right", xanchor = "right"
+                                        )
 
 # selecting ddata and plotting
 ##################################catches#########################################################
@@ -385,6 +391,8 @@ p1 <- df %>%
 
 
 p1
+
+
 # converting
 fig1 <- ggplotly(p1, tooltip = "text") %>%
     layout(legend = list(
@@ -394,7 +402,9 @@ fig1 <- ggplotly(p1, tooltip = "text") %>%
         x = 0.5,
         xanchor = "center",
         title = list(text = "")
-    ))
+    ),
+    annotations = list(SAGstamp)
+    )
 
 
 ######################################recruitment###################################################
@@ -442,7 +452,9 @@ fig2 <- ggplotly(p2, tooltip = "text") %>%
         x = 0.5,
         xanchor = "center",
         title = list(text = "")
-    ))
+    ),
+    annotations = list(SAGstamp)
+    )
 
 
 p3 <- df %>%
@@ -480,7 +492,7 @@ p3 <- df %>%
                 "<b>F: </b>", F
             ), HTML
         )
-    ), size = 1.5) +
+    )) + #, size = 1.5
     geom_line(aes(
         x = Year,
         y = FMSY,
@@ -562,11 +574,12 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
             orientation = "h",
             itemwidth = 20,
             itemsizing= "trace",
-            y = -.5, yanchor = "bottom",
+            y = -.3, yanchor = "bottom",
             x = 0.5, xanchor = "center",
             title = list(text = "")
         ),
-        xaxis = list(zeroline = TRUE)
+        xaxis = list(zeroline = TRUE),
+        annotations = list(SAGstamp)
     ) 
 for (i in 1:length(fig3$x$data)) {
     if (!is.null(fig3$x$data[[i]]$name)) {
@@ -610,8 +623,8 @@ p4 <- df %>%
                 "<b>SSB: </b>", SSB
             ), HTML
         )
-    ),
-    size = 1.5
+    )
+    # size = 1.5
     ) +
     geom_line(aes(
         x = Year,
@@ -661,7 +674,7 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
         legend = list(
             itemsizing = "trace",
             orientation = "h",
-            y = -.5,
+            y = -.3,
             yanchor = "bottom",
             x = 0.5,
             xanchor = "center",
@@ -669,7 +682,8 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
             itemsizing= "trace",
             title = list(text = "")
         ),
-        xaxis = list(zeroline = TRUE)
+        xaxis = list(zeroline = TRUE),
+        annotations = list(SAGstamp)
     ) # nolint
 
 for (i in 1:length(fig4$x$data)){
@@ -838,7 +852,7 @@ return(df_list)
 }
 
 #download quality of assessment data
-df_qual <- quality_assessment_data("cod.27.47d20")
+df_qual <- quality_assessment_data("tur.27.4")
 
 
 #plot
@@ -917,7 +931,8 @@ fig5 <- ggplotly(p5, tooltip = "text") %>%
             xanchor = "center",
             title = list(text = "")
         ),
-        xaxis = list(zeroline = TRUE)
+        xaxis = list(zeroline = TRUE),
+        annotations = list(SAGstamp)
     ) # nolint
 
 for (i in 1:length(fig5$x$data)){
@@ -1003,7 +1018,8 @@ fig6 <- ggplotly(p6, tooltip = "text") %>%
             xanchor = "center",
             title = list(text = "")
         ),
-        xaxis = list(zeroline = TRUE)
+        xaxis = list(zeroline = TRUE),
+        annotations = list(SAGstamp)
     ) # nolint
 
 for (i in 1:length(fig6$x$data)){
@@ -1056,7 +1072,8 @@ fig7 <- ggplotly(p7, tooltip = "text") %>%
             xanchor = "center",
             title = list(text = "")
         ),
-        xaxis = list(zeroline = TRUE)
+        xaxis = list(zeroline = TRUE),
+        annotations = list(SAGstamp)
     ) # nolint
 
 for (i in 1:length(fig7$x$data)){
@@ -1108,8 +1125,8 @@ ui <- navbarPage(
     fluid = TRUE,
     # navbar title
     title = title_html,
-    navbarMenu("Plots",
-    tabPanel("Historical",
+    navbarMenu("Standard Graphs",
+    tabPanel("Stock development over time",
     panel(
                 style = "height: 90vh; overflow-y: auto;",
                 fluidRow(
@@ -1134,7 +1151,7 @@ ui <- navbarPage(
                 )
             )
     ),
-tabPanel("Quality",
+tabPanel("Quality of assessment",
 panel(
                 style = "height: 90vh; overflow-y: auto;",
                 fluidRow(
@@ -1158,60 +1175,60 @@ panel(
 )
 
 # Define UI ----
-ui <- fluidPage(
-    sidebarLayout(
-        sidebarPanel(
-            width = 9,
-            panel(
-                style = "height: 94vh; overflow-y: auto;",
-                fluidRow(
-                    column(
-                        width = 6, style = "height: 45vh;",
-                        plotlyOutput("plot1", height = "100%", width = "100%")
-                    ),
-                    column(
-                        width = 6, style = "height: 45vh;",
-                        plotlyOutput("plot2", height = "100%", width = "100%")
-                    ),
-                ),
-                fluidRow(
-                    column(
-                        width = 6, style = "height: 45vh;",
-                        plotlyOutput("plot3", height = "100%", width = "100%")
-                    ),
-                    column(
-                        width = 6, style = "height: 45vh;",
-                        plotlyOutput("plot4", height = "100%", width = "100%")
-                    ),
-                )
-            )
-        ),
-        sidebarPanel(
-            width = 3,
-            panel(
-                style = "height: 94vh; overflow-y: auto;",
-                fluidRow(
-                    column(
-                        width = 12, style = "height: 30vh;",
-                        plotlyOutput("plot5", height = "100%", width = "100%")
-                    )
-                ),
-                fluidRow(
-                    column(
-                        width = 12, style = "height: 30vh;",
-                        plotlyOutput("plot6", height = "100%", width = "100%")
-                    )
-                ),
-                fluidRow(
-                    column(
-                        width = 12, style = "height: 30vh;",
-                        plotlyOutput("plot7", height = "100%", width = "100%")
-                    )
-                ),
-            )
-        )
-    )
-)
+# ui <- fluidPage(
+#     sidebarLayout(
+#         sidebarPanel(
+#             width = 9,
+#             panel(
+#                 style = "height: 94vh; overflow-y: auto;",
+#                 fluidRow(
+#                     column(
+#                         width = 6, style = "height: 45vh;",
+#                         plotlyOutput("plot1", height = "100%", width = "100%")
+#                     ),
+#                     column(
+#                         width = 6, style = "height: 45vh;",
+#                         plotlyOutput("plot2", height = "100%", width = "100%")
+#                     ),
+#                 ),
+#                 fluidRow(
+#                     column(
+#                         width = 6, style = "height: 45vh;",
+#                         plotlyOutput("plot3", height = "100%", width = "100%")
+#                     ),
+#                     column(
+#                         width = 6, style = "height: 45vh;",
+#                         plotlyOutput("plot4", height = "100%", width = "100%")
+#                     ),
+#                 )
+#             )
+#         ),
+#         sidebarPanel(
+#             width = 3,
+#             panel(
+#                 style = "height: 94vh; overflow-y: auto;",
+#                 fluidRow(
+#                     column(
+#                         width = 12, style = "height: 30vh;",
+#                         plotlyOutput("plot5", height = "100%", width = "100%")
+#                     )
+#                 ),
+#                 fluidRow(
+#                     column(
+#                         width = 12, style = "height: 30vh;",
+#                         plotlyOutput("plot6", height = "100%", width = "100%")
+#                     )
+#                 ),
+#                 fluidRow(
+#                     column(
+#                         width = 12, style = "height: 30vh;",
+#                         plotlyOutput("plot7", height = "100%", width = "100%")
+#                     )
+#                 ),
+#             )
+#         )
+#     )
+# )
 # ui<- fluidPage(
 #     tabPanel(
 #         "Stock development over time",
