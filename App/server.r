@@ -558,29 +558,44 @@ output$TAC_timeline <- renderPlotly({
 
 
 ### right side
-output$advice_timeline <- renderTimevis({
-  timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected))
-#   style <- "
-#  .vis-timeline {
-#    border-color: #269026;
-#    background-color: rgb(246,250,251);
-#    font-size: 20px;
-#    font-family: Sans-serif;
-#    color: #9AC2B7;
-#  }
+# output$advice_timeline <- renderTimevis({
+#   timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected))
 
-#  .vis-item {
-#    border: 1px solid #E8EAEA;
-#    font-size: 20pt;
-#    background: #9AC2B7;
-#    font-family: Sans-serif;
-#    padding: 5px;
-#  }
-#  "
-#   tagList(tags$style(style), tv)
 
-  # htmltools::html_print(tv)
-})
+
+# #   style <- "
+# #  .vis-timeline {
+# #    border-color: #269026;
+# #    background-color: rgb(246,250,251);
+# #    font-size: 20px;
+# #    font-family: Sans-serif;
+# #    color: #9AC2B7;
+# #  }
+
+# #  .vis-item {
+# #    border: 1px solid #E8EAEA;
+# #    font-size: 20pt;
+# #    background: #9AC2B7;
+# #    font-family: Sans-serif;
+# #    padding: 5px;
+# #  }
+# #  "
+# #   tagList(tags$style(style), tv)
+
+#   # htmltools::html_print(tv)
+# })
+observeEvent(input$preview, {
+    # Show a modal when the button is pressed
+    shinyalert(title= " Advice Timeline", 
+    # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
+    tags$body(HTML(html_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected))),
+            type = "info",
+            html=TRUE,
+            closeOnClickOutside = TRUE,
+            confirmButtonText = "Close",
+            size = "s",
+            )
+  })
 
 output$table <- DT::renderDT(
   arrange(catch_scenario_table(), F) %>% select(-Year),
