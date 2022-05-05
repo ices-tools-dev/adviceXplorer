@@ -1667,8 +1667,16 @@ html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
     timeL <- get_Advice_View_info(stock_code)
 
     release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
+    release_date <- strptime(as.character(release_date), "%Y-%m-%d")
+    release_date <- format(release_date, "%d/%m/%Y")
+
     applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
+    applicable_from <- strptime(as.character(applicable_from), "%Y-%m-%d")
+    applicable_from <- format(applicable_from, "%d/%m/%Y")
+
     applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
+    applicable_until <- strptime(as.character(applicable_until), "%Y-%m-%d")
+    applicable_until <- format(applicable_until, "%d/%m/%Y")
 
     ## This block gets the name of the working group from the currently selected row
     filtered_row <- tbl_sid[tbl_rows_selected, ]
@@ -1679,8 +1687,12 @@ html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
     page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
     
     start_date <- page %>%
-        html_nodes("td") %>%
-        html_text()
+        html_nodes("td") #%>%
+        # html_text()
+        
+    start_date <- gsub("<td>", "", start_date)
+    start_date <- gsub("</td>", "", start_date)
+
 
     title_meeting <- start_date[1]
     descr_group <- start_date[4]
@@ -1688,6 +1700,11 @@ html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
     ## This block extracts and formats the dates as above
     start_WG <- strapplyc(start_date[2], "\\d+/\\d+/\\d+", simplify = TRUE)
     end_WG <- strapplyc(start_date[3], "\\d+/\\d+/\\d+", simplify = TRUE)
+
+    start_WG <- strptime(as.character(start_WG), "%d/%m/%Y")
+    start_WG <- format(start_WG, "%d/%m/%Y")
+    end_WG <- strptime(as.character(end_WG), "%d/%m/%Y")
+    end_WG <- format(end_WG, "%d/%m/%Y")
 
     html_timeline_string <- paste0("
                                 <style>
