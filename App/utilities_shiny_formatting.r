@@ -189,12 +189,14 @@ catch_scenarios_left_panel <- sidebarPanel(
 catch_scenarios_right_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
-    title = "Advice timeline",
-    fillPage(
-      tags$style(type = "text/css", "#advice_timeline overflow-y: auto; !important;"), #{height: calc(20vh - 10px); calc(100vw - 10px)}
-      timevisOutput("advice_timeline", height = "5%", width = "100%")
-    )
+    actionButton("preview", "Advice Timeline", style="font-size:150%; padding:10px;")# style="color: #fff; background-color: #337ab7; border-color: #2e6da4; padding:10px; font-size:150%")
+  #   title = "Advice timeline",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#advice_timeline overflow-y: auto; !important;"), #{height: calc(20vh - 10px); calc(100vw - 10px)}
+  #     timevisOutput("advice_timeline", height = "5%", width = "100%")
+  #   )
   ),
+  
   panel(
     title = "Catch scenario table",
     fillPage(
