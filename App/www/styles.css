@@ -49,3 +49,13 @@ body {
   font-size: 16px;
   color: inherit;
 }
+
+.btn-default {
+  color: #ffffff;
+  background-image: linear-gradient(#f69371, #F15D2A 50%, #f69371);
+  background-repeat: no-repeat;
+  background-color: #F15D2A;
+  border-color: rgba(0,0,0,0.1);
+  border-bottom: 1px solid #e6e6e6;
+}
+
