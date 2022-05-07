@@ -225,13 +225,14 @@ server <- function(input, output, session) {
     ### reshuffle some columns
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>%
-      relocate(doi, .before = EcoRegion) %>%
+      relocate(c(doi,FO_doi), .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
       # select(-c(ExpertGroup)) %>%
       # rename(StockCode = StockKeyLabel) %>%
       rename(ExpertGroupUrl = group_url) %>%
       rename("Advice doi" = doi) %>% 
-      relocate("Advice doi", .before = AssessmentKey)
+      rename("Fishery Overview" = FO_doi) %>% 
+      relocate(c("Advice doi","Fishery Overview"), .before = AssessmentKey)
       
 
 
@@ -305,7 +306,7 @@ server <- function(input, output, session) {
         #   )
 
         # ),
-        list(visible = FALSE, targets = c(0, 5, 11))
+        list(visible = FALSE, targets = c(0, 5, 12))
       )
     )
     # callback=JS(

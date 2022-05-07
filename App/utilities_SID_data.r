@@ -275,87 +275,50 @@ createLink_SAG_db <- function(assessmentKey) {
 #' @export
 #'
 createLink_advice_pdf <- function(df) {
-  # print(stock_list_all$StockKeyLabel)
-  
-  DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
-  colnames(DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
-  # setdiff( unique(DOI_data$Stock_code),unique(stock_list_all$StockKeyLabel))
-  # unique(stock_list_all$StockKeyLabel)
-  # unique(DOI_data$Stock_code)
-  # StockKeyLabel <- "cod.27.47d20"
-  # AssessmentYear <- 2017
+  advice_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
+  colnames(advice_DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
 
-  # data <- data.frame(colnames)
-  # df <- stock_list_all$StockKeyLabel
+  FO_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Overviews")
+  colnames(FO_DOI_data) <- c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi")
+
+  for (i in 1:dim(df)[1]) {
+    list_doi <- filter(advice_DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
+
+    FO_doi <- FO_DOI_data %>%
+      filter(Advice_product == "Fisheries Overviews") %>%
+      filter(Year == df$YearOfLastAssessment[i]) %>%
+      filter(str_detect(df$EcoRegion[i], Ecoregion))
+    FO_doi <- FO_doi$doi
 
 
-  # stock_list_all$doi <- NA
-  for (i in 1:dim(df)[1]){
-    # print(stock_list_all$StockKeyLabel[i])
-    list_doi <- filter(DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
-    # list_doi <- filter(DOI_data, Stock_code == stock_list_all$StockKeyLabel[i] & Year == stock_list_all$YearOfLastAssessment[i])$doi
-    if (identical(list_doi,character(0))){
+    if (identical(list_doi, character(0))) {
       list_doi <- "not_available"
+    } else if (identical(FO_doi, character(0))) {
+      FO_doi <- "not_available"
     }
+
     list_doi <- strsplit(list_doi, "\\s+")
+    FO_doi <- strsplit(FO_doi, "\\s+")
+
+
     if (length(list_doi) > 1) {
-    list_doi <- list_doi[[length(list_doi)]]
-  } else {
-    list_doi <- list_doi
+      list_doi <- list_doi[[length(list_doi)]]
+    } else if (length(FO_doi) > 1) {
+      FO_doi <- FO_doi[[length(FO_doi)]]
+    } else {
+      list_doi <- list_doi
+      FO_doi <- FO_doi
+    }
+    list_doi <- paste0("<a href='", list_doi, "' target='_blank'>", "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
+    FO_doi <- paste0("<a href='", FO_doi, "' target='_blank'>", "<img src= 'seafood.png'", " height= '30px'/>", "</a>")
+
+    df$doi[i] <- list_doi
+    df$FO_doi[i] <- FO_doi
   }
-  list_doi <- paste0("<a href='", list_doi,"' target='_blank'>", "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
-  df$doi[i] <- list_doi
-  }
-    
-    
-  
+
   return(df)
-  }
-  # createLink_advice_pdf(stock_list_all)
-    # stock_list_all$doi[i] <- list_doi
-    
-    # stock_list_all$doi[,i] <- 
-  #   if (length(list_doi) > 1) {
-  #   stock_list_all$doi[,i] <- list_doi[[length(list_doi)]]
-  # } else {
-  #   stock_list_all$doi[,i] <- list_doi
-  # }
-  # }
-  # list_doi <- filter(DOI_data, Stock_code == StockKeyLabel & Year == AssessmentYear)$doi
-  # list_doi <- strsplit(list_doi, "\\s+")
+}
   
-  # if (length(list_doi) > 1) {
-  #   list_doi <- list_doi[[length(list_doi)]]
-  # } else {
-  #   list_doi <- list_doi
-  # }
-
-
-  # doi <- c()
-  # for (stock in stock_list_all$StockKeyLabel){
-  #   list_doi <- subset(DOI_data, Stock_code == stock_list_all$StockKeyLabel & Year == AssessmentYear)$doi
-    
-  #   list_doi <- strsplit(list_doi, "\\s+")
-  # if (length(list_doi) > 1) {
-  #   stock_list_all$doi <- list_doi[[length(list_doi)]]
-  # } else {
-  #   stock_list_all$doi <- list_doi
-  # }
-  # }
-  # # print(doi)
-  # doi <- do.call(rbind.data.frame,doi)
-  # print(length(doi))
-  # colnames(doi) <- "link"
-  # print(doi$link)
-  # list_doi <- subset(DOI_data, Stock_code == StockKeyLabel & Year==AssessmentYear)$doi
-  # list_doi <- strsplit(list_doi, "\\s+")
-  
-  # if (length(list_doi) > 1) {
-  #   doi <- list_doi[[length(list_doi)]]
-  # } else {
-  #   doi <- list_doi
-  # }
-  # print(doi)
   
   
 
