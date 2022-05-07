@@ -87,7 +87,7 @@ download_SID <- function(Year) {
   # }
   return(stock_list_all)
 }
-
+# stock_list_all<- download_SID(2021)
 
 #' Returns ....
 #'
@@ -146,36 +146,9 @@ separate_ecoregions <- function(stock_list_all) {
   return(mydf_long)
 }
 
+# stock_list_all<- separate_ecoregions(stock_list_all)
 
 
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
-#'
-#' @return 
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#'
-createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
-  paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>",
-  "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
-}
 
 #
 #' Returns ....
@@ -277,6 +250,115 @@ createLink_SAG_db <- function(assessmentKey) {
   "<img src= 'database.png'", " height= '30px'/>", "</a>")
 }
 
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#'
+createLink_advice_pdf <- function(df) {
+  # print(stock_list_all$StockKeyLabel)
+  
+  DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
+  colnames(DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
+  # setdiff( unique(DOI_data$Stock_code),unique(stock_list_all$StockKeyLabel))
+  # unique(stock_list_all$StockKeyLabel)
+  # unique(DOI_data$Stock_code)
+  # StockKeyLabel <- "cod.27.47d20"
+  # AssessmentYear <- 2017
+
+  # data <- data.frame(colnames)
+  # df <- stock_list_all$StockKeyLabel
+
+
+  # stock_list_all$doi <- NA
+  for (i in 1:dim(df)[1]){
+    # print(stock_list_all$StockKeyLabel[i])
+    list_doi <- filter(DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
+    # list_doi <- filter(DOI_data, Stock_code == stock_list_all$StockKeyLabel[i] & Year == stock_list_all$YearOfLastAssessment[i])$doi
+    if (identical(list_doi,character(0))){
+      list_doi <- "not_available"
+    }
+    list_doi <- strsplit(list_doi, "\\s+")
+    if (length(list_doi) > 1) {
+    list_doi <- list_doi[[length(list_doi)]]
+  } else {
+    list_doi <- list_doi
+  }
+  list_doi <- paste0("<a href='", list_doi,"' target='_blank'>", "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
+  df$doi[i] <- list_doi
+  }
+    
+    
+  
+  return(df)
+  }
+  # createLink_advice_pdf(stock_list_all)
+    # stock_list_all$doi[i] <- list_doi
+    
+    # stock_list_all$doi[,i] <- 
+  #   if (length(list_doi) > 1) {
+  #   stock_list_all$doi[,i] <- list_doi[[length(list_doi)]]
+  # } else {
+  #   stock_list_all$doi[,i] <- list_doi
+  # }
+  # }
+  # list_doi <- filter(DOI_data, Stock_code == StockKeyLabel & Year == AssessmentYear)$doi
+  # list_doi <- strsplit(list_doi, "\\s+")
+  
+  # if (length(list_doi) > 1) {
+  #   list_doi <- list_doi[[length(list_doi)]]
+  # } else {
+  #   list_doi <- list_doi
+  # }
+
+
+  # doi <- c()
+  # for (stock in stock_list_all$StockKeyLabel){
+  #   list_doi <- subset(DOI_data, Stock_code == stock_list_all$StockKeyLabel & Year == AssessmentYear)$doi
+    
+  #   list_doi <- strsplit(list_doi, "\\s+")
+  # if (length(list_doi) > 1) {
+  #   stock_list_all$doi <- list_doi[[length(list_doi)]]
+  # } else {
+  #   stock_list_all$doi <- list_doi
+  # }
+  # }
+  # # print(doi)
+  # doi <- do.call(rbind.data.frame,doi)
+  # print(length(doi))
+  # colnames(doi) <- "link"
+  # print(doi$link)
+  # list_doi <- subset(DOI_data, Stock_code == StockKeyLabel & Year==AssessmentYear)$doi
+  # list_doi <- strsplit(list_doi, "\\s+")
+  
+  # if (length(list_doi) > 1) {
+  #   doi <- list_doi[[length(list_doi)]]
+  # } else {
+  #   doi <- list_doi
+  # }
+  # print(doi)
+  
+  
+
 
 #' Returns ....
 #'
@@ -306,8 +388,41 @@ sid_table_links <- function(df){
   
   df$icon <- paste0('<img src=', "'", match_stockcode_to_illustration(df$StockKeyLabel, df), "'", ' height=40>') 
   # reference fish icon place holder <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a>
-  df$advice_url <- createLink_advice_pdf(df$StockKeyLabel, df$YearOfLastAssessment)
+  df <- createLink_advice_pdf(df)
   df$group_url <- createLink_expert_group(df$ExpertGroup)
   df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
+  
   return(df)
 }
+# sid_table_links(stock_list_all)
+
+
+
+# ' Returns ....
+# '
+# ' Downloads ...
+# '
+# ' @param stock_name
+# '
+# ' @return 
+# '
+# ' @note
+# ' Can add some helpful information here
+# '
+# ' @seealso
+# '
+# ' @examples
+# ' \dontrun{
+# ' 
+# ' }
+# '
+# ' @references
+# '
+# ' 
+# '
+# ' @export
+#'
+# createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
+#   paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>",
+#   "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
+# }

@@ -225,13 +225,13 @@ server <- function(input, output, session) {
     ### reshuffle some columns
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>%
-      relocate(advice_url, .before = EcoRegion) %>%
+      relocate(doi, .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
       # select(-c(ExpertGroup)) %>%
       # rename(StockCode = StockKeyLabel) %>%
       rename(ExpertGroupUrl = group_url) %>%
-      rename("Advice pdf" = advice_url) %>% 
-      relocate("Advice pdf", .before = AssessmentKey)
+      rename("Advice doi" = doi) %>% 
+      relocate("Advice doi", .before = AssessmentKey)
       
 
 

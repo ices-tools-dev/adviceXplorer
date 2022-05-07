@@ -28,6 +28,7 @@ library(icesSAG)
 library(plotly)
 library(shinythemes)
 library(shinyalert)
+library(readxl)
 
 
 
