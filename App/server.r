@@ -277,6 +277,7 @@ server <- function(input, output, session) {
             size = "m",
             ),#"Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
     options = list(
+      order = list(1, 'asc'),
       dom = "Bfrtip",
       pageLength = 1000,
       # buttons = c("csv","xls"),
@@ -288,44 +289,12 @@ server <- function(input, output, session) {
         )),
       # rownames = FALSE,
       columnDefs = list(
-        # list(
-        #   targets = 4,
-        #   render = JS(
-        #     "function(data, type, row, meta) {",
-        #     "return type === 'display' && data.length > 15 ?",
-        #     "'<span title=\"' + data + '\">' + data.substr(0, 15) + '...</span>' : data;",
-        #     "}"
-        #   )
-        # ),
-        # list(
-        #   targets = 2,
-        #   render = JS(
-        #     "function(.zoom.hover) {",
-        #     "transform: scale(1.5); ",
-        #     "}"
-        #   )
-
-        # ),
-        list(visible = FALSE, targets = c(0, 5, 12))
+        list(visible = FALSE, targets = c(0, 5, 12)),
+        list(className = 'dt-center', targets = c(3,6,10,11,13))
+        )
       )
     )
-    # callback=JS(
-    #   'table.on("mouseover","td", function() {
-    #   $(".small-img").hover(function() {
-    #       $(this).css("transform", "scale(3, 3)");
-    #     }, function(){
-    #           $(this).css("transform", "none");
-    #     });
-    #   })')
-    # callback = JS("table.on('mouseover', 'tr', function() {
-    #                           $(.small-img).hover(function() {
-    #                             $(this).css(transform,scale(3,3));
-    #                             }, function() {
-    #                               $(this).css(transform, none);
-    #                               });
-    #                               })"
-    #                           )
-  )
+    
 
   ## process selection
   observeEvent(input$tbl_rows_selected, {
@@ -476,13 +445,15 @@ catch_scenario_table <- eventReactive(query$stockkeylabel, {
 })
 
 output$catch_scenario_table <- DT::renderDT(
-    catch_scenario_table(),
-    selection = "none",
-    caption = "Catch Scenario Table",
-    rownames= FALSE,
-    options = list(
-        dom = 't',
-      pageLength = 100)
+  catch_scenario_table(),
+  selection = "none",
+  caption = "Catch Scenario Table",
+  rownames = FALSE,
+  options = list(
+    order = list(2, "asc"),
+    dom = "t",
+    pageLength = 100
+  )
 )
 # output$Advice_View <- DT::datatable(
 #     test(),

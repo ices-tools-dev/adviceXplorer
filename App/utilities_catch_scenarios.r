@@ -80,6 +80,7 @@ get_Advice_View_sentence <- function(stock_name) {
 
 catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
 catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
+catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
 

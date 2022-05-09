@@ -1369,7 +1369,7 @@ catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSi
     # F0 <- tmp[tmp$cat == "F = 0", ] taking this out because spmetimes F0 is not present
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
 
-    fig_catch <- plot_ly(tmp, source = "ranking") %>%
+    fig_catch <- plot_ly(tmp, source = "ranking") %>%  
         add_trace(
             x = ~ TotCatch,
             y = ~ F,
@@ -1609,55 +1609,55 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
 #'
 #' @export
 #' 
-get_advice_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
-    ## this gets the initial dates from the advice view
-    timeL <- get_Advice_View_info(stock_code)
+# get_advice_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
+#     ## this gets the initial dates from the advice view
+#     timeL <- get_Advice_View_info(stock_code)
 
-    release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
-    applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
-    applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
+#     release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
+#     applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
+#     applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
 
-    ## This block formats the dates from dd/mm/yyy to Yyyy-mm-dd
-    release_date <- strptime(as.character(release_date), "%d/%m/%Y")
-    release_date <- format(release_date, "%Y-%m-%d")
-    applicable_from <- strptime(as.character(applicable_from), "%d/%m/%Y")
-    applicable_from <- format(applicable_from, "%Y-%m-%d")
-    applicable_until <- strptime(as.character(applicable_until), "%d/%m/%Y")
-    applicable_until <- format(applicable_until, "%Y-%m-%d")
+#     ## This block formats the dates from dd/mm/yyy to Yyyy-mm-dd
+#     release_date <- strptime(as.character(release_date), "%d/%m/%Y")
+#     release_date <- format(release_date, "%Y-%m-%d")
+#     applicable_from <- strptime(as.character(applicable_from), "%d/%m/%Y")
+#     applicable_from <- format(applicable_from, "%Y-%m-%d")
+#     applicable_until <- strptime(as.character(applicable_until), "%d/%m/%Y")
+#     applicable_until <- format(applicable_until, "%Y-%m-%d")
 
 
-    ## This block gets the name of the working group from the currently selected row
-    filtered_row <- tbl_sid[tbl_rows_selected, ]
-    WG <- filtered_row$ExpertGroupUrl
-    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+#     ## This block gets the name of the working group from the currently selected row
+#     filtered_row <- tbl_sid[tbl_rows_selected, ]
+#     WG <- filtered_row$ExpertGroupUrl
+#     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
 
-    ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
-    page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
+#     ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
+#     page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
     
-    start_date <- page %>%
-        html_nodes("td") %>%
-        html_text()
+#     start_date <- page %>%
+#         html_nodes("td") %>%
+#         html_text()
 
-    title_meeting <- start_date[1]
-    ## This block extracts and formats the dates as above
-    start_WG <- strapplyc(start_date[2], "\\d+/\\d+/\\d+", simplify = TRUE)
-    end_WG <- strapplyc(start_date[3], "\\d+/\\d+/\\d+", simplify = TRUE)
-    start_WG <- strptime(as.character(start_WG), "%d/%m/%Y")
-    start_WG <- format(start_WG, "%Y-%m-%d")
-    end_WG <- strptime(as.character(end_WG), "%d/%m/%Y")
-    end_WG <- format(end_WG, "%Y-%m-%d")
+#     title_meeting <- start_date[1]
+#     ## This block extracts and formats the dates as above
+#     start_WG <- strapplyc(start_date[2], "\\d+/\\d+/\\d+", simplify = TRUE)
+#     end_WG <- strapplyc(start_date[3], "\\d+/\\d+/\\d+", simplify = TRUE)
+#     start_WG <- strptime(as.character(start_WG), "%d/%m/%Y")
+#     start_WG <- format(start_WG, "%Y-%m-%d")
+#     end_WG <- strptime(as.character(end_WG), "%d/%m/%Y")
+#     end_WG <- format(end_WG, "%Y-%m-%d")
 
-    ## This blocks create the df that timevis will display
-    data <- data.frame(
-        id      = 1:3,
-        content = c("Advice Release Date", "Advice Applicable Between", title_meeting),
-        start   = c(release_date, applicable_from, start_WG),
-        end     = c(NA, applicable_until, end_WG)
-    )
+#     ## This blocks create the df that timevis will display
+#     data <- data.frame(
+#         id      = 1:3,
+#         content = c("Advice Release Date", "Advice Applicable Between", title_meeting),
+#         start   = c(release_date, applicable_from, start_WG),
+#         end     = c(NA, applicable_until, end_WG)
+#     )
     
 
-    return(data)
-}
+#     return(data)
+# }
 
 
 

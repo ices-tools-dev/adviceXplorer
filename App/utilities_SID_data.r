@@ -143,6 +143,7 @@ separate_ecoregions <- function(stock_list_all) {
   )
   # req(EcoRegion_filter)
   # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
+  
   return(mydf_long)
 }
 
