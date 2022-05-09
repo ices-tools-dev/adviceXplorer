@@ -199,7 +199,7 @@ years <- c(2021, 2020, 2019, 2018, 2017)
 datalist = list()
 
 for (year in years) {
-    print(year)
+    # print(year)
     data_temp <- try(access_sag_data_local(stock_code, year)) # "had.27.6b"
 
     ###############

@@ -242,7 +242,7 @@ server <- function(input, output, session) {
       temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
       temp_df <- rbind(temp_df, temp_1)
     }
-    print(tibble(temp_df))
+    # print(tibble(temp_df))
     stock_list_long <- temp_df
   })
 
@@ -263,37 +263,51 @@ server <- function(input, output, session) {
   
   ###########################################################  Render table in stock selection tab
 
-  output$tbl <- DT::renderDT(res_mod(),
+  output$tbl <- DT::renderDT(
+    
+#     colnames(eco_filter) <- c("Stock code", "Ecoregion", "icon", "Common Name","ExpertGroup", "Expert Group", "Data Category", "Year Of Last Assessment",
+#     "Advice Category", "Advice doi", "Fisheries Overview doi", "AssessmentKey", "Data")
+
+    res_mod(),
     escape = FALSE,
     extensions = "Buttons",
     selection = "single",
-    caption = shinyalert(title= "Stock Selection", 
-            text = paste0( "<b>","To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>","<br/>","<br/>",
-            "<img src= 'stock_selection.gif'", " height= '400px'/>" ),
-            type = "info",
-            html=TRUE,
-            closeOnClickOutside = TRUE,
-            confirmButtonText = "Let's go!",
-            size = "m",
-            ),#"Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
+    caption = shinyalert(
+      title = "Stock Selection",
+      text = paste0(
+        "<b>", "To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>", "<br/>", "<br/>",
+        "<img src= 'stock_selection.gif'", " height= '400px'/>"
+      ),
+      type = "info",
+      html = TRUE,
+      closeOnClickOutside = TRUE,
+      confirmButtonText = "Let's go!",
+      size = "m",
+    ), # "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
+
+
     options = list(
-      order = list(1, 'asc'),
+      order = list(1, "asc"),
       dom = "Bfrtip",
       pageLength = 1000,
       # buttons = c("csv","xls"),
       buttons =
-        list("copy", "print", list(
-          extend = "collection",
-          buttons = c("csv", "excel"),
-          text = "Download"
-        )),
+        list(
+          "copy", "print",
+          list(
+            extend = "collection",
+            buttons = c("csv", "excel"),
+            text = "Download"
+          )
+        ),
       # rownames = FALSE,
       columnDefs = list(
         list(visible = FALSE, targets = c(0, 5, 12)),
-        list(className = 'dt-center', targets = c(3,6,10,11,13))
-        )
+        list(className = "dt-center", targets = c(3, 6, 10, 11, 13))
       )
     )
+  )
+  
     
 
   ## process selection
@@ -450,7 +464,7 @@ output$catch_scenario_table <- DT::renderDT(
   caption = "Catch Scenario Table",
   rownames = FALSE,
   options = list(
-    order = list(2, "asc"),
+    # order = list("cS_Purpose", "asc"),
     dom = "t",
     pageLength = 100
   )
@@ -576,6 +590,7 @@ output$table <- DT::renderDT(
   caption = "Catch Scenario Table",
   rownames = FALSE,
   options = list(
+    # order = list("cS_Purpose", "asc"),
     dom = "Bfrtip",
     pageLength = 100,
     buttons =
