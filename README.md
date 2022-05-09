@@ -16,3 +16,4 @@ All the official scripts and data to run the app are in the App folder. The Shin
 Source for placeholder fish icon: <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a><i/><br/>
 Source for pdf icon: <a href="https://www.flaticon.com/free-icons/pdf" title="pdf icons">Pdf icons created by Creative Stall Premium - Flaticon</a><br/>
 Source for database icon: <a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by srip - Flaticon</a><br/>
+Source for fisheries overviews icon: <a href="https://www.flaticon.com/free-icons/seafood" title="seafood icons">Seafood icons created by iconixar - Flaticon</a>

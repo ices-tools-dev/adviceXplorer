@@ -231,8 +231,8 @@ server <- function(input, output, session) {
       # rename(StockCode = StockKeyLabel) %>%
       rename(ExpertGroupUrl = group_url) %>%
       rename("Advice doi" = doi) %>% 
-      rename("Fishery Overview" = FO_doi) %>% 
-      relocate(c("Advice doi","Fishery Overview"), .before = AssessmentKey)
+      rename("Fisheries Overview doi" = FO_doi) %>% 
+      relocate(c("Advice doi","Fisheries Overview doi"), .before = AssessmentKey)
       
 
 
