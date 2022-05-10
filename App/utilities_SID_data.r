@@ -333,11 +333,18 @@ sid_table_links <- function(df){
 #   "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
 # }
 createLink_advice_pdf <- function(df) {
-  advice_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
-  colnames(advice_DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
+  # advice_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
+  advice_DOI_data <- fread("Data/DOI/single_stock_2017_4.5.2022.csv", 
+                            header = TRUE, 
+                            col.names = c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi"))
 
-  FO_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Overviews")
-  colnames(FO_DOI_data) <- c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi")
+  # colnames(advice_DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
+
+  # FO_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Overviews")
+  FO_DOI_data <- fread("Data/DOI/overviews_2017_4.5.2022.csv", 
+                            header = TRUE, 
+                            col.names = c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi"))
+  # colnames(FO_DOI_data) <- c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi")
 
   for (i in 1:dim(df)[1]) {
     list_doi <- filter(advice_DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
