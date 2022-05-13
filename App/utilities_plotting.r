@@ -1688,7 +1688,7 @@ html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
 
     ## This block gets the name of the working group from the currently selected row
     filtered_row <- tbl_sid[tbl_rows_selected, ]
-    WG <- filtered_row$ExpertGroupUrl
+    WG <- filtered_row$`Expert group`
     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
 
     ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting

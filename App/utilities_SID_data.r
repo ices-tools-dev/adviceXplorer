@@ -88,7 +88,7 @@ download_SID <- function(Year) {
   return(stock_list_all)
 }
 
-
+# stock_list_all <-  download_SID(2021)
 #' Returns ....
 #'
 #' Downloads ...
@@ -141,13 +141,16 @@ separate_ecoregions <- function(stock_list_all) {
     # Published = rep(mydf$Published, sapply(s, length)),
     AssessmentKey = rep(mydf$AssessmentKey, sapply(s, length))
   )
+  # mydf_long <- mydf_long %>% rename("Advice category" = AdviceCategory, 
+  #                                   "Year of last assessment"= YearOfLastAssessment,
+  #                                   "Data category" = DataCategory)
   # req(EcoRegion_filter)
   # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
   return(mydf_long)
 }
 
-
-
+# stock_list_all <-  separate_ecoregions(stock_list_all)
+# names(stock_list_all)
 
 
 #
@@ -250,7 +253,34 @@ createLink_SAG_db <- function(assessmentKey) {
   "<img src= 'database.png'", " height= '30px'/>", "</a>")
 }
 
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#'
+createLink_visa_tool <- function(assessmentKey) {
+  paste0("<a href='","https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=", assessmentKey,"' target='_blank'>",
+  "<img src= 'gps.png'", " height= '30px'/>", "</a>")
+}
 #' Returns ....
 #'
 #' Downloads ...
@@ -282,6 +312,7 @@ sid_table_links <- function(df){
   df <- createLink_advice_pdf(df)
   df$group_url <- createLink_expert_group(df$ExpertGroup)
   df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
+  df$visa_url <- createLink_visa_tool(df$AssessmentKey)
   
   return(df)
 }
