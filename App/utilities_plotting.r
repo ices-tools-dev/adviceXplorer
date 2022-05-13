@@ -1558,6 +1558,14 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
         paper_bgcolor = "rgb(246,250,251)",
         plot_bgcolor = "rgb(255,255,255)",
         # images = watermark(),
+        legend = list(
+            orientation = "h",
+            y = -.6,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = "Scenarios")
+        ),
 
         xaxis = list(
             title = "Years",

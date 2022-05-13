@@ -40,12 +40,13 @@ get_Advice_View_info <- function(stock_name) {
   # reshape table from horizontal to vertical
   
   x <- colnames(catch_scenario_list[, -1])
-  t <- melt(catch_scenario_list, measure.vars = x, variable.name = "advice View", value.name = "Values", na.rm = TRUE)
+  t <- reshape2::melt(catch_scenario_list, measure.vars = x, variable.name = "advice View", value.name = "Values", na.rm = TRUE)
 
   table_vert_adviceView <- subset(t, select = -c(adviceKey))
   return(table_vert_adviceView)
 }
 
+# catch_scenario_list <- get_Advice_View_info("wit.27.3a47d")
 #' Returns ....
 #'
 #' Downloads ...
@@ -139,7 +140,7 @@ get_catch_scenario_table <- function(stock_name) {
     # unclass()
   return(catch_scenario_table)
 }
-
+# catch_scenario_table <- get_catch_scenario_table("wit.27.3a47d")
 
 #' Returns ....
 #'
@@ -166,7 +167,7 @@ get_catch_scenario_table <- function(stock_name) {
 #' @export
 #' 
 standardize_catch_scenario_table <- function(tmp) {
-  tmp$Year <- 2021
+  tmp$Year <- 2020 #assesment year + 1
   ###################################### code tests to try to accept as many catch scen tables headings
 
   tmp_unified <- data.frame()
@@ -264,7 +265,7 @@ standardize_catch_scenario_table <- function(tmp) {
   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
 }
 
-
+# catch_scenario_table_st <- standardize_catch_scenario_table(catch_scenario_table)
 #' Returns ....
 #'
 #' Downloads ...
@@ -294,9 +295,12 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     catches_data <- catches_data %>% add_column(cat = "Historical Catches")
     catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
+    catches_data <- catches_data %>% mutate(catches = c(catches[-n()], 2500)) #### this will be substituted by advice value from advice list of previous year
+
     catches_data_year_before <- catch_scenario_table
-    catches_data_year_before$Year <- 2020
-    catches_data_year_before$TotCatch <- catches_data$catches[catches_data$Year == 2020]
+    catches_data_year_before$Year <- 2019 ## assessmnet year
+    # catches_data_year_before$TotCatch <- catches_data$catches[catches_data$Year == 2018]
+    catches_data_year_before$TotCatch <- tail(catches_data$catches,1)
 
     # print(catches_data)
     # print(catch_scenario_table)
@@ -304,6 +308,16 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
 
     catches_data <- setNames(catches_data, names(catch_scenario_table))
     final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
+    # final_df <- rbind(catches_data,  catch_scenario_table)
+    print(final_df)
     return(final_df)
 }
 
+# catches_data <- df
+# catch_scenario_table <- catch_scenario_table_st
+
+# tail(catches_data$catches, 1)  2000
+
+# catches_data %>% mutate(catches = c(catches[-n()], 2500))
+ 
+# tail(catches_data$catches,1)
