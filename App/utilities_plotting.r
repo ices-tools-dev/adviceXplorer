@@ -1688,8 +1688,8 @@ html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
 
     ## This block gets the name of the working group from the currently selected row
     filtered_row <- tbl_sid[tbl_rows_selected, ]
-    WG <- filtered_row$`Expert group`
-    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+    WG <- filtered_row$ExpertGroup
+    # WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
 
     ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
     page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))

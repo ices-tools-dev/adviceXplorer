@@ -229,18 +229,19 @@ server <- function(input, output, session) {
       relocate(group_url, .before = DataCategory) %>%
       # select(-c(ExpertGroup)) %>%
       # rename(StockCode = StockKeyLabel) %>%
-      rename(
-        "Expert group" = group_url,
-        "Advice doi" = doi,
-        "Fisheries Overview doi" = FO_doi,
-        "VISA tool" = visa_url,
-        "SAG data" = SAG_url
-      ) %>%
+      # rename(
+      #   "Expert group" = group_url,
+      #   "Advice doi" = doi,
+      #   "Fisheries Overview doi" = FO_doi,
+      #   "VISA tool" = visa_url,
+      #   "SAG data" = SAG_url
+      # ) %>%
       # rename("Advice doi" = doi) %>%
       # rename("Fisheries Overview doi" = FO_doi) %>%
       # rename("VISA tool" = visa_url) %>%
       # rename("SAG data" = SAG_url) %>%
-      relocate(c("Advice doi", "Fisheries Overview doi"), .before = AssessmentKey)
+      relocate(c(doi, FO_doi), .before = AssessmentKey)
+      # relocate(c("Advice doi", "Fisheries Overview doi"), .before = AssessmentKey)
 
 
 
@@ -275,8 +276,19 @@ server <- function(input, output, session) {
     
 #     colnames(eco_filter) <- c("Stock code", "Ecoregion", "icon", "Common Name","ExpertGroup", "Expert Group", "Data Category", "Year Of Last Assessment",
 #     "Advice Category", "Advice doi", "Fisheries Overview doi", "AssessmentKey", "Data")
-
-    res_mod(),
+    res_modo <- res_mod() %>% rename("Stock code" = StockKeyLabel,
+                                      "Ecoregion" = EcoRegion,
+                                      " " = icon,
+                                      "Common name" = SpeciesCommonName,
+                                      "Expert group" = group_url,
+                                      "Data category" = DataCategory,
+                                      "Year of last assessment" = YearOfLastAssessment,
+                                      "Advice category" = AdviceCategory,
+                                      "Advice doi" = doi,
+                                      "Fisheries Overview doi" = FO_doi,
+                                      "SAG data" = SAG_url,
+                                      "VISA tool" = visa_url),
+    # res_mod(),
     escape = FALSE,
     extensions = "Buttons",
     selection = "single",
@@ -314,7 +326,7 @@ server <- function(input, output, session) {
         list(className = "dt-center", targets = c(3, 6, 10, 11, 13, 14))
       )
     )
-  )
+)
   
     
 
