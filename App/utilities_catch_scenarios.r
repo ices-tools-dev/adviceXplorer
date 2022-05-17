@@ -309,7 +309,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     catches_data <- setNames(catches_data, names(catch_scenario_table))
     final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
     # final_df <- rbind(catches_data,  catch_scenario_table)
-    print(final_df)
+    # print(final_df)
     return(final_df)
 }
 
