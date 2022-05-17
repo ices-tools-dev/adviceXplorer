@@ -5,36 +5,54 @@ Years <- data.frame(Year)
 
 # this list is temporary, it is just to limit the searches to the stocks already in advice_view
 advice_view_stocks <- c(
-  "cod.27.5a",
-  "cod.21.1",
+  "bll.27.3a47d",
+  # "cod.27.5a",
+  # "cod.21.1",
   "cod.27.47d20",
-  "had.27.7a",
-  "had.27.6b",
-  "had.27.7b-k",
+  "dab.27.3a4",
+  "gug.27.3a47d",
+  "fle.27.3a4",
+  # "had.27.7a",
+  # "had.27.6b",
+  # "had.27.7b-k",
   "had.27.46a20",
-  "had.27.1-2",
-  "her.27.irls",
-  "her.27.20-24",
-  "her.27.nirs",
-  "her.27.3a47d",
+  # "had.27.1-2",
+  # "her.27.irls",
+  # "her.27.20-24",
+  # "her.27.nirs",
+  # "her.27.3a47d",
+  "lem.27.3a47d",
+  "mur.27.3a47d",
   "nop.27.3a4",
   "ple.27.420",
   "ple.27.7d",
-  "ple.27.7a",
+  # "ple.27.7a",
   "pok.27.3a46",
-  "pok.27.1-2",
-  "san.sa.1r",
-  "san.sa.2r",
-  "san.sa.3r",
-  "san.sa.4",
+  # "pok.27.1-2",
+  "pol.27.3a4",
+  # "san.sa.1r",
+  # "san.sa.2r",
+  # "san.sa.3r",
+  # "san.sa.4",  
   "sol.27.4",
-  "spr.27.3a4",
+  "sol.27.7d",
+  # "spr.27.3a4",
+  "tur.27.3a",
   "tur.27.4",
+  "whg.27.3a",
   "whg.27.47d",
   "wit.27.3a47d"
 )
 
+# #run this before to save time later
+# advice_DOI_data <- fread("Data/DOI/single_stock_2017_4.5.2022.csv", 
+#                             header = TRUE, 
+#                             col.names = c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi"))
+# advice_DOI_data <- advice_DOI_data %>% filter(Stock_code %in% advice_view_stocks)
 
+# FO_DOI_data <- fread("Data/DOI/overviews_2017_4.5.2022.csv", 
+#                             header = TRUE, 
+#                             col.names = c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi"))
 #' Returns ....
 #'
 #' Downloads ...
@@ -364,21 +382,25 @@ sid_table_links <- function(df){
 #   "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
 # }
 createLink_advice_pdf <- function(df) {
-  # advice_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
+  
+  
   advice_DOI_data <- fread("Data/DOI/single_stock_2017_4.5.2022.csv", 
                             header = TRUE, 
                             col.names = c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi"))
+  # advice_DOI_data <- advice_DOI_data %>% filter(Stock_code %in% advice_view_stocks)
+  
 
-  # colnames(advice_DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
-
-  # FO_DOI_data <- read_excel("Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Overviews")
+  
   FO_DOI_data <- fread("Data/DOI/overviews_2017_4.5.2022.csv", 
                             header = TRUE, 
                             col.names = c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi"))
-  # colnames(FO_DOI_data) <- c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi")
-
+  
   for (i in 1:dim(df)[1]) {
-    list_doi <- filter(advice_DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
+    # list_doi <- filter(advice_DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
+    list_doi <- advice_DOI_data %>% filter(Year == df$YearOfLastAssessment[i]) %>% 
+                                    filter(Stock_code == df$StockKeyLabel[i])
+    list_doi <- list_doi$doi
+
 
     FO_doi <- FO_DOI_data %>%
       filter(Advice_product == "Fisheries Overviews") %>%

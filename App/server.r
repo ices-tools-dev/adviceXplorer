@@ -18,8 +18,17 @@ options(icesSAG.use_token = FALSE)
 ## the following line will download the last 5 years of SAG data (summary and ref points).
 ## This process will take several minutes but, once the data is in the local folder,
 ## the app will run much faster.
-if (!file.exists("Data/SAG_2021/SAG_summary.csv")) {
-    source("update_SAG_data.r")
+if (!file.exists(
+  c(
+    "Data/SAG_2021/SAG_summary.csv",
+    "Data/SAG_2020/SAG_summary.csv",
+    "Data/SAG_2019/SAG_summary.csv",
+    "Data/SAG_2018/SAG_summary.csv",
+    "Data/SAG_2017/SAG_summary.csv"
+  )
+)
+) {
+  source("update_SAG_data.r")
 }
 
 
@@ -227,21 +236,7 @@ server <- function(input, output, session) {
     stock_list_long <- stock_list_long %>%
       relocate(c(doi, FO_doi), .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
-      # select(-c(ExpertGroup)) %>%
-      # rename(StockCode = StockKeyLabel) %>%
-      # rename(
-      #   "Expert group" = group_url,
-      #   "Advice doi" = doi,
-      #   "Fisheries Overview doi" = FO_doi,
-      #   "VISA tool" = visa_url,
-      #   "SAG data" = SAG_url
-      # ) %>%
-      # rename("Advice doi" = doi) %>%
-      # rename("Fisheries Overview doi" = FO_doi) %>%
-      # rename("VISA tool" = visa_url) %>%
-      # rename("SAG data" = SAG_url) %>%
       relocate(c(doi, FO_doi), .before = AssessmentKey)
-      # relocate(c("Advice doi", "Fisheries Overview doi"), .before = AssessmentKey)
 
 
 

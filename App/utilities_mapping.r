@@ -45,6 +45,7 @@ map_plot <- function(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_a
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
         # addProviderTiles("Stamen.Toner") %>%
         addPolygons(
+            # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
             color = "#444444",
             weight = 1,
@@ -66,6 +67,7 @@ map_plot <- function(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_a
             )
         ) %>%
         addPolygons(
+            # data = st_set_precision(eu_shape, precision=10^2),
             data = eu_shape,
             color = "black",
             weight = 1,
@@ -216,6 +218,7 @@ map_ecoregion <- function(shape_eco, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
                 # addTiles() %>%
                 addPolygons(
+                    # data = st_set_precision(eu_shape, precision=10^2),
                     data = eu_shape,
                     color = "black",
                     weight = 1,
@@ -224,6 +227,7 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                     group = "Europe"
                 ) %>%
                 addPolygons(
+                    # data = st_set_precision(shape_eco, precision=10^2),
                     data = shape_eco,
                     fillColor = "#71B5BC",
                     fillOpacity = 0.08,
@@ -235,6 +239,7 @@ map_ecoregion <- function(shape_eco, eu_shape) {
                     label = ~Ecoregion
                 ) %>%
                 addPolygons(
+                    # data = st_set_precision(shape_eco, precision=10^2),
                     data = shape_eco,
                     fillColor = "#F15D2A",
                     fillOpacity = 0.7,

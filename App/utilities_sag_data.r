@@ -1,4 +1,4 @@
-options(icesSAG.use_token = TRUE)
+options(icesSAG.use_token = FALSE)
 
 #' Returns ....
 #'
@@ -67,16 +67,18 @@ access_sag_data <- function(stock_code, year) {
 access_sag_data_local <- function(stock_code, year) {
 
     # Dowload the data
-    df_summary <- read.csv(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
+    df_summary <- fread(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
     SAGsummary <- df_summary %>% filter(fishstock == stock_code)
 
-    df_refpts <- read.csv(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
+    df_refpts <- fread(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
     SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
 
 
     data_sag <- cbind(SAGsummary, SAGrefpts)
-    data_sag <- subset(data_sag, select = -fishstock)
-    data_sag <- filter(data_sag, StockPublishNote == "Stock published")
+    data_sag <- merge(SAGsummary, SAGrefpts)
+    data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
+    # data_sag <- subset(data_sag, select = -fishstock)
+    # data_sag <- filter(data_sag, StockPublishNote == "Stock published")
     return(data_sag)
     #print(data_sag %>% tibble())
 }
