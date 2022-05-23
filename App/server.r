@@ -19,26 +19,26 @@ options(icesSAG.use_token = FALSE)
 ## This process will take several minutes but, once the data is in the local folder,
 ## the app will run much faster.
 if (!file.exists(
-  c(
+  
     "Data/SAG_2021/SAG_summary.csv",
     "Data/SAG_2020/SAG_summary.csv",
     "Data/SAG_2019/SAG_summary.csv",
     "Data/SAG_2018/SAG_summary.csv",
     "Data/SAG_2017/SAG_summary.csv"
-  )
+  
 )
 ) {
   source("update_SAG_data.r")
 }
 
 if (!file.exists(
-  c(
+  
     "Data/SID_2021/SID.csv",
     "Data/SID_2020/SID.csv",
     "Data/SID_2019/SID.csv",
     "Data/SID_2018/SID.csv",
     "Data/SID_2017/SID.csv"
-  )
+
 )
 ) {
   source("update_SID_data.r")
