@@ -473,12 +473,12 @@ output$Advice_View <- DT::renderDT(
 
 
 ##### catch scenarios sentence
-advice_view_sentence <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_sentence(query$stockkeylabel)
-})
-output$Advice_Sentence <- renderUI({
-  HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
-})
+# advice_view_sentence <- eventReactive(query$stockkeylabel, {
+#   get_Advice_View_sentence(query$stockkeylabel)
+# })
+# output$Advice_Sentence <- renderUI({
+#   HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
+# })
 
 
 ##### catch scenarios table
@@ -522,10 +522,15 @@ output$catch_scenario_plot_2 <- renderPlotly({
   catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
 })
 
-
+##### catch scenarios sentence
+advice_view_sentence <- eventReactive(query$stockkeylabel, {
+  get_Advice_View_sentence(query$stockkeylabel)
+})
 ##### new tab in development left side
 output$Advice_Sentence2 <- renderUI({
-  HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+  advice_view_sentence()
+  # get_Advice_View_sentence(query$stockkeylabel)
+  # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 })
 
 ### F_SSB and chatches plot linked to table
