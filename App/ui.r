@@ -188,7 +188,7 @@ navbarPage(
         # verbatimTextOutput("headline")
     ),
     tabPanel(
-        "Resources",
+        "Resources", style = "max-height: 90vh; overflow-y: auto;",
         htmlOutput("citation")
         
         # verbatimTextOutput("headline")
