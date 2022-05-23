@@ -81,7 +81,15 @@ get_Advice_View_sentence <- function(stock_name) {
 
 catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
 catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
-catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
+# advice_requester <- catch_scenario_list$adviceRequester
+advice_requester <- gsub("~", ", ", catch_scenario_list$adviceRequester)
+# HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+
+catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock code: ", "<b>", stock_name,"</b><br/>",
+                                              "<font size=", 3, ">","Advice requester: ", "<b>", advice_requester,"</b><br/>",
+                                              "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
+                                              "<font size=", 3, ">",catch_scenario_advice_sentence,"</font>"))
+# catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
 
@@ -309,7 +317,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     catches_data <- setNames(catches_data, names(catch_scenario_table))
     final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
     # final_df <- rbind(catches_data,  catch_scenario_table)
-    print(final_df)
+    # print(final_df)
     return(final_df)
 }
 

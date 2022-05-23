@@ -1,7 +1,8 @@
 # Load europe shape file
-eu_shape <- st_read(dsn = "Data/old_eu", 
-    layer = "eu_shape")
-
+eu_shape <- st_read(dsn = "Data/Coastline05k", 
+    layer = "eu_shape_diss_simpl05")
+# eu_shape <- st_read(dsn = "Data/old_eu", 
+#     layer = "eu_shape")
 # Load the lighter version of the ecoregions shapefile
 shape_eco <- st_read(dsn = "Data/test_lowres", 
     layer = "ecoR_lowres")

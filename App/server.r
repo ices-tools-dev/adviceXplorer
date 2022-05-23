@@ -19,16 +19,29 @@ options(icesSAG.use_token = FALSE)
 ## This process will take several minutes but, once the data is in the local folder,
 ## the app will run much faster.
 if (!file.exists(
-  c(
+  
     "Data/SAG_2021/SAG_summary.csv",
     "Data/SAG_2020/SAG_summary.csv",
     "Data/SAG_2019/SAG_summary.csv",
     "Data/SAG_2018/SAG_summary.csv",
     "Data/SAG_2017/SAG_summary.csv"
-  )
+  
 )
 ) {
   source("update_SAG_data.r")
+}
+
+if (!file.exists(
+  
+    "Data/SID_2021/SID.csv",
+    "Data/SID_2020/SID.csv",
+    "Data/SID_2019/SID.csv",
+    "Data/SID_2018/SID.csv",
+    "Data/SID_2017/SID.csv"
+
+)
+) {
+  source("update_SID_data.r")
 }
 
 
@@ -225,12 +238,15 @@ server <- function(input, output, session) {
     req(input$selected_locations, input$selected_years)
     # print(input$selected_locations)
 
-    ### download SID
-    stock_list_all <- download_SID(input$selected_years)
-    ### modifify SID table, 1 row == 1 Ecoregion
-    stock_list_long <- separate_ecoregions(stock_list_all)
-    ### add hyperlinks to table
-    stock_list_long <- sid_table_links(stock_list_long)
+    # ### download SID
+    # stock_list_all <- download_SID(input$selected_years)
+    # ### modifify SID table, 1 row == 1 Ecoregion
+    # stock_list_long <- separate_ecoregions(stock_list_all)
+    # ### add hyperlinks to table
+    # stock_list_long <- sid_table_links(stock_list_long)
+    stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
+
+
     ### reshuffle some columns
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>%
@@ -238,15 +254,12 @@ server <- function(input, output, session) {
       relocate(group_url, .before = DataCategory) %>%
       relocate(c(doi, FO_doi), .before = AssessmentKey)
 
-
-
-
     temp_df <- data.frame()
     for (i in 1:length(input$selected_locations)) {
       temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
       temp_df <- rbind(temp_df, temp_1)
     }
-    print(tibble(temp_df))
+    # print(tibble(temp_df))
     stock_list_long <- temp_df
   })
 
@@ -460,12 +473,12 @@ output$Advice_View <- DT::renderDT(
 
 
 ##### catch scenarios sentence
-advice_view_sentence <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_sentence(query$stockkeylabel)
-})
-output$Advice_Sentence <- renderUI({
-  HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
-})
+# advice_view_sentence <- eventReactive(query$stockkeylabel, {
+#   get_Advice_View_sentence(query$stockkeylabel)
+# })
+# output$Advice_Sentence <- renderUI({
+#   HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
+# })
 
 
 ##### catch scenarios table
@@ -509,10 +522,15 @@ output$catch_scenario_plot_2 <- renderPlotly({
   catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
 })
 
-
+##### catch scenarios sentence
+advice_view_sentence <- eventReactive(query$stockkeylabel, {
+  get_Advice_View_sentence(query$stockkeylabel)
+})
 ##### new tab in development left side
 output$Advice_Sentence2 <- renderUI({
-  HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+  advice_view_sentence()
+  # get_Advice_View_sentence(query$stockkeylabel)
+  # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 })
 
 ### F_SSB and chatches plot linked to table
