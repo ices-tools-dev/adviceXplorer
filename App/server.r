@@ -20,11 +20,11 @@ options(icesSAG.use_token = FALSE)
 ## the app will run much faster.
 if (!file.exists(
   
-    "Data/SAG_2021/SAG_summary.csv",
-    "Data/SAG_2020/SAG_summary.csv",
-    "Data/SAG_2019/SAG_summary.csv",
-    "Data/SAG_2018/SAG_summary.csv",
-    "Data/SAG_2017/SAG_summary.csv"
+    "Data/SAG_2021/SAG_summary.csv"#,
+    # "Data/SAG_2020/SAG_summary.csv",
+    # "Data/SAG_2019/SAG_summary.csv",
+    # "Data/SAG_2018/SAG_summary.csv",
+    # "Data/SAG_2017/SAG_summary.csv"
   
 )
 ) {
@@ -33,11 +33,11 @@ if (!file.exists(
 
 if (!file.exists(
   
-    "Data/SID_2021/SID.csv",
-    "Data/SID_2020/SID.csv",
-    "Data/SID_2019/SID.csv",
-    "Data/SID_2018/SID.csv",
-    "Data/SID_2017/SID.csv"
+    "Data/SID_2021/SID.csv"#,
+    # "Data/SID_2020/SID.csv",
+    # "Data/SID_2019/SID.csv",
+    # "Data/SID_2018/SID.csv",
+    # "Data/SID_2017/SID.csv"
 
 )
 ) {
