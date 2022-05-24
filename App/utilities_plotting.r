@@ -1530,7 +1530,10 @@ catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSi
 #' @export
 #' 
 TAC_timeline <- function(final_df, catch_scenarios, units) {
-    
+    # palette <- brewer.pal(length(unique(final_df$cat)), "Paired")
+    # colourCount <- length(unique(catch_scenarios))
+    # getPalette <- colorRampPalette(brewer.pal(12, "Paired"))
+    # print(array(getPalette(colourCount)))
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
 
     catch_time <- plot_ly(final_df,
@@ -1545,6 +1548,7 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
             type = "scatter",
             mode = "lines+markers",
             color = ~cat
+            # color = array(getPalette(colourCount))
         )
     # catch_time <- catch_time %>% layout(
     #     xaxis = list(
