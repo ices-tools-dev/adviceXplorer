@@ -458,7 +458,7 @@ server <- function(input, output, session) {
 
 ##### catch scenarios tab
 advice_view_info <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_info(query$stockkeylabel)
+  get_Advice_View_info(query$stockkeylabel, query$year)
 })
 
 output$Advice_View <- DT::renderDT(
@@ -524,7 +524,7 @@ output$catch_scenario_plot_2 <- renderPlotly({
 
 ##### catch scenarios sentence
 advice_view_sentence <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_sentence(query$stockkeylabel)
+  get_Advice_View_sentence(advice_view_info())
 })
 ##### new tab in development left side
 output$Advice_Sentence2 <- renderUI({
