@@ -24,11 +24,13 @@
 #' 
 # Catch scenarios table
 ########################################################### tranform the sid dataframe
-get_Advice_View_info <- function(stock_name) {
+get_Advice_View_info <- function(stock_name, year) {
   catch_scenario_list <- jsonlite::fromJSON(
     URLencode(
       # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
-      sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
+      # sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
+      # sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?assessmentkey=%s", assessmentkey)
+      sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
     )
   )
 
@@ -46,7 +48,7 @@ get_Advice_View_info <- function(stock_name) {
   return(table_vert_adviceView)
 }
 
-# catch_scenario_list <- get_Advice_View_info("wit.27.3a47d")
+catch_scenario_list <- get_Advice_View_info("cod.27.47d20")
 #' Returns ....
 #'
 #' Downloads ...
