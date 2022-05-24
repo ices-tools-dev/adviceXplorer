@@ -35,17 +35,17 @@ get_Advice_View_info <- function(stock_name, year) {
   )
 
   catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
-  catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
+  # catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
   # catch_scenario_advice_link <- catch_scenario_list$adviceLink
   # catch_scenario_list <- subset(catch_scenario_list, select = -c(adviceSentence, adviceLink, linkToAdviceView, mpwebLink))
 
   # reshape table from horizontal to vertical
   
-  x <- colnames(catch_scenario_list[, -1])
-  t <- reshape2::melt(catch_scenario_list, measure.vars = x, variable.name = "advice View", value.name = "Values", na.rm = TRUE)
+  # x <- colnames(catch_scenario_list[, -1])
+  # t <- reshape2::melt(catch_scenario_list, measure.vars = x, variable.name = "advice_View", value.name = "Values", na.rm = TRUE)
 
-  table_vert_adviceView <- subset(t, select = -c(adviceKey))
-  return(table_vert_adviceView)
+  # table_vert_adviceView <- subset(t, select = -c(adviceKey))
+  return(catch_scenario_list)
 }
 
 # catch_scenario_list <- get_Advice_View_info("cod.27.47d20", 2021)
@@ -80,11 +80,12 @@ get_Advice_View_sentence <- function(df) {
 #       sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
 #     )
 #   )
-stockCode <- df[df$`advice View` == "stockCode",]$Values
-advice_requester <- df[df$`advice View` == "adviceRequester",]$Values
+# stockCode <- df[df$`advice View` == "stockCode",]$Values
+# advice_requester <- df[df$`advice View` == "adviceRequester",]$Values
+advice_requester <- df$adviceRequester
 advice_requester <- gsub("~", ", ", advice_requester)
-assessmentYear <- df[df$`advice View` == "assessmentYear",]$Values
-adviceSentence <- df[df$`advice View` == "adviceSentence",]$Values
+# assessmentYear <- df[df$`advice View` == "assessmentYear",]$Values
+# adviceSentence <- df[df$`advice View` == "adviceSentence",]$Values
 # catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
 # catch_scenario_advice_sentence <- df$adviceSentence
 # advice_requester <- catch_scenario_list$adviceRequester
@@ -92,15 +93,15 @@ adviceSentence <- df[df$`advice View` == "adviceSentence",]$Values
 # advice_requester <- gsub("~", ", ", df$adviceRequester)
 # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 
-catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock code: ", "<b>", stockCode,"</b><br/>",
+catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock code: ", "<b>", df$stockCode,"</b><br/>",
                                               "<font size=", 3, ">","Advice requester: ", "<b>", advice_requester,"</b><br/>",
-                                              "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>",
+                                              "<font size=", 3, ">","Assessment year: ", "<b>", df$assessmentYear,"</b><br/>",
                                               "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
-                                              "<font size=", 3, ">",adviceSentence,"</font>"))
+                                              "<font size=", 3, ">",df$adviceSentence,"</font>"))
 # catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
-# tezst <- get_Advice_View_sentence(df)
+# tezst <- get_Advice_View_sentence(catch_scenario_list)
 #' Returns ....
 #'
 #' Downloads ...
@@ -125,19 +126,20 @@ return(catch_scenario_advice_sentence)
 #'
 #' @export
 #' 
-get_catch_scenario_table <- function(stock_name) {
-  catch_scenario_list <- jsonlite::fromJSON(
-    URLencode(
-      # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
-      sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
-    )
-  )
+get_catch_scenario_table <- function(df) {
+  # catch_scenario_list <- jsonlite::fromJSON(
+  #   URLencode(
+  #     # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
+  #     # sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
+  #     sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
+  #   )
+  # )
 
-  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
+  # catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
 
   catch_scenario_table <- jsonlite::fromJSON(
     URLencode(
-      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey) # )
+      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", df$adviceKey) # )
     )
   )
   catch_scenario_table <- catch_scenario_table %>%
@@ -156,7 +158,7 @@ get_catch_scenario_table <- function(stock_name) {
     # unclass()
   return(catch_scenario_table)
 }
-# catch_scenario_table <- get_catch_scenario_table("wit.27.3a47d")
+# catch_scenario_table <- get_catch_scenario_table(catch_scenario_list)
 
 #' Returns ....
 #'
