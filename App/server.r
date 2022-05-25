@@ -482,8 +482,8 @@ advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
 
 
 ##### catch scenarios table
-catch_scenario_table <- eventReactive(req(query$stockkeylabel,query$year), {
-  standardize_catch_scenario_table(get_catch_scenario_table(query$stockkeylabel, query$year))
+catch_scenario_table <- eventReactive(req(advice_view_info()), {
+  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()))
 })
 
 # output$catch_scenario_table <- DT::renderDT(
@@ -523,8 +523,8 @@ catch_scenario_table <- eventReactive(req(query$stockkeylabel,query$year), {
 # })
 
 ##### catch scenarios sentence
-advice_view_sentence <- eventReactive(req(query$stockkeylabel,query$year), {
-  get_Advice_View_sentence(query$stockkeylabel, query$year)
+advice_view_sentence <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_sentence(advice_view_info())
 })
 ##### new tab in development left side
 output$Advice_Sentence2 <- renderUI({
@@ -607,7 +607,7 @@ observeEvent(input$preview, {
     # Show a modal when the button is pressed
     shinyalert(title= " Advice Timeline", 
     # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
-    tags$body(HTML(html_timeline(query$stockkeylabel,query$year, res_mod(), input$tbl_rows_selected))),
+    tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$tbl_rows_selected))),
             type = "info",
             html=TRUE,
             closeOnClickOutside = TRUE,

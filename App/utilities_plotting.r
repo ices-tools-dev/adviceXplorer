@@ -1673,10 +1673,10 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
 
 
 
-html_timeline <- function(stock_name, year, tbl_sid, tbl_rows_selected) {
+html_timeline <- function(timeL, tbl_sid, tbl_rows_selected) {
     ## this gets the initial dates from the advice view
     
-    timeL <- get_Advice_View_info(stock_name, year)
+    # timeL <- get_Advice_View_info(stock_name, year)
 
     # release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
     # release_date <- strptime(as.character(release_date), "%Y-%m-%d")

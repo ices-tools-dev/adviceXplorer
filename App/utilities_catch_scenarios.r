@@ -76,14 +76,14 @@ get_Advice_View_info <- function(stock_name, year) {
 #'
 #' @export
 #' 
-get_Advice_View_sentence <- function(stock_name, year) {
+get_Advice_View_sentence <- function(catch_scenario_list) {
   # catch_scenario_list <- jsonlite::fromJSON(
   #   URLencode(
   #     # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
   #     sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
   #   )
   # )
-  catch_scenario_list <- get_Advice_View_info(stock_name, year)
+  # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 # stockCode <- df[df$`advice View` == "stockCode",]$Values
 # advice_requester <- df[df$`advice View` == "adviceRequester",]$Values
 advice_requester <- catch_scenario_list$adviceRequester
@@ -130,7 +130,7 @@ return(catch_scenario_advice_sentence)
 #'
 #' @export
 #' 
-get_catch_scenario_table <- function(stock_name, year) {
+get_catch_scenario_table <- function(catch_scenario_list) {
   # catch_scenario_list <- jsonlite::fromJSON(
   #   URLencode(
   #     # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
@@ -138,7 +138,7 @@ get_catch_scenario_table <- function(stock_name, year) {
   #     sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
   #   )
   # )
-  catch_scenario_list <- get_Advice_View_info(stock_name, year)
+  # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 
   catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
 
