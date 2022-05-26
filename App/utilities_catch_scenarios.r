@@ -140,7 +140,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   # )
   # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 
-  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
+  # catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
 
   catch_scenario_table <- jsonlite::fromJSON(
     URLencode(
@@ -161,6 +161,10 @@ get_catch_scenario_table <- function(catch_scenario_list) {
     #   }
     # ) %>%
     # unclass()
+ 
+  catch_scenario_table <- catch_scenario_table %>% add_column(Year = catch_scenario_list$assessmentYear + 1, .before = "cS_Label")
+  # print(catch_scenario_table)
+  # print("1-------------------")
   return(catch_scenario_table)
 }
 # catch_scenario_table <- get_catch_scenario_table(stock_name, year)
@@ -190,7 +194,8 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 #' @export
 #' 
 standardize_catch_scenario_table <- function(tmp) {
-  tmp$Year <- 2020 #assesment year + 1
+  
+  # tmp$Year <- 2020 #assesment year + 1
   ###################################### code tests to try to accept as many catch scen tables headings
 
   tmp_unified <- data.frame()
@@ -220,7 +225,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(F = NA)
   } else {
-      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
   
   # Total catch"
@@ -233,7 +238,7 @@ standardize_catch_scenario_table <- function(tmp) {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
   }
   
-
+  
   # % TAC change"
   pattern <- c("% TAC ", "TAC", "TAC ", "% TAC")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -277,13 +282,16 @@ standardize_catch_scenario_table <- function(tmp) {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
   }
   
+  # print(data.frame(names(tmp_unified)))
+  # fwrite(data.frame(names(tmp_unified)), "Data/catch_scen_col_names.csv")
+  fwrite(as.list(names(tmp_unified)), file = "Data/catch_scen_col_names.txt")
 # rename columns to standard names
   colnames(tmp_unified) <- c("Year", "cat","cS_Purpose", "F", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
 
 #   tmp_unified <- tmp_unified %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0, SSB = 0)))
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
-  print(tmp_unified)
+  # print(tmp_unified)
   return(tmp_unified)
   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
 }
@@ -333,7 +341,8 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
     final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
     # final_df <- rbind(catches_data,  catch_scenario_table)
     # print(final_df)
-    print(final_df)
+    # print(names(fread(file = "Data/catch_scen_col_names.txt", sep = ","))[4])
+    # print(names(test))
     return(final_df)
 }
 

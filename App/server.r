@@ -616,9 +616,19 @@ observeEvent(input$preview, {
             )
   })
 
+catch_table_names <- eventReactive(catch_scenario_table(),{
+  req(query$stockkeylabel, query$year)
+  gsub("â€“", " - ",names(fread(file = "Data/catch_scen_col_names.txt", sep = ",")), fixed = TRUE)
+
+})
+
 output$table <- DT::renderDT(
-  # catch_scenario_table(),
-  arrange(catch_scenario_table(), F) %>% select(-Year),
+  tab <- catch_scenario_table() %>%
+    arrange(F) %>%
+    rename_all(funs(catch_table_names())) %>%
+    rename("Basis" = cS_Label, " " = cS_Purpose),
+ 
+  # arrange(catch_scenario_table(), F) %>% select(-Year),
   selection = "single",
   class = "display",
   caption = "Catch Scenario Table",
@@ -632,8 +642,10 @@ output$table <- DT::renderDT(
         extend = "collection",
         buttons = c("csv", "excel"),
         text = "Download"
-      ))
-    # columnDefs = list(list(visible=FALSE, targets=c(1)))
+      )),
+    columnDefs = list(
+      list(visible = FALSE, targets = c(0))
+    )
   ),
   callback = JS("table.on('mouseover', 'td', function() {
                               $(this).parent().addClass('hover')
