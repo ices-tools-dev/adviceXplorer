@@ -1673,21 +1673,24 @@ TAC_timeline <- function(final_df, catch_scenarios, units) {
 
 
 
-html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
+html_timeline <- function(timeL, tbl_sid, tbl_rows_selected) {
     ## this gets the initial dates from the advice view
     
-    timeL <- get_Advice_View_info(stock_code)
+    # timeL <- get_Advice_View_info(stock_name, year)
 
-    release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
-    release_date <- strptime(as.character(release_date), "%Y-%m-%d")
+    # release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
+    # release_date <- strptime(as.character(release_date), "%Y-%m-%d")
+    release_date <- strptime(as.character(timeL$adviceReleasedDate), "%Y-%m-%d")
     release_date <- format(release_date, "%d/%m/%Y")
 
-    applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
-    applicable_from <- strptime(as.character(applicable_from), "%Y-%m-%d")
+    # applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
+    # applicable_from <- strptime(as.character(applicable_from), "%Y-%m-%d")
+    applicable_from <- strptime(as.character(timeL$adviceApplicableFrom), "%Y-%m-%d")
     applicable_from <- format(applicable_from, "%d/%m/%Y")
 
-    applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
-    applicable_until <- strptime(as.character(applicable_until), "%Y-%m-%d")
+    # applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
+    # applicable_until <- strptime(as.character(applicable_until), "%Y-%m-%d")
+    applicable_until <- strptime(as.character(timeL$adviceApplicableUntil), "%Y-%m-%d")
     applicable_until <- format(applicable_until, "%d/%m/%Y")
 
     ## This block gets the name of the working group from the currently selected row
@@ -1794,7 +1797,7 @@ html_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
                         </style>
 
 
-                        <h1>Stockcode: ", stock_code, "</h1>
+                        <h1>Stockcode: ", timeL$stockCode, "</h1>
                         <div class='vtl'>
                         <div class='event'>
                             <p class='date'>", "Not Available", "</p>

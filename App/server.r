@@ -457,19 +457,19 @@ server <- function(input, output, session) {
 
 
 ##### catch scenarios tab
-advice_view_info <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_info(query$stockkeylabel)
+advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
+  get_Advice_View_info(query$stockkeylabel, query$year)
 })
 
-output$Advice_View <- DT::renderDT(
-    advice_view_info(),
-    selection = "none",
-    caption = "Advice view info",
-    rownames= FALSE,
-    options = list(
-        dom = 't',
-      pageLength = 50)
-)
+# output$Advice_View <- DT::renderDT(
+#     advice_view_info(),
+#     selection = "none",
+#     caption = "Advice view info",
+#     rownames= FALSE,
+#     options = list(
+#         dom = 't',
+#       pageLength = 50)
+# )
 
 
 ##### catch scenarios sentence
@@ -482,21 +482,21 @@ output$Advice_View <- DT::renderDT(
 
 
 ##### catch scenarios table
-catch_scenario_table <- eventReactive(query$stockkeylabel, {
-  standardize_catch_scenario_table(get_catch_scenario_table(query$stockkeylabel))
+catch_scenario_table <- eventReactive(req(advice_view_info()), {
+  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()))
 })
 
-output$catch_scenario_table <- DT::renderDT(
-  catch_scenario_table(),
-  selection = "none",
-  caption = "Catch Scenario Table",
-  rownames = FALSE,
-  options = list(
-    # order = list("cS_Purpose", "asc"),
-    dom = "t",
-    pageLength = 100
-  )
-)
+# output$catch_scenario_table <- DT::renderDT(
+#   catch_scenario_table(),
+#   selection = "none",
+#   caption = "Catch Scenario Table",
+#   rownames = FALSE,
+#   options = list(
+#     # order = list("cS_Purpose", "asc"),
+#     dom = "t",
+#     pageLength = 100
+#   )
+# )
 # output$Advice_View <- DT::datatable(
 #     test(),
 #     selection = "none",
@@ -510,21 +510,21 @@ output$catch_scenario_table <- DT::renderDT(
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
+# output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
 
-output$catch_scenario_plot_2 <- renderPlotly({
-  data_list <- advice_action()
-  rv <- reactiveValues(
-    catches_df = data_list$catches,
-    f_df = data_list$f,
-    SSB_df = data_list$SSB
-  )
-  catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
-})
+# output$catch_scenario_plot_2 <- renderPlotly({
+#   data_list <- advice_action()
+#   rv <- reactiveValues(
+#     catches_df = data_list$catches,
+#     f_df = data_list$f,
+#     SSB_df = data_list$SSB
+#   )
+#   catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+# })
 
 ##### catch scenarios sentence
-advice_view_sentence <- eventReactive(query$stockkeylabel, {
-  get_Advice_View_sentence(query$stockkeylabel)
+advice_view_sentence <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_sentence(advice_view_info())
 })
 ##### new tab in development left side
 output$Advice_Sentence2 <- renderUI({
@@ -551,7 +551,7 @@ output$catch_scenario_plot_3 <- renderPlotly({
 
 test_table <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table(), query$stockkeylabel,query$year)
 })
 output$catch_scenarios <- renderUI({
   # req(query$stockkeylabel, query$year, catch_scenario_table())
@@ -607,7 +607,7 @@ observeEvent(input$preview, {
     # Show a modal when the button is pressed
     shinyalert(title= " Advice Timeline", 
     # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
-    tags$body(HTML(html_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected))),
+    tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$tbl_rows_selected))),
             type = "info",
             html=TRUE,
             closeOnClickOutside = TRUE,
@@ -616,8 +616,19 @@ observeEvent(input$preview, {
             )
   })
 
+catch_table_names <- eventReactive(catch_scenario_table(),{
+  req(query$stockkeylabel, query$year)
+  gsub("â€“", " - ",names(fread(file = "Data/catch_scen_col_names.txt", sep = ",")), fixed = TRUE)
+
+})
+
 output$table <- DT::renderDT(
-  arrange(catch_scenario_table(), F) %>% select(-Year),
+  tab <- catch_scenario_table() %>%
+    arrange(F) %>%
+    rename_all(funs(catch_table_names())) %>%
+    rename("Basis" = cS_Label, " " = cS_Purpose),
+ 
+  # arrange(catch_scenario_table(), F) %>% select(-Year),
   selection = "single",
   class = "display",
   caption = "Catch Scenario Table",
@@ -631,8 +642,10 @@ output$table <- DT::renderDT(
         extend = "collection",
         buttons = c("csv", "excel"),
         text = "Download"
-      ))
-    # columnDefs = list(list(visible=FALSE, targets=c(1)))
+      )),
+    columnDefs = list(
+      list(visible = FALSE, targets = c(0))
+    )
   ),
   callback = JS("table.on('mouseover', 'td', function() {
                               $(this).parent().addClass('hover')
@@ -667,6 +680,13 @@ selected_scenario <- reactive({
     print(WG)
 
 })
+
+##### catch scenarios sentence
+footnotes <- eventReactive(req(advice_view_info()), {
+  get_catch_scenario_notes(advice_view_info())
+})
+
+output$footnotes <-renderUI(footnotes())
 
 output$citation <- renderUI({
   make_app_citation()
