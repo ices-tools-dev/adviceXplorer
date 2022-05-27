@@ -551,7 +551,7 @@ output$catch_scenario_plot_3 <- renderPlotly({
 
 test_table <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table(), query$stockkeylabel,query$year)
 })
 output$catch_scenarios <- renderUI({
   # req(query$stockkeylabel, query$year, catch_scenario_table())

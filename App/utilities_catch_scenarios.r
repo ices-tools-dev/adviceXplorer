@@ -35,7 +35,7 @@ get_Advice_View_info <- function(stock_name, year) {
     )
   )
 
-  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
+  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
   # catch_scenario_advice_sentence <- catch_scenario_list$adviceSentence
   # catch_scenario_advice_link <- catch_scenario_list$adviceLink
   # catch_scenario_list <- subset(catch_scenario_list, select = -c(adviceSentence, adviceLink, linkToAdviceView, mpwebLink))
@@ -49,8 +49,8 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-# stock_name <- "whg.27.47d"
-# year <- 2019
+# stock_name <- "cod.27.47d20"
+# year <- 2021
 # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
@@ -167,7 +167,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   # print("1-------------------")
   return(catch_scenario_table)
 }
-# catch_scenario_table <- get_catch_scenario_table(stock_name, year)
+# catch_scenario_table <- get_catch_scenario_table(catch_scenario_list)
 
 #' Returns ....
 #'
@@ -260,10 +260,10 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
   # SSB"
-  pattern <- c("SSB (2021)")
+  pattern <- c(paste0("SSB (", tmp$Year[1]+1, ")"))
   subset <- which(names(tmp) == pattern)
   if (length(subset) == 0) {
-    pattern <- c("SSB (2020)")
+    pattern <- c(paste0("SSB (", tmp$Year[1], ")"))
     subset <- which(names(tmp) == pattern)
   }
 
@@ -321,36 +321,27 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #' 
-wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table) {
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year) {
     catches_data <- catches_data %>% select(Year, catches)
     catches_data <- catches_data %>% add_column(cat = "Historical Catches")
     catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
-    catches_data <- catches_data %>% mutate(catches = c(catches[-n()], 2500)) #### this will be substituted by advice value from advice list of previous year
+
+    catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year-1)
+    # print(catch_scenario_list_previous_year$adviceValue)
+
+    catches_data <- catches_data %>% mutate(catches = c(catches[-n()], as.numeric(catch_scenario_list_previous_year$adviceValue))) #### this will be substituted by advice value from advice list of previous year
 
     catches_data_year_before <- catch_scenario_table
-    catches_data_year_before$Year <- 2019 ## assessmnet year
+    catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
     # catches_data_year_before$TotCatch <- catches_data$catches[catches_data$Year == 2018]
     catches_data_year_before$TotCatch <- tail(catches_data$catches,1)
-
-    # print(catches_data)
-    # print(catch_scenario_table)
-    # print(catches_data_year_before)
 
     catches_data <- setNames(catches_data, names(catch_scenario_table))
     final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
     # final_df <- rbind(catches_data,  catch_scenario_table)
-    # print(final_df)
-    # print(names(fread(file = "Data/catch_scen_col_names.txt", sep = ","))[4])
-    # print(names(test))
+    final_df <- na.omit(final_df)
+    
     return(final_df)
 }
 
-# catches_data <- df
-# catch_scenario_table <- catch_scenario_table_st
-
-# tail(catches_data$catches, 1)  2000
-
-# catches_data %>% mutate(catches = c(catches[-n()], 2500))
- 
-# tail(catches_data$catches,1)
