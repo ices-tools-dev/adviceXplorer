@@ -201,7 +201,8 @@ catch_scenarios_right_panel <- sidebarPanel(
     title = "Catch scenario table",
     fillPage(
       tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
-      DTOutput("table", height = "90%", width = "100%")
+      DTOutput("table", height = "90%", width = "100%"),
+      htmlOutput("footnotes", height = "90%", width = "100%")
     )
   )
 )

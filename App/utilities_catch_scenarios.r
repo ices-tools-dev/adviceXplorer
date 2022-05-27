@@ -193,6 +193,47 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 #'
 #' @export
 #' 
+get_catch_scenario_notes <- function(catch_scenario_list) {
+ 
+   catch_scenario_table_notes <- jsonlite::fromJSON(
+    URLencode(
+      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosNotes/%s", catch_scenario_list$adviceKey) # )
+    )
+  )
+  catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-catchOptionsTableKey, -adviceKey)
+
+  string_notes <- HTML(
+    paste0("<ul>",paste0("<li><font size=2>",catch_scenario_table_notes$symbol, " "), paste0(catch_scenario_table_notes$notes, "</font></li>"), "</ul>"))
+  return(string_notes)
+}
+
+
+
+
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 standardize_catch_scenario_table <- function(tmp) {
   
   # tmp$Year <- 2020 #assesment year + 1
@@ -296,6 +337,15 @@ standardize_catch_scenario_table <- function(tmp) {
   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
 }
 
+# install.packages("gt")
+# library(gt)
+# tmp_unified %>% gt() %>% tab_header(
+#     title = "S&P 500") %>% tab_footnote(
+  
+#   footnote = paste0(catch_scenario_table_notes$symbol, catch_scenario_table_notes$notes),
+#   locations = NULL,
+#   placement =  "right"
+# )
 # catch_scenario_table_st <- standardize_catch_scenario_table(catch_scenario_table)
 #' Returns ....
 #'

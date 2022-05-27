@@ -681,6 +681,13 @@ selected_scenario <- reactive({
 
 })
 
+##### catch scenarios sentence
+footnotes <- eventReactive(req(advice_view_info()), {
+  get_catch_scenario_notes(advice_view_info())
+})
+
+output$footnotes <-renderUI(footnotes())
+
 output$citation <- renderUI({
   make_app_citation()
   # HTML(paste0(br(),"<b>","<font size=", 3, ">",br(), make_app_citation(), "</font>","</b>", br()))
