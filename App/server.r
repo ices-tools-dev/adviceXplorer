@@ -58,6 +58,7 @@ server <- function(input, output, session) {
             closeOnClickOutside = TRUE,
             confirmButtonText = "Let's go!",
             size = "m",
+            session = session
             )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
@@ -311,6 +312,7 @@ server <- function(input, output, session) {
       closeOnClickOutside = TRUE,
       confirmButtonText = "Let's go!",
       size = "m",
+      session = session
     ), # "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
 
 
