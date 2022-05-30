@@ -39,7 +39,7 @@ body {
 
 .panel-primary>.panel-heading {
   color: #ffffff;
-  background-color: #AEC640; /* #2fa4e7*/
+  background-color: #9AC2B7; /* #2fa4e7  #AEC640*/
   border-color: #dddddd;
 }
 
@@ -52,9 +52,9 @@ body {
 
 .btn-default {
   color: #ffffff;
-  background-image: linear-gradient(#bad5ce, #9AC2B7 50%, #bad5ce); /*linear-gradient(#f69371, #F15D2A 50%, #f69371)*/
+  background-image: linear-gradient(#b6cc54, #aec640 60%, #b6cc54); /*linear-gradient(#f69371, #F15D2A 50%, #f69371)   #bad5ce, #9AC2B7 50%, #bad5ce*/
   background-repeat: no-repeat;
-  background-color: #9AC2B7;
+  background-color: #aec640;
   border-color: rgba(0,0,0,0.1);
   border-bottom: 1px solid #e6e6e6;
 }
