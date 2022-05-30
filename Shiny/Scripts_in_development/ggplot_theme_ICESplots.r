@@ -24,7 +24,7 @@ access_sag_data <- function(stock_code, year) {
 
 # download data
 
-df <- access_sag_data("tur.27.4", 2021)
+df <- access_sag_data("cod.27.47d20", 2021)
 df
 # create the theme
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R")) {
@@ -371,92 +371,95 @@ SAGstamp <- list( showarrow = FALSE,
 
 # selecting ddata and plotting
 ##################################catches#########################################################
-p1 <- df %>%
-    select(Year, landings, discards, units) %>%
-    gather(type, count, discards:landings) %>%
-    ggplot(., aes(
-        x = Year,
-        y = count,
-        fill = type,
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>", type, ": </b>", count
-            ), HTML
+ICES_plot_1 <- function(df, SAGstamp) {
+    p1 <- df %>%
+        select(Year, landings, discards, units) %>%
+        gather(type, count, discards:landings) %>%
+        ggplot(., aes(
+            x = Year,
+            y = count,
+            fill = type,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", type, ": </b>", count
+                ), HTML
+            )
+        )) +
+        geom_bar(position = "stack", stat = "identity") +
+        theme_ICES_plots(type = "catches")
+
+    # converting
+    fig1 <- ggplotly(p1, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                y = -.3,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
+            annotations = list(SAGstamp)
         )
-    )) +
-    geom_bar(position = "stack", stat = "identity") +
-    theme_ICES_plots(type = "catches")
-
-
-p1
-
-
-# converting
-fig1 <- ggplotly(p1, tooltip = "text") %>%
-    layout(legend = list(
-        orientation = "h",
-        y = -.3,
-        yanchor = "bottom",
-        x = 0.5,
-        xanchor = "center",
-        title = list(text = "")
-    ),
-    annotations = list(SAGstamp)
-    )
-
-
+    fig1
+}
+# ICES_plot_1(df, SAGstamp)
 ######################################recruitment###################################################
+ICES_plot_2 <- function(df, SAGstamp) {
+    p2 <- df %>%
+        select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age) %>%
+        #    gather(type, count, discards:landings) %>%
+        ggplot(., aes(
+            x = Year,
+            y = recruitment,
+            fill = "recruitment",
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>Recruitment: </b>", recruitment
+                ), HTML
+            )
+        )) +
+        geom_bar(stat = "identity") +
+        geom_errorbar(aes(
+            ymin = low_recruitment,
+            ymax = high_recruitment,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>High recruitment: </b>", high_recruitment,
+                    "<br>",
+                    "<b>Low recruitment: </b>", low_recruitment
+                ), HTML
+            )
+        ), # , color = "2*sd"
+        width = .3
+        ) +
+        theme_ICES_plots(type = "recruitment")
 
-p2 <- df %>%
-    select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age) %>%
-    #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(
-        x = Year,
-        y = recruitment,
-        fill = "recruitment",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>Recruitment: </b>", recruitment
-            ), HTML
+    # p2
+    # converting
+    fig2 <- ggplotly(p2, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                y = -.3,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
+            annotations = list(SAGstamp)
         )
-    )) +
-    geom_bar(stat = "identity") +
-    geom_errorbar(aes(
-        ymin = low_recruitment,
-        ymax = high_recruitment,
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>High recruitment: </b>", high_recruitment,
-                "<br>",
-                "<b>Low recruitment: </b>", low_recruitment
-            ), HTML
-        )
-    ), # , color = "2*sd"
-    width = .3
-    ) +
-    theme_ICES_plots(type = "recruitment")
+    fig2
+}
+# ICES_plot_2(df, SAGstamp)
 
-p2
-#converting
-fig2 <- ggplotly(p2, tooltip = "text") %>%
-    layout(legend = list(
-        orientation = "h",
-        y = -.3,
-        yanchor = "bottom",
-        x = 0.5,
-        xanchor = "center",
-        title = list(text = "")
-    ),
-    annotations = list(SAGstamp)
-    )
-
-
+ICES_plot_3 <- function(df, SAGstamp) {
 p3 <- df %>%
     select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription) %>%
     drop_na(F) %>%
@@ -566,7 +569,7 @@ p3 <- df %>%
    
 # plot <- p + text_labels
 # plot
-p3
+# p3
 #converting
 fig3 <- ggplotly(p3, tooltip = "text") %>%
     layout(
@@ -586,8 +589,11 @@ for (i in 1:length(fig3$x$data)) {
         fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
     }
 }
+fig3
+}
+# ICES_plot_3(df, SAGstamp)
 
-
+ICES_plot_4 <- function(df, SAGstamp) {
 p4 <- df %>%
     select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
     drop_na(SSB, high_SSB) %>%
@@ -666,7 +672,7 @@ p4 <- df %>%
    
 # plot <- p + text_labels
 # plot
-p4
+# p4
 #converting
 fig4 <- ggplotly(p4, tooltip = "text") %>%
     layout(
@@ -691,7 +697,10 @@ for (i in 1:length(fig4$x$data)){
         fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
     }
 }
+fig4
+}
 
+# ICES_plot_4(df, SAGstamp)
 # clean_plotly_legend(fig4)
 # library(gridExtra)
 # gring <- grid.arrange(p1,p2,p3,p4, nrow = 2)
@@ -852,236 +861,245 @@ return(df_list)
 }
 
 #download quality of assessment data
-df_qual <- quality_assessment_data("tur.27.4")
+df_qual <- quality_assessment_data("cod.27.47d20")
 
 
 #plot
-p5 <- df_qual[[1]] %>%
-    select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
-    # drop_na(SSB, high_SSB) %>%
-    #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y = SSB, color  = AssessmentYear)) +
-    
-    geom_line(aes(
-        x = Year,
-        y = SSB,
-        color = AssessmentYear,
-        size = "SSB",
-        linetype = "SSB",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>Assessment year: </b>", AssessmentYear,
-                "<br>",
-                "<b>", stockSizeDescription, ": </b>", SSB," ", stockSizeUnits
-            ), HTML
-        )
-    )#,
-    # size = 1,
-    # linetype = "solid",
-    ) +
-    geom_hline(aes(
-        yintercept = tail(Blim, 1),
-        linetype = "B<sub>Lim</sub>",
-        colour = "B<sub>Lim</sub>",
-        size = "B<sub>Lim</sub>",
-        text = map(
-            paste0(
-                "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-            ), HTML
-        )
-    )) +
-    geom_hline(aes(
-        yintercept = tail(Bpa, 1),
-        linetype = "B<sub>pa</sub>",
-        colour = "B<sub>pa</sub>",
-        size = "B<sub>pa</sub>",
-        text = map(
-            paste0(
-                "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-            ), HTML
-        )
-    )) +
-    geom_hline(aes(
-        yintercept = tail(MSYBtrigger, 1),
-        linetype = "MSY B<sub>trigger</sub>",
-        colour = "MSY B<sub>trigger</sub>",
-        size = "MSY B<sub>trigger</sub>",
-        text = map(
-            paste0(
-                "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-            ), HTML
-        )
-    )) +
-    theme_ICES_plots(type = "quality_SSB")
+ICES_plot_5 <- function(df, SAGstamp) {
+    p5 <- df %>%
+        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
+        # drop_na(SSB, high_SSB) %>%
+        #    gather(type, count, discards:landings) %>%
+        ggplot(., aes(x = Year, y = SSB, color = AssessmentYear)) +
+        geom_line(
+            aes(
+                x = Year,
+                y = SSB,
+                color = AssessmentYear,
+                size = "SSB",
+                linetype = "SSB",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Assessment year: </b>", AssessmentYear,
+                        "<br>",
+                        "<b>", stockSizeDescription, ": </b>", SSB, " ", stockSizeUnits
+                    ), HTML
+                )
+            ) # ,
+            # size = 1,
+            # linetype = "solid",
+        ) +
+        geom_hline(aes(
+            yintercept = tail(Blim, 1),
+            linetype = "B<sub>Lim</sub>",
+            colour = "B<sub>Lim</sub>",
+            size = "B<sub>Lim</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+                ), HTML
+            )
+        )) +
+        geom_hline(aes(
+            yintercept = tail(Bpa, 1),
+            linetype = "B<sub>pa</sub>",
+            colour = "B<sub>pa</sub>",
+            size = "B<sub>pa</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                ), HTML
+            )
+        )) +
+        geom_hline(aes(
+            yintercept = tail(MSYBtrigger, 1),
+            linetype = "MSY B<sub>trigger</sub>",
+            colour = "MSY B<sub>trigger</sub>",
+            size = "MSY B<sub>trigger</sub>",
+            text = map(
+                paste0(
+                    "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+                ), HTML
+            )
+        )) +
+        theme_ICES_plots(type = "quality_SSB")
     # theme(legend.position = "none")
-   
-# plot <- p + text_labels
-# plot
-p5
-#converting
-fig5 <- ggplotly(p5, tooltip = "text") %>%
-    layout(
-        legend = list(
-            orientation = "h",
-            y = -.25,
-            yanchor = "bottom",
-            x = 0.5,
-            xanchor = "center",
-            title = list(text = "")
-        ),
-        xaxis = list(zeroline = TRUE),
-        annotations = list(SAGstamp)
-    ) # nolint
 
-for (i in 1:length(fig5$x$data)){
-    if (!is.null(fig5$x$data[[i]]$name)){
-        fig5$x$data[[i]]$name =  gsub("\\(","",str_split(fig5$x$data[[i]]$name,",")[[1]][1])
+    # plot <- p + text_labels
+    # plot
+    # p5
+    # converting
+    fig5 <- ggplotly(p5, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                y = -.25,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(SAGstamp)
+        ) # nolint
+
+    for (i in 1:length(fig5$x$data)) {
+        if (!is.null(fig5$x$data[[i]]$name)) {
+            fig5$x$data[[i]]$name <- gsub("\\(", "", str_split(fig5$x$data[[i]]$name, ",")[[1]][1])
+        }
     }
+    fig5
 }
+
+# ICES_plot_5(df_qual[[1]], SAGstamp)
 
 #F
-
-p6 <- df_qual[[1]] %>%
-    select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear) %>%
-    # drop_na(SSB, high_SSB) %>%
-    #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y = F, color  = AssessmentYear)) +
-    
-    geom_line(aes(
-        x = Year,
-        y = F,
-        color = AssessmentYear,
-        size = "F",
-        linetype = "F",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>Assessment year: </b>", AssessmentYear,
-                "<br>",
-                "<b>", fishingPressureDescription, ": </b>", F
-            ), HTML
-        )
-    )#,
-    # size = 1,
-    # linetype = "solid",
-    ) +
-    geom_hline(aes(
-        yintercept = tail(FLim, 1),
-        linetype = "F<sub>Lim</sub>",
-        colour = "F<sub>Lim</sub>",
-        size = "F<sub>Lim</sub>",
-        text = map(
-            paste0(
-                "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
-            ), HTML
-        )
-    )) +
-    geom_hline(aes(
-        yintercept = tail(Fpa, 1),
-        linetype = "F<sub>pa</sub>",
-        colour = "F<sub>pa</sub>",
-        size = "F<sub>pa</sub>",
-        text = map(
-            paste0(
-                "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
-            ), HTML
-        )
-    )) +
-    geom_hline(aes(
-        yintercept = tail(FMSY, 1),
-        linetype = "F<sub>MSY</sub>",
-        colour = "F<sub>MSY</sub>",
-        size = "F<sub>MSY</sub>",
-        text = map(
-            paste0(
-                "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
-            ), HTML
-        )
-    )) +
-    theme_ICES_plots(type = "quality_F")
+ICES_plot_6 <- function(df, SAGstamp) {
+    p6 <- df %>%
+        select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear) %>%
+        # drop_na(SSB, high_SSB) %>%
+        #    gather(type, count, discards:landings) %>%
+        ggplot(., aes(x = Year, y = F, color = AssessmentYear)) +
+        geom_line(
+            aes(
+                x = Year,
+                y = F,
+                color = AssessmentYear,
+                size = "F",
+                linetype = "F",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Assessment year: </b>", AssessmentYear,
+                        "<br>",
+                        "<b>", fishingPressureDescription, ": </b>", F
+                    ), HTML
+                )
+            ) # ,
+            # size = 1,
+            # linetype = "solid",
+        ) +
+        geom_hline(aes(
+            yintercept = tail(FLim, 1),
+            linetype = "F<sub>Lim</sub>",
+            colour = "F<sub>Lim</sub>",
+            size = "F<sub>Lim</sub>",
+            text = map(
+                paste0(
+                    "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
+                ), HTML
+            )
+        )) +
+        geom_hline(aes(
+            yintercept = tail(Fpa, 1),
+            linetype = "F<sub>pa</sub>",
+            colour = "F<sub>pa</sub>",
+            size = "F<sub>pa</sub>",
+            text = map(
+                paste0(
+                    "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
+                ), HTML
+            )
+        )) +
+        geom_hline(aes(
+            yintercept = tail(FMSY, 1),
+            linetype = "F<sub>MSY</sub>",
+            colour = "F<sub>MSY</sub>",
+            size = "F<sub>MSY</sub>",
+            text = map(
+                paste0(
+                    "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+                ), HTML
+            )
+        )) +
+        theme_ICES_plots(type = "quality_F")
     # theme(legend.position = "none")
-   
-# plot <- p + text_labels
-# plot
-p6
-#converting
-fig6 <- ggplotly(p6, tooltip = "text") %>%
-    layout(
-        legend = list(
-            orientation = "h",
-            y = -.25,
-            yanchor = "bottom",
-            x = 0.5,
-            xanchor = "center",
-            title = list(text = "")
-        ),
-        xaxis = list(zeroline = TRUE),
-        annotations = list(SAGstamp)
-    ) # nolint
 
-for (i in 1:length(fig6$x$data)){
-    if (!is.null(fig6$x$data[[i]]$name)){
-        fig6$x$data[[i]]$name =  gsub("\\(","",str_split(fig6$x$data[[i]]$name,",")[[1]][1])
+    # plot <- p + text_labels
+    # plot
+    # p6
+    # converting
+    fig6 <- ggplotly(p6, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                y = -.25,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(SAGstamp)
+        ) # nolint
+
+    for (i in 1:length(fig6$x$data)) {
+        if (!is.null(fig6$x$data[[i]]$name)) {
+            fig6$x$data[[i]]$name <- gsub("\\(", "", str_split(fig6$x$data[[i]]$name, ",")[[1]][1])
+        }
     }
+    fig6
 }
-
+# ICES_plot_6(df_qual[[1]], SAGstamp)
 #Rec
-p7 <- df_qual[[1]] %>%
-    select(Year, recruitment, RecruitmentAge, AssessmentYear) %>%
-    drop_na(recruitment) %>%
-    #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y = recruitment, color  = AssessmentYear)) +
-    
-    geom_line(aes(
-        x = Year,
-        y = recruitment,
-        color = AssessmentYear,
-        size = "recruitment",
-        linetype = "recruitment",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>Assessment year: </b>", AssessmentYear,
-                "<br>",
-                "<b>Recruitment: </b>", recruitment
-            ), HTML
-        )
-    )#,
-    # size = 1,
-    # linetype = "solid",
-    ) +
-    
-    theme_ICES_plots(type = "quality_R")
+ICES_plot_7 <- function(df, SAGstamp) {
+    p7 <- df %>%
+        select(Year, recruitment, RecruitmentAge, AssessmentYear) %>%
+        drop_na(recruitment) %>%
+        #    gather(type, count, discards:landings) %>%
+        ggplot(., aes(x = Year, y = recruitment, color = AssessmentYear)) +
+        geom_line(
+            aes(
+                x = Year,
+                y = recruitment,
+                color = AssessmentYear,
+                size = "recruitment",
+                linetype = "recruitment",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Assessment year: </b>", AssessmentYear,
+                        "<br>",
+                        "<b>Recruitment: </b>", recruitment
+                    ), HTML
+                )
+            ) # ,
+            # size = 1,
+            # linetype = "solid",
+        ) +
+        theme_ICES_plots(type = "quality_R")
     # theme(legend.position = "none")
-   
-# plot <- p + text_labels
-# plot
-p7
-#converting
-fig7 <- ggplotly(p7, tooltip = "text") %>%
-    layout(
-        legend = list(
-            orientation = "h",
-            y = -.25,
-            yanchor = "bottom",
-            x = 0.5,
-            xanchor = "center",
-            title = list(text = "")
-        ),
-        xaxis = list(zeroline = TRUE),
-        annotations = list(SAGstamp)
-    ) # nolint
 
-for (i in 1:length(fig7$x$data)){
-    if (!is.null(fig7$x$data[[i]]$name)){
-        fig7$x$data[[i]]$name =  gsub("\\(","",str_split(fig7$x$data[[i]]$name,",")[[1]][1])
+    # plot <- p + text_labels
+    # plot
+    # p7
+    # converting
+    fig7 <- ggplotly(p7, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                y = -.25,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(SAGstamp)
+        ) # nolint
+
+    for (i in 1:length(fig7$x$data)) {
+        if (!is.null(fig7$x$data[[i]]$name)) {
+            fig7$x$data[[i]]$name <- gsub("\\(", "", str_split(fig7$x$data[[i]]$name, ",")[[1]][1])
+        }
     }
+    fig7
 }
-
+# ICES_plot_7(df_qual[[1]], SAGstamp)
 
 
 # layout_ggplotly <- function(gg, x = -0.1, y = -0.05, x_legend=1.05, y_legend=0.95, mar=list(l=50, r=150)){
@@ -1125,9 +1143,12 @@ ui <- navbarPage(
     fluid = TRUE,
     # navbar title
     title = title_html,
-    navbarMenu("Standard Graphs",
-    tabPanel("Stock development over time",
-    panel(
+    tabPanel("Stock selection"),
+    navbarMenu(
+        "Stock assessment graphs",
+        tabPanel(
+            "Development over time",
+            panel(
                 style = "height: 90vh; overflow-y: auto;",
                 fluidRow(
                     column(
@@ -1150,9 +1171,10 @@ ui <- navbarPage(
                     ),
                 )
             )
-    ),
-tabPanel("Quality of assessment",
-panel(
+        ),
+        tabPanel(
+            "Quality of assessment",
+            panel(
                 style = "height: 90vh; overflow-y: auto;",
                 fluidRow(
                     column(
@@ -1168,10 +1190,10 @@ panel(
                         plotlyOutput("plot7", height = "100%", width = "100%")
                     )
                 )
-                
             )
         )
-    )
+    ),
+    tabPanel("Advice")
 )
 
 # Define UI ----
@@ -1240,33 +1262,41 @@ panel(
 #         # includeMarkdown("Instructions.Rmd")
 #     )
 # )
-
+stock_name <- "cod.27.47d20"
+year <- 2021
 # Define server logic ----
 server <- function(input, output) {
+# df <- access_sag_data("cod.27.47d20", 2021)
+advice_action <- eventReactive(req(stock_name, year), {
+    #   # Dowload the data
+    access_sag_data(stock_name, year)
+})
+
   output$plot1 <- renderPlotly(
-      fig1
+      ICES_plot_1(advice_action(), SAGstamp)
   )
   output$plot2 <- renderPlotly(
-      fig2
+      ICES_plot_2(advice_action(), SAGstamp)
   )
   output$plot3 <- renderPlotly(
-      fig3
+      ICES_plot_3(advice_action(), SAGstamp)
   )
   output$plot4 <- renderPlotly(
-      fig4
+      ICES_plot_4(advice_action(), SAGstamp)
   )
   output$plot5 <- renderPlotly(
-      fig5
+      ICES_plot_5(df_qual[[1]], SAGstamp)
   )
   output$plot6 <- renderPlotly(
-      fig6
+      ICES_plot_6(df_qual[[1]], SAGstamp)
   )
   output$plot7 <- renderPlotly(
-      fig7
+      ICES_plot_7(df_qual[[1]], SAGstamp)
   )
 }
 
 # Run the app ----
+
 shinyApp(ui = ui, server = server)
 
 
