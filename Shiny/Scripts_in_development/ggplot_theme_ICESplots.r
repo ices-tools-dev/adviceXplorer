@@ -27,7 +27,7 @@ access_sag_data <- function(stock_code, year) {
 df <- access_sag_data("cod.27.47d20", 2021)
 df
 # create the theme
-theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R")) {
+theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df) {
     font <- "Calibri, sans-serif" # assign font family up front
 
     # scale_color_manual(values = mycolors)
@@ -388,7 +388,8 @@ ICES_plot_1 <- function(df, SAGstamp) {
             )
         )) +
         geom_bar(position = "stack", stat = "identity") +
-        theme_ICES_plots(type = "catches")
+        theme_ICES_plots(type = "catches", df) 
+
 
     # converting
     fig1 <- ggplotly(p1, tooltip = "text") %>%
@@ -405,7 +406,7 @@ ICES_plot_1 <- function(df, SAGstamp) {
         )
     fig1
 }
-# ICES_plot_1(df, SAGstamp)
+ICES_plot_1(df, SAGstamp)
 ######################################recruitment###################################################
 ICES_plot_2 <- function(df, SAGstamp) {
     p2 <- df %>%
@@ -439,7 +440,7 @@ ICES_plot_2 <- function(df, SAGstamp) {
         ), # , color = "2*sd"
         width = .3
         ) +
-        theme_ICES_plots(type = "recruitment")
+        theme_ICES_plots(type = "recruitment",df)
 
     # p2
     # converting
@@ -457,7 +458,7 @@ ICES_plot_2 <- function(df, SAGstamp) {
         )
     fig2
 }
-# ICES_plot_2(df, SAGstamp)
+ICES_plot_2(df, SAGstamp)
 
 ICES_plot_3 <- function(df, SAGstamp) {
 p3 <- df %>%
@@ -564,7 +565,7 @@ p3 <- df %>%
     #         ), HTML
     #     )
     )) +
-    theme_ICES_plots(type = "F") 
+    theme_ICES_plots(type = "F", df) 
     
    
 # plot <- p + text_labels
@@ -591,7 +592,7 @@ for (i in 1:length(fig3$x$data)) {
 }
 fig3
 }
-# ICES_plot_3(df, SAGstamp)
+ICES_plot_3(df, SAGstamp)
 
 ICES_plot_4 <- function(df, SAGstamp) {
 p4 <- df %>%
@@ -668,7 +669,7 @@ p4 <- df %>%
             ), HTML
         )
     )) +
-    theme_ICES_plots(type = "SSB")
+    theme_ICES_plots(type = "SSB", df)
    
 # plot <- p + text_labels
 # plot
@@ -700,7 +701,7 @@ for (i in 1:length(fig4$x$data)){
 fig4
 }
 
-# ICES_plot_4(df, SAGstamp)
+ICES_plot_4(df, SAGstamp)
 # clean_plotly_legend(fig4)
 # library(gridExtra)
 # gring <- grid.arrange(p1,p2,p3,p4, nrow = 2)
@@ -924,7 +925,7 @@ ICES_plot_5 <- function(df, SAGstamp) {
                 ), HTML
             )
         )) +
-        theme_ICES_plots(type = "quality_SSB")
+        theme_ICES_plots(type = "quality_SSB", df)
     # theme(legend.position = "none")
 
     # plot <- p + text_labels
@@ -953,7 +954,7 @@ ICES_plot_5 <- function(df, SAGstamp) {
     fig5
 }
 
-# ICES_plot_5(df_qual[[1]], SAGstamp)
+ICES_plot_5(df_qual[[1]], SAGstamp)
 
 #F
 ICES_plot_6 <- function(df, SAGstamp) {
@@ -1015,7 +1016,7 @@ ICES_plot_6 <- function(df, SAGstamp) {
                 ), HTML
             )
         )) +
-        theme_ICES_plots(type = "quality_F")
+        theme_ICES_plots(type = "quality_F", df)
     # theme(legend.position = "none")
 
     # plot <- p + text_labels
@@ -1043,7 +1044,7 @@ ICES_plot_6 <- function(df, SAGstamp) {
     }
     fig6
 }
-# ICES_plot_6(df_qual[[1]], SAGstamp)
+ICES_plot_6(df_qual[[1]], SAGstamp)
 #Rec
 ICES_plot_7 <- function(df, SAGstamp) {
     p7 <- df %>%
@@ -1071,7 +1072,7 @@ ICES_plot_7 <- function(df, SAGstamp) {
             # size = 1,
             # linetype = "solid",
         ) +
-        theme_ICES_plots(type = "quality_R")
+        theme_ICES_plots(type = "quality_R", df)
     # theme(legend.position = "none")
 
     # plot <- p + text_labels
@@ -1099,7 +1100,7 @@ ICES_plot_7 <- function(df, SAGstamp) {
     }
     fig7
 }
-# ICES_plot_7(df_qual[[1]], SAGstamp)
+ICES_plot_7(df_qual[[1]], SAGstamp)
 
 
 # layout_ggplotly <- function(gg, x = -0.1, y = -0.05, x_legend=1.05, y_legend=0.95, mar=list(l=50, r=150)){
@@ -1145,7 +1146,7 @@ ui <- navbarPage(
     title = title_html,
     tabPanel("Stock selection"),
     navbarMenu(
-        "Stock assessment graphs",
+        "Stock assessment trends",
         tabPanel(
             "Development over time",
             panel(
