@@ -380,82 +380,136 @@ server <- function(input, output, session) {
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year) #####
 
-      updateNavbarPage(session, "tabset", selected = "Stock development over time")
+      updateNavbarPage(session, "tabset", selected = "Development over time")
     }
   })
 
 
-  advice_action <- eventReactive(req(query$assessmentkey), {
+  # advice_action <- eventReactive(req(query$assessmentkey), {
 
+  #   info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+  #   query$stockkeylabel <- info$StockKeyLabel
+  #   query$year <- info$AssessmentYear ####
+    
+  #   stock_name <- query$stockkeylabel
+  #   msg("downloading:", stock_name)
+
+  #   year <- query$year #####
+
+  #   #   # Dowload the data
+  #   data_sag <- access_sag_data_local(stock_name, year) #####
+
+  #   catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
+  #   R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
+  #   f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
+  #   SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
+  #   list_df <- quality_assessment_data_local(stock_name)
+  #   # the bit below could be potentially be replaced by the sag status? summary table option?
+  #   SAG_summary <- data_sag %>% select(
+  #     Year,
+  #     recruitment, high_recruitment, low_recruitment,
+  #     SSB, high_SSB, low_SSB,
+  #     catches, landings,
+  #     F, high_F, low_F
+  #   )
+
+  #   #     big_data <- list_df[[1]]
+  #   # big_data_last_year <- list_df[[2]]
+
+  #   list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
+  # })
+  ####################################################new SAG #############################################
+  SAG_data_reactive <- eventReactive(req(query$assessmentkey), {
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
-    
+
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)
 
     year <- query$year #####
-
+    msg("downloading:", year)
     #   # Dowload the data
-    data_sag <- access_sag_data_local(stock_name, year) #####
-
-    catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
-    R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
-    f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
-    SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
-    list_df <- quality_assessment_data_local(stock_name)
-    # the bit below could be potentially be replaced by the sag status? summary table option?
-    SAG_summary <- data_sag %>% select(
-      Year,
-      recruitment, high_recruitment, low_recruitment,
-      SSB, high_SSB, low_SSB,
-      catches, landings,
-      F, high_F, low_F
-    )
-
-    #     big_data <- list_df[[1]]
-    # big_data_last_year <- list_df[[2]]
-
-    list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
+    access_sag_data_local(stock_name, year)
   })
 
+  SAG_stamp <- eventReactive(req(query$year, query$assessmentkey), {
+    get_SAG_stamp(query$year, query$assessmentkey)
+  })
+
+  output$plot1 <- renderPlotly(
+      ICES_plot_1(SAG_data_reactive(), SAG_stamp())
+  )
+  output$plot2 <- renderPlotly(
+      ICES_plot_2(SAG_data_reactive(), SAG_stamp())
+  )
+  output$plot3 <- renderPlotly(
+      ICES_plot_3(SAG_data_reactive(), SAG_stamp())
+  )
+  output$plot4 <- renderPlotly(
+      ICES_plot_4(SAG_data_reactive(), SAG_stamp())
+  )
+
+  advice_action_quality <- eventReactive(req(query$assessmentkey), {
+    info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    query$stockkeylabel <- info$StockKeyLabel
+    query$year <- info$AssessmentYear ####
+
+    stock_name <- query$stockkeylabel
+    # msg("downloading:", stock_name)
+
+    year <- query$year #####
+    # msg("downloading:", year)
+    #   # Dowload the data
+    quality_assessment_data_local(stock_name)
+  })
+
+  output$plot5 <- renderPlotly(
+      ICES_plot_5(advice_action_quality()[[1]], SAG_stamp())
+  )
+  output$plot6 <- renderPlotly(
+      ICES_plot_6(advice_action_quality()[[1]], SAG_stamp())
+  )
+  output$plot7 <- renderPlotly(
+      ICES_plot_7(advice_action_quality()[[1]], SAG_stamp())
+  )
   ######################### Stock development over time
 
-  output$all_plots <- renderPlotly({
-    data_list <- advice_action()
+  # output$all_plots <- renderPlotly({
+  #   data_list <- advice_action()
 
 
-    rv <- reactiveValues(
-      catches_df = data_list$catches,
-      r_df = data_list$R,
-      f_df = data_list$f,
-      SSB_df = data_list$SSB
-    )
-    figure_1_plots(
-      rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df,
-            rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
-            rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
-            rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
-            rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits
-    )
-  })
+  #   rv <- reactiveValues(
+  #     catches_df = data_list$catches,
+  #     r_df = data_list$R,
+  #     f_df = data_list$f,
+  #     SSB_df = data_list$SSB
+  #   )
+  #   figure_1_plots(
+  #     rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df,
+  #           rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
+  #           rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
+  #           rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
+  #           rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits
+  #   )
+  # })
 
-  #### Plot 5 quality of assessment
-  output$Q_Ass <- renderPlotly({
-    data_list <- advice_action()
+  # #### Plot 5 quality of assessment
+  # output$Q_Ass <- renderPlotly({
+  #   data_list <- advice_action()
 
-    rv <- reactiveValues(
-      Q_Ass_df1 = data_list$big_data,
-      Q_Ass_df2 = data_list$big_data_last_year
-    )
+  #   rv <- reactiveValues(
+  #     Q_Ass_df1 = data_list$big_data,
+  #     Q_Ass_df2 = data_list$big_data_last_year
+  #   )
 
-    ### forth plot
-    quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
-                                    rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits,
-                                    rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription,
-                                    rv$Q_Ass_df1$RecruitmentAge)
-    # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-  })
+  #   ### forth plot
+  #   quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
+  #                                   rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits,
+  #                                   rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription,
+  #                                   rv$Q_Ass_df1$RecruitmentAge)
+  #   # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
+  # })
 
 
 ##### catch scenarios tab
@@ -537,13 +591,14 @@ output$Advice_Sentence2 <- renderUI({
 
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({
-  data_list <- advice_action()
-  rv <- reactiveValues(
-    catches_df = data_list$catches,
-    f_df = data_list$f,
-    SSB_df = data_list$SSB
-  )
-  catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+  # data_list <- advice_action()
+  # rv <- reactiveValues(
+  #   catches_df = data_list$catches,
+  #   f_df = data_list$f,
+  #   SSB_df = data_list$SSB
+  # )
+  # catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+  catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 })
 
 # catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
@@ -570,11 +625,11 @@ output$catch_scenarios <- renderUI({
 
 
 output$TAC_timeline <- renderPlotly({
-  data_list <- advice_action()
-  rv <- reactiveValues(
-    catches_df = data_list$catches,
-  )
-  TAC_timeline(test_table(), input$catch_choice, rv$catches_df$units)
+  # data_list <- advice_action()
+  # rv <- reactiveValues(
+  #   catches_df = data_list$catches,
+  # )
+  TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
 
