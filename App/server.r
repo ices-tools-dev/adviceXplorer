@@ -66,10 +66,10 @@ server <- function(input, output, session) {
   
   ######################### Map panel
 
-  sf_cent <- st_coordinates(suppressWarnings(st_centroid(shape_eco)))
-  sf_cent_map_X <- mean(sf_cent[, 1])
-  sf_cent_map_Y <- mean(sf_cent[, 2])
-  sf_cent_map <- c(sf_cent_map_X, sf_cent_map_Y)
+  # sf_cent <- st_coordinates(suppressWarnings(st_centroid(shape_eco)))
+  # sf_cent_map_X <- mean(sf_cent[, 1])
+  # sf_cent_map_Y <- mean(sf_cent[, 2])
+  # sf_cent_map <- c(sf_cent_map_X, sf_cent_map_Y)
   # # Define the interactive labels
   # labels <- sprintf(
   #     "<strong>%s Ecoregion</strong><br/>%g Shape Area ",
@@ -439,7 +439,9 @@ server <- function(input, output, session) {
 
   output$plot1 <- renderPlotly(
       ICES_plot_1(SAG_data_reactive(), SAG_stamp())
-  )
+  ) #%>%
+  # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
+
   output$plot2 <- renderPlotly(
       ICES_plot_2(SAG_data_reactive(), SAG_stamp())
   )
@@ -587,7 +589,8 @@ output$Advice_Sentence2 <- renderUI({
   advice_view_sentence()
   # get_Advice_View_sentence(query$stockkeylabel)
   # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
-})
+}) #%>%
+  # bindCache(advice_view_sentence(), advice_view_info())
 
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({
@@ -599,7 +602,8 @@ output$catch_scenario_plot_3 <- renderPlotly({
   # )
   # catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
-})
+}) #%>%
+  # bindCache(catch_scenario_table(), SAG_data_reactive())
 
 # catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
 # # print(query$stockkeylabel)
