@@ -31,6 +31,8 @@ library(shinyalert)
 # library(readxl)
 library(data.table)
 library(RColorBrewer)
+library(shinycssloaders)
+
 
 
 
@@ -158,7 +160,7 @@ navbarPage(
                     fluidRow(
                         column(
                             width = 4, style = "height: 85vh;",
-                            plotlyOutput("plot5", height = "100%", width = "100%"),
+                            plotlyOutput("plot5", height = "100%", width = "100%")
                         ),
                         column(
                             width = 4, style = "height: 85vh;",

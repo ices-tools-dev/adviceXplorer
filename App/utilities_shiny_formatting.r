@@ -75,7 +75,7 @@ maps_panels <-
         "ICES Ecoregions",
         fillPage(
           tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
-          leafletOutput("map1", height = "100%", width = "100%")
+          withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
         )
       )#,
       # tabPanel(
@@ -165,14 +165,14 @@ catch_scenarios_left_panel <- sidebarPanel(
     title = "Headline advice",
     fillPage(
       tags$style(type = "text/css", "#Advice_Sentence2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
-      htmlOutput("Advice_Sentence2", height = "10%", width = "100%")
+      withSpinner(htmlOutput("Advice_Sentence2", height = "10%", width = "100%"))
     )
   ),
   panel(
     title = "Catch_scenario_F_SSB",
     fillPage(
       tags$style(type = "text/css", "#catch_scenario_plot_3  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-      plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%")
+      withSpinner(plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%"))
     )
   ),
   panel(
@@ -180,7 +180,7 @@ catch_scenarios_left_panel <- sidebarPanel(
     fillPage(
       tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
       uiOutput("catch_scenarios"),
-      plotlyOutput("TAC_timeline", height = "20%", width = "100%")
+      withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
     )
   )
 )
@@ -201,7 +201,7 @@ catch_scenarios_right_panel <- sidebarPanel(
     title = "Catch scenario table",
     fillPage(
       tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
-      DTOutput("table", height = "90%", width = "100%"),
+      withSpinner(DTOutput("table", height = "90%", width = "100%")),
       htmlOutput("footnotes", height = "90%", width = "100%")
     )
   )
