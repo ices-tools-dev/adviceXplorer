@@ -75,7 +75,7 @@ maps_panels <-
         "ICES Ecoregions",
         fillPage(
           tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
-          leafletOutput("map1", height = "100%", width = "100%")
+          withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
         )
       )#,
       # tabPanel(
@@ -157,22 +157,86 @@ selectize_panel <-
       status = "primary"
     )
   )
+################################## SAG plots tab
+SAG_plots_left_panel <- sidebarPanel(
+  width = 6, style = "height: 90vh; overflow-y: auto;",
+  panel(
+    title = "1",
+    # fillPage(
+    #   tags$style(type = "text/css", "#plot1  height: 90vh overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))
+    # )
+  ),
+  panel(
+    title = "3",
+    # fillPage(
+    #   tags$style(type = "text/css", "#plot3  height: 90vh overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))
+    # )
+  )
+)
 
+SAG_plots_righ_panel <- sidebarPanel(
+  width = 6, style = "height: 90vh; overflow-y: auto;",
+  panel(
+    title = "2",
+    fillPage(
+      tags$style(type = "text/css", "#plot2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot2", height = "100%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "4",
+    fillPage(
+      tags$style(type = "text/css", "#plot4  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))
+    )
+  )
+)
 
+##############################################Quality of assessment tab
+quality_of_assessment <- splitLayout(
+  style = "border: 1px solid silver; height: 90vh; overflow-y: auto;",
+  cellWidths = c("33%", "33%", "33%"),
+  cellArgs = list(style = "padding: 6px"),
+  panel(
+    title = "5",
+    fillPage(
+      tags$style(type = "text/css", "#plot5  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "6",
+    fillPage(
+      tags$style(type = "text/css", "#plot6  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "7",
+    fillPage(
+      tags$style(type = "text/css", "#plot7  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot7", height = "100%", width = "100%"))
+    )
+  )
+)
+
+####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
     title = "Headline advice",
     fillPage(
       tags$style(type = "text/css", "#Advice_Sentence2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
-      htmlOutput("Advice_Sentence2", height = "10%", width = "100%")
+      withSpinner(htmlOutput("Advice_Sentence2", height = "10%", width = "100%"))
     )
   ),
   panel(
     title = "Catch_scenario_F_SSB",
     fillPage(
       tags$style(type = "text/css", "#catch_scenario_plot_3  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-      plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%")
+      withSpinner(plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%"))
     )
   ),
   panel(
@@ -180,7 +244,7 @@ catch_scenarios_left_panel <- sidebarPanel(
     fillPage(
       tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
       uiOutput("catch_scenarios"),
-      plotlyOutput("TAC_timeline", height = "20%", width = "100%")
+      withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
     )
   )
 )
@@ -201,7 +265,7 @@ catch_scenarios_right_panel <- sidebarPanel(
     title = "Catch scenario table",
     fillPage(
       tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
-      DTOutput("table", height = "90%", width = "100%"),
+      withSpinner(DTOutput("table", height = "90%", width = "100%")),
       htmlOutput("footnotes", height = "90%", width = "100%")
     )
   )

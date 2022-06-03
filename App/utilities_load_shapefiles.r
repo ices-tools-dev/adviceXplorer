@@ -1,11 +1,14 @@
 # Load europe shape file
 eu_shape <- st_read(dsn = "Data/Coastline05k", 
     layer = "eu_shape_diss_simpl05")
-# eu_shape <- st_read(dsn = "Data/old_eu", 
-#     layer = "eu_shape")
+# eu_shape <- st_read(dsn = "Data/Coastline05k_laea", 
+#     layer = "shape_EU_lea")
 # Load the lighter version of the ecoregions shapefile
 shape_eco <- st_read(dsn = "Data/test_lowres", 
     layer = "ecoR_lowres")
+
+# shape_eco <- st_read(dsn = "Data/ecoregion_shape_laea", 
+#     layer = "shape_eco_lea")
 
 # shape_ices_areas <- st_read(dsn = "Data/ICES_areas_low_res", 
 #     layer = "ICES_areas_low_res")
@@ -18,13 +21,15 @@ levels(shape_eco$Ecoregion)[match("Icelandic Waters",levels(shape_eco$Ecoregion)
 shape_eco$uid <- paste0("P", 1:17)
 # ices_areas$uid <- paste0("A", 1:66)
 
+# shape_eco_lea <- st_transform(shape_eco, "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958")
+# shape_EU_lea <- st_transform(eu_shape, "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958")
+# st_write(shape_eco_lea, "shape_eco_lea.shp")
+# st_write(shape_EU_lea, "shape_EU_lea.shp")
 
-minZoom = 0
-maxZoom = 13
-resolutions <- 2*(2^(maxZoom:minZoom))
-crs_laea <- leafletCRS(crsClass = "L.Proj.CRS", code = "EPSG:3035",
-  proj4def = "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958",
-  resolutions = resolutions)
+# mapG <- readOGR("ecoR_lowres.shp", layer="App/Data/test_lowres")
+# summary(mapG)
+# germG <- spTransform(mapG, CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+# plot(germG, axes=T)
 
 # eu_shape <- st_set_precision(eu_shape, precision=10^2)
 # st_write(eu_shape, "App/data/old_eu/eu_shape.shp")

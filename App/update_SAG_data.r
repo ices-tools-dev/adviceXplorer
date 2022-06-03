@@ -34,13 +34,13 @@ update_SAG <- function(year){
     # lookup for assessment key for summary
     sag <-
       getListStocks(year = year) %>%
-      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose) %>%
+      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
       rename(fishstock = StockKeyLabel)
 
     summary <- load_sag_summary(year) %>%
       left_join(sag, by = c("fishstock", "AssessmentYear", "Purpose"))
 
-    write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year))
+    write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
     refpts <- load_sag_refpts(year)
     write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year))

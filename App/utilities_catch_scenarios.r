@@ -49,8 +49,8 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-# stock_name <- "cod.27.47d20"
-# year <- 2021
+# stock_name <- "ple.27.420"
+# year <- 2019
 # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
