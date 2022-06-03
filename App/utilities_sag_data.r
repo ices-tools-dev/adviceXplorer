@@ -79,8 +79,9 @@ access_sag_data_local <- function(stock_code, year) {
     data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
     # data_sag <- subset(data_sag, select = -fishstock)
     # data_sag <- filter(data_sag, StockPublishNote == "Stock published")
+    # print(data_sag)
     return(data_sag)
-    #print(data_sag %>% tibble())
+    
 }
 
 # df <- access_sag_data_local("wit.27.3a47d", 2019)
@@ -129,14 +130,15 @@ for (i in years) {
                                             recruitment, RecruitmentAge,
                                             SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
                                             F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
-                                            AssessmentYear, StockPublishNote,Purpose)
+                                            AssessmentYear, StockPublishNote,Purpose, SAGStamp)
 
         data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
         data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
         data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
         data_temp$Fage <- as.character(data_temp$Fage)
         data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
-
+        data_temp$SAGStamp <- as.character(data_temp$SAGStamp)
+        
         datalist[[i]] <- data_temp
         # }
     }

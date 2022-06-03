@@ -433,23 +433,23 @@ server <- function(input, output, session) {
     access_sag_data_local(stock_name, year)
   })
 
-  SAG_stamp <- eventReactive(req(query$year, query$assessmentkey), {
-    get_SAG_stamp(query$year, query$assessmentkey)
-  })
+#   SAG_stamp <- eventReactive( req(SAG_data_reactive()), {
+#     get_SAG_stamp(SAG_data_reactive())
+# })
 
   output$plot1 <- renderPlotly(
-      ICES_plot_1(SAG_data_reactive(), SAG_stamp())
+      ICES_plot_1(SAG_data_reactive())
   ) #%>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
   output$plot2 <- renderPlotly(
-      ICES_plot_2(SAG_data_reactive(), SAG_stamp())
+      ICES_plot_2(SAG_data_reactive())
   )
   output$plot3 <- renderPlotly(
-      ICES_plot_3(SAG_data_reactive(), SAG_stamp())
+      ICES_plot_3(SAG_data_reactive())
   )
   output$plot4 <- renderPlotly(
-      ICES_plot_4(SAG_data_reactive(), SAG_stamp())
+      ICES_plot_4(SAG_data_reactive())
   )
 
   advice_action_quality <- eventReactive(req(query$assessmentkey), {
@@ -467,13 +467,13 @@ server <- function(input, output, session) {
   })
 
   output$plot5 <- renderPlotly(
-      ICES_plot_5(advice_action_quality()[[1]], SAG_stamp())
+      ICES_plot_5(advice_action_quality()[[1]])
   )
   output$plot6 <- renderPlotly(
-      ICES_plot_6(advice_action_quality()[[1]], SAG_stamp())
+      ICES_plot_6(advice_action_quality()[[1]])
   )
   output$plot7 <- renderPlotly(
-      ICES_plot_7(advice_action_quality()[[1]], SAG_stamp())
+      ICES_plot_7(advice_action_quality()[[1]])
   )
   ######################### Stock development over time
 

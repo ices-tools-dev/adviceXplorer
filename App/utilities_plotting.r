@@ -2155,24 +2155,24 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 
 
 #### SAG stamp
-get_SAG_stamp <- function(year, assessmentkey) {
-    list_stocks <- getListStocks(year)
-    stock <- list_stocks %>% filter(AssessmentKey == assessmentkey)
-    SAGstamp <- list(
-        showarrow = FALSE,
-        text = stock$SAGStamp,
-        font = list(family = "Calibri, serif", size = 10, color = "black"),
-        yref = "paper", y = 1, xref = "paper", x = 1,
-        yanchor = "right", xanchor = "right"
-    )
-    return(SAGstamp)
-}
+# get_SAG_stamp <- function(df) {
+#     # list_stocks <- getListStocks(year)
+#     # stock <- list_stocks %>% filter(AssessmentKey == assessmentkey)
+#     SAGstamp <- list(
+#         showarrow = FALSE,
+#         text = tail(df$SAGStamp),
+#         font = list(family = "Calibri, serif", size = 10, color = "black"),
+#         yref = "paper", y = 1, xref = "paper", x = 1,
+#         yanchor = "right", xanchor = "right"
+#     )
+#     return(SAGstamp)
+# }
 
 ####### Plots 
 
-ICES_plot_1 <- function(df, SAGstamp) {
+ICES_plot_1 <- function(df) {
     p1 <- df %>%
-        select(Year, landings, discards, units) %>%
+        select(Year, landings, discards, units, SAGStamp) %>%
         gather(type, count, discards:landings) %>%
         ggplot(., aes(
             x = Year,
@@ -2201,15 +2201,21 @@ ICES_plot_1 <- function(df, SAGstamp) {
                 xanchor = "center",
                 title = list(text = "")
             ),
-            annotations = list(SAGstamp)
+            annotations = list(
+                showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right"
+            )
         )
     fig1
 }
 # ICES_plot_1(df, SAGstamp)
 ######################################recruitment###################################################
-ICES_plot_2 <- function(df, SAGstamp) {
+ICES_plot_2 <- function(df) {
     p2 <- df %>%
-        select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age) %>%
+        select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp) %>%
         #    gather(type, count, discards:landings) %>%
         ggplot(., aes(
             x = Year,
@@ -2253,15 +2259,20 @@ ICES_plot_2 <- function(df, SAGstamp) {
                 xanchor = "center",
                 title = list(text = "")
             ),
-            annotations = list(SAGstamp)
+            annotations = list(
+                showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
         )
     fig2
 }
 # ICES_plot_2(df, SAGstamp)
 
-ICES_plot_3 <- function(df, SAGstamp) {
+ICES_plot_3 <- function(df) {
 p3 <- df %>%
-    select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription) %>%
+    select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
     drop_na(F) %>%
     #    gather(type, count, discards:landings) %>%
     ggplot(., aes(x = Year, y = F)) +
@@ -2382,7 +2393,12 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
             title = list(text = "")
         ),
         xaxis = list(zeroline = TRUE),
-        annotations = list(SAGstamp)
+        annotations = list(
+            showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
     ) 
 for (i in 1:length(fig3$x$data)) {
     if (!is.null(fig3$x$data[[i]]$name)) {
@@ -2393,9 +2409,9 @@ fig3
 }
 # ICES_plot_3(df, SAGstamp)
 
-ICES_plot_4 <- function(df, SAGstamp) {
+ICES_plot_4 <- function(df) {
 p4 <- df %>%
-    select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
+    select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
     drop_na(SSB, high_SSB) %>%
     #    gather(type, count, discards:landings) %>%
     ggplot(., aes(x = Year, y = SSB)) +
@@ -2489,7 +2505,12 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
             title = list(text = "")
         ),
         xaxis = list(zeroline = TRUE),
-        annotations = list(SAGstamp)
+        annotations = list(
+            showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
     ) # nolint
 
 for (i in 1:length(fig4$x$data)){
@@ -2502,9 +2523,9 @@ fig4
 
 # ICES_plot_4(df, SAGstamp)
 
-ICES_plot_5 <- function(df, SAGstamp) {
+ICES_plot_5 <- function(df) {
     p5 <- df %>%
-        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) %>%
+        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
         # drop_na(SSB, high_SSB) %>%
         #    gather(type, count, discards:landings) %>%
         ggplot(., aes(x = Year, y = SSB, color = AssessmentYear)) +
@@ -2579,7 +2600,12 @@ ICES_plot_5 <- function(df, SAGstamp) {
                 title = list(text = "")
             ),
             xaxis = list(zeroline = TRUE),
-            annotations = list(SAGstamp)
+            annotations = list(
+                showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
         ) # nolint
 
     for (i in 1:length(fig5$x$data)) {
@@ -2593,9 +2619,9 @@ ICES_plot_5 <- function(df, SAGstamp) {
 # ICES_plot_5(df_qual[[1]], SAGstamp)
 
 #F
-ICES_plot_6 <- function(df, SAGstamp) {
+ICES_plot_6 <- function(df) {
     p6 <- df %>%
-        select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear) %>%
+        select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) %>%
         # drop_na(SSB, high_SSB) %>%
         #    gather(type, count, discards:landings) %>%
         ggplot(., aes(x = Year, y = F, color = AssessmentYear)) +
@@ -2670,7 +2696,12 @@ ICES_plot_6 <- function(df, SAGstamp) {
                 title = list(text = "")
             ),
             xaxis = list(zeroline = TRUE),
-            annotations = list(SAGstamp)
+            annotations = list(
+                showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
         ) # nolint
 
     for (i in 1:length(fig6$x$data)) {
@@ -2682,9 +2713,9 @@ ICES_plot_6 <- function(df, SAGstamp) {
 }
 # ICES_plot_6(df_qual[[1]], SAGstamp)
 #Rec
-ICES_plot_7 <- function(df, SAGstamp) {
+ICES_plot_7 <- function(df) {
     p7 <- df %>%
-        select(Year, recruitment, RecruitmentAge, AssessmentYear) %>%
+        select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
         drop_na(recruitment) %>%
         #    gather(type, count, discards:landings) %>%
         ggplot(., aes(x = Year, y = recruitment, color = AssessmentYear)) +
@@ -2726,7 +2757,12 @@ ICES_plot_7 <- function(df, SAGstamp) {
                 title = list(text = "")
             ),
             xaxis = list(zeroline = TRUE),
-            annotations = list(SAGstamp)
+            annotations = list(
+                showarrow = FALSE,
+                text = df$SAGStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
         ) # nolint
 
     for (i in 1:length(fig7$x$data)) {
