@@ -157,8 +157,72 @@ selectize_panel <-
       status = "primary"
     )
   )
+################################## SAG plots tab
+SAG_plots_left_panel <- sidebarPanel(
+  width = 6, style = "height: 90vh; overflow-y: auto;",
+  panel(
+    title = "1",
+    # fillPage(
+    #   tags$style(type = "text/css", "#plot1  height: 90vh overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))
+    # )
+  ),
+  panel(
+    title = "3",
+    # fillPage(
+    #   tags$style(type = "text/css", "#plot3  height: 90vh overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))
+    # )
+  )
+)
 
+SAG_plots_righ_panel <- sidebarPanel(
+  width = 6, style = "height: 90vh; overflow-y: auto;",
+  panel(
+    title = "2",
+    fillPage(
+      tags$style(type = "text/css", "#plot2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot2", height = "100%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "4",
+    fillPage(
+      tags$style(type = "text/css", "#plot4  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))
+    )
+  )
+)
 
+##############################################Quality of assessment tab
+quality_of_assessment <- splitLayout(
+  style = "border: 1px solid silver; height: 90vh; overflow-y: auto;",
+  cellWidths = c("33%", "33%", "33%"),
+  cellArgs = list(style = "padding: 6px"),
+  panel(
+    title = "5",
+    fillPage(
+      tags$style(type = "text/css", "#plot5  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "6",
+    fillPage(
+      tags$style(type = "text/css", "#plot6  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "7",
+    fillPage(
+      tags$style(type = "text/css", "#plot7  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+      withSpinner(plotlyOutput("plot7", height = "100%", width = "100%"))
+    )
+  )
+)
+
+####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(

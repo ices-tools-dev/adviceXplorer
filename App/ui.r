@@ -129,49 +129,54 @@ navbarPage(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
-                panel(
-                    style = "height: 90vh; overflow-y: auto;",
-                    fluidRow(
-                        column(
-                            width = 6, style = "height: 43vh;",
-                            plotlyOutput("plot1", height = "100%", width = "100%")
-                        ),
-                        column(
-                            width = 6, style = "height: 43vh;",
-                            plotlyOutput("plot2", height = "100%", width = "100%")
-                        ),
-                    ),
-                    fluidRow(
-                        column(
-                            width = 6, style = "height: 43vh;",
-                            plotlyOutput("plot3", height = "100%", width = "100%")
-                        ),
-                        column(
-                            width = 6, style = "height: 43vh;",
-                            plotlyOutput("plot4", height = "100%", width = "100%")
-                        ),
-                    )
-                )
+                sidebarLayout(
+                sidebarPanel = SAG_plots_left_panel,
+                mainPanel = SAG_plots_righ_panel
+            )
+                # panel(
+                #     style = "height: 90vh; overflow-y: auto;",
+                #     fluidRow(
+                #         column(
+                #             width = 6, style = "height: 43vh;",
+                #             plotlyOutput("plot1", height = "100%", width = "100%")
+                #         ),
+                #         column(
+                #             width = 6, style = "height: 43vh;",
+                #             plotlyOutput("plot2", height = "100%", width = "100%")
+                #         ),
+                #     ),
+                #     fluidRow(
+                #         column(
+                #             width = 6, style = "height: 43vh;",
+                #             plotlyOutput("plot3", height = "100%", width = "100%")
+                #         ),
+                #         column(
+                #             width = 6, style = "height: 43vh;",
+                #             plotlyOutput("plot4", height = "100%", width = "100%")
+                #         ),
+                #     )
+                # )
             ),
             tabPanel(
                 "Quality of assessment",
-                panel(
-                    style = "height: 90vh; overflow-y: auto;",
-                    fluidRow(
-                        column(
-                            width = 4, style = "height: 85vh;",
-                            plotlyOutput("plot5", height = "100%", width = "100%")
-                        ),
-                        column(
-                            width = 4, style = "height: 85vh;",
-                            plotlyOutput("plot6", height = "100%", width = "100%")
-                        ),
-                        column(
-                            width = 4, style = "height: 85vh;",
-                            plotlyOutput("plot7", height = "100%", width = "100%")
-                        )
-                    )
-                )
+                quality_of_assessment
+                # panel(
+                #     style = "height: 90vh; overflow-y: auto;",
+                #     fluidRow(
+                #         column(
+                #             width = 4, style = "height: 85vh;",
+                #             plotlyOutput("plot5", height = "100%", width = "100%")
+                #         ),
+                #         column(
+                #             width = 4, style = "height: 85vh;",
+                #             plotlyOutput("plot6", height = "100%", width = "100%")
+                #         ),
+                #         column(
+                #             width = 4, style = "height: 85vh;",
+                #             plotlyOutput("plot7", height = "100%", width = "100%")
+                #         )
+                #     )
+                # )
             )
         ),
 

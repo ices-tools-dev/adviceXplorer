@@ -2572,7 +2572,7 @@ ICES_plot_5 <- function(df, SAGstamp) {
         layout(
             legend = list(
                 orientation = "h",
-                y = -.25,
+                y = -.4,
                 yanchor = "bottom",
                 x = 0.5,
                 xanchor = "center",
@@ -2663,7 +2663,7 @@ ICES_plot_6 <- function(df, SAGstamp) {
         layout(
             legend = list(
                 orientation = "h",
-                y = -.25,
+                y = -.4,
                 yanchor = "bottom",
                 x = 0.5,
                 xanchor = "center",
@@ -2719,7 +2719,7 @@ ICES_plot_7 <- function(df, SAGstamp) {
         layout(
             legend = list(
                 orientation = "h",
-                y = -.25,
+                y = -.4,
                 yanchor = "bottom",
                 x = 0.5,
                 xanchor = "center",
