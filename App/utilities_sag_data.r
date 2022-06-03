@@ -217,7 +217,7 @@ for (year in years) {
                                             recruitment, RecruitmentAge,
                                             SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
                                             F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
-                                            AssessmentYear, StockPublishNote,Purpose)
+                                            AssessmentYear, StockPublishNote,Purpose, SAGStamp)
 
         data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
         data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
@@ -252,6 +252,7 @@ big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
 big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
 
 df_list <- list(big_data, big_data_last_year)
+# print(df_list)
 return(df_list)
 }
 

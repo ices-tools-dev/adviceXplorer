@@ -2602,7 +2602,7 @@ ICES_plot_5 <- function(df) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2698,7 +2698,7 @@ ICES_plot_6 <- function(df) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2759,7 +2759,7 @@ ICES_plot_7 <- function(df) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
