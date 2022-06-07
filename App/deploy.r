@@ -1,6 +1,6 @@
-library(rsconnect)
+# library(rsconnect)
 deployApp(
-  appDir = "App",
+  # appDir = "App",
   appName = "online-single-stock-advice",
   appTitle = "Online single-stock advice"
 )
