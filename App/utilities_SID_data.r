@@ -5,7 +5,7 @@ Years <- data.frame(Year)
 
 # this list is temporary, it is just to limit the searches to the stocks already in advice_view
 advice_view_stocks <- c(
-  "bll.27.3a47d",
+  "bll.27.3a47de",
   # "cod.27.5a",
   # "cod.21.1",
   "cod.27.47d20",
@@ -87,7 +87,7 @@ download_SID <- function(Year) {
     )
   )$value
   #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
-  stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
+  # stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
 
   stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks)
   
