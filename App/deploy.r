@@ -4,5 +4,5 @@ deployApp(
   appName = "online-single-stock-advice",
   appTitle = "Online single-stock advice",
   forceUpdate = getOption("rsconnect.force.update.apps", TRUE),
-  launch.browser = getOption("rsconnect.launch.browser", FALSE)
+  launch.browser = FALSE
 )
