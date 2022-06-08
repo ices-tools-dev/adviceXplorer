@@ -1,6 +1,7 @@
 README.md
 LICENSE
 deploy.r 
+update_data_and_deploy_app.r
 advice_shiny_app_stable_version.r
 create_token_SAG.r
 .gitignore
