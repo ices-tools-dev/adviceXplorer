@@ -12,7 +12,7 @@ update_SID <- function(year){
 
 }
 
-years <- c(2021, 2020, 2019, 2018, 2017)
-for (year in years) {
-    update_SID(year)
-}
+# years <- c(2021, 2020, 2019, 2018, 2017)
+# for (year in years) {
+#     update_SID(year)
+# }
