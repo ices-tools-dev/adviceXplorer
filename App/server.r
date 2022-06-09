@@ -246,7 +246,7 @@ server <- function(input, output, session) {
     # ### add hyperlinks to table
     # stock_list_long <- sid_table_links(stock_list_long)
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
-
+    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
     ### reshuffle some columns
     stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
