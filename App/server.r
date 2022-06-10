@@ -437,7 +437,7 @@ server <- function(input, output, session) {
 #     get_SAG_stamp(SAG_data_reactive())
 # })
 
-  output$plot1 <- renderPlotly(
+  output$plot1 <- renderPlotly(    
       ICES_plot_1(SAG_data_reactive())
   ) #%>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")

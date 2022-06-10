@@ -2171,8 +2171,8 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 ####### Plots 
 
 ICES_plot_1 <- function(df) {
-    p1 <- df %>%
-        select(Year, landings, discards, units, SAGStamp) %>%
+    p1 <- df %>% filter(Purpose == "Advice") %>%
+        select(Year, landings, discards, units, SAGStamp) %>%  
         gather(type, count, discards:landings) %>%
         ggplot(., aes(
             x = Year,
@@ -2203,18 +2203,19 @@ ICES_plot_1 <- function(df) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
         )
+        # print(df %>% filter(Purpose == "Advice"))
     fig1
 }
 # ICES_plot_1(df, SAGstamp)
 ######################################recruitment###################################################
 ICES_plot_2 <- function(df) {
-    p2 <- df %>%
+    p2 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp) %>%
         #    gather(type, count, discards:landings) %>%
         ggplot(., aes(
@@ -2261,7 +2262,7 @@ ICES_plot_2 <- function(df) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2271,7 +2272,7 @@ ICES_plot_2 <- function(df) {
 # ICES_plot_2(df, SAGstamp)
 
 ICES_plot_3 <- function(df) {
-p3 <- df %>%
+p3 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
     drop_na(F) %>%
     #    gather(type, count, discards:landings) %>%
@@ -2395,7 +2396,7 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
         xaxis = list(zeroline = TRUE),
         annotations = list(
             showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2410,9 +2411,11 @@ fig3
 # ICES_plot_3(df, SAGstamp)
 
 ICES_plot_4 <- function(df) {
-p4 <- df %>%
+p4 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
-    drop_na(SSB, high_SSB) %>%
+    fill(c(high_SSB,low_SSB), .direction = "down") %>% 
+    # {if(is.na(tail(high_SSB,1))) head(df, -1) else .} %>%
+    # drop_na(SSB, high_SSB) %>%
     #    gather(type, count, discards:landings) %>%
     ggplot(., aes(x = Year, y = SSB)) +
     geom_ribbon(aes(
@@ -2507,7 +2510,7 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
         xaxis = list(zeroline = TRUE),
         annotations = list(
             showarrow = FALSE,
-                text = df$SAGStamp,
+                text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2518,13 +2521,17 @@ for (i in 1:length(fig4$x$data)){
         fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
     }
 }
+
+# print(df %>% filter(Purpose == "Advice") %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp)) #%>% 
+# { if(is.na(tail(df$high_SSB,1))) filter(head(df,-1)) } )
+#     # {if(is.na(tail(high_SSB,1))) head(df, -1)  else .})
 fig4
 }
 
 # ICES_plot_4(df, SAGstamp)
 
 ICES_plot_5 <- function(df) {
-    p5 <- df %>%
+    p5 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
         # drop_na(SSB, high_SSB) %>%
         #    gather(type, count, discards:landings) %>%
@@ -2620,7 +2627,7 @@ ICES_plot_5 <- function(df) {
 
 #F
 ICES_plot_6 <- function(df) {
-    p6 <- df %>%
+    p6 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) %>%
         # drop_na(SSB, high_SSB) %>%
         #    gather(type, count, discards:landings) %>%
@@ -2714,7 +2721,7 @@ ICES_plot_6 <- function(df) {
 # ICES_plot_6(df_qual[[1]], SAGstamp)
 #Rec
 ICES_plot_7 <- function(df) {
-    p7 <- df %>%
+    p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
         drop_na(recruitment) %>%
         #    gather(type, count, discards:landings) %>%

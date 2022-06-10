@@ -372,7 +372,8 @@ standardize_catch_scenario_table <- function(tmp) {
 #' @export
 #' 
 wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year) {
-    catches_data <- catches_data %>% select(Year, catches)
+  
+    catches_data <- catches_data %>% filter(Purpose == "Advice") %>% select(Year, catches)
     catches_data <- catches_data %>% add_column(cat = "Historical Catches")
     catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
