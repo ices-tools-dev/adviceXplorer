@@ -1,0 +1,1 @@
+Year,cS_Label,cS_Purpose,Division 7.d plaice stock Ftotal (ages 3-6) (2022),Division 7.d plaice stock Total catch^ (2022),TACchange,Division 7.d plaice stock % advice change$ (2023),SSB,Division 7.d plaice stock % SSB change *** (2023)
