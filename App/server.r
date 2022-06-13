@@ -60,6 +60,111 @@ server <- function(input, output, session) {
             size = "m",
             session = session
             )
+
+  helptext <- reactive(data.table(
+    tab = c(
+      "help_tab1",#1
+      "help_tab1",#2
+      "help_tab1",#3
+      "help_tab1",#4
+      "help_tab1",#5
+      "help_tab1",#6
+      "help_tab1",#7
+      "help_tab1",#8
+      "help_tab2",#9
+      #"help_tab2",
+      "help_tab3",#10
+      "help_tab3",#11
+      "help_tab3",#12
+      "help_tab3", #13
+      "help_tab3", #14
+      "help_tab3" #15
+    ),
+    step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+    element = c(
+      "#map1",
+      "#selected_locations + .selectize-control",
+      "#selected_years + .selectize-control",
+      "#my-filters-StockKeyLabel-selectized",
+      "#my-filters-SpeciesCommonName-selectized",
+      "#my-filters-ExpertGroup-selectized",
+      "#my-filters-YearOfLastAssessment-selectized",
+      "#my-filters-AdviceCategory-selectized",
+      "#tbl",
+      #"#tbl + .tr.odd",
+      "#Advice_Sentence2",
+      "#catch_scenario_plot_3",
+      "#catch_choice-label",
+      "#TAC_timeline",
+      "#preview",
+      "#table"
+    ),
+    intro = c(
+      "this is a map",
+      "select ecoregion",
+      "select year",
+      "select stockcode",
+      "common name",
+      "Expert group",
+      "Year of last assessment",
+      "Advice category",
+      "Table to select stocks",
+      "infos",
+      "plot catch scen 3",
+      "choose scenarios",
+      "TAC plot",
+      "check the timeline",
+      "chatch scenario table"
+    )
+  ))
+  observeEvent(
+    eventExpr = input$help_tab1,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab1"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab2,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab2"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab3,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab3"]
+              )
+      )
+    }
+  )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 

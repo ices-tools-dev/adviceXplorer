@@ -33,6 +33,7 @@ library(data.table)
 library(RColorBrewer)
 library(shinycssloaders)
 library(tidyr)
+library(rintrojs)
 
 
 
@@ -65,7 +66,7 @@ tagList(
     tags$head(tags$script(type="text/javascript", src = "code.js")),
 
 navbarPage(
-
+    introjsUI(),
     # tab title
     windowTitle = "Online Advice",
     id = "tabset",
@@ -110,6 +111,7 @@ navbarPage(
     
     tabPanel(
         "Stock Selection", style = "max-height: 90vh; overflow-y: auto;",
+        actionButton("help_tab2", "About this Page"),
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))

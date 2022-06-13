@@ -91,6 +91,7 @@ maps_panels <-
 selectize_panel <-
   mainPanel(
     width = 4, style = "max-height: 90vh; overflow-y: auto;",
+    actionButton("help_tab1", "About this Page"),
     panel(
       selectizeInput(
         inputId = "selected_locations",
@@ -225,6 +226,7 @@ quality_of_assessment <- splitLayout(
 ####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
+  actionButton("help_tab3", "About this Page"),
   panel(
     title = "Headline advice",
     fillPage(
