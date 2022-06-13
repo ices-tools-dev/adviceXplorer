@@ -251,13 +251,13 @@ standardize_catch_scenario_table <- function(tmp) {
   pattern <- c("cS_Label")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$cat <- tmp[,c(subset)]
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   
   # cS_Purpose"
   pattern <- c("cS_Purpose")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$cat <- tmp[,c(subset)]
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   
   # Ftotal"
   pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age", "F")
@@ -276,7 +276,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
   } else {
-      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
   
   
@@ -287,7 +287,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(TACchange = NA)
   } else {
-      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
   # % Advice change"
@@ -297,7 +297,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(ADVICEchange = NA)
   } else {
-      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
   
   # SSB"
@@ -320,7 +320,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(SSBchange = NA)
   } else {
-      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
   
   # print(data.frame(names(tmp_unified)))
