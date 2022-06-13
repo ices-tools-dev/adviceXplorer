@@ -49,8 +49,8 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-# stock_name <- "ple.27.420"
-# year <- 2019
+# stock_name <- "wit.27.3a47d"
+# year <- 2020
 # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
@@ -260,7 +260,7 @@ standardize_catch_scenario_table <- function(tmp) {
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
   
   # Ftotal"
-  pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age")
+  pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age", "F")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$F <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -270,7 +270,7 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
   # Total catch"
-  pattern <- c("Total catch")
+  pattern <- c("Total catch", "Catch")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$TotCatch <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -311,7 +311,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(SSB = NA)
   } else {
-      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+      tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
   
   # % SSB change "
@@ -372,7 +372,8 @@ standardize_catch_scenario_table <- function(tmp) {
 #' @export
 #' 
 wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year) {
-    catches_data <- catches_data %>% select(Year, catches)
+  
+    catches_data <- catches_data %>% filter(Purpose == "Advice") %>% select(Year, catches)
     catches_data <- catches_data %>% add_column(cat = "Historical Catches")
     catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 

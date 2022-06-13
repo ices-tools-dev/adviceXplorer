@@ -8,6 +8,7 @@ update_SID <- function(year){
     ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
 
+
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year))
 
 }

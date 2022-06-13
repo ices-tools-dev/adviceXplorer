@@ -90,6 +90,7 @@ download_SID <- function(Year) {
   # stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
 
   stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks)
+  # stock_list_all <- stock_list_all[!is.na(stock_list_all$AssessmentKey),]
   
   
   
@@ -106,7 +107,7 @@ download_SID <- function(Year) {
   return(stock_list_all)
 }
 
-# stock_list_all <-  download_SID(2021)
+stock_list_all <-  download_SID(2021)
 #' Returns ....
 #'
 #' Downloads ...
