@@ -2413,7 +2413,8 @@ fig3
 ICES_plot_4 <- function(df) {
 p4 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
-    fill(c(high_SSB,low_SSB), .direction = "down") %>% 
+    {if (is.na(.[nrow(.),2:4]) == c(TRUE,FALSE,TRUE)) head(., -1)} %>% 
+    # fill(c(high_SSB,low_SSB), .direction = "down") %>% 
     # {if(is.na(tail(high_SSB,1))) head(df, -1) else .} %>%
     # drop_na(SSB, high_SSB) %>%
     #    gather(type, count, discards:landings) %>%
@@ -2523,6 +2524,7 @@ for (i in 1:length(fig4$x$data)){
 }
 
 # print(df %>% filter(Purpose == "Advice") %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp)) #%>% 
+# {if (is.na(df[nrow(df),2:4]) == c(TRUE,FALSE,TRUE)) head(df, -1)})
 # { if(is.na(tail(df$high_SSB,1))) filter(head(df,-1)) } )
 #     # {if(is.na(tail(high_SSB,1))) head(df, -1)  else .})
 fig4
