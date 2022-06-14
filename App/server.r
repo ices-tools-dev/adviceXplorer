@@ -60,10 +60,15 @@ server <- function(input, output, session) {
   #           size = "m",
   #           session = session
   #           )
+observe({
+        click("help_tab1")
+        
+      })
 
   helptext <- reactive(
     help_datatable()
   )
+  
   observeEvent(
     eventExpr = input$help_tab1,
     handlerExpr = {

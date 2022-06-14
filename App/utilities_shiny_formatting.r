@@ -91,7 +91,8 @@ maps_panels <-
 selectize_panel <-
   mainPanel(
     width = 4, style = "max-height: 90vh; overflow-y: auto;",
-    actionButton("help_tab1", "About this Page"),
+    # actionButton("help_tab1", "About this Page", icon = icon("circle-info", "fa-solid"), width = "100%"),
+    actionButton(inputId = "help_tab1", label = NULL, style = "width: 50px; height: 50px; background: url('info.png');  background-size: cover; background-position: center;"),
     panel(
       selectizeInput(
         inputId = "selected_locations",
@@ -226,7 +227,7 @@ quality_of_assessment <- splitLayout(
 ####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
-  actionButton("help_tab3", "About this Page"),
+  actionButton(inputId = "help_tab3", label = NULL, style = "width: 50px; height: 50px; background: url('info.png');  background-size: cover; background-position: center;"),
   panel(
     title = "Headline advice",
     fillPage(

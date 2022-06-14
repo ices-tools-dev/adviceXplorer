@@ -115,7 +115,7 @@ navbarPage(
     
     tabPanel(
         "Stock Selection", style = "max-height: 90vh; overflow-y: auto;",
-        actionButton("help_tab2", "About this Page"),
+        actionButton(inputId = "help_tab2", label = NULL, style = "width: 50px; height: 50px; background: url('info.png');  background-size: cover; background-position: center;"),
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))

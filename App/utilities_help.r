@@ -3,6 +3,7 @@ help_datatable <- function() {
     data.table(
         tab = c(
             "help_tab1",
+            "help_tab1",
             "help_tab1", # 1
             "help_tab1", # 2
             "help_tab1", # 3
@@ -21,8 +22,9 @@ help_datatable <- function() {
             "help_tab3", # 15
             "help_tab3"  #16
         ),
-        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17),
+        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18),
         element = c(
+            "#help_tab1",
             "#tabset",
             "#map1",
             "#selected_locations + .selectize-control",
@@ -43,6 +45,7 @@ help_datatable <- function() {
             "#footnotes"
         ),
         intro = c(
+            "Welcome!",
             "filter tab",
             paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>","<img src= 'Animation.gif'", " height= '200px'/>"),
             "select ecoregion",
