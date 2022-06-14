@@ -39,6 +39,7 @@ library(rintrojs)
 
 
 ########## Load utilities ############
+source("utilities_help.r")
 source("utilities_SID_data.r")
 source("utilities_load_shapefiles.r")
 source("utilities_plotting.r")
@@ -62,17 +63,19 @@ title_html <- tags$a(
         )
 )
 tagList(
-    useShinyjs(),    
+    useShinyjs(),
+    introjsUI(),    
     tags$head(tags$script(type="text/javascript", src = "code.js")),
 
 navbarPage(
-    introjsUI(),
+    
     # tab title
     windowTitle = "Online Advice",
     id = "tabset",
     fluid = TRUE,
     # navbar title
     title = title_html,
+    # actionButton("help_tab1", "About this Page",style = "position: absolute; right: 100px; margin-top: -35px"),
     
 
     
@@ -102,6 +105,7 @@ navbarPage(
     #tabsetPanel(#id = "tabset",
     tabPanel(
         "Data Filtering",
+        #id = "data_filtering",
         sidebarLayout(
             sidebarPanel = maps_panels,
             mainPanel = selectize_panel

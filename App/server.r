@@ -50,73 +50,20 @@ options(icesSAG.use_token = FALSE)
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
   ## pop up with intructions test
-  shinyalert(title= "Welcome to Online Advice", 
-            text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
-            "<img src= 'Animation.gif'", " height= '400px'/>" ),
-            type = "info",
-            html=TRUE,
-            closeOnClickOutside = TRUE,
-            confirmButtonText = "Let's go!",
-            size = "m",
-            session = session
-            )
+  # shinyalert(title= "Welcome to Online Advice", 
+  #           text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
+  #           "<img src= 'Animation.gif'", " height= '400px'/>" ),
+  #           type = "info",
+  #           html=TRUE,
+  #           closeOnClickOutside = TRUE,
+  #           confirmButtonText = "Let's go!",
+  #           size = "m",
+  #           session = session
+  #           )
 
-  helptext <- reactive(data.table(
-    tab = c(
-      "help_tab1",#1
-      "help_tab1",#2
-      "help_tab1",#3
-      "help_tab1",#4
-      "help_tab1",#5
-      "help_tab1",#6
-      "help_tab1",#7
-      "help_tab1",#8
-      "help_tab2",#9
-      #"help_tab2",
-      "help_tab3",#10
-      "help_tab3",#11
-      "help_tab3",#12
-      "help_tab3", #13
-      "help_tab3", #14
-      "help_tab3" #15
-    ),
-    step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
-    element = c(
-      "#map1",
-      "#selected_locations + .selectize-control",
-      "#selected_years + .selectize-control",
-      "#my-filters-StockKeyLabel-selectized",
-      "#my-filters-SpeciesCommonName-selectized",
-      "#my-filters-ExpertGroup-selectized",
-      "#my-filters-YearOfLastAssessment-selectized",
-      "#my-filters-AdviceCategory-selectized",
-      "#tbl",
-      #"#tbl + .tr.odd",
-      "#Advice_Sentence2",
-      "#catch_scenario_plot_3",
-      "#catch_choice-label",
-      "#TAC_timeline",
-      "#preview",
-      "#table"
-    ),
-    intro = c(
-      "this is a map",
-      "select ecoregion",
-      "select year",
-      "select stockcode",
-      "common name",
-      "Expert group",
-      "Year of last assessment",
-      "Advice category",
-      "Table to select stocks",
-      "infos",
-      "plot catch scen 3",
-      "choose scenarios",
-      "TAC plot",
-      "check the timeline",
-      "chatch scenario table"
-    )
-  ))
+  helptext <- reactive(
+    help_datatable()
+  )
   observeEvent(
     eventExpr = input$help_tab1,
     handlerExpr = {
@@ -406,21 +353,7 @@ server <- function(input, output, session) {
     escape = FALSE,
     extensions = "Buttons",
     selection = "single",
-    caption = shinyalert(
-      title = "Stock Selection",
-      text = paste0(
-        "<b>", "To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>", "<br/>", "<br/>",
-        "<img src= 'stock_selection.gif'", " height= '400px'/>"
-      ),
-      type = "info",
-      html = TRUE,
-      closeOnClickOutside = TRUE,
-      confirmButtonText = "Let's go!",
-      size = "m",
-      session = session
-    ), # "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
-
-
+    caption = "Click the row for the fish stock of interest and then click on one of panels on the right",
     options = list(
       order = list(1, "asc"),
       dom = "Bfrtip",
