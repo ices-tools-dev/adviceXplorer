@@ -50,16 +50,106 @@ options(icesSAG.use_token = FALSE)
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
   ## pop up with intructions test
-  shinyalert(title= "Welcome to Online Advice", 
-            text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
-            "<img src= 'Animation.gif'", " height= '400px'/>" ),
-            type = "info",
-            html=TRUE,
-            closeOnClickOutside = TRUE,
-            confirmButtonText = "Let's go!",
-            size = "m",
-            session = session
-            )
+  # shinyalert(title= "Welcome to Online Advice", 
+  #           text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
+  #           "<img src= 'Animation.gif'", " height= '400px'/>" ),
+  #           type = "info",
+  #           html=TRUE,
+  #           closeOnClickOutside = TRUE,
+  #           confirmButtonText = "Let's go!",
+  #           size = "m",
+  #           session = session
+  #           )
+observe({
+        click("help_tab1")
+        
+      })
+
+  helptext <- reactive(
+    help_datatable()
+  )
+  
+  observeEvent(
+    eventExpr = input$help_tab1,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                "setDontShowAgain" = "true",
+                steps=helptext()[tab == "help_tab1"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab2,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab2"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab3,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab3"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab4,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab4"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab5,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab5"]
+              )
+      )
+    }
+  )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
@@ -301,21 +391,7 @@ server <- function(input, output, session) {
     escape = FALSE,
     extensions = "Buttons",
     selection = "single",
-    caption = shinyalert(
-      title = "Stock Selection",
-      text = paste0(
-        "<b>", "To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>", "<br/>", "<br/>",
-        "<img src= 'stock_selection.gif'", " height= '400px'/>"
-      ),
-      type = "info",
-      html = TRUE,
-      closeOnClickOutside = TRUE,
-      confirmButtonText = "Let's go!",
-      size = "m",
-      session = session
-    ), # "Select the row for the fish stock of interest and then click on the 'Stock development over time' panel",
-
-
+    caption = "Click the row for the fish stock of interest and then click on one of panels on the right",
     options = list(
       order = list(1, "asc"),
       dom = "Bfrtip",
