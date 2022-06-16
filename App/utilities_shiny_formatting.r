@@ -91,6 +91,8 @@ maps_panels <-
 selectize_panel <-
   mainPanel(
     width = 4, style = "max-height: 90vh; overflow-y: auto;",
+    # actionButton("help_tab1", "About this Page", icon = icon("circle-info", "fa-solid"), width = "100%"),
+    actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
     panel(
       selectizeInput(
         inputId = "selected_locations",
@@ -196,7 +198,7 @@ SAG_plots_righ_panel <- sidebarPanel(
 
 ##############################################Quality of assessment tab
 quality_of_assessment <- splitLayout(
-  style = "border: 1px solid silver; height: 90vh; overflow-y: auto;",
+  style = "border: 1px solid silver; height: 90vh; overflow-y: auto;",  
   cellWidths = c("33%", "33%", "33%"),
   cellArgs = list(style = "padding: 6px"),
   panel(
@@ -229,6 +231,7 @@ catch_scenarios_left_panel <- sidebarPanel(
     title = "Headline advice",
     fillPage(
       tags$style(type = "text/css", "#Advice_Sentence2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+      
       withSpinner(htmlOutput("Advice_Sentence2", height = "10%", width = "100%"))
     )
   ),

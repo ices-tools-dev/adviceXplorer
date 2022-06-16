@@ -33,11 +33,13 @@ library(data.table)
 library(RColorBrewer)
 library(shinycssloaders)
 library(tidyr)
+library(rintrojs)
 
 
 
 
 ########## Load utilities ############
+source("utilities_help.r")
 source("utilities_SID_data.r")
 source("utilities_load_shapefiles.r")
 source("utilities_plotting.r")
@@ -61,17 +63,19 @@ title_html <- tags$a(
         )
 )
 tagList(
-    useShinyjs(),    
+    useShinyjs(),
+    introjsUI(),    
     tags$head(tags$script(type="text/javascript", src = "code.js")),
 
 navbarPage(
-
+    
     # tab title
     windowTitle = "Online Advice",
     id = "tabset",
     fluid = TRUE,
     # navbar title
     title = title_html,
+    # actionButton("help_tab1", "About this Page",style = "position: absolute; right: 100px; margin-top: -35px"),
     
 
     
@@ -101,6 +105,7 @@ navbarPage(
     #tabsetPanel(#id = "tabset",
     tabPanel(
         "Data Filtering",
+        #id = "data_filtering",
         sidebarLayout(
             sidebarPanel = maps_panels,
             mainPanel = selectize_panel
@@ -109,7 +114,8 @@ navbarPage(
     ),
     
     tabPanel(
-        "Stock Selection", style = "max-height: 90vh; overflow-y: auto;",
+        "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
+        actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))
@@ -130,6 +136,7 @@ navbarPage(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
+                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
                 sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel,
                 mainPanel = SAG_plots_righ_panel
@@ -160,6 +167,7 @@ navbarPage(
             ),
             tabPanel(
                 "Quality of assessment",
+                actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
                 quality_of_assessment
                 # panel(
                 #     style = "height: 90vh; overflow-y: auto;",
@@ -233,6 +241,7 @@ navbarPage(
     
     tabPanel(
         "Advice",
+        actionButton(inputId = "help_tab5", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
             mainPanel = catch_scenarios_right_panel
