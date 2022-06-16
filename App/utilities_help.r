@@ -82,24 +82,24 @@ help_datatable <- function() {
             "Year of last assessment",
             "<font size='4'>You can also filter the data based on the Advice Category (to know more about Advice Categories, you can check this <a href='https://vocab.ices.dk/?ref=1570' target='_blank'>list</a>)</font>",
             # stock selection
-            paste0("<b>", "To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>","<img src= 'stock_selection.gif'", " height= '100px'/>"),
+            paste0("<b><font size='4'>To select a stock, simply click on its row and move to one of the other tabs on the right</font><b/></br><img src= 'stock_selection.gif' height= '100px'/>"),
             # stock assessment trends - development over time
-            "catches",
-            "Recruitment",
-            "fishing pressure",
-            "SSB",
+            "catches lorem ipsum",
+            "Recruitment lorem ipsum",
+            "fishing pressure lorem ipsum",
+            "SSB lorem ipsum",
             # stock assessment trends - quality of assessemnt
-            "SSB",
-            "F",
-            "REC",
+            "SSB lorem ipsum",
+            "F lorem ipsum",
+            "REC lorem ipsum",
             # Advice
-            "infos",
-            "plot catch scen 3",
-            "choose scenarios",
-            "TAC plot",
-            "check the timeline",
-            "chatch scenario table",
-            "these are the footnotes"
+            "<font size='4'>A few information about the stock, the assessment year and the advice requesters</font>",
+            "<font size='4'>Relationshp between F, SSB, Total Catches and the differen basis of advice..... lorem ipsum</font>",
+            "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
+            "<font size='4'>Catches plot and effect on catches of different scenarios</font>",
+            "<font size='4'>You can click here to see the timeline (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
+            "<font size='4'>chatch scenario table....lorem ipsun</font>",
+            "<font size='4'>Footnotes of catch scenario table</font>"
         ),
         position = c(
             #data filtering
