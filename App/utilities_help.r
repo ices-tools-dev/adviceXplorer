@@ -70,9 +70,9 @@ help_datatable <- function() {
         ),
         intro = c(
             #data filtering
-            paste0("<center><img src= 'ICES_logo.png' width= '100%'/></br></br></center><b><font size='5'>Welcome to the beta-version of the single-stock Online Advice!</font></b></br></br><font size='4'>You can get a quick tour of each page by clicking this symbol</font></br></br>" ,"<center><img src= 'info.png' height= '50px'/></center>"),
-            paste0("<ul><li><b>Data Filtering:</b> You can filter the data based on different criteria</li>","<li><b>Stock Selection:</b> Select a fish stock and get access to different ICES products</li>","<li><b>Stock Assessment Trends:</b> Check the present and past trends of the fish stock</li>","<li><b>Advice:</b> Check the future projections for the stock</li>","<li><b>Resources:</b> Give us feedback! Abd acess more ICES resources.</li>","</ul>"),
-            paste0( "<b>","This map is interactive and connected to the Data filtering panel on the right. Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>","<img src= 'Animation.gif'", " height= '150px'/>"),
+            "<center><img src= 'ICES_logo.png' width= '100%'/></br></br></center><b><font size='5'>Welcome to the beta-version of the single-stock Online Advice!</font></b></br></br><font size='4'>You can get a quick tour of each page by clicking this symbol</font></br></br><center><img src= 'info.png' height= '50px'/></center>",
+            "<ul><li><b>Data Filtering:</b> You can filter the data based on different criteria</li><li><b>Stock Selection:</b> Select a fish stock and get access to different ICES products</li><li><b>Stock Assessment Trends:</b> Check the present and past trends of the fish stock</li><li><b>Advice:</b> Check the future projections for the stock</li><li><b>Resources:</b> Give us feedback! Abd acess more ICES resources.</li></ul>",
+            "<font size='4'>This map is interactive and connected to the Data filtering panel on the right. Click on one or more Ecoregions to start filtering the data</font><br/><br/><img src= 'Animation.gif' height= '150px'/>",
             "<font size='4'>You can also select an Ecoregion from this drop-down menu</font>",
             "<font size='4'>Select the assessment year you are interested in</font>",
             "<font size='4'>If you know already the stock code you are looking for, you can select it from here</font>",
@@ -82,7 +82,7 @@ help_datatable <- function() {
             "Year of last assessment",
             "<font size='4'>You can also filter the data based on the Advice Category (to know more about Advice Categories, you can check this <a href='https://vocab.ices.dk/?ref=1570' target='_blank'>list</a>)</font>",
             # stock selection
-            paste0("<b><font size='4'>To select a stock, simply click on its row and move to one of the other tabs on the right</font><b/></br><img src= 'stock_selection.gif' height= '100px'/>"),
+            "<b><font size='4'>To select a stock, simply click on its row and move to one of the other tabs on the right</font><b/></br><img src= 'stock_selection.gif' height= '100px'/>",
             # stock assessment trends - development over time
             "catches lorem ipsum",
             "Recruitment lorem ipsum",
