@@ -114,8 +114,8 @@ navbarPage(
     ),
     
     tabPanel(
-        "Stock Selection", style = "max-height: 90vh; overflow-y: auto;",
-        actionButton(inputId = "help_tab2", label = NULL, style = "width: 50px; height: 50px; background: url('info.png');  background-size: cover; background-position: center;"),
+        "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
+        actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))
@@ -136,6 +136,7 @@ navbarPage(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
+                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
                 sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel,
                 mainPanel = SAG_plots_righ_panel
@@ -166,6 +167,7 @@ navbarPage(
             ),
             tabPanel(
                 "Quality of assessment",
+                actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
                 quality_of_assessment
                 # panel(
                 #     style = "height: 90vh; overflow-y: auto;",
@@ -239,6 +241,7 @@ navbarPage(
     
     tabPanel(
         "Advice",
+        actionButton(inputId = "help_tab5", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
             mainPanel = catch_scenarios_right_panel

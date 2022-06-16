@@ -2,6 +2,7 @@
 help_datatable <- function() {
     data.table(
         tab = c(
+            #data filtering
             "help_tab1",# 1
             "help_tab1",#2
             "help_tab1", #3
@@ -13,17 +14,29 @@ help_datatable <- function() {
             "help_tab1", # 9
             "help_tab1", # 10
             "help_tab1", # 11
+            # stock selection
             "help_tab2", # 12
+            # stock assessment trends - development over time
             "help_tab3", # 13
             "help_tab3", # 14
             "help_tab3", # 15
             "help_tab3", # 16
-            "help_tab3", # 17
-            "help_tab3", # 18
-            "help_tab3"  #19
+            # stock assessment trends - quality of assessemnt
+            "help_tab4", # 17
+            "help_tab4", # 18
+            "help_tab4", # 19
+            # Advice
+            "help_tab5", # 20
+            "help_tab5", # 21
+            "help_tab5", # 22
+            "help_tab5", # 23
+            "help_tab5", # 24
+            "help_tab5", # 25
+            "help_tab5"  # 26
         ),
-        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19),
+        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
         element = c(
+            #data filtering
             "#help_tab1",
             "#tabset",
             "#map1",
@@ -35,8 +48,18 @@ help_datatable <- function() {
             "#my-filters-DataCategory-label",
             "#my-filters-YearOfLastAssessment-label",
             "#my-filters-AdviceCategory-label",
+            # stock selection
             "#tbl",
-            # "#tbl + .tr.odd",
+            # stock assessment trends - development over time
+            "#plot1",
+            "#plot2",
+            "#plot3",
+            "#plot4",
+            # stock assessment trends - quality of assessemnt
+            "#plot5",
+            "#plot6",
+            "#plot7",
+            # Advice
             "#Advice_Sentence2",
             "#catch_scenario_plot_3",
             "#catch_choice-label",
@@ -46,18 +69,30 @@ help_datatable <- function() {
             "#footnotes"
         ),
         intro = c(
+            #data filtering
             paste0("<center><img src= 'ICES_logo.png' width= '100%'/></br></br></center><b><font size='5'>Welcome to the beta-version of the single-stock Online Advice!</font></b></br></br><font size='4'>You can get a quick tour of each page by clicking this symbol</font></br></br>" ,"<center><img src= 'info.png' height= '50px'/></center>"),
             paste0("<ul><li><b>Data Filtering:</b> You can filter the data based on different criteria</li>","<li><b>Stock Selection:</b> Select a fish stock and get access to different ICES products</li>","<li><b>Stock Assessment Trends:</b> Check the present and past trends of the fish stock</li>","<li><b>Advice:</b> Check the future projections for the stock</li>","<li><b>Resources:</b> Give us feedback! Abd acess more ICES resources.</li>","</ul>"),
             paste0( "<b>","This map is interactive and connected to the Data filtering panel on the right. Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>","<img src= 'Animation.gif'", " height= '150px'/>"),
-            "select ecoregion",
-            "select year",
-            "select stockcode",
-            "common name",
-            "Expert group",
-            "data category",
+            "<font size='4'>You can also select an Ecoregion from this drop-down menu</font>",
+            "<font size='4'>Select the assessment year you are interested in</font>",
+            "<font size='4'>If you know already the stock code you are looking for, you can select it from here</font>",
+            "<font size='4'>...or look for the common species name...</font>",
+            "<font size='4'>You can also filter the data based on an Expert Group (to know more about Expert Groups, you can check this <a href='https://vocab.ices.dk/?ref=1424' target='_blank'>list</a>)</font>",
+            "<font size='4'>You can choose also the data category of stocks (to know more about Data Categories, check page 7 of this <a href='https://www.ices.dk/sites/pub/Publication%20Reports/Advice/2019/2019/Introduction_to_advice_2019.pdf' target='_blank'>document</a>)</font>",
             "Year of last assessment",
-            "Advice category",
+            "<font size='4'>You can also filter the data based on the Advice Category (to know more about Advice Categories, you can check this <a href='https://vocab.ices.dk/?ref=1570' target='_blank'>list</a>)</font>",
+            # stock selection
             paste0("<b>", "To select a stock, simply click on its row and move to one of the other tabs on the right", "<b/>","<img src= 'stock_selection.gif'", " height= '100px'/>"),
+            # stock assessment trends - development over time
+            "catches",
+            "Recruitment",
+            "fishing pressure",
+            "SSB",
+            # stock assessment trends - quality of assessemnt
+            "SSB",
+            "F",
+            "REC",
+            # Advice
             "infos",
             "plot catch scen 3",
             "choose scenarios",
@@ -67,6 +102,7 @@ help_datatable <- function() {
             "these are the footnotes"
         ),
         position = c(
+            #data filtering
             "left", #1
             "bottom",#2
             "right",#3
@@ -78,14 +114,25 @@ help_datatable <- function() {
             "left",#9
             "left",#10
             "left",#11
+            # stock selection
             "left",#12
-            "bottom",#13
-            "right",#14
-            "top",#15
-            "right",#16
-            "left",#17
-            "left",#18
-            "left"  #19
+            # stock assessment trends - development over time
+            "right",#13
+            "left", #14
+            "right", #15
+            "left", #16
+            # stock assessment trends - quality of assessemnt
+            "bottom", #17
+            "bottom", #18
+            "bottom", #19
+            # Advice
+            "bottom",#20
+            "right",#21
+            "top",#22
+            "right",#23
+            "left",#24
+            "left",#25
+            "left"  #26
         )
     )
 }

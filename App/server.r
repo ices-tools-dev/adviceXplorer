@@ -118,6 +118,38 @@ observe({
       )
     }
   )
+  observeEvent(
+    eventExpr = input$help_tab4,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab4"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab5,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab5"]
+              )
+      )
+    }
+  )
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
