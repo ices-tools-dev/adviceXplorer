@@ -80,6 +80,7 @@ observe({
                 "nextLabel"="Next",
                 "prevLabel"="Prev",
                 "skipLabel"="Skip",
+                "setDontShowAgain" = "true",
                 steps=helptext()[tab == "help_tab1"]
               )
       )
