@@ -53,16 +53,18 @@ make_app_citation <- function() {
       " for full conditions and guidance on citation.<br/>
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
-      International Council for the Exploration of the Sea (ICES). (", Sys.Date(), "). ICES Single-Stock Online Advice.
-      https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "</font><br/>",
-      br(),
+
+      <i><b>ICES Single-Stock Online Advice (https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(),"), ", Sys.Date(),". ICES, Copenhagen.</b></i></font><br/><br/>",
+      # "International Council for the Exploration of the Sea (ICES). (", Sys.Date(), "). ICES Single-Stock Online Advice.
+      # https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "</font><br/>",
+      # br(),
       
       "<b>", "<font size=", 5, ">", "Data Policy", "</font>", "</b>", "<br/>",
       "<font size=", 3, ">",
       
       "Under the revised ", "<a href='","https://www.ices.dk/data/guidelines-and-policy/Pages/ICES-data-policy.aspx", "' target='_blank'>", "ICES Data Policy","</a>",
       " all public data are under the Creative Commons licence ",
-      "<a href='","https://creativecommons.org/licenses/by/4.0/", "' target='_blank'>", "(CC BY 4.0).","</a>","<br/>",
+      "<a href='","https://creativecommons.org/licenses/by/4.0/", "' target='_blank'>", "(CC BY 4.0).</a><br/><br/>",
       # img(src = "by.png", height = "100px"),
       "<img src= 'by.png'", " height= '100px'/>"
       
