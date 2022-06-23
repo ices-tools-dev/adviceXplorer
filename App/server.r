@@ -528,7 +528,7 @@ observe({
       ICES_plot_4(SAG_data_reactive())
   )
 
-  advice_action_quality <- eventReactive(req(query$assessmentkey), {
+  advice_action_quality <- eventReactive(req(query$assessmentkey,query$year), {
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
@@ -539,17 +539,17 @@ observe({
     year <- query$year #####
     # msg("downloading:", year)
     #   # Dowload the data
-    quality_assessment_data_local(stock_name)
+    quality_assessment_data_local(stock_name, year)
   })
 
   output$plot5 <- renderPlotly(
-      ICES_plot_5(advice_action_quality()[[1]])
+      ICES_plot_5(advice_action_quality())
   )
   output$plot6 <- renderPlotly(
-      ICES_plot_6(advice_action_quality()[[1]])
+      ICES_plot_6(advice_action_quality())
   )
   output$plot7 <- renderPlotly(
-      ICES_plot_7(advice_action_quality()[[1]])
+      ICES_plot_7(advice_action_quality())
   )
   ######################### Stock development over time
 
