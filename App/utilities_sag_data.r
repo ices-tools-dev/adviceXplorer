@@ -110,64 +110,65 @@ access_sag_data_local <- function(stock_code, year) {
 #' @export
 #'
 # function to dowload the quality assessemnt data
-quality_assessment_data <- function(stock_code){
+# quality_assessment_data <- function(stock_code){
 
-years <- c(2021, 2020, 2019, 2018, 2017)
-datalist = list()
+# years <- c(2021, 2020, 2019, 2018, 2017)
 
-for (i in years) {
-    print(i)
-    data_temp <- try(access_sag_data(stock_code, i)) # "had.27.6b"
+# datalist = list()
 
-    ###############
-    if (isTRUE(class(data_temp) == "try-error")) {
-        next
-    }
-    else {
-        #
-        data_temp <- filter(data_temp, between(Year, 2005, 2021))
-        data_temp <- data_temp %>% select(Year,
-                                            recruitment, RecruitmentAge,
-                                            SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
-                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
-                                            AssessmentYear, StockPublishNote,Purpose, SAGStamp)
+# for (i in years) {
+#     print(i)
+#     data_temp <- try(access_sag_data(stock_code, i)) # "had.27.6b"
 
-        data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
-        data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
-        data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
-        data_temp$Fage <- as.character(data_temp$Fage)
-        data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
-        data_temp$SAGStamp <- as.character(data_temp$SAGStamp)
+#     ###############
+#     if (isTRUE(class(data_temp) == "try-error")) {
+#         next
+#     }
+#     else {
+#         #
+#         data_temp <- filter(data_temp, between(Year, 2005, 2021))
+#         data_temp <- data_temp %>% select(Year,
+#                                             recruitment, RecruitmentAge,
+#                                             SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
+#                                             F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
+#                                             AssessmentYear, StockPublishNote,Purpose, SAGStamp)
+
+#         data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+#         data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
+#         data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
+#         data_temp$Fage <- as.character(data_temp$Fage)
+#         data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
+#         data_temp$SAGStamp <- as.character(data_temp$SAGStamp)
         
-        datalist[[i]] <- data_temp
-        # }
-    }
-}
+#         datalist[[i]] <- data_temp
+#         # }
+#     }
+# }
 
-#print(tibble(datalist))
-### bind data in unique df
-big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
+# #print(tibble(datalist))
+# ### bind data in unique df
+# big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
 
-# find last asseement year
-last_year <- tail(big_data$AssessmentYear, n=1)
+# # find last asseement year
+# last_year <- tail(big_data$AssessmentYear, n=1)
 
-# subset last year
-big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
+# # subset last year
+# big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
 
-# take out non published data from before 2021 in big data
-big_data <- filter(big_data, StockPublishNote == "Stock published")
-big_data <- filter(big_data, Purpose == "Advice")
-# put together the published data from before 2021 with the unpublished from 2021
-big_data <- rbind(big_data, big_data_last_year)
-big_data <- big_data  %>% distinct()
+# # take out non published data from before 2021 in big data
+# big_data <- filter(big_data, StockPublishNote == "Stock published")
+# big_data <- filter(big_data, Purpose == "Advice")
+# # put together the published data from before 2021 with the unpublished from 2021
+# big_data <- rbind(big_data, big_data_last_year)
+# big_data <- big_data  %>% distinct()
 
-#make assessmentYear as factor
-big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
-big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
+# #make assessmentYear as factor
+# big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+# big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
 
-df_list <- list(big_data, big_data_last_year)
-return(df_list)
-}
+# df_list <- list(big_data, big_data_last_year)
+# return(df_list)
+# }
 
 
 
@@ -187,7 +188,7 @@ return(df_list)
 #'
 #' @examples
 #' \dontrun{
-#'
+#'quality_assessment_data_local("wit.27.3a47d")
 #' }
 #'
 #' @references
@@ -197,9 +198,10 @@ return(df_list)
 #' @export
 #'
 # function to dowload the quality assessemnt data
-quality_assessment_data_local <- function(stock_code){
+quality_assessment_data_local <- function(stock_code, year){
 
 years <- c(2021, 2020, 2019, 2018, 2017)
+years <- years[years <= year]
 datalist = list()
 
 for (year in years) {
@@ -235,25 +237,25 @@ for (year in years) {
 big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
 
 # find last asseement year
-last_year <- tail(big_data$AssessmentYear, n=1)
+# last_year <- tail(big_data$AssessmentYear, n=1)
 
 # subset last year
-big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
+# big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
 
 # take out non published data from before 2021 in big data
 big_data <- filter(big_data, StockPublishNote == "Stock published")
 big_data <- filter(big_data, Purpose == "Advice")
 # put together the published data from before 2021 with the unpublished from 2021
-big_data <- rbind(big_data, big_data_last_year)
+# big_data <- rbind(big_data, big_data_last_year)
 big_data <- big_data  %>% distinct()
 
 #make assessmentYear as factor
 big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
-big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
+# big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
 
-df_list <- list(big_data, big_data_last_year)
+# df_list <- list(big_data, big_data_last_year)
 # print(df_list)
-return(df_list)
+return(big_data)
 }
 
 
