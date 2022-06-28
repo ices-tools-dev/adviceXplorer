@@ -1,4 +1,27 @@
-# help dataframe
+#' Returns a data.table object 
+#'
+#' Downloads ...
+#'
+#' @param null
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+
 help_datatable <- function() {
     data.table(
         tab = c(
