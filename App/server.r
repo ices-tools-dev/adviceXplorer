@@ -389,23 +389,23 @@ observe({
                                       "VISA tool" = visa_url),
     # res_mod(),
     escape = FALSE,
-    extensions = "Buttons",
+    # extensions = "Buttons",
     selection = "single",
     caption = "Click the row for the fish stock of interest and then click on one of panels on the right",
     options = list(
       order = list(1, "asc"),
       dom = "Bfrtip",
-      pageLength = 1000,
+      pageLength = 300,
       # buttons = c("csv","xls"),
-      buttons =
-        list(
-          "copy", "print",
-          list(
-            extend = "collection",
-            buttons = c("csv", "excel"),
-            text = "Download"
-          )
-        ),
+      # buttons =
+      #   list(
+      #     "copy", "print",
+      #     list(
+      #       extend = "collection",
+      #       buttons = c("csv", "excel"),
+      #       text = "Download"
+      #     )
+      #   ),
       # rownames = FALSE,
       columnDefs = list(
         list(visible = FALSE, targets = c(0, 5, 12)),
