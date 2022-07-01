@@ -344,11 +344,13 @@ observe({
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
     ### reshuffle some columns
-    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
+    # stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>%
+      relocate(icon, .before = SpeciesCommonName) %>% 
       relocate(c(doi, FO_doi), .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
-      relocate(c(doi, FO_doi), .before = AssessmentKey)
+      relocate(c(doi, FO_doi), .before = AssessmentKey) 
+     
 
     temp_df <- data.frame()
     for (i in 1:length(input$selected_locations)) {
@@ -357,6 +359,16 @@ observe({
     }
     # print(tibble(temp_df))
     stock_list_long <- temp_df
+    # stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
+    # for (value in 1:nrow(stock_list_long)){
+    #   if (value == 1){
+    #     stock_list_long$Select[value] <- sprintf('<input type="radio" name="rdbtn" value="%s" checked="checked"/>', value)
+    #   }
+    #   else {
+    #     stock_list_long$Select[value] <- sprintf('<input type="radio" name="rdbtn" value="%s"/>', value)
+    #   }
+    # }
+    # stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s" checked/>', 1)
     stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
       relocate(Select, .before = StockKeyLabel)
@@ -429,6 +441,7 @@ observe({
   
   ## process selection
   observeEvent(input$rdbtn, {
+    print(input$rdbtn)
     filtered_row <- res_mod()[input$rdbtn, ]
     # updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
 
