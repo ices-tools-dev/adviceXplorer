@@ -43,23 +43,18 @@ options(icesSAG.use_token = FALSE)
 # ) {
 #   source("update_SID_data.r")
 # }
-
+callback <- c(
+  "$('input[name=rdbtn]').on('click', function(){",
+  "  var value = $('input[name=rdbtn]:checked').val();",
+  "  Shiny.setInputValue('rdbtn', value);",
+  "});"
+)
 
 ############# Start server function ################
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
-  ## pop up with intructions test
-  # shinyalert(title= "Welcome to Online Advice", 
-  #           text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
-  #           "<img src= 'Animation.gif'", " height= '400px'/>" ),
-  #           type = "info",
-  #           html=TRUE,
-  #           closeOnClickOutside = TRUE,
-  #           confirmButtonText = "Let's go!",
-  #           size = "m",
-  #           session = session
-  #           )
+  
 observe({
         click("help_tab1")
         
@@ -339,11 +334,13 @@ observe({
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
     ### reshuffle some columns
-    stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
+    # stock_list_long <- stock_list_long %>% relocate(icon, .before = SpeciesCommonName)
     stock_list_long <- stock_list_long %>%
+      relocate(icon, .before = SpeciesCommonName) %>% 
       relocate(c(doi, FO_doi), .before = EcoRegion) %>%
       relocate(group_url, .before = DataCategory) %>%
-      relocate(c(doi, FO_doi), .before = AssessmentKey)
+      relocate(c(doi, FO_doi), .before = AssessmentKey) 
+     
 
     temp_df <- data.frame()
     for (i in 1:length(input$selected_locations)) {
@@ -352,6 +349,20 @@ observe({
     }
     # print(tibble(temp_df))
     stock_list_long <- temp_df
+    stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
+    # for (value in 1:nrow(stock_list_long)){
+    #   if (value == 1){
+    #     stock_list_long$Select[value] <- sprintf('<input type="radio" name="rdbtn" value="%s" checked="checked"/>', value)
+    #   }
+    #   else {
+    #     stock_list_long$Select[value] <- sprintf('<input type="radio" name="rdbtn" value="%s"/>', value)
+    #   }
+    # }
+    # stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s" checked/>', 1)
+    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s" checked/>', 1:nrow(stock_list_long))
+    stock_list_long <- stock_list_long %>%
+      relocate(Select, .before = StockKeyLabel)
+    # print(tibble(stock_list_long))
   })
 
   # res_mod <- reactive({
@@ -369,13 +380,15 @@ observe({
     #"AdviceType", "TrophicGuild","FisheriesGuild", "SizeGuild",)
   )
   
+
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(
     
 #     colnames(eco_filter) <- c("Stock code", "Ecoregion", "icon", "Common Name","ExpertGroup", "Expert Group", "Data Category", "Year Of Last Assessment",
 #     "Advice Category", "Advice doi", "Fisheries Overview doi", "AssessmentKey", "Data")
-    res_modo <- res_mod() %>% rename("Stock code" = StockKeyLabel,
+    res_modo <- res_mod() %>% rename("Select" = Select,
+                                      "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
                                       "Common name" = SpeciesCommonName,
@@ -385,15 +398,16 @@ observe({
                                       "Advice category" = AdviceCategory,
                                       "Advice doi" = doi,
                                       "Fisheries Overview doi" = FO_doi,
-                                      "SAG data" = SAG_url,
-                                      "VISA tool" = visa_url),
-    # res_mod(),
+                                      "Assessment data" = SAG_url,
+                                      "GIS data" = visa_url),
+    
     escape = FALSE,
     # extensions = "Buttons",
-    selection = "single",
-    caption = "Click the row for the fish stock of interest and then click on one of panels on the right",
+    selection = 'none', 
+    server = FALSE,    
+    caption = "Select the fish stock of interest and then click on one of panels on the right",
     options = list(
-      order = list(1, "asc"),
+      order = list(2, "asc"),
       dom = "Bfrtip",
       pageLength = 300,
       # buttons = c("csv","xls"),
@@ -408,20 +422,18 @@ observe({
       #   ),
       # rownames = FALSE,
       columnDefs = list(
-        list(visible = FALSE, targets = c(0, 5, 12)),
-        list(className = "dt-center", targets = c(3, 6, 10, 11, 13, 14))
+        list(visible = FALSE, targets = c(0, 6, 13)),
+        list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
       )
-    )
+    ),
+    callback = JS(callback)
 )
   
-    
-
   ## process selection
-  observeEvent(input$tbl_rows_selected, {
-    filtered_row <- res_mod()[input$tbl_rows_selected, ]
+  observeEvent(input$rdbtn, {
+    
+    filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
     # updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
-
-    # print(filtered_row)
 
     ###
     #updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel, "&", "Year=", input$selected_years), mode = "push") ####
