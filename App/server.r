@@ -54,17 +54,7 @@ callback <- c(
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
-  ## pop up with intructions test
-  # shinyalert(title= "Welcome to Online Advice", 
-  #           text = paste0( "<b>","Click on one or more Ecoregions to start filtering the data", "<b/>","<br/>","<br/>",
-  #           "<img src= 'Animation.gif'", " height= '400px'/>" ),
-  #           type = "info",
-  #           html=TRUE,
-  #           closeOnClickOutside = TRUE,
-  #           confirmButtonText = "Let's go!",
-  #           size = "m",
-  #           session = session
-  #           )
+  
 observe({
         click("help_tab1")
         
@@ -359,7 +349,7 @@ observe({
     }
     # print(tibble(temp_df))
     stock_list_long <- temp_df
-    # stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
+    stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
     # for (value in 1:nrow(stock_list_long)){
     #   if (value == 1){
     #     stock_list_long$Select[value] <- sprintf('<input type="radio" name="rdbtn" value="%s" checked="checked"/>', value)
@@ -369,10 +359,10 @@ observe({
     #   }
     # }
     # stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s" checked/>', 1)
-    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s"/>', 1:nrow(stock_list_long))
+    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s" checked/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
       relocate(Select, .before = StockKeyLabel)
-    print(tibble(stock_list_long))
+    # print(tibble(stock_list_long))
   })
 
   # res_mod <- reactive({
@@ -408,8 +398,8 @@ observe({
                                       "Advice category" = AdviceCategory,
                                       "Advice doi" = doi,
                                       "Fisheries Overview doi" = FO_doi,
-                                      "SAG data" = SAG_url,
-                                      "VISA tool" = visa_url),
+                                      "Assessment data" = SAG_url,
+                                      "GIS data" = visa_url),
     
     escape = FALSE,
     # extensions = "Buttons",
@@ -441,8 +431,8 @@ observe({
   
   ## process selection
   observeEvent(input$rdbtn, {
-    print(input$rdbtn)
-    filtered_row <- res_mod()[input$rdbtn, ]
+    
+    filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
     # updateQueryString(paste0("?StockKeyLabel=", filtered_row$StockKeyLabel), mode = "push")
 
     ###
