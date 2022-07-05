@@ -44,10 +44,7 @@ options(icesSAG.use_token = FALSE)
 #   source("update_SID_data.r")
 # }
 callback <- c(
-  "$('input[name=rdbtn]').on('click', function(){",
-  "  var value = $('input[name=rdbtn]:checked').val();",
-  "  Shiny.setInputValue('rdbtn', value);",
-  "});"
+  "$('input[name=rdbtn]').on('click', function(){ var value = $('input[name=rdbtn]:checked').val(); Shiny.setInputValue('rdbtn', value); }); var btn = document.querySelectorAll('[value=rdbtn_1]')[0]; btn.checked=true;"
 )
 
 ############# Start server function ################
@@ -359,7 +356,7 @@ observe({
     #   }
     # }
     # stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s" checked/>', 1)
-    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s" checked/>', 1:nrow(stock_list_long))
+    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
       relocate(Select, .before = StockKeyLabel)
     # print(tibble(stock_list_long))
@@ -429,6 +426,15 @@ observe({
     callback = JS(callback)
 )
   
+  # observe({
+  #   rdbtn_value_first_row <- paste0("rdbtn_", extract_numeric(res_mod()$Select[1])) #readr::parse_number
+  #   runjs("$(tab).removeClass('disabled');")
+  #   print(rdbtn_value_first_row)
+  # })
+  # observeEvent(input$map1_shape_click, {
+  #   session$sendCustomMessage("rdbtn", 'rdbtn_2')
+  # })
+
   ## process selection
   observeEvent(input$rdbtn, {
     
