@@ -43,9 +43,7 @@ options(icesSAG.use_token = FALSE)
 # ) {
 #   source("update_SID_data.r")
 # }
-callback <- c(
-  "$('input[name=rdbtn]').on('click', function(){ var value = $('input[name=rdbtn]:checked').val(); Shiny.setInputValue('rdbtn', value); }); var btn = document.querySelectorAll('[value=rdbtn_1]')[0]; btn.checked=true;"
-)
+
 
 ############# Start server function ################
 
@@ -423,17 +421,10 @@ observe({
         list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
       )
     ),
-    callback = JS(callback)
+    callback = JS(callback1(res_mod()))
 )
   
-  # observe({
-  #   rdbtn_value_first_row <- paste0("rdbtn_", extract_numeric(res_mod()$Select[1])) #readr::parse_number
-  #   runjs("$(tab).removeClass('disabled');")
-  #   print(rdbtn_value_first_row)
-  # })
-  # observeEvent(input$map1_shape_click, {
-  #   session$sendCustomMessage("rdbtn", 'rdbtn_2')
-  # })
+  
 
   ## process selection
   observeEvent(input$rdbtn, {
