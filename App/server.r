@@ -43,12 +43,7 @@ options(icesSAG.use_token = FALSE)
 # ) {
 #   source("update_SID_data.r")
 # }
-callback <- c(
-  "$('input[name=rdbtn]').on('click', function(){",
-  "  var value = $('input[name=rdbtn]:checked').val();",
-  "  Shiny.setInputValue('rdbtn', value);",
-  "});"
-)
+
 
 ############# Start server function ################
 
@@ -359,7 +354,7 @@ observe({
     #   }
     # }
     # stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="%s" checked/>', 1)
-    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s" checked/>', 1:nrow(stock_list_long))
+    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
       relocate(Select, .before = StockKeyLabel)
     # print(tibble(stock_list_long))
@@ -426,9 +421,11 @@ observe({
         list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
       )
     ),
-    callback = JS(callback)
+    callback = JS(callback1(res_mod()))
 )
   
+  
+
   ## process selection
   observeEvent(input$rdbtn, {
     
