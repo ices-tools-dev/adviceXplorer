@@ -468,7 +468,7 @@ createLink_advice_pdf <- function(df) {
 
 
 callback1 <- function(df) {
-  value_rdbtn_to_preSelect <- paste0("rdbtn_", extract_numeric(df$Select[1]))
+  value_rdbtn_to_preSelect <- paste0("rdbtn_", readr::parse_number(df$Select[1]))
   stringjs <- paste0("$('input[name=rdbtn]').on('click', function(){ var value = $('input[name=rdbtn]:checked').val(); Shiny.setInputValue('rdbtn', value); }); var btn = document.querySelectorAll('[value=", value_rdbtn_to_preSelect, "]')[0].click(); btn.checked=true;")
   return(stringjs)
 }
