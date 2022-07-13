@@ -49,9 +49,9 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-# stock_name <- "wit.27.3a47d"
-# year <- 2020
-# catch_scenario_list <- get_Advice_View_info(stock_name, year)
+stock_name <- "wit.27.3a47d"
+year <- 2020
+catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
 #' Downloads ...
@@ -150,7 +150,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   catch_scenario_table <- catch_scenario_table %>%
     pivot_wider(
       names_from = c(aK_ID, aK_Label, yearLabel, unit, stockDataType),
-      names_glue = "{aK_Label} ({yearLabel})",
+      names_glue = "{aK_Label} ({yearLabel}) _{stockDataType}_",
       values_from = value
     ) %>%
     select(-assessmentKey,-adviceKey, -cS_Basis, -aR_ID) #%>%
@@ -167,7 +167,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   # print("1-------------------")
   return(catch_scenario_table)
 }
-# catch_scenario_table <- get_catch_scenario_table(catch_scenario_list)
+catch_scenario_table <- get_catch_scenario_table(catch_scenario_list)
 
 #' Returns ....
 #'
@@ -260,7 +260,8 @@ standardize_catch_scenario_table <- function(tmp) {
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   
   # Ftotal"
-  pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age", "F")
+  # pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age", "F")
+  pattern <- c("_FTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$F <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -270,7 +271,8 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
   # Total catch"
-  pattern <- c("Total catch", "Catch")
+  # pattern <- c("Total catch", "Catch")
+  pattern <- c("_CatchTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$TotCatch <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -291,7 +293,8 @@ standardize_catch_scenario_table <- function(tmp) {
   }
 
   # % Advice change"
-  pattern <- c("% Advice change", "Advice change", "% advice change")
+  # pattern <- c("% Advice change", "Advice change", "% advice change")
+  pattern <- c("_Advchange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$ADVICEchange <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -299,23 +302,33 @@ standardize_catch_scenario_table <- function(tmp) {
   } else {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
-  
   # SSB"
-  pattern <- c(paste0("SSB (", tmp$Year[1]+1, ")"))
-  subset <- which(names(tmp) == pattern)
-  if (length(subset) == 0) {
-    pattern <- c(paste0("SSB (", tmp$Year[1], ")"))
-    subset <- which(names(tmp) == pattern)
-  }
-
+  # pattern <- c("% Advice change", "Advice change", "% advice change")
+  pattern <- c("_StockSize_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  # tmp_unified$ADVICEchange <- tmp[,c(subset)]
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(SSB = NA)
   } else {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
+  # # SSB"
+  # pattern <- c(paste0("SSB (", tmp$Year[1]+1, ")"))
+  # subset <- which(names(tmp) == pattern)
+  # if (length(subset) == 0) {
+  #   pattern <- c(paste0("SSB (", tmp$Year[1], ")"))
+  #   subset <- which(names(tmp) == pattern)
+  # }
+
+  # if (!any(subset)) {
+  #     tmp_unified <- tmp_unified %>% add_column(SSB = NA)
+  # } else {
+  #     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  # }
   
   # % SSB change "
-  pattern <- c("% SSB change", "SSB change")
+  # pattern <- c("% SSB change", "SSB change")
+  pattern <- c("_StockSizechange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(SSBchange = NA)
@@ -325,6 +338,7 @@ standardize_catch_scenario_table <- function(tmp) {
   
   # print(data.frame(names(tmp_unified)))
   # fwrite(data.frame(names(tmp_unified)), "Data/catch_scen_col_names.csv")
+  # sub(" _.*_", "", a)############################################################ need to run this before saving the names
   fwrite(as.list(names(tmp_unified)), file = "Data/catch_scen_col_names.txt")
 # rename columns to standard names
   colnames(tmp_unified) <- c("Year", "cat","cS_Purpose", "F", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
