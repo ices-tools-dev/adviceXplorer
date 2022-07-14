@@ -666,26 +666,24 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 # })
 
 ##### catch scenarios sentence
-advice_view_sentence <- eventReactive(req(advice_view_info()), {
-  get_Advice_View_sentence(advice_view_info())
+advice_view_summary <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
 })
 ##### new tab in development left side
-output$Advice_Sentence2 <- renderUI({
-  advice_view_sentence()
-  # get_Advice_View_sentence(query$stockkeylabel)
-  # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+output$Advice_Summary <- renderUI({
+  advice_view_summary()
+  
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
-
+advice_view_headline <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_Headline(advice_view_info())
+})
+output$Advice_Headline <- renderUI({
+  advice_view_headline()
+  
+})
 ### F_SSB and chatches plot linked to table
-output$catch_scenario_plot_3 <- renderPlotly({
-  # data_list <- advice_action()
-  # rv <- reactiveValues(
-  #   catches_df = data_list$catches,
-  #   f_df = data_list$f,
-  #   SSB_df = data_list$SSB
-  # )
-  # catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+output$catch_scenario_plot_3 <- renderPlotly({  
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
@@ -751,7 +749,7 @@ output$TAC_timeline <- renderPlotly({
 # })
 observeEvent(input$preview, {
     # Show a modal when the button is pressed
-    shinyalert(title= " Advice Timeline", 
+    shinyalert(title= " Advice Calendar", 
     # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
     tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$tbl_rows_selected))),
             type = "info",
