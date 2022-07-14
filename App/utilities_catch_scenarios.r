@@ -49,8 +49,8 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-stock_name <- "wit.27.3a47d"
-year <- 2020
+stock_name <- "cod.27.47d20"
+year <- 2021
 catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
@@ -283,7 +283,8 @@ standardize_catch_scenario_table <- function(tmp) {
   
   
   # % TAC change"
-  pattern <- c("% TAC ", "TAC", "TAC ", "% TAC")
+  # pattern <- c("% TAC ", "TAC", "TAC ", "% TAC")
+  pattern <- c("_TACchange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$TACchange <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -338,6 +339,7 @@ standardize_catch_scenario_table <- function(tmp) {
   
   # print(data.frame(names(tmp_unified)))
   # fwrite(data.frame(names(tmp_unified)), "Data/catch_scen_col_names.csv")
+  colnames(tmp_unified) <- sub(" _.*_", "", colnames(tmp_unified))
   # sub(" _.*_", "", a)############################################################ need to run this before saving the names
   fwrite(as.list(names(tmp_unified)), file = "Data/catch_scen_col_names.txt")
 # rename columns to standard names
