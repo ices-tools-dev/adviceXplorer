@@ -105,6 +105,21 @@ catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock code:
 # catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
+
+get_Advice_View_sentence_new <- function(catch_scenario_list) {
+
+advice_requester <- catch_scenario_list$adviceRequester
+advice_requester <- gsub("~", ", ", advice_requester)
+
+
+catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
+                                              "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))
+# catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
+return(catch_scenario_advice_sentence)
+}
+
+
+
 # tezst <- get_Advice_View_sentence(stock_name, year)
 #' Returns ....
 #'
