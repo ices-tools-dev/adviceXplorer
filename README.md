@@ -19,3 +19,5 @@ Source for database icon: <a href="https://www.flaticon.com/free-icons/database"
 Source for fisheries overviews icon: <a href="https://www.flaticon.com/free-icons/seafood" title="seafood icons">Seafood icons created by iconixar - Flaticon</a><br/>
 Source for VISA tool icon: <a href="https://www.flaticon.com/free-icons/gps" title="gps icons">Gps icons created by geotatah - Flaticon</a>
 Source for info icon: <a href="https://www.flaticon.com/free-icons/info" title="info icons">Info icons created by Stockio - Flaticon</a>
+
+<a href="https://www.flaticon.com/free-icons/calendar" title="calendar icons">Calendar icons created by Freepik - Flaticon</a>

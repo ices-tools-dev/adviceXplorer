@@ -49,8 +49,8 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-# stock_name <- "wit.27.3a47d"
-# year <- 2020
+# stock_name <- "tur.27.4"
+# year <- 2021
 # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
@@ -76,7 +76,7 @@ get_Advice_View_info <- function(stock_name, year) {
 #'
 #' @export
 #' 
-get_Advice_View_sentence <- function(catch_scenario_list) {
+get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
   # catch_scenario_list <- jsonlite::fromJSON(
   #   URLencode(
   #     # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
@@ -97,14 +97,28 @@ advice_requester <- gsub("~", ", ", advice_requester)
 # advice_requester <- gsub("~", ", ", df$adviceRequester)
 # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 
-catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock code: ", "<b>", catch_scenario_list$stockCode,"</b><br/>",
+catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock description: ", "<b>", StockDescription,"</b><br/>",
+                                              "<font size=", 3, ">","Stock code: ", "<b>", catch_scenario_list$stockCode,"</b><br/>",                                              
                                               "<font size=", 3, ">","Advice requester: ", "<b>", advice_requester,"</b><br/>",
-                                              "<font size=", 3, ">","Assessment year: ", "<b>", catch_scenario_list$assessmentYear,"</b><br/>",
-                                              "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
+                                              "<font size=", 3, ">","Assessment year: ", "<b>", catch_scenario_list$assessmentYear,"</b><br/><br/>",
+                                              # "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
+                                              # "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"
+                                              actionButton(inputId = "preview", label = NULL, style = "top: 1%; left:7%; width: 50px; height: 50px; background: url('calendar.png');  background-size: cover; background-position: center;")
+                                              ))
+# catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
+return(catch_scenario_advice_sentence)
+}
+
+get_Advice_View_Headline <- function(catch_scenario_list) {
+
+catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
                                               "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))
 # catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
+
+
+
 # tezst <- get_Advice_View_sentence(stock_name, year)
 #' Returns ....
 #'
@@ -150,7 +164,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   catch_scenario_table <- catch_scenario_table %>%
     pivot_wider(
       names_from = c(aK_ID, aK_Label, yearLabel, unit, stockDataType),
-      names_glue = "{aK_Label} ({yearLabel})",
+      names_glue = "{aK_Label} ({yearLabel}) _{stockDataType}_",
       values_from = value
     ) %>%
     select(-assessmentKey,-adviceKey, -cS_Basis, -aR_ID) #%>%
@@ -260,7 +274,8 @@ standardize_catch_scenario_table <- function(tmp) {
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   
   # Ftotal"
-  pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age", "F")
+  # pattern <- c("Ftotal", "F_total", "F total", "Total F", "F age", "F")
+  pattern <- c("_FTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$F <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -270,7 +285,8 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   
   # Total catch"
-  pattern <- c("Total catch", "Catch")
+  # pattern <- c("Total catch", "Catch")
+  pattern <- c("_CatchTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$TotCatch <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -281,7 +297,8 @@ standardize_catch_scenario_table <- function(tmp) {
   
   
   # % TAC change"
-  pattern <- c("% TAC ", "TAC", "TAC ", "% TAC")
+  # pattern <- c("% TAC ", "TAC", "TAC ", "% TAC")
+  pattern <- c("_TACchange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$TACchange <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -291,7 +308,8 @@ standardize_catch_scenario_table <- function(tmp) {
   }
 
   # % Advice change"
-  pattern <- c("% Advice change", "Advice change", "% advice change")
+  # pattern <- c("% Advice change", "Advice change", "% advice change")
+  pattern <- c("_Advchange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   # tmp_unified$ADVICEchange <- tmp[,c(subset)]
   if (!any(subset)) {
@@ -299,23 +317,33 @@ standardize_catch_scenario_table <- function(tmp) {
   } else {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
-  
   # SSB"
-  pattern <- c(paste0("SSB (", tmp$Year[1]+1, ")"))
-  subset <- which(names(tmp) == pattern)
-  if (length(subset) == 0) {
-    pattern <- c(paste0("SSB (", tmp$Year[1], ")"))
-    subset <- which(names(tmp) == pattern)
-  }
-
+  # pattern <- c("% Advice change", "Advice change", "% advice change")
+  pattern <- c("_StockSize_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  # tmp_unified$ADVICEchange <- tmp[,c(subset)]
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(SSB = NA)
   } else {
       tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
+  # # SSB"
+  # pattern <- c(paste0("SSB (", tmp$Year[1]+1, ")"))
+  # subset <- which(names(tmp) == pattern)
+  # if (length(subset) == 0) {
+  #   pattern <- c(paste0("SSB (", tmp$Year[1], ")"))
+  #   subset <- which(names(tmp) == pattern)
+  # }
+
+  # if (!any(subset)) {
+  #     tmp_unified <- tmp_unified %>% add_column(SSB = NA)
+  # } else {
+  #     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  # }
   
   # % SSB change "
-  pattern <- c("% SSB change", "SSB change")
+  # pattern <- c("% SSB change", "SSB change")
+  pattern <- c("_StockSizechange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
       tmp_unified <- tmp_unified %>% add_column(SSBchange = NA)
@@ -325,6 +353,8 @@ standardize_catch_scenario_table <- function(tmp) {
   
   # print(data.frame(names(tmp_unified)))
   # fwrite(data.frame(names(tmp_unified)), "Data/catch_scen_col_names.csv")
+  colnames(tmp_unified) <- sub(" _.*_", "", colnames(tmp_unified))
+  # sub(" _.*_", "", a)############################################################ need to run this before saving the names
   fwrite(as.list(names(tmp_unified)), file = "Data/catch_scen_col_names.txt")
 # rename columns to standard names
   colnames(tmp_unified) <- c("Year", "cat","cS_Purpose", "F", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
