@@ -672,8 +672,7 @@ advice_view_summary <- eventReactive(req(advice_view_info()), {
 ##### new tab in development left side
 output$Advice_Summary <- renderUI({
   advice_view_summary()
-  # get_Advice_View_sentence(query$stockkeylabel)
-  # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+  
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
 advice_view_headline <- eventReactive(req(advice_view_info()), {
@@ -681,18 +680,10 @@ advice_view_headline <- eventReactive(req(advice_view_info()), {
 })
 output$Advice_Headline <- renderUI({
   advice_view_headline()
-  # get_Advice_View_sentence(query$stockkeylabel)
-  # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+  
 })
 ### F_SSB and chatches plot linked to table
-output$catch_scenario_plot_3 <- renderPlotly({
-  # data_list <- advice_action()
-  # rv <- reactiveValues(
-  #   catches_df = data_list$catches,
-  #   f_df = data_list$f,
-  #   SSB_df = data_list$SSB
-  # )
-  # catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
+output$catch_scenario_plot_3 <- renderPlotly({  
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())

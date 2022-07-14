@@ -49,9 +49,9 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-stock_name <- "cod.27.47d20"
-year <- 2021
-catch_scenario_list <- get_Advice_View_info(stock_name, year)
+# stock_name <- "tur.27.4"
+# year <- 2021
+# catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
 #' Downloads ...
@@ -181,7 +181,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   # print("1-------------------")
   return(catch_scenario_table)
 }
-catch_scenario_table <- get_catch_scenario_table(catch_scenario_list)
+# catch_scenario_table <- get_catch_scenario_table(catch_scenario_list)
 
 #' Returns ....
 #'
