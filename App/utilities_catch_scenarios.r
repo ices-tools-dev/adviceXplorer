@@ -76,7 +76,7 @@ catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #'
 #' @export
 #' 
-get_Advice_View_sentence <- function(catch_scenario_list) {
+get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
   # catch_scenario_list <- jsonlite::fromJSON(
   #   URLencode(
   #     # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
@@ -97,20 +97,19 @@ advice_requester <- gsub("~", ", ", advice_requester)
 # advice_requester <- gsub("~", ", ", df$adviceRequester)
 # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 
-catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock code: ", "<b>", catch_scenario_list$stockCode,"</b><br/>",
+catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock description: ", "<b>", StockDescription,"</b><br/>",
+                                              "<font size=", 3, ">","Stock code: ", "<b>", catch_scenario_list$stockCode,"</b><br/>",                                              
                                               "<font size=", 3, ">","Advice requester: ", "<b>", advice_requester,"</b><br/>",
-                                              "<font size=", 3, ">","Assessment year: ", "<b>", catch_scenario_list$assessmentYear,"</b><br/>",
-                                              "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
-                                              "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))
+                                              "<font size=", 3, ">","Assessment year: ", "<b>", catch_scenario_list$assessmentYear,"</b><br/><br/>",
+                                              # "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
+                                              # "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"
+                                              actionButton(inputId = "preview", label = NULL, style = "top: 1%; left:7%; width: 50px; height: 50px; background: url('calendar.png');  background-size: cover; background-position: center;")
+                                              ))
 # catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
 
-get_Advice_View_sentence_new <- function(catch_scenario_list) {
-
-advice_requester <- catch_scenario_list$adviceRequester
-advice_requester <- gsub("~", ", ", advice_requester)
-
+get_Advice_View_Headline <- function(catch_scenario_list) {
 
 catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
                                               "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))

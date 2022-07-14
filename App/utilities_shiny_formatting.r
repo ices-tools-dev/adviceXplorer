@@ -230,9 +230,9 @@ catch_scenarios_left_panel <- sidebarPanel(
   panel(
     title = "Headline advice",
     fillPage(
-      tags$style(type = "text/css", "#Advice_Sentence2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+      tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
       
-      withSpinner(htmlOutput("Advice_Sentence2", height = "10%", width = "100%"))
+      withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%"))
     )
   ),
   panel(
@@ -256,9 +256,10 @@ catch_scenarios_left_panel <- sidebarPanel(
 catch_scenarios_right_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
+    withSpinner(htmlOutput("Advice_Headline", height = "10%", width = "100%"))
     # htmlOutput("Advice_Sentence2", height = "10%", width = "100%"),
     # actionButton("preview", "Advice Calendar", style="font-size:150%; padding:10px;")# style="color: #fff; background-color: #337ab7; border-color: #2e6da4; padding:10px; font-size:150%")
-    actionButton(inputId = "preview", label = NULL, style = "top: 1%; left:7%; width: 50px; height: 50px; background: url('calendar.png');  background-size: cover; background-position: center;")
+    # actionButton(inputId = "preview", label = NULL, style = "top: 1%; left:7%; width: 50px; height: 50px; background: url('calendar.png');  background-size: cover; background-position: center;")
   #   title = "Advice timeline",
   #   fillPage(
   #     tags$style(type = "text/css", "#advice_timeline overflow-y: auto; !important;"), #{height: calc(20vh - 10px); calc(100vw - 10px)}

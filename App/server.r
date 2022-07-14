@@ -666,17 +666,24 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 # })
 
 ##### catch scenarios sentence
-advice_view_sentence <- eventReactive(req(advice_view_info()), {
-  get_Advice_View_sentence(advice_view_info())
+advice_view_summary <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
 })
 ##### new tab in development left side
-output$Advice_Sentence2 <- renderUI({
-  advice_view_sentence()
+output$Advice_Summary <- renderUI({
+  advice_view_summary()
   # get_Advice_View_sentence(query$stockkeylabel)
   # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
-
+advice_view_headline <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_Headline(advice_view_info())
+})
+output$Advice_Headline <- renderUI({
+  advice_view_headline()
+  # get_Advice_View_sentence(query$stockkeylabel)
+  # HTML(paste0("<b>","<font size=", 5, ">", "Headline advice:","</font>","</b>", br(),"<font size=", 3, ">", advice_view_sentence(),"</font>"))
+})
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({
   # data_list <- advice_action()
