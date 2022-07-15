@@ -34,6 +34,8 @@ library(RColorBrewer)
 library(shinycssloaders)
 library(tidyr)
 library(rintrojs)
+library(scales)
+library(ggradar)
 
 
 

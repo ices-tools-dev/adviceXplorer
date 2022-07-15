@@ -1180,14 +1180,22 @@ catch_scenarios_plot1 <- function(tmp) {
     not_all_na <- function(x) any(!is.na(x))
     tmp <- tmp %>% select(where(not_all_na))
     
+    # data_num2 <- select_if(tmp, is.numeric)
+    # data_num2 <- data_num2 %>% na.omit() %>% select(-c(Year))
+
+    # min_val <- min(data_num2)
+    # max_val <- max(data_num2)
     
     rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
+    tmp <- tmp %>% select(-c(Year)) %>% na.omit() %>% mutate_if(is.numeric, rescale_function)
 
-
-    tmp_scaled <- tmp %>%
-        select(-Year) %>%
-        mutate_if(is.numeric, rescale_function)
-    tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSB change")
+    # tmp_scaled <- tmp %>%
+    #     select(-c(Year, F, TotCatch,SSB)) %>% na.omit() %>%
+    #     mutate_if(is.numeric, rescale_function)
+    # tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSB change")
+    
+    
+    
     # zz <- ggplotly(
     #     ggradar(tmp_scaled %>% select(-cS_Purpose), 
     #     values.radar = c("0%", "50%", "100%"), 
@@ -1197,11 +1205,12 @@ catch_scenarios_plot1 <- function(tmp) {
     #     legend.position = "bottom")
     # )
     # zz
+    
     zz <- ggplotly(
-        ggradar(tmp_scaled %>% select(-cS_Purpose),
+        ggradar(tmp %>% select(-cS_Purpose),
             base.size = 10,
             font.radar = "sans",
-            values.radar = c("0%", "50%", "100%"),
+            values.radar = c("-100%", "0%","100%"),
             # axis.labels = colnames(catch_tab_stand_scaled)[-1],
             # grid.min = 0,
             # grid.mid = 0.5,
@@ -1236,7 +1245,8 @@ catch_scenarios_plot1 <- function(tmp) {
             plot.title = "",
             legend.text.size = 12,
             legend.position = "right"
-        )
+        )#,
+        # height = 600, width=600
     )
     # zz <- zz %>% layout(autosize = T, margin = list(l = 0, r = 100, b = 0, t = 0, pad = 4))
 
@@ -1262,6 +1272,8 @@ catch_scenarios_plot1 <- function(tmp) {
     # )
     # zz
 }
+
+# catch_scenarios_plot1(catch_scen_table_perc)
 
 # catch_scenarios_plot2 <- function(tmp) {
 #     tmp$Year <- 2022
