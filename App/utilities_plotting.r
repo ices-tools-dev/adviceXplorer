@@ -1208,7 +1208,7 @@ catch_scenarios_plot1 <- function(tmp) {
     
     zz <- ggplotly(
         ggradar(tmp %>% select(-cS_Purpose),
-            base.size = 10,
+            base.size = 8,
             font.radar = "sans",
             values.radar = c("-100%", "0%","100%"),
             # axis.labels = colnames(catch_tab_stand_scaled)[-1],
@@ -1233,7 +1233,7 @@ catch_scenarios_plot1 <- function(tmp) {
             label.gridline.mid = TRUE,
             label.gridline.max = TRUE,
             axis.label.offset = 1.20,
-            axis.label.size = 10,
+            axis.label.size = 8,
             axis.line.colour = "grey",
             group.line.width = 1.5,
             group.point.size = 6,
@@ -1241,9 +1241,9 @@ catch_scenarios_plot1 <- function(tmp) {
             background.circle.colour = "#D7D6D1",
             background.circle.transparency = 0.2,
             plot.legend = TRUE, # if (nrow(catch_tab_stand_scaled) > 1) TRUE else FALSE,
-            legend.title = "Catch Scenarios:",
+            legend.title = "Scenarios:",
             plot.title = "",
-            legend.text.size = 12,
+            legend.text.size = 8,
             legend.position = "right"
         )#,
         # height = 600, width=600

@@ -604,6 +604,10 @@ advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
   get_Advice_View_info(query$stockkeylabel, query$year)
 })
 
+advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
+  get_Advice_View_info(query$stockkeylabel, query$year-1)
+})
+
 # output$Advice_View <- DT::renderDT(
 #     advice_view_info(),
 #     selection = "none",
@@ -629,6 +633,16 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
   standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()))
 })
 
+##### catch scenarios table previous year in percentages (for radial plot)
+catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
+  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  # scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year, catch_scenario_table())
+})
+
+catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
+  # standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
+})
 # output$catch_scenario_table <- DT::renderDT(
 #   catch_scenario_table(),
 #   selection = "none",
@@ -653,7 +667,9 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-# output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
+output$Radial_plot <- renderPlotly({
+  catch_scenarios_plot1(catch_scenario_table_percentages())
+})
 
 # output$catch_scenario_plot_2 <- renderPlotly({
 #   data_list <- advice_action()
@@ -671,16 +687,14 @@ advice_view_summary <- eventReactive(req(advice_view_info()), {
 })
 ##### new tab in development left side
 output$Advice_Summary <- renderUI({
-  advice_view_summary()
-  
+  advice_view_summary()  
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
 advice_view_headline <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Headline(advice_view_info())
 })
 output$Advice_Headline <- renderUI({
-  advice_view_headline()
-  
+  advice_view_headline()  
 })
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({  

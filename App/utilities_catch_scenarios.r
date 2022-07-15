@@ -49,9 +49,9 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-stock_name <- "ple.27.420"
-year <- 2020
-catch_scenario_list <- get_Advice_View_info(stock_name, year)
+# stock_name <- "ple.27.420"
+# year <- 2020
+# catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
 #'
 #' Downloads ...
@@ -181,8 +181,8 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   # print("1-------------------")
   return(catch_scenario_table)
 }
-catch_scenario_table_2021 <- get_catch_scenario_table(catch_scenario_list)
-catch_scenario_table_2020 <- get_catch_scenario_table(catch_scenario_list)
+# catch_scenario_table_2021 <- get_catch_scenario_table(catch_scenario_list)
+# catch_scenario_table_2020 <- get_catch_scenario_table(catch_scenario_list)
 #' Returns ....
 #'
 #' Downloads ...
@@ -376,8 +376,8 @@ standardize_catch_scenario_table <- function(tmp) {
 #   locations = NULL,
 #   placement =  "right"
 # )
-catch_scenario_table_st_2020 <- standardize_catch_scenario_table(catch_scenario_table_2020)
-catch_scenario_table_st_2021 <- standardize_catch_scenario_table(catch_scenario_table_2021)
+# catch_scenario_table_st_2020 <- standardize_catch_scenario_table(catch_scenario_table_2020)
+# catch_scenario_table_st_2021 <- standardize_catch_scenario_table(catch_scenario_table_2021)
 #' Returns ....
 #'
 #' Downloads ...
@@ -440,6 +440,7 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
   catch_scen_table_perc$SSB <- (new_catch_scen_table$SSB - Basis$SSB) / Basis$SSB *100
   catch_scen_table_perc$`SSB change` <- new_catch_scen_table$`SSB change`
+  # print(catch_scen_table_perc)
   return(catch_scen_table_perc)
 }
 # scale_catch_scenarios_for_radialPlot(catch_scenario_table_st_2020, catch_scenario_table_st_2021)
