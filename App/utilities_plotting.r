@@ -1685,7 +1685,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
 
 
 
-html_timeline <- function(timeL, tbl_sid, tbl_rows_selected) {
+html_timeline <- function(timeL, tbl_sid, radio_button) {
     ## this gets the initial dates from the advice view
     
     # timeL <- get_Advice_View_info(stock_name, year)
@@ -1706,7 +1706,8 @@ html_timeline <- function(timeL, tbl_sid, tbl_rows_selected) {
     applicable_until <- format(applicable_until, "%d/%m/%Y")
 
     ## This block gets the name of the working group from the currently selected row
-    filtered_row <- tbl_sid[tbl_rows_selected, ]
+    filtered_row <- tbl_sid[str_detect(tbl_sid$Select, regex(paste0("\\b", radio_button,"\\b"))), ]
+    # filtered_row <- tbl_sid[tbl_rows_selected, ]
     WG <- filtered_row$ExpertGroup
     # WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
 

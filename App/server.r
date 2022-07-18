@@ -765,7 +765,7 @@ observeEvent(input$preview, {
     # Show a modal when the button is pressed
     shinyalert(title= " Advice Calendar", 
     # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
-    tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$tbl_rows_selected))),
+    tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$rdbtn))),
             type = "info",
             html=TRUE,
             closeOnClickOutside = TRUE,
