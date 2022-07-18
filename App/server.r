@@ -667,9 +667,7 @@ catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previ
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-output$Radial_plot <- renderPlotly({
-  catch_scenarios_plot1(catch_scenario_table_percentages())
-})
+
 
 # output$catch_scenario_plot_2 <- renderPlotly({
 #   data_list <- advice_action()
@@ -726,46 +724,18 @@ output$catch_scenarios <- renderUI({
 
 
 output$TAC_timeline <- renderPlotly({
-  # data_list <- advice_action()
-  # rv <- reactiveValues(
-  #   catches_df = data_list$catches,
-  # )
-  TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
+    TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
+output$Radial_plot <- renderPlotly({
+  catch_scenarios_plot1(catch_scenario_table_percentages())
+})
 
-### right side
-# output$advice_timeline <- renderTimevis({
-#   timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected))
-
-
-
-# #   style <- "
-# #  .vis-timeline {
-# #    border-color: #269026;
-# #    background-color: rgb(246,250,251);
-# #    font-size: 20px;
-# #    font-family: Sans-serif;
-# #    color: #9AC2B7;
-# #  }
-
-# #  .vis-item {
-# #    border: 1px solid #E8EAEA;
-# #    font-size: 20pt;
-# #    background: #9AC2B7;
-# #    font-family: Sans-serif;
-# #    padding: 5px;
-# #  }
-# #  "
-# #   tagList(tags$style(style), tv)
-
-#   # htmltools::html_print(tv)
-# })
 observeEvent(input$preview, {
     # Show a modal when the button is pressed
     shinyalert(title= " Advice Calendar", 
     # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
-    tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$rdbtn))),
+    tags$body(HTML(html_calendar(advice_view_info(), res_mod(), input$rdbtn))),
             type = "info",
             html=TRUE,
             closeOnClickOutside = TRUE,
@@ -831,13 +801,13 @@ selected_scenario <- reactive({
 
 
 
- observeEvent(input$tbl_rows_selected, {
-    filtered_row <- res_mod()[input$tbl_rows_selected, ]
-    WG <- filtered_row$ExpertGroupUrl
-    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
-    print(WG)
+#  observeEvent(input$rdbtn, {
+#     filtered_row <- res_mod()[input$tbl_rows_selected, ]
+#     WG <- filtered_row$ExpertGroupUrl
+#     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+#     print(WG)
 
-})
+# })
 
 ##### catch scenarios sentence
 footnotes <- eventReactive(req(advice_view_info()), {
