@@ -117,7 +117,14 @@ catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Head
 return(catch_scenario_advice_sentence)
 }
 
+get_Stock_info <- function(stockcode, StockDescription, assessmentYear) {
 
+stock_info_sentence <- HTML(paste0("<font size=", 3, ">","Stock description: ", "<b>", StockDescription,"</b><br/>",
+                                              "<font size=", 3, ">","Stock code: ", "<b>", stockcode,"</b><br/>",
+                                              "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"))
+# catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
+return(stock_info_sentence)
+}
 
 # tezst <- get_Advice_View_sentence(stock_name, year)
 #' Returns ....

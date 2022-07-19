@@ -140,6 +140,7 @@ navbarPage(
             tabPanel(
                 "Development over time",
                 actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+                withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel,
                 mainPanel = SAG_plots_righ_panel
@@ -171,6 +172,7 @@ navbarPage(
             tabPanel(
                 "Quality of assessment",
                 actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+                withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
                 quality_of_assessment
                 # panel(
                 #     style = "height: 90vh; overflow-y: auto;",

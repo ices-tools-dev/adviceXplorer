@@ -521,6 +521,10 @@ observe({
 #   SAG_stamp <- eventReactive( req(SAG_data_reactive()), {
 #     get_SAG_stamp(SAG_data_reactive())
 # })
+  output$stock_infos <- renderUI({
+  get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
+})
+
 
   output$plot1 <- renderPlotly(    
       ICES_plot_1(SAG_data_reactive())
@@ -551,6 +555,9 @@ observe({
     quality_assessment_data_local(stock_name, year)
   })
 
+  output$stock_infos2 <- renderUI({
+    get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
+  })
   output$plot5 <- renderPlotly(
       ICES_plot_5(advice_action_quality())
   )
@@ -700,11 +707,10 @@ output$catch_scenario_plot_3 <- renderPlotly({
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
 
-# catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
-# # print(query$stockkeylabel)
-#   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-# })
 
+
+
+########## Historical catches panel
 test_table <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table(), query$stockkeylabel,query$year)
@@ -721,17 +727,13 @@ output$catch_scenarios <- renderUI({
         multiple = TRUE
       )
 })
-
-
 output$TAC_timeline <- renderPlotly({
     TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
+############ Radial plot panel
 output$catch_scenarios_radial <- renderUI({
-  # req(query$stockkeylabel, query$year, catch_scenario_table())
-  # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-
-  selectizeInput(
+    selectizeInput(
         inputId = "catch_choice_radial",
         label = "Select a scenario",
         choices = unique(catch_scenario_table_percentages()$cat),
@@ -743,6 +745,7 @@ output$Radial_plot <- renderPlotly({
   catch_scenarios_plot1(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
+###### Calendar of stock with modal
 observeEvent(input$preview, {
     # Show a modal when the button is pressed
     shinyalert(title= " Advice Calendar", 
