@@ -255,6 +255,7 @@ catch_scenarios_left_panel <- sidebarPanel(
     fillPage(
       tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
       # uiOutput("catch_scenarios"),
+      uiOutput("catch_scenarios_radial"),
       withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
     )
   )

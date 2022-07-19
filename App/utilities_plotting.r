@@ -1166,7 +1166,7 @@ figure_1_plots <- function(data1, data2, data3, data4,
 #' @export
 #' 
 ####### plots 1 catch scenarios
-catch_scenarios_plot1 <- function(tmp) {
+catch_scenarios_plot1 <- function(tmp, catch_scenarios) {
     # tmp <- get_catch_scenario_table(stock_name = "cod.27.47d20") #ple.27.7d
     # tmp$Year <- 2022
 
@@ -1207,7 +1207,7 @@ catch_scenarios_plot1 <- function(tmp) {
     # zz
     
     zz <- ggplotly(
-        ggradar(tmp %>% select(-cS_Purpose),
+        ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
             base.size = 8,
             font.radar = "sans",
             values.radar = c("-100%", "0%","100%"),

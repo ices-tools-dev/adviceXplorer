@@ -727,8 +727,20 @@ output$TAC_timeline <- renderPlotly({
     TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
+output$catch_scenarios_radial <- renderUI({
+  # req(query$stockkeylabel, query$year, catch_scenario_table())
+  # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
+
+  selectizeInput(
+        inputId = "catch_choice_radial",
+        label = "Select a scenario",
+        choices = unique(catch_scenario_table_percentages()$cat),
+        selected = "F = 0",
+        multiple = TRUE
+      )
+})
 output$Radial_plot <- renderPlotly({
-  catch_scenarios_plot1(catch_scenario_table_percentages())
+  catch_scenarios_plot1(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 observeEvent(input$preview, {
