@@ -98,7 +98,7 @@ selectize_panel <-
         inputId = "selected_locations",
         label = "ICES Ecoregions",
         choices = sort(shape_eco$Ecoregion),
-        selected = NULL,
+        selected = "Greater North Sea",
         multiple = TRUE,
         width = "100%",
         options = list(
@@ -161,7 +161,7 @@ selectize_panel <-
   )
 ################################## SAG plots tab
 SAG_plots_left_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   panel(
     title = "1",
     # fillPage(
@@ -179,7 +179,7 @@ SAG_plots_left_panel <- sidebarPanel(
 )
 
 SAG_plots_righ_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   panel(
     title = "2",
     fillPage(
