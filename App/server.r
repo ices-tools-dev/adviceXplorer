@@ -521,6 +521,10 @@ observe({
 #   SAG_stamp <- eventReactive( req(SAG_data_reactive()), {
 #     get_SAG_stamp(SAG_data_reactive())
 # })
+  output$stock_infos <- renderUI({
+  get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
+})
+
 
   output$plot1 <- renderPlotly(    
       ICES_plot_1(SAG_data_reactive())
@@ -551,6 +555,9 @@ observe({
     quality_assessment_data_local(stock_name, year)
   })
 
+  output$stock_infos2 <- renderUI({
+    get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
+  })
   output$plot5 <- renderPlotly(
       ICES_plot_5(advice_action_quality())
   )
@@ -604,6 +611,10 @@ advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
   get_Advice_View_info(query$stockkeylabel, query$year)
 })
 
+advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
+  get_Advice_View_info(query$stockkeylabel, query$year-1)
+})
+
 # output$Advice_View <- DT::renderDT(
 #     advice_view_info(),
 #     selection = "none",
@@ -629,6 +640,16 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
   standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()))
 })
 
+##### catch scenarios table previous year in percentages (for radial plot)
+catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
+  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  # scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year, catch_scenario_table())
+})
+
+catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
+  # standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
+})
 # output$catch_scenario_table <- DT::renderDT(
 #   catch_scenario_table(),
 #   selection = "none",
@@ -653,7 +674,7 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 #           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
 #           "}"))
 # )
-# output$catch_scenario_plot_1 <- renderPlotly(catch_scenarios_plot1(catch_scenario_table()))
+
 
 # output$catch_scenario_plot_2 <- renderPlotly({
 #   data_list <- advice_action()
@@ -671,16 +692,14 @@ advice_view_summary <- eventReactive(req(advice_view_info()), {
 })
 ##### new tab in development left side
 output$Advice_Summary <- renderUI({
-  advice_view_summary()
-  
+  advice_view_summary()  
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
 advice_view_headline <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Headline(advice_view_info())
 })
 output$Advice_Headline <- renderUI({
-  advice_view_headline()
-  
+  advice_view_headline()  
 })
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({  
@@ -688,11 +707,10 @@ output$catch_scenario_plot_3 <- renderPlotly({
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
 
-# catches_AND_scenarios_table <- observeEvent(query$stockkeylabel,query$year,catch_scenario_table(),{
-# # print(query$stockkeylabel)
-#   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-# })
 
+
+
+########## Historical catches panel
 test_table <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table(), query$stockkeylabel,query$year)
@@ -709,49 +727,30 @@ output$catch_scenarios <- renderUI({
         multiple = TRUE
       )
 })
-
-
 output$TAC_timeline <- renderPlotly({
-  # data_list <- advice_action()
-  # rv <- reactiveValues(
-  #   catches_df = data_list$catches,
-  # )
-  TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
+    TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
+############ Radial plot panel
+output$catch_scenarios_radial <- renderUI({
+    selectizeInput(
+        inputId = "catch_choice_radial",
+        label = "Select a scenario",
+        choices = unique(catch_scenario_table_percentages()$cat),
+        selected = "F = 0",
+        multiple = TRUE
+      )
+})
+output$Radial_plot <- renderPlotly({
+  catch_scenarios_plot1(catch_scenario_table_percentages(), input$catch_choice_radial)
+})
 
-### right side
-# output$advice_timeline <- renderTimevis({
-#   timevis(get_advice_timeline(query$stockkeylabel, res_mod(), input$tbl_rows_selected))
-
-
-
-# #   style <- "
-# #  .vis-timeline {
-# #    border-color: #269026;
-# #    background-color: rgb(246,250,251);
-# #    font-size: 20px;
-# #    font-family: Sans-serif;
-# #    color: #9AC2B7;
-# #  }
-
-# #  .vis-item {
-# #    border: 1px solid #E8EAEA;
-# #    font-size: 20pt;
-# #    background: #9AC2B7;
-# #    font-family: Sans-serif;
-# #    padding: 5px;
-# #  }
-# #  "
-# #   tagList(tags$style(style), tv)
-
-#   # htmltools::html_print(tv)
-# })
+###### Calendar of stock with modal
 observeEvent(input$preview, {
     # Show a modal when the button is pressed
     shinyalert(title= " Advice Calendar", 
     # includeHTML("D:/Profile/Documents/GitHub/online-advice/Shiny/Scripts_in_development/timeline3.html"),
-    tags$body(HTML(html_timeline(advice_view_info(), res_mod(), input$tbl_rows_selected))),
+    tags$body(HTML(html_calendar(advice_view_info(), res_mod(), input$rdbtn))),
             type = "info",
             html=TRUE,
             closeOnClickOutside = TRUE,
@@ -817,13 +816,13 @@ selected_scenario <- reactive({
 
 
 
- observeEvent(input$tbl_rows_selected, {
-    filtered_row <- res_mod()[input$tbl_rows_selected, ]
-    WG <- filtered_row$ExpertGroupUrl
-    WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
-    print(WG)
+#  observeEvent(input$rdbtn, {
+#     filtered_row <- res_mod()[input$tbl_rows_selected, ]
+#     WG <- filtered_row$ExpertGroupUrl
+#     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
+#     print(WG)
 
-})
+# })
 
 ##### catch scenarios sentence
 footnotes <- eventReactive(req(advice_view_info()), {

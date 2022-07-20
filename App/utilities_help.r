@@ -83,11 +83,11 @@ help_datatable <- function() {
             "#plot6",
             "#plot7",
             # Advice
-            "#Advice_Sentence2",
+            "#Advice_Summary",
+            "#preview",
             "#catch_scenario_plot_3",
             "#catch_choice-label",
-            "#TAC_timeline",
-            "#preview",
+            "#TAC_timeline",            
             "#table",
             "#footnotes"
         ),
@@ -117,10 +117,10 @@ help_datatable <- function() {
             "REC lorem ipsum",
             # Advice
             "<font size='4'>A few information about the stock, the assessment year and the advice requesters</font>",
+            "<font size='4'>You can click here to see the calendar (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
             "<font size='4'>Relationshp between F, SSB, Total Catches and the differen basis of advice..... lorem ipsum</font>",
             "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
-            "<font size='4'>Catches plot and effect on catches of different scenarios</font>",
-            "<font size='4'>You can click here to see the timeline (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
+            "<font size='4'>Catches plot and effect on catches of different scenarios</font>",            
             "<font size='4'>chatch scenario table....lorem ipsun</font>",
             "<font size='4'>Footnotes of catch scenario table</font>"
         ),
