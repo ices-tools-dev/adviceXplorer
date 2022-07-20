@@ -228,7 +228,7 @@ quality_of_assessment <- splitLayout(
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
-    title = "Headline advice",
+    title = "Advice Summary",
     fillPage(
       tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
       
