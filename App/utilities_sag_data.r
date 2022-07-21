@@ -1,12 +1,12 @@
 options(icesSAG.use_token = FALSE)
 
-#' Returns ....
-#'
-#' Downloads ...
+
+#' Downloads SAG data using icesSAG library and web services
 #'
 #' @param stock_name
+#' @param year
 #'
-#' @return
+#' @return an aggregated dataframe which includes SAGsummary and SAG reference points
 #'
 #' @note
 #' Can add some helpful information here
@@ -15,7 +15,7 @@ options(icesSAG.use_token = FALSE)
 #'
 #' @examples
 #' \dontrun{
-#'
+#'access_sag_data("wit.27.3a47d", 2019)
 #' }
 #'
 #' @references
@@ -40,13 +40,12 @@ access_sag_data <- function(stock_code, year) {
     #print(data_sag %>% tibble())
 }
 
-#' Returns ....
-#'
-#' Downloads ...
+#' Reads SAG data that is stored locally
 #'
 #' @param stock_name
+#' @param year
 #'
-#' @return
+#' @return an aggregated dataframe which includes SAG summary and SAG reference points
 #'
 #' @note
 #' Can add some helpful information here
@@ -55,7 +54,7 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @examples
 #' \dontrun{
-#'
+#'access_sag_data_local("wit.27.3a47d", 2019)
 #' }
 #'
 #' @references
@@ -175,20 +174,21 @@ access_sag_data_local <- function(stock_code, year) {
 
 #' Returns ....
 #'
-#' Downloads ...
+#' Reads SAG data stored locally for multiple years prior to the year provided (ex year = 2019, years of data returned = c(2017,2018,2019))
 #'
 #' @param stock_name
-#'
-#' @return
+#' @param year
+#' 
+#' @return an aggregated dataframe of SAG data from different years
 #'
 #' @note
 #' Can add some helpful information here
 #'
-#' @seealso
+#' @seealso access_sag_data_local()
 #'
 #' @examples
 #' \dontrun{
-#'quality_assessment_data_local("wit.27.3a47d")
+#'quality_assessment_data_local("wit.27.3a47d", 2021)
 #' }
 #'
 #' @references
@@ -200,13 +200,13 @@ access_sag_data_local <- function(stock_code, year) {
 # function to dowload the quality assessemnt data
 quality_assessment_data_local <- function(stock_code, year){
 
-years <- c(2021, 2020, 2019, 2018, 2017)
+years <- c(2022, 2021, 2020, 2019, 2018, 2017)
 years <- years[years <= year]
 datalist = list()
 
 for (year in years) {
     # print(year)
-    data_temp <- try(access_sag_data_local(stock_code, year)) # "had.27.6b"
+    data_temp <- try(access_sag_data_local(stock_code, year)) 
 
     ###############
     if (isTRUE(class(data_temp) == "try-error")) {
@@ -214,7 +214,7 @@ for (year in years) {
     }
     else {
         #
-        data_temp <- filter(data_temp, between(Year, 2005, 2021))
+        data_temp <- filter(data_temp, between(Year, 2005, 2022))
         data_temp <- data_temp %>% select(Year,
                                             recruitment, RecruitmentAge,
                                             SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
@@ -262,13 +262,11 @@ return(big_data)
 
 
 
-#' Returns ....# ### function for getting ices_areas for each stock
-#'
-#' Downloads ...
+#' Function for getting ices_areas for each stock
 #'
 #' @param stock_name
 #'
-#' @return
+#' @return the list of ICES areas for a particular stock
 #'
 #' @note
 #' Can add some helpful information here
@@ -292,16 +290,3 @@ getStockAreas <- function(stockCode) {
   areas$Key
 }
 
-
-# details <- getCodeDetail(code = "ane.27.9a", code_type = "ICES_StockCode")
-# details <- getCodeDetail(code = "her.27.irls", code_type = "ICES_StockCode")
-# areas <-  getStockAreas("her.27.irls")
-# areas
-# class(areas)
-# class(stock_list_all$EcoRegion)
-
-# str_flatten(getStockAreas("her.27.irls"), ", ")
-
-# library(plyr)
-# test <- sapply(stock_list_all$StockKeyLabel[1:10], getStockAreas)
-# test
