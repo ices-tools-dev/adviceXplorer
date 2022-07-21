@@ -1166,46 +1166,14 @@ figure_1_plots <- function(data1, data2, data3, data4,
 #' @export
 #' 
 ####### plots 1 catch scenarios
-catch_scenarios_plot1 <- function(tmp, catch_scenarios) {
-    # tmp <- get_catch_scenario_table(stock_name = "cod.27.47d20") #ple.27.7d
-    # tmp$Year <- 2022
-
-    # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
-
-    # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
-    # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
-
-    # sc <- head(tmp2$cat)
-
+radial_plot <- function(tmp, catch_scenarios) {
+    
     not_all_na <- function(x) any(!is.na(x))
     tmp <- tmp %>% select(where(not_all_na))
-    
-    # data_num2 <- select_if(tmp, is.numeric)
-    # data_num2 <- data_num2 %>% na.omit() %>% select(-c(Year))
-
-    # min_val <- min(data_num2)
-    # max_val <- max(data_num2)
     
     rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
     tmp <- tmp %>% select(-c(Year)) %>% na.omit() %>% mutate_if(is.numeric, rescale_function)
 
-    # tmp_scaled <- tmp %>%
-    #     select(-c(Year, F, TotCatch,SSB)) %>% na.omit() %>%
-    #     mutate_if(is.numeric, rescale_function)
-    # tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSB change")
-    
-    
-    
-    # zz <- ggplotly(
-    #     ggradar(tmp_scaled %>% select(-cS_Purpose), 
-    #     values.radar = c("0%", "50%", "100%"), 
-    #     axis.label.size = 10, 
-    #     axis.line.colour = "grey", 
-    #     legend.title = "Catch Scenarios:",
-    #     legend.position = "bottom")
-    # )
-    # zz
-    
     zz <- ggplotly(
         ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
             base.size = 8,
@@ -1251,26 +1219,7 @@ catch_scenarios_plot1 <- function(tmp, catch_scenarios) {
     # zz <- zz %>% layout(autosize = T, margin = list(l = 0, r = 100, b = 0, t = 0, pad = 4))
 
     zz
-    ### problem here, some catch tables have 1 or more NAs columns, we could use
-    # not_all_na <- function(x) any(!is.na(x))
-    # temp %>% select(where(not_all_na))
-    # then we need to make the rescale function not variable-name dependent but general.
-    # tmp3 <- tmp %>% mutate(
-    #     F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
-    #     SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
-    #     TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
-    #     TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
-    #     ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
-    #     SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
-    # )
-    # tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
-
-
-
-    # zz <- ggplotly(
-    #     ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
-    # )
-    # zz
+    
 }
 
 # catch_scenarios_plot1(catch_scen_table_perc)

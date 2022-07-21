@@ -470,40 +470,8 @@ observe({
   })
 
 
-  # advice_action <- eventReactive(req(query$assessmentkey), {
 
-  #   info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
-  #   query$stockkeylabel <- info$StockKeyLabel
-  #   query$year <- info$AssessmentYear ####
-    
-  #   stock_name <- query$stockkeylabel
-  #   msg("downloading:", stock_name)
-
-  #   year <- query$year #####
-
-  #   #   # Dowload the data
-  #   data_sag <- access_sag_data_local(stock_name, year) #####
-
-  #   catches <- data_sag %>% select(Year, catches, landings, discards, units,  AssessmentYear) %>% add_column(stock_name_column = stock_name, .after = "units")
-  #   R <- data_sag %>% select(Year, low_recruitment, recruitment, high_recruitment, recruitment_age) # %>% na.omit()
-  #   f <- data_sag %>% select(Year, low_F, F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription)
-  #   SSB <- data_sag %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits)
-  #   list_df <- quality_assessment_data_local(stock_name)
-  #   # the bit below could be potentially be replaced by the sag status? summary table option?
-  #   SAG_summary <- data_sag %>% select(
-  #     Year,
-  #     recruitment, high_recruitment, low_recruitment,
-  #     SSB, high_SSB, low_SSB,
-  #     catches, landings,
-  #     F, high_F, low_F
-  #   )
-
-  #   #     big_data <- list_df[[1]]
-  #   # big_data_last_year <- list_df[[2]]
-
-  #   list(catches = catches, R = R, f = f, SSB = SSB, big_data = list_df[[1]], big_data_last_year = list_df[[2]], SAG_summary = SAG_summary)
-  # })
-  ####################################################new SAG #############################################
+  ######### SAG data
   SAG_data_reactive <- eventReactive(req(query$assessmentkey), {
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
@@ -518,14 +486,12 @@ observe({
     access_sag_data_local(stock_name, year)
   })
 
-#   SAG_stamp <- eventReactive( req(SAG_data_reactive()), {
-#     get_SAG_stamp(SAG_data_reactive())
-# })
+###### info about the stock selected for top of page
   output$stock_infos <- renderUI({
   get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
 })
 
-
+######################### Stock development over time plots
   output$plot1 <- renderPlotly(    
       ICES_plot_1(SAG_data_reactive())
   ) #%>%
@@ -541,6 +507,8 @@ observe({
       ICES_plot_4(SAG_data_reactive())
   )
 
+
+####################### Quality of assessment data
   advice_action_quality <- eventReactive(req(query$assessmentkey,query$year), {
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
@@ -555,9 +523,13 @@ observe({
     quality_assessment_data_local(stock_name, year)
   })
 
+
+###### info about the stock selected for top of page
   output$stock_infos2 <- renderUI({
     get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
   })
+
+  ######################### quality of assessment plots
   output$plot5 <- renderPlotly(
       ICES_plot_5(advice_action_quality())
   )
@@ -606,33 +578,18 @@ observe({
   # })
 
 
-##### catch scenarios tab
+##### Advice view info
 advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
   get_Advice_View_info(query$stockkeylabel, query$year)
 })
 
+
+##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
   get_Advice_View_info(query$stockkeylabel, query$year-1)
 })
 
-# output$Advice_View <- DT::renderDT(
-#     advice_view_info(),
-#     selection = "none",
-#     caption = "Advice view info",
-#     rownames= FALSE,
-#     options = list(
-#         dom = 't',
-#       pageLength = 50)
-# )
 
-
-##### catch scenarios sentence
-# advice_view_sentence <- eventReactive(query$stockkeylabel, {
-#   get_Advice_View_sentence(query$stockkeylabel)
-# })
-# output$Advice_Sentence <- renderUI({
-#   HTML(paste0(br(),"<b>","<font size=", 5, ">", advice_view_sentence(),"</font>","</b>", br()))
-# })
 
 
 ##### catch scenarios table
@@ -646,61 +603,34 @@ catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previou
   # scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year, catch_scenario_table())
 })
 
+##### catch scenario table scaled with the values of previous advice to get percentage of change
 catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
   # standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
   scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
 })
-# output$catch_scenario_table <- DT::renderDT(
-#   catch_scenario_table(),
-#   selection = "none",
-#   caption = "Catch Scenario Table",
-#   rownames = FALSE,
-#   options = list(
-#     # order = list("cS_Purpose", "asc"),
-#     dom = "t",
-#     pageLength = 100
-#   )
-# )
-# output$Advice_View <- DT::datatable(
-#     test(),
-#     selection = "none",
-#     caption = "Advice view info",
-
-#     options = list(
-#         dom = 't',
-#       pageLength = 50,
-#       initComplete = htmlwidgets::JS(
-#           "function(settings, json) {",
-#           paste0("$(this.api().table().container()).css({'font-size': '10px'});"),
-#           "}"))
-# )
 
 
-# output$catch_scenario_plot_2 <- renderPlotly({
-#   data_list <- advice_action()
-#   rv <- reactiveValues(
-#     catches_df = data_list$catches,
-#     f_df = data_list$f,
-#     SSB_df = data_list$SSB
-#   )
-#   catch_scenarios_plot2(catch_scenario_table(), rv$f_df$Fage, rv$f_df$fishingPressureDescription, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits,rv$catches_df$units)
-# })
-
-##### catch scenarios sentence
+##### Advice and stock infos
 advice_view_summary <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
 })
-##### new tab in development left side
 output$Advice_Summary <- renderUI({
   advice_view_summary()  
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
+
+
+##### advice headline (right side of page)
 advice_view_headline <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Headline(advice_view_info())
 })
 output$Advice_Headline <- renderUI({
   advice_view_headline()  
 })
+
+
+
+
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({  
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
@@ -718,12 +648,12 @@ test_table <- eventReactive(catch_scenario_table(),{
 output$catch_scenarios <- renderUI({
   # req(query$stockkeylabel, query$year, catch_scenario_table())
   # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-
+  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
   selectizeInput(
         inputId = "catch_choice",
         label = "Select a scenario",
         choices = unique(test_table()$cat),
-        selected = "Historical Catches",
+        selected = c("Historical Catches",Basis$cat),
         multiple = TRUE
       )
 })
@@ -733,16 +663,17 @@ output$TAC_timeline <- renderPlotly({
 
 ############ Radial plot panel
 output$catch_scenarios_radial <- renderUI({
+  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
     selectizeInput(
         inputId = "catch_choice_radial",
         label = "Select a scenario",
         choices = unique(catch_scenario_table_percentages()$cat),
-        selected = "F = 0",
+        selected = c(Basis$cat),
         multiple = TRUE
       )
 })
 output$Radial_plot <- renderPlotly({
-  catch_scenarios_plot1(catch_scenario_table_percentages(), input$catch_choice_radial)
+  radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 ###### Calendar of stock with modal
@@ -759,6 +690,8 @@ observeEvent(input$preview, {
             )
   })
 
+
+############### Catch scenario plot
 catch_table_names <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
   gsub("â€“", " - ",names(fread(file = "Data/catch_scen_col_names.txt", sep = ",")), fixed = TRUE)
@@ -800,7 +733,7 @@ output$table <- DT::renderDT(
                           ")
 )
 
-# tableProxy ##
+##### connection between F/SSB plot points and table rows 
 table_proxy = dataTableProxy('table')
 
 selected_scenario <- reactive({
@@ -814,26 +747,17 @@ selected_scenario <- reactive({
     })
 
 
-
-
-#  observeEvent(input$rdbtn, {
-#     filtered_row <- res_mod()[input$tbl_rows_selected, ]
-#     WG <- filtered_row$ExpertGroupUrl
-#     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
-#     print(WG)
-
-# })
-
-##### catch scenarios sentence
+##### footnotes of catch scenario table
 footnotes <- eventReactive(req(advice_view_info()), {
   get_catch_scenario_notes(advice_view_info())
 })
-
 output$footnotes <-renderUI(footnotes())
 
+
+##### Last page text, citation, data usage, feedback etcc
 output$citation <- renderUI({
   make_app_citation()
-  # HTML(paste0(br(),"<b>","<font size=", 3, ">",br(), make_app_citation(), "</font>","</b>", br()))
+  
 })
 
 
