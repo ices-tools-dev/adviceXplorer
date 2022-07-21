@@ -98,7 +98,7 @@ selectize_panel <-
         inputId = "selected_locations",
         label = "ICES Ecoregions",
         choices = sort(shape_eco$Ecoregion),
-        selected = NULL,
+        selected = "Greater North Sea",
         multiple = TRUE,
         width = "100%",
         options = list(
@@ -161,16 +161,15 @@ selectize_panel <-
   )
 ################################## SAG plots tab
 SAG_plots_left_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   panel(
-    title = "1",
+    title = "Catches",
     # fillPage(
     #   tags$style(type = "text/css", "#plot1  height: 90vh overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
       withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))
-    # )
   ),
   panel(
-    title = "3",
+    title = "F",
     # fillPage(
     #   tags$style(type = "text/css", "#plot3  height: 90vh overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
       withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))
@@ -179,16 +178,16 @@ SAG_plots_left_panel <- sidebarPanel(
 )
 
 SAG_plots_righ_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   panel(
-    title = "2",
+    title = "Recruitment",
     fillPage(
       tags$style(type = "text/css", "#plot2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
       withSpinner(plotlyOutput("plot2", height = "100%", width = "100%"))
     )
   ),
   panel(
-    title = "4",
+    title = "SSB",
     fillPage(
       tags$style(type = "text/css", "#plot4  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
       withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))
@@ -228,7 +227,7 @@ quality_of_assessment <- splitLayout(
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
   panel(
-    title = "Headline advice",
+    title = "Advice Summary",
     fillPage(
       tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
       
@@ -248,6 +247,15 @@ catch_scenarios_left_panel <- sidebarPanel(
       tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
       uiOutput("catch_scenarios"),
       withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
+    )
+  ),
+  panel(
+    title = "Radial_plot",
+    fillPage(
+      tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+      # uiOutput("catch_scenarios"),
+      uiOutput("catch_scenarios_radial"),
+      withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
     )
   )
 )

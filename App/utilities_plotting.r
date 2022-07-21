@@ -1166,42 +1166,19 @@ figure_1_plots <- function(data1, data2, data3, data4,
 #' @export
 #' 
 ####### plots 1 catch scenarios
-catch_scenarios_plot1 <- function(tmp) {
-    # tmp <- get_catch_scenario_table(stock_name = "cod.27.47d20") #ple.27.7d
-    # tmp$Year <- 2022
-
-    # tmp2 <- tmp %>% select(Year, cS_Label, `Ftotal (2020)`, `SSB (2021)`, `Total catch (2020)`, `% TAC change (2020)`, `% Advice change (2020)`, `% SSB change (2021)`)
-
-    # colnames(tmp2) <- c("Year", "cat", "F", "SSB", "TotCatch", "TACchange", "ADVICEchange", "SSBchange")
-    # tmp2 <- tmp2 %>% do(bind_rows(., data.frame(Year = 2022, cat = "ref", F = 0, SSB = 0, TotCatch = 0, TACchange = 0, ADVICEchange = 0, SSBchange = 0)))
-
-    # sc <- head(tmp2$cat)
-
+radial_plot <- function(tmp, catch_scenarios) {
+    
     not_all_na <- function(x) any(!is.na(x))
     tmp <- tmp %>% select(where(not_all_na))
     
-    
     rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
+    tmp <- tmp %>% select(-c(Year)) %>% na.omit() %>% mutate_if(is.numeric, rescale_function)
 
-
-    tmp_scaled <- tmp %>%
-        select(-Year) %>%
-        mutate_if(is.numeric, rescale_function)
-    tmp_scaled <- tmp_scaled %>% relocate("SSB", .before = "SSB change")
-    # zz <- ggplotly(
-    #     ggradar(tmp_scaled %>% select(-cS_Purpose), 
-    #     values.radar = c("0%", "50%", "100%"), 
-    #     axis.label.size = 10, 
-    #     axis.line.colour = "grey", 
-    #     legend.title = "Catch Scenarios:",
-    #     legend.position = "bottom")
-    # )
-    # zz
     zz <- ggplotly(
-        ggradar(tmp_scaled %>% select(-cS_Purpose),
-            base.size = 10,
+        ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
+            base.size = 8,
             font.radar = "sans",
-            values.radar = c("0%", "50%", "100%"),
+            values.radar = c("-100%", "0%","100%"),
             # axis.labels = colnames(catch_tab_stand_scaled)[-1],
             # grid.min = 0,
             # grid.mid = 0.5,
@@ -1224,7 +1201,7 @@ catch_scenarios_plot1 <- function(tmp) {
             label.gridline.mid = TRUE,
             label.gridline.max = TRUE,
             axis.label.offset = 1.20,
-            axis.label.size = 10,
+            axis.label.size = 8,
             axis.line.colour = "grey",
             group.line.width = 1.5,
             group.point.size = 6,
@@ -1232,36 +1209,20 @@ catch_scenarios_plot1 <- function(tmp) {
             background.circle.colour = "#D7D6D1",
             background.circle.transparency = 0.2,
             plot.legend = TRUE, # if (nrow(catch_tab_stand_scaled) > 1) TRUE else FALSE,
-            legend.title = "Catch Scenarios:",
+            legend.title = "Scenarios:",
             plot.title = "",
-            legend.text.size = 12,
+            legend.text.size = 8,
             legend.position = "right"
-        )
+        )#,
+        # height = 600, width=600
     )
     # zz <- zz %>% layout(autosize = T, margin = list(l = 0, r = 100, b = 0, t = 0, pad = 4))
 
     zz
-    ### problem here, some catch tables have 1 or more NAs columns, we could use
-    # not_all_na <- function(x) any(!is.na(x))
-    # temp %>% select(where(not_all_na))
-    # then we need to make the rescale function not variable-name dependent but general.
-    # tmp3 <- tmp %>% mutate(
-    #     F = rescale(F, to = c(0, 1), from = range(c(min(F), max(F)))),
-    #     SSB = rescale(SSB, to = c(0, 1), from = range(c(min(SSB), max(SSB)))),
-    #     TotCatch = rescale(TotCatch, to = c(0, 1), from = range(c(min(TotCatch), max(TotCatch)))),
-    #     TACchange = rescale(TACchange, to = c(0, 1), from = range(c(min(TACchange), max(TACchange)))),
-    #     ADVICEchange = rescale(ADVICEchange, to = c(0, 1), from = range(c(min(ADVICEchange), max(ADVICEchange)))),
-    #     SSBchange = rescale(SSBchange, to = c(0, 1), from = range(c(min(SSBchange), max(SSBchange)))),
-    # )
-    # tmp3 <- tmp3 %>% relocate("SSB", .before = "SSBchange")
-
-
-
-    # zz <- ggplotly(
-    #     ggradar(tmp3 %>% select(-Year), values.radar = c("0%", "50%", "100%"), axis.label.size = 10, axis.line.colour = "grey", legend.title = "Catch Scenarios:")
-    # )
-    # zz
+    
 }
+
+# catch_scenarios_plot1(catch_scen_table_perc)
 
 # catch_scenarios_plot2 <- function(tmp) {
 #     tmp$Year <- 2022
@@ -1673,155 +1634,6 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
 
 
 
-html_timeline <- function(timeL, tbl_sid, tbl_rows_selected) {
-    ## this gets the initial dates from the advice view
-    
-    # timeL <- get_Advice_View_info(stock_name, year)
-
-    # release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
-    # release_date <- strptime(as.character(release_date), "%Y-%m-%d")
-    release_date <- strptime(as.character(timeL$adviceReleasedDate), "%Y-%m-%d")
-    release_date <- format(release_date, "%d/%m/%Y")
-
-    # applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
-    # applicable_from <- strptime(as.character(applicable_from), "%Y-%m-%d")
-    applicable_from <- strptime(as.character(timeL$adviceApplicableFrom), "%Y-%m-%d")
-    applicable_from <- format(applicable_from, "%d/%m/%Y")
-
-    # applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
-    # applicable_until <- strptime(as.character(applicable_until), "%Y-%m-%d")
-    applicable_until <- strptime(as.character(timeL$adviceApplicableUntil), "%Y-%m-%d")
-    applicable_until <- format(applicable_until, "%d/%m/%Y")
-
-    ## This block gets the name of the working group from the currently selected row
-    filtered_row <- tbl_sid[tbl_rows_selected, ]
-    WG <- filtered_row$ExpertGroup
-    # WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
-
-    ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
-    page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
-    
-    start_date <- page %>%
-        html_nodes("td") #%>%
-        # html_text()
-        
-    start_date <- gsub("<td>", "", start_date)
-    start_date <- gsub("</td>", "", start_date)
-
-
-    title_meeting <- start_date[1]
-    descr_group <- start_date[4]
-    meeting_loc <- start_date[5]
-    ## This block extracts and formats the dates as above
-    start_WG <- strapplyc(start_date[2], "\\d+/\\d+/\\d+", simplify = TRUE)
-    end_WG <- strapplyc(start_date[3], "\\d+/\\d+/\\d+", simplify = TRUE)
-
-    start_WG <- strptime(as.character(start_WG), "%d/%m/%Y")
-    start_WG <- format(start_WG, "%d/%m/%Y")
-    end_WG <- strptime(as.character(end_WG), "%d/%m/%Y")
-    end_WG <- format(end_WG, "%d/%m/%Y")
-
-    html_timeline_string <- paste0("
-                                <style>
-                            /* (A) TIMELINE CONTAINER */
-                        .vtl {
-                        /* (A1) RELATIVE POSITION REQUIRED TO PROPERLY POSITION THE TIMELINE */
-                        position: relative;
-
-                        /* (A2) RESERVE MORE SPACE TO THE LEFT FOR THE TIMELINE */
-                        padding: 10px 10px 10px 50px;
-
-                        /* (A3) OPTIONAL WIDTH RESTRICTION */
-                        max-width: 400px;
-                        }
-                        .vtl, .vtl * { box-sizing: border-box; }
-
-                        /* (B) DRAW VERTICAL LINE USING ::BEFORE */
-                        .vtl::before {
-                        /* (B1) VERTICAL LINE */
-                        content: '';
-                        width: 5px;
-                        background-color: #de421a;
-
-                        /* (B2) POSITION TO THE LEFT */
-                        position: absolute;
-                        top: 0; bottom: 0; left: 15px;
-                        }
-
-                        /* (C) COSMETICS FOR EVENTS */
-                        div.event {
-                        padding: 20px 30px;
-                        background-color: #ffebeb;
-                        position: relative;
-                        border-radius: 6px;
-                        margin-bottom: 10px;
-                        }
-
-                        /* (D) COSMETICS FOR EVENT DATE & TEXT */
-                        p.date {
-                        font-size: 1.1em;
-                        font-weight: 700;
-                        color: #ff6a00;
-                        }
-                        p.txt {
-                        margin: 10px 0 0 0;
-                        color: #222;
-                        }
-
-                        /* (E) EVENT 'SPEECH BUBBLE CALLOUT' */
-                        div.event::before {
-                        /* (E1) 'MAGIC TRIANGLE' */
-                        content: '';
-                        border: 10px solid transparent;
-                        border-right-color: #ffebeb;
-                        border-left: 0;
-
-                        /* (E2) POSITION TO THE LEFT */
-                        position: absolute;
-                        top: 20%; left: -10px;
-                        }
-
-                        /* (F) CIRCLE ON TIMELINE */
-                        div.event::after {
-                        /* (F1) 'MAGIC CIRCLE' */
-                        content: '';
-                        background: #fff;
-                        border: 4px solid #DE421A;
-                        width: 16px; height: 16px;
-                        border-radius: 50%;
-
-                        /* (F2) POSITION TO THE LEFT */
-                        position: absolute;
-                        top: 20%; left: -40px;
-                        }
-                        </style>
-
-
-                        <h1>Stockcode: ", timeL$stockCode, "</h1>
-                        <div class='vtl'>
-                        <div class='event'>
-                            <p class='date'>", "Not Available", "</p>
-                            <p class='txt'>", "Previous Benchmark", "</p>
-                        </div>
-                        <div class='event'>
-                            <p class='date'>", release_date, "</p>
-                            <p class='txt'>Advice release</p>
-                        </div>
-                        <div class='event'>
-                            <p class='date'>", applicable_from,  " - ", applicable_until, "</p>
-                            <p class='txt'>Advice validity</href>
-                        </div>
-                        <div class='event'>
-                            <p class='date'>", start_WG, " - ", end_WG, "</p>
-                            <p class='txt'>", title_meeting, "<br/>", descr_group, "<br/>", "Location: ", meeting_loc, "</p>
-                        </div>
-                        <div class='event'>
-                            <p class='date'>Not Available</p>
-                            <p class='txt'>Next benchmark</p>
-                        </div>
-                        </div>")
-return(html_timeline_string)
-}
 
 
 
