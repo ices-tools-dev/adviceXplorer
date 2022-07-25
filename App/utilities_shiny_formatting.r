@@ -92,7 +92,9 @@ selectize_panel <-
   mainPanel(
     width = 4, style = "max-height: 90vh; overflow-y: auto;",
     # actionButton("help_tab1", "About this Page", icon = icon("circle-info", "fa-solid"), width = "100%"),
-    actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+    tipify(
+      actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+      title = "Click here for help", placement = "left", trigger = "hover"),
     panel(
       selectizeInput(
         inputId = "selected_locations",

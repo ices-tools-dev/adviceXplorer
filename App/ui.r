@@ -120,7 +120,9 @@ navbarPage(
     
     tabPanel(
         "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
-        actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+        tipify(
+            actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+            title = "Click here for help", placement = "bottom", trigger = "hover"),
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))
@@ -141,7 +143,10 @@ navbarPage(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
-                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+                tipify(
+                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"), 
+                title = "Click here fof help", placement = "right", trigger = "hover"),
+
                 withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel,
@@ -173,7 +178,9 @@ navbarPage(
             ),
             tabPanel(
                 "Quality of assessment",
+                tipify(
                 actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+                title = "Click here fof help", placement = "right", trigger = "hover"),
                 withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
                 quality_of_assessment
                 # panel(
@@ -248,7 +255,9 @@ navbarPage(
     
     tabPanel(
         "Advice",
+        tipify(
         actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"),
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
             mainPanel = catch_scenarios_right_panel
