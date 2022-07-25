@@ -690,6 +690,9 @@ observeEvent(input$preview, {
             )
   })
 
+# addTooltip(session=session,id="help_tab5",title="Link to Advice View record") # not working
+
+
 
 ############### Catch scenario plot
 catch_table_names <- eventReactive(catch_scenario_table(),{
@@ -707,7 +710,7 @@ output$table <- DT::renderDT(
   # arrange(catch_scenario_table(), F) %>% select(-Year),
   selection = "single",
   class = "display",
-  caption = "Catch Scenario Table",
+  caption = "Subset of catch scenario table",
   rownames = FALSE,
   options = list(
     # order = list("cS_Purpose", "asc"),

@@ -36,6 +36,7 @@ library(tidyr)
 library(rintrojs)
 library(scales)
 library(ggradar)
+library(shinyBS)
 
 
 
@@ -247,7 +248,7 @@ navbarPage(
     
     tabPanel(
         "Advice",
-        actionButton(inputId = "help_tab5", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+        actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
             mainPanel = catch_scenarios_right_panel
