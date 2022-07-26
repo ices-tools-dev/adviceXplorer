@@ -107,7 +107,7 @@ download_SID <- function(Year) {
   return(stock_list_all)
 }
 
-stock_list_all <-  download_SID(2021)
+# stock_list_all <-  download_SID(2021)
 #' Returns ....
 #'
 #' Downloads ...
@@ -298,7 +298,7 @@ createLink_SAG_db <- function(assessmentKey) {
 #'
 createLink_visa_tool <- function(assessmentKey) {
   paste0("<a href='","https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=", assessmentKey,"' target='_blank'>",
-  "<img src= 'gps.png'", " height= '30px'/>", "</a>")
+  "<img src= 'map.png'", " height= '30px'/>", "</a>")
 }
 #' Returns ....
 #'

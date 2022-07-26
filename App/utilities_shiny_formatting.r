@@ -71,20 +71,24 @@ maps_panels <-
   sidebarPanel(
     width = 8,
     # tabsetPanel(
-      tabPanel(
-        "ICES Ecoregions",
-        fillPage(
-          tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
-          withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
-        )
-      )#,
-      # tabPanel(
-      #   "ICES Areas",
-      #   fillPage(
-      #     tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
-      #     leafletOutput("map2", height = "100%", width = "100%")
-      #   )
-      # )
+    tabPanel(
+      "ICES Ecoregions",
+      fillPage(
+        tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
+        withSpinner(
+          leafletOutput("map1", height = "100%", width = "100%")          
+        )        
+      )
+    )
+    
+     # ,
+    # tabPanel(
+    #   "ICES Areas",
+    #   fillPage(
+    #     tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
+    #     leafletOutput("map2", height = "100%", width = "100%")
+    #   )
+    # )
     # )
   )
 
@@ -92,7 +96,9 @@ selectize_panel <-
   mainPanel(
     width = 4, style = "max-height: 90vh; overflow-y: auto;",
     # actionButton("help_tab1", "About this Page", icon = icon("circle-info", "fa-solid"), width = "100%"),
-    actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+    tipify(
+      actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+      title = "Click here for help", placement = "left", trigger = "hover"),
     panel(
       selectizeInput(
         inputId = "selected_locations",
@@ -157,7 +163,8 @@ selectize_panel <-
       ),
       heading = "Data filtering",
       status = "primary"
-    )
+    ),
+    htmlOutput("app_last_update")
   )
 ################################## SAG plots tab
 SAG_plots_left_panel <- sidebarPanel(
@@ -197,7 +204,7 @@ SAG_plots_righ_panel <- sidebarPanel(
 
 ##############################################Quality of assessment tab
 quality_of_assessment <- splitLayout(
-  style = "border: 1px solid silver; height: 90vh; overflow-y: auto;",  
+  style = "border: 1px solid silver; height: 80vh; overflow-y: auto;",  
   cellWidths = c("33%", "33%", "33%"),
   cellArgs = list(style = "padding: 6px"),
   panel(

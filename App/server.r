@@ -376,6 +376,10 @@ observe({
   )
   
 
+  #### last update of the app 
+  output$app_last_update <- renderUI({
+    make_app_update_date()
+  })
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(
@@ -487,24 +491,34 @@ observe({
   })
 
 ###### info about the stock selected for top of page
-  output$stock_infos <- renderUI({
+output$stock_infos <- renderUI({
   get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
 })
 
+##### button to download SAG data
+output$download_SAG_Data <- downloadHandler(
+    filename = function() {
+      paste("SAG_data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(SAG_data_reactive(), file)
+    }
+  )
+
 ######################### Stock development over time plots
-  output$plot1 <- renderPlotly(    
-      ICES_plot_1(SAG_data_reactive())
-  ) #%>%
+  output$plot1 <- renderPlotly(
+    ICES_plot_1(SAG_data_reactive())
+  ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
   output$plot2 <- renderPlotly(
-      ICES_plot_2(SAG_data_reactive())
+    ICES_plot_2(SAG_data_reactive())
   )
   output$plot3 <- renderPlotly(
-      ICES_plot_3(SAG_data_reactive())
+    ICES_plot_3(SAG_data_reactive())
   )
   output$plot4 <- renderPlotly(
-      ICES_plot_4(SAG_data_reactive())
+    ICES_plot_4(SAG_data_reactive())
   )
 
 
@@ -529,6 +543,16 @@ observe({
     get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
   })
 
+##### button to download SAG data for quality of assessemnt
+  output$download_SAG_Quality_Data <- downloadHandler(
+    filename = function() {
+      paste("SAG_data-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(advice_action_quality(), file)
+    }
+  )
+
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly(
       ICES_plot_5(advice_action_quality())
@@ -539,44 +563,7 @@ observe({
   output$plot7 <- renderPlotly(
       ICES_plot_7(advice_action_quality())
   )
-  ######################### Stock development over time
-
-  # output$all_plots <- renderPlotly({
-  #   data_list <- advice_action()
-
-
-  #   rv <- reactiveValues(
-  #     catches_df = data_list$catches,
-  #     r_df = data_list$R,
-  #     f_df = data_list$f,
-  #     SSB_df = data_list$SSB
-  #   )
-  #   figure_1_plots(
-  #     rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df,
-  #           rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
-  #           rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
-  #           rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
-  #           rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits
-  #   )
-  # })
-
-  # #### Plot 5 quality of assessment
-  # output$Q_Ass <- renderPlotly({
-  #   data_list <- advice_action()
-
-  #   rv <- reactiveValues(
-  #     Q_Ass_df1 = data_list$big_data,
-  #     Q_Ass_df2 = data_list$big_data_last_year
-  #   )
-
-  #   ### forth plot
-  #   quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
-  #                                   rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits,
-  #                                   rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription,
-  #                                   rv$Q_Ass_df1$RecruitmentAge)
-  #   # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-  # })
-
+  
 
 ##### Advice view info
 advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
@@ -588,7 +575,6 @@ advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
   get_Advice_View_info(query$stockkeylabel, query$year-1)
 })
-
 
 
 
@@ -629,14 +615,11 @@ output$Advice_Headline <- renderUI({
 })
 
 
-
-
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({  
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
-
 
 
 
@@ -660,6 +643,7 @@ output$catch_scenarios <- renderUI({
 output$TAC_timeline <- renderPlotly({
     TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
+
 
 ############ Radial plot panel
 output$catch_scenarios_radial <- renderUI({
@@ -690,6 +674,9 @@ observeEvent(input$preview, {
             )
   })
 
+# addTooltip(session=session,id="help_tab5",title="Link to Advice View record") # not working
+
+
 
 ############### Catch scenario plot
 catch_table_names <- eventReactive(catch_scenario_table(),{
@@ -707,7 +694,7 @@ output$table <- DT::renderDT(
   # arrange(catch_scenario_table(), F) %>% select(-Year),
   selection = "single",
   class = "display",
-  caption = "Catch Scenario Table",
+  caption = "Subset of catch scenario table",
   rownames = FALSE,
   options = list(
     # order = list("cS_Purpose", "asc"),

@@ -485,243 +485,243 @@ legend_format <- function() {
 #' @export
 #' 
 #####################Subplots quality of assessment
-quality_assessment_plots <- function(big_data, big_data_last_year,
-                                        stockSizeDescription,stockSizeUnits,
-                                        Fage, fishingPressureDescription,
-                                        RecruitmentAge) {
+# quality_assessment_plots <- function(big_data, big_data_last_year,
+#                                         stockSizeDescription,stockSizeUnits,
+#                                         Fage, fishingPressureDescription,
+#                                         RecruitmentAge) {
 
-## Labels for axes and annotation for the plots, taken from SAG
-SSB_yaxis_label <- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
-F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
-R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(RecruitmentAge))
+# ## Labels for axes and annotation for the plots, taken from SAG
+# SSB_yaxis_label <- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
+# F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+# R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(RecruitmentAge))
 
-# print(length(unique(big_data$AssessmentYear)))
-# print(length(unique(big_data_last_year$AssessmentYear)))
-palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd",
- fig1 <- plot_ly(
-     data = big_data,
-     x = ~Year,
-     y = ~SSB,
-     split = ~AssessmentYear,
-     type = "scatter",
-     mode = "lines+markers",
-    #  line = list(shape = "spline"),
-     connectgaps = FALSE,
-     color = ~AssessmentYear,
-     colors = palette_bw,
-     legendgroup = "A"
- )
- fig1 <- fig1 %>% add_trace(
-        data = big_data_last_year, ###select for last reference points last year
-        x = ~Year, 
-        y = ~Blim, 
-        name = "Blim", 
-        type = "scatter", 
-        mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-    fig1 <- fig1 %>% add_trace(
-        data = big_data_last_year, 
-        x = ~Year, 
-        y = ~Bpa, 
-        name = "Bpa", 
-        type = "scatter", 
-        mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
+# # print(length(unique(big_data$AssessmentYear)))
+# # print(length(unique(big_data_last_year$AssessmentYear)))
+# palette_bw <- c( "#969696", "#737373", "#525252", "#252525","#de2d26") #"#bdbdbd",
+#  fig1 <- plot_ly(
+#      data = big_data,
+#      x = ~Year,
+#      y = ~SSB,
+#      split = ~AssessmentYear,
+#      type = "scatter",
+#      mode = "lines+markers",
+#     #  line = list(shape = "spline"),
+#      connectgaps = FALSE,
+#      color = ~AssessmentYear,
+#      colors = palette_bw,
+#      legendgroup = "A"
+#  )
+#  fig1 <- fig1 %>% add_trace(
+#         data = big_data_last_year, ###select for last reference points last year
+#         x = ~Year, 
+#         y = ~Blim, 
+#         name = "Blim", 
+#         type = "scatter", 
+#         mode = "lines",
+#         line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#     fig1 <- fig1 %>% add_trace(
+#         data = big_data_last_year, 
+#         x = ~Year, 
+#         y = ~Bpa, 
+#         name = "Bpa", 
+#         type = "scatter", 
+#         mode = "lines",
+#         line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
 
-    fig1 <- fig1 %>% add_trace(
-        data = big_data_last_year, 
-        x = ~Year, 
-        y = ~MSYBtrigger, 
-        name = "MSYBtrigger", 
-        type = "scatter", 
-        mode = "lines",
-        line = list(color = "#689dff", shape = "linear", width = 1), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
- fig1 <- fig1 %>% layout(
-        # title = "SSB", 
-        legend = legend_format(),
-        paper_bgcolor = "rgb(246,250,251)", 
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#     fig1 <- fig1 %>% add_trace(
+#         data = big_data_last_year, 
+#         x = ~Year, 
+#         y = ~MSYBtrigger, 
+#         name = "MSYBtrigger", 
+#         type = "scatter", 
+#         mode = "lines",
+#         line = list(color = "#689dff", shape = "linear", width = 1), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#  fig1 <- fig1 %>% layout(
+#         # title = "SSB", 
+#         legend = legend_format(),
+#         paper_bgcolor = "rgb(246,250,251)", 
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        yaxis = list(
-            title = SSB_yaxis_label,
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        )
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         yaxis = list(
+#             title = SSB_yaxis_label,
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         )
+#     )
 
- fig2 <- plot_ly(
-     data = big_data,
-     x = ~Year,
-     y = ~F,
-     split = ~AssessmentYear,
-     type = "scatter",
-     mode = "lines+markers",
-    #  line = list(shape = "spline"),
-     connectgaps = FALSE,
-     color = ~AssessmentYear,
-     colors = palette_bw,
-     showlegend = FALSE,
-     legendgroup = "A"
- )
- ## Add horizontal lines
-    fig2 <- fig2 %>% add_trace(
-        data = big_data_last_year, 
-        x = ~Year, 
-        y = ~FLim, 
-        name = "FLim", 
-        type = "scatter", 
-        mode = "lines",
-        line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-    fig2 <- fig2 %>% add_trace(
-        data = big_data_last_year, 
-        x = ~Year, 
-        y = ~Fpa, 
-        name = "Fpa", 
-        type = "scatter", 
-        mode = "lines",
-        line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
+#  fig2 <- plot_ly(
+#      data = big_data,
+#      x = ~Year,
+#      y = ~F,
+#      split = ~AssessmentYear,
+#      type = "scatter",
+#      mode = "lines+markers",
+#     #  line = list(shape = "spline"),
+#      connectgaps = FALSE,
+#      color = ~AssessmentYear,
+#      colors = palette_bw,
+#      showlegend = FALSE,
+#      legendgroup = "A"
+#  )
+#  ## Add horizontal lines
+#     fig2 <- fig2 %>% add_trace(
+#         data = big_data_last_year, 
+#         x = ~Year, 
+#         y = ~FLim, 
+#         name = "FLim", 
+#         type = "scatter", 
+#         mode = "lines",
+#         line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#     fig2 <- fig2 %>% add_trace(
+#         data = big_data_last_year, 
+#         x = ~Year, 
+#         y = ~Fpa, 
+#         name = "Fpa", 
+#         type = "scatter", 
+#         mode = "lines",
+#         line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
 
-    fig2 <- fig2 %>% add_trace(
-        data = big_data_last_year, 
-        x = ~Year, 
-        y = ~FMSY, 
-        name = "FMSY", 
-        type = "scatter", 
-        mode = "lines",
-        line = list(color = "#00AC67", shape = "linear", width = 1), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-fig2 <- fig2 %>% layout(
-        # title = "F", 
-        legend = legend_format(),
-        paper_bgcolor = "rgb(246,250,251)", 
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#     fig2 <- fig2 %>% add_trace(
+#         data = big_data_last_year, 
+#         x = ~Year, 
+#         y = ~FMSY, 
+#         name = "FMSY", 
+#         type = "scatter", 
+#         mode = "lines",
+#         line = list(color = "#00AC67", shape = "linear", width = 1), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+# fig2 <- fig2 %>% layout(
+#         # title = "F", 
+#         legend = legend_format(),
+#         paper_bgcolor = "rgb(246,250,251)", 
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        yaxis = list(
-            title = F_yaxis_label,
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            rangemode = "tozero",
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        )
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         yaxis = list(
+#             title = F_yaxis_label,
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             rangemode = "tozero",
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         )
+#     )
 
- fig3 <- plot_ly(
-     data = big_data,
-     x = ~Year,
-     y = ~recruitment,
-     split = ~AssessmentYear,
-     type = "scatter",
-     mode = "lines+markers",
-    #  line = list(shape = "spline"),
-     connectgaps = FALSE,
-     color = ~AssessmentYear,
-     colors = palette_bw,
-     showlegend = FALSE,
-     legendgroup = "A"
- )
-fig3 <- fig3 %>% layout(
-        # title = "R", 
-        legend = legend_format(),
-        paper_bgcolor = "rgb(246,250,251)", 
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#  fig3 <- plot_ly(
+#      data = big_data,
+#      x = ~Year,
+#      y = ~recruitment,
+#      split = ~AssessmentYear,
+#      type = "scatter",
+#      mode = "lines+markers",
+#     #  line = list(shape = "spline"),
+#      connectgaps = FALSE,
+#      color = ~AssessmentYear,
+#      colors = palette_bw,
+#      showlegend = FALSE,
+#      legendgroup = "A"
+#  )
+# fig3 <- fig3 %>% layout(
+#         # title = "R", 
+#         legend = legend_format(),
+#         paper_bgcolor = "rgb(246,250,251)", 
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        yaxis = list(
-            title = R_yaxis_label,
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        )
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         yaxis = list(
+#             title = R_yaxis_label,
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         )
+#     )
 
- fig_qass <- subplot(fig1, fig2, fig3, 
- nrows = 3, shareX = TRUE, titleX = TRUE, titleY = TRUE,  heights = c(0.33, 0.33, 0.33), margin = c(0.05,0.05,0.01,0.01))#, ,
-#  nrows = 1,
-#    widths = NULL,
-#    heights = NULL,
-#    margin = 0.02,
-#    shareX = TRUE,
-#    shareY = FALSE,
-#    titleX = shareX)
-#    titleY = shareY,
-#    which_layout = "merge")
- fig_qass
-}
+#  fig_qass <- subplot(fig1, fig2, fig3, 
+#  nrows = 3, shareX = TRUE, titleX = TRUE, titleY = TRUE,  heights = c(0.33, 0.33, 0.33), margin = c(0.05,0.05,0.01,0.01))#, ,
+# #  nrows = 1,
+# #    widths = NULL,
+# #    heights = NULL,
+# #    margin = 0.02,
+# #    shareX = TRUE,
+# #    shareY = FALSE,
+# #    titleX = shareX)
+# #    titleY = shareY,
+# #    which_layout = "merge")
+#  fig_qass
+# }
 
 # quality_assessment_plots(big_data, big_data_last_year)
 
@@ -750,394 +750,394 @@ fig3 <- fig3 %>% layout(
 #'
 #' @export
 #' 
-figure_1_plots <- function(data1, data2, data3, data4, 
-                            years, 
-                            catches, landings, discards, units, stock_name, AssessmentYear,
-                            recruitment, low_recruitment, high_recruitment, recruitment_age, 
-                            low_F, F, high_F, FLim, Fpa, FMSY,Fage, fishingPressureDescription,
-                            low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) {
-    if (all(is.na(data1[, "landings"]))) {
-        data1$landings <- data1$catches
-    }
+# figure_1_plots <- function(data1, data2, data3, data4, 
+#                             years, 
+#                             catches, landings, discards, units, stock_name, AssessmentYear,
+#                             recruitment, low_recruitment, high_recruitment, recruitment_age, 
+#                             low_F, F, high_F, FLim, Fpa, FMSY,Fage, fishingPressureDescription,
+#                             low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) {
+#     if (all(is.na(data1[, "landings"]))) {
+#         data1$landings <- data1$catches
+#     }
 
-    ## Labels for axes and annotation for the plots, taken from SAG
-    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
-    R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(recruitment_age))
-    F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
-    SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
+#     ## Labels for axes and annotation for the plots, taken from SAG
+#     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(units))
+#     R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(recruitment_age))
+#     F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
+#     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
     
-    Stockcode_year_annotation_1 <- list( showarrow = FALSE,
-                                        text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
-                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
-                                        yref = 'paper', y = 1, xref = "paper", x = 0.8
-                                        )
-    Stockcode_year_annotation_2 <- list( showarrow = FALSE,
-                                        text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
-                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
-                                        yref = 'paper', y = 1, xref = "paper", x = 0.95
-                                        )
-    Stockcode_year_annotation_3 <- list( showarrow = FALSE,
-                                            text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
-                                            font = list(family = "Calibri, serif",size = 10, color = "black"),
-                                            yref = 'paper', y = 0.97, xref = "paper", x = 0.8
-                                            )
-    Stockcode_year_annotation_4 <- list( showarrow = FALSE,
-                                        text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
-                                        font = list(family = "Calibri, serif",size = 10, color = "black"),
-                                        yref = 'paper', y = 0.97, xref = "paper", x = 0.95
-                                        )
+#     Stockcode_year_annotation_1 <- list( showarrow = FALSE,
+#                                         text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+#                                         font = list(family = "Calibri, serif",size = 10, color = "black"),
+#                                         yref = 'paper', y = 1, xref = "paper", x = 0.8
+#                                         )
+#     Stockcode_year_annotation_2 <- list( showarrow = FALSE,
+#                                         text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+#                                         font = list(family = "Calibri, serif",size = 10, color = "black"),
+#                                         yref = 'paper', y = 1, xref = "paper", x = 0.95
+#                                         )
+#     Stockcode_year_annotation_3 <- list( showarrow = FALSE,
+#                                             text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+#                                             font = list(family = "Calibri, serif",size = 10, color = "black"),
+#                                             yref = 'paper', y = 0.97, xref = "paper", x = 0.8
+#                                             )
+#     Stockcode_year_annotation_4 <- list( showarrow = FALSE,
+#                                         text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
+#                                         font = list(family = "Calibri, serif",size = 10, color = "black"),
+#                                         yref = 'paper', y = 0.97, xref = "paper", x = 0.95
+#                                         )
 
     
 
-    # Start the plot
-    fig1 <- plot_ly(
-        data = data1,
-        x = ~years,
-        y = ~landings,
-        name = "Landings",
-        type = "bar",
-        hoverinfo = "text",
-        text = ~ paste("Year:", Year, "<br>Landings:", landings),
-        marker = list(
-            color = "#002b5f", # BMSlandings #047c6c
-            line = list(
-                color = "#d0d1d6",
-                width = 0.5
-            )
-        ),
-        showlegend = TRUE,
-        legendgroup = "A"
-    )
+#     # Start the plot
+#     fig1 <- plot_ly(
+#         data = data1,
+#         x = ~years,
+#         y = ~landings,
+#         name = "Landings",
+#         type = "bar",
+#         hoverinfo = "text",
+#         text = ~ paste("Year:", Year, "<br>Landings:", landings),
+#         marker = list(
+#             color = "#002b5f", # BMSlandings #047c6c
+#             line = list(
+#                 color = "#d0d1d6",
+#                 width = 0.5
+#             )
+#         ),
+#         showlegend = TRUE,
+#         legendgroup = "A"
+#     )
 
-    fig1 <- fig1 %>% add_trace(
-        data = data1,
-        x = ~years,
-        y = ~discards,
-        name = "Discards",
-        type = "bar",
-        hoverinfo = "text",
-        text = ~ paste("Year:", Year, "<br>Discards:", discards),
-        marker = list(
-            color = "#fda500",
-            line = list(
-                color = "#d0d1d6",
-                width = 0.5
-            )
-        ),
-        showlegend = TRUE,
-        legendgroup = "A"
-    )
+#     fig1 <- fig1 %>% add_trace(
+#         data = data1,
+#         x = ~years,
+#         y = ~discards,
+#         name = "Discards",
+#         type = "bar",
+#         hoverinfo = "text",
+#         text = ~ paste("Year:", Year, "<br>Discards:", discards),
+#         marker = list(
+#             color = "#fda500",
+#             line = list(
+#                 color = "#d0d1d6",
+#                 width = 0.5
+#             )
+#         ),
+#         showlegend = TRUE,
+#         legendgroup = "A"
+#     )
 
-    fig1 <- fig1 %>% layout(
-        # title = "Catches",
-        paper_bgcolor = "rgb(246,250,251)",
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#     fig1 <- fig1 %>% layout(
+#         # title = "Catches",
+#         paper_bgcolor = "rgb(246,250,251)",
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format(),
-            showticklabels = TRUE
-        ),
-        barmode = "stack",
-        legend = legend_format(),
-        yaxis = list(
-            title = catches_yaxis_label,#"Catches",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format(),
-            showticklabels = TRUE
-        ),
-        annotations = list(Stockcode_year_annotation_1)
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format(),
+#             showticklabels = TRUE
+#         ),
+#         barmode = "stack",
+#         legend = legend_format(),
+#         yaxis = list(
+#             title = catches_yaxis_label,#"Catches",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format(),
+#             showticklabels = TRUE
+#         ),
+#         annotations = list(Stockcode_year_annotation_1)
+#     )
 
-    fig2 <- plot_ly(
-        data = data2,
-        x = ~years,
-        y = ~recruitment,
-        name = "Recruitment",
-        type = "bar",
-        hoverinfo = "text",
-        text = ~ paste("Year:", years, "<br>Recruitment:", recruitment),
-        marker = list(
-            color = "#28b3e8", #last yesr #92defb
-            line = list(
-                color = "#d0d1d6",
-                width = 0.5
-            )
-        ),
-        error_y = list(
-            type = "data",
-            symmetric = FALSE,
-            arrayminus = ~low_recruitment,
-            array = ~high_recruitment,
-            color = "rgba(169,169,169,0.5)"
-        ),
-        legendgroup = "A"
-    )
+#     fig2 <- plot_ly(
+#         data = data2,
+#         x = ~years,
+#         y = ~recruitment,
+#         name = "Recruitment",
+#         type = "bar",
+#         hoverinfo = "text",
+#         text = ~ paste("Year:", years, "<br>Recruitment:", recruitment),
+#         marker = list(
+#             color = "#28b3e8", #last yesr #92defb
+#             line = list(
+#                 color = "#d0d1d6",
+#                 width = 0.5
+#             )
+#         ),
+#         error_y = list(
+#             type = "data",
+#             symmetric = FALSE,
+#             arrayminus = ~low_recruitment,
+#             array = ~high_recruitment,
+#             color = "rgba(169,169,169,0.5)"
+#         ),
+#         legendgroup = "A"
+#     )
 
-    fig2 <- fig2 %>% layout(
-        # title = "Recruitment",
-        paper_bgcolor = "rgb(246,250,251)",
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#     fig2 <- fig2 %>% layout(
+#         # title = "Recruitment",
+#         paper_bgcolor = "rgb(246,250,251)",
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format(),
-            showticklabels = TRUE
-        ),
-        yaxis = list(
-            title = R_yaxis_label,#"Recruitment",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format(),
-            showticklabels = TRUE
-        ),
-        annotations = list(Stockcode_year_annotation_2)
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format(),
+#             showticklabels = TRUE
+#         ),
+#         yaxis = list(
+#             title = R_yaxis_label,#"Recruitment",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format(),
+#             showticklabels = TRUE
+#         ),
+#         annotations = list(Stockcode_year_annotation_2)
+#     )
 
-    fig3 <- plot_ly(
-        data = data3,
-        x = ~years,
-        y = ~high_F,
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "transparent", shape = "linear"), #
-        showlegend = FALSE,
-        name = "DATA",
-        legendgroup = "A"
-    )
-    fig3 <- fig3 %>% add_trace(
-        data = data3,
-        y = ~low_F,
-        type = "scatter",
-        mode = "lines",
-        fill = "tonexty",
-        name = "95 %",
-        fillcolor = "#f2a497", # "rgba(0,100,80,0.2)"rgba(255,71,26,0.2)
-        line = list(color = "transparent", shape = "linear"),
-        showlegend = TRUE,
-        name = "low_F",
-        legendgroup = "A"
-    )
-    fig3 <- fig3 %>% add_trace(
-        data = data3,
-        x = ~years,
-        y = ~F,
-        type = "scatter",
-        mode = "lines+markers",
-        line = list(color = "#ed5f26", shape = "linear"), #"rgb(255,71,26)"
-        name = "F",
-        marker = list(size = 1, color = "#ed5f26"),
-        showlegend = TRUE,
-        legendgroup = "A"
-    )
+#     fig3 <- plot_ly(
+#         data = data3,
+#         x = ~years,
+#         y = ~high_F,
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "transparent", shape = "linear"), #
+#         showlegend = FALSE,
+#         name = "DATA",
+#         legendgroup = "A"
+#     )
+#     fig3 <- fig3 %>% add_trace(
+#         data = data3,
+#         y = ~low_F,
+#         type = "scatter",
+#         mode = "lines",
+#         fill = "tonexty",
+#         name = "95 %",
+#         fillcolor = "#f2a497", # "rgba(0,100,80,0.2)"rgba(255,71,26,0.2)
+#         line = list(color = "transparent", shape = "linear"),
+#         showlegend = TRUE,
+#         name = "low_F",
+#         legendgroup = "A"
+#     )
+#     fig3 <- fig3 %>% add_trace(
+#         data = data3,
+#         x = ~years,
+#         y = ~F,
+#         type = "scatter",
+#         mode = "lines+markers",
+#         line = list(color = "#ed5f26", shape = "linear"), #"rgb(255,71,26)"
+#         name = "F",
+#         marker = list(size = 1, color = "#ed5f26"),
+#         showlegend = TRUE,
+#         legendgroup = "A"
+#     )
 
-    ## Add horizontal lines
-    fig3 <- fig3 %>% add_trace(
-        data = data3,
-        x = ~years,
-        y = ~FLim,
-        name = "FLim",
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), #black
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-    fig3 <- fig3 %>% add_trace(
-        data = data3,
-        x = ~years,
-        y = ~Fpa,
-        name = "Fpa",
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), #7e7e7e
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-    fig3 <- fig3 %>% add_trace(
-        data = data3,
-        x = ~years,
-        y = ~FMSY,
-        name = "FMSY",
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "#00AC67", shape = "linear", width = 1),#, dash = "dash"), #679dfe old blue like the one MSYBtrigger  af1111
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
+#     ## Add horizontal lines
+#     fig3 <- fig3 %>% add_trace(
+#         data = data3,
+#         x = ~years,
+#         y = ~FLim,
+#         name = "FLim",
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), #black
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#     fig3 <- fig3 %>% add_trace(
+#         data = data3,
+#         x = ~years,
+#         y = ~Fpa,
+#         name = "Fpa",
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), #7e7e7e
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#     fig3 <- fig3 %>% add_trace(
+#         data = data3,
+#         x = ~years,
+#         y = ~FMSY,
+#         name = "FMSY",
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "#00AC67", shape = "linear", width = 1),#, dash = "dash"), #679dfe old blue like the one MSYBtrigger  af1111
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
 
-    fig3 <- fig3 %>% layout(
-        # title = "F",
-        legend = legend_format(),
-        paper_bgcolor = "rgb(246,250,251)",
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#     fig3 <- fig3 %>% layout(
+#         # title = "F",
+#         legend = legend_format(),
+#         paper_bgcolor = "rgb(246,250,251)",
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        yaxis = list(
-            title = F_yaxis_label, #"F",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            rangemode = "tozero",
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        annotations = list(Stockcode_year_annotation_3)
-    )
-    fig4 <- plot_ly(
-        data = data4,
-        x = ~years,
-        y = ~high_SSB,
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "transparent", shape = "linear"),
-        showlegend = FALSE,
-        name = "high_SSB"
-    )
-    fig4 <- fig4 %>% add_trace(
-        data = data4,
-        x = ~years,
-        y = ~low_SSB,
-        type = "scatter",
-        mode = "lines",
-        fill = "tonexty",
-        name = "95 %",
-        fillcolor = "#94b0a9", #rgba(0,100,80,0.2)
-        line = list(color = "transparent", shape = "linear"),
-        showlegend = TRUE,
-        name = "low_SSB",
-        legendgroup = "A"
-    )
-    fig4 <- fig4 %>% add_trace(
-        data = data4,
-        x = ~years,
-        y = ~SSB,
-        type = "scatter",
-        mode = "lines+markers",
-        line = list(color = "#047c6c", shape = "linear"), #rgb(0,100,80)
-        name = "SSB",
-        marker = list(size = 1, color = "#047c6c"),
-        showlegend = TRUE,
-        legendgroup = "A"
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         yaxis = list(
+#             title = F_yaxis_label, #"F",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             rangemode = "tozero",
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         annotations = list(Stockcode_year_annotation_3)
+#     )
+#     fig4 <- plot_ly(
+#         data = data4,
+#         x = ~years,
+#         y = ~high_SSB,
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "transparent", shape = "linear"),
+#         showlegend = FALSE,
+#         name = "high_SSB"
+#     )
+#     fig4 <- fig4 %>% add_trace(
+#         data = data4,
+#         x = ~years,
+#         y = ~low_SSB,
+#         type = "scatter",
+#         mode = "lines",
+#         fill = "tonexty",
+#         name = "95 %",
+#         fillcolor = "#94b0a9", #rgba(0,100,80,0.2)
+#         line = list(color = "transparent", shape = "linear"),
+#         showlegend = TRUE,
+#         name = "low_SSB",
+#         legendgroup = "A"
+#     )
+#     fig4 <- fig4 %>% add_trace(
+#         data = data4,
+#         x = ~years,
+#         y = ~SSB,
+#         type = "scatter",
+#         mode = "lines+markers",
+#         line = list(color = "#047c6c", shape = "linear"), #rgb(0,100,80)
+#         name = "SSB",
+#         marker = list(size = 1, color = "#047c6c"),
+#         showlegend = TRUE,
+#         legendgroup = "A"
+#     )
 
-    ## Add horizontal lines
-    fig4 <- fig4 %>% add_trace(
-        data = data4,
-        x = ~years,
-        y = ~Blim,
-        name = "Blim",
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dash", width = 2),
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-    fig4 <- fig4 %>% add_trace(
-        data = data4,
-        x = ~years,
-        y = ~Bpa,
-        name = "Bpa",
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "black", shape = "linear", dash = "dot", width = 2),
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
-    fig4 <- fig4 %>% add_trace(
-        data = data4,
-        x = ~years,
-        y = ~MSYBtrigger,
-        name = "MSYBtrigger",
-        type = "scatter",
-        mode = "lines",
-        line = list(color = "#689dff", shape = "linear", width = 1),#, dash = "dash"), 
-        showlegend = TRUE,
-        legendgroup = "B"
-    )
+#     ## Add horizontal lines
+#     fig4 <- fig4 %>% add_trace(
+#         data = data4,
+#         x = ~years,
+#         y = ~Blim,
+#         name = "Blim",
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "black", shape = "linear", dash = "dash", width = 2),
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#     fig4 <- fig4 %>% add_trace(
+#         data = data4,
+#         x = ~years,
+#         y = ~Bpa,
+#         name = "Bpa",
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "black", shape = "linear", dash = "dot", width = 2),
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
+#     fig4 <- fig4 %>% add_trace(
+#         data = data4,
+#         x = ~years,
+#         y = ~MSYBtrigger,
+#         name = "MSYBtrigger",
+#         type = "scatter",
+#         mode = "lines",
+#         line = list(color = "#689dff", shape = "linear", width = 1),#, dash = "dash"), 
+#         showlegend = TRUE,
+#         legendgroup = "B"
+#     )
 
-    fig4 <- fig4 %>% layout(
-        # title = "SSB",
-        legend = legend_format(),
-        paper_bgcolor = "rgb(246,250,251)",
-        plot_bgcolor = "rgb(255,255,255)",
-        # images = watermark(),
+#     fig4 <- fig4 %>% layout(
+#         # title = "SSB",
+#         legend = legend_format(),
+#         paper_bgcolor = "rgb(246,250,251)",
+#         plot_bgcolor = "rgb(255,255,255)",
+#         # images = watermark(),
 
-        xaxis = list(
-            title = "Years",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        yaxis = list(
-            title = SSB_yaxis_label,#"SSB",
-            gridcolor = "rgb(235,235,235)",
-            showgrid = TRUE,
-            showline = TRUE,
-            showticklabels = TRUE,
-            tickcolor = "rgb(127,127,127)",
-            ticks = "outside",
-            zeroline = TRUE,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
-        ),
-        annotations = list(Stockcode_year_annotation_4)
-    )
+#         xaxis = list(
+#             title = "Years",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         yaxis = list(
+#             title = SSB_yaxis_label,#"SSB",
+#             gridcolor = "rgb(235,235,235)",
+#             showgrid = TRUE,
+#             showline = TRUE,
+#             showticklabels = TRUE,
+#             tickcolor = "rgb(127,127,127)",
+#             ticks = "outside",
+#             zeroline = TRUE,
+#             titlefont = titlefont_format(),
+#             tickfont = tickfont_format()
+#         ),
+#         annotations = list(Stockcode_year_annotation_4)
+#     )
 
-    fig <- subplot(fig1, fig2, fig3, fig4,
-        nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.5, 0.5), heights = c(0.5, 0.5), margin = c(0.06,0.06,0.02,0.02)
-    ) #
+#     fig <- subplot(fig1, fig2, fig3, fig4,
+#         nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, widths = c(0.5, 0.5), heights = c(0.5, 0.5), margin = c(0.06,0.06,0.02,0.02)
+#     ) #
 
-    # RefPoints_annotation <- list( showarrow = FALSE,
-    #                                     text = "Reference points",
-    #                                     font = list(family = "Calibri, serif",size = 20, color = "black"),
-    #                                     yref = 'paper', y =0.6, xref = "paper", x = 1.2
-    #                                   )
+#     # RefPoints_annotation <- list( showarrow = FALSE,
+#     #                                     text = "Reference points",
+#     #                                     font = list(family = "Calibri, serif",size = 20, color = "black"),
+#     #                                     yref = 'paper', y =0.6, xref = "paper", x = 1.2
+#     #                                   )
 
-    # fig <- fig %>%layout(annotations =  RefPoints_annotation)                                 
-    fig
-}
+#     # fig <- fig %>%layout(annotations =  RefPoints_annotation)                                 
+#     fig
+# }
 
 
 
@@ -1424,7 +1424,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
 
     fig_catch <- fig_catch %>% layout(
         # title = "Catches",
-        paper_bgcolor = "rgb(246,250,251)",
+        paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
         hovermode = "x",
         yaxis2 = ay,
@@ -1520,7 +1520,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
     
     catch_time <- catch_time %>% layout(
         # title = "Catches",
-        paper_bgcolor = "rgb(246,250,251)",
+        paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
         # images = watermark(),
         legend = list(
@@ -1643,7 +1643,30 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
 
 
 ##### ICES Theme function
-
+#' Returns ....
+#'
+#' Downloads ...
+#'
+#' @param stock_name
+#'
+#' @return 
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df) {
     font <- "Calibri, sans-serif" # assign font family up front
 

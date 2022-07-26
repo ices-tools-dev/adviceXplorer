@@ -100,17 +100,24 @@ advice_requester <- gsub("~", ", ", advice_requester)
 catch_scenario_advice_sentence <- HTML(paste0("<font size=", 3, ">","Stock description: ", "<b>", StockDescription,"</b><br/>",
                                               "<font size=", 3, ">","Stock code: ", "<b>", catch_scenario_list$stockCode,"</b><br/>",                                              
                                               "<font size=", 3, ">","Advice requester: ", "<b>", advice_requester,"</b><br/>",
-                                              "<font size=", 3, ">","Assessment year: ", "<b>", catch_scenario_list$assessmentYear,"</b><br/><br/>",
+                                              "<font size=", 3, ">","Assessment year: ", "<b>", catch_scenario_list$assessmentYear,"</b><br/>",
                                               # "<b><i>","<font size=", 4, ">", "Headline advice:","</font>","</b></i><br/>",
                                               # "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"
-                                              actionButton(inputId = "preview", label = NULL, style = "top: 1%; left:7%; width: 50px; height: 50px; background: url('calendar.png');  background-size: cover; background-position: center;")
+                                              tipify(
+                                                actionButton(inputId = "preview", label = NULL, hover=T, style = "top: 1%; left:7%; width: 50px; height: 50px; background: url('calendar.png');  background-size: cover; background-position: center; padding-right:25px;"), 
+                                                title = "Useful dates for the stock's advice process", placement = "bottom", trigger = "hover"),
+                                              
+                                              "     ", ## This need to be changed to something smarter
+                                              
+                                              tipify(
+                                              actionButton(inputId = "advice_view_link", label = NULL, hover=T, onclick = paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", catch_scenario_list$adviceKey,"', '_blank')"), style = "top: 1%; left:15%; width: 50px; height: 50px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center;"), 
+                                              title = "Link for the full advice view record", placement = "right", trigger = "hover")
                                               ))
 # catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
 return(catch_scenario_advice_sentence)
 }
 
 get_Advice_View_Headline <- function(catch_scenario_list) {
-
 catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
                                               "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))
 # catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
@@ -118,7 +125,6 @@ return(catch_scenario_advice_sentence)
 }
 
 get_Stock_info <- function(stockcode, StockDescription, assessmentYear) {
-
 stock_info_sentence <- HTML(paste0("<font size=", 3, ">","Stock description: ", "<b>", StockDescription,"</b><br/>",
                                               "<font size=", 3, ">","Stock code: ", "<b>", stockcode,"</b><br/>",
                                               "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"))

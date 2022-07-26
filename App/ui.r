@@ -36,6 +36,7 @@ library(tidyr)
 library(rintrojs)
 library(scales)
 library(ggradar)
+library(shinyBS)
 
 
 
@@ -55,7 +56,10 @@ source("utilities_calendar.r")
 source("utilities_resources.r")
 
 
-
+myDownloadButton <- function(outputId){
+  tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
+         target = "_blank", download = NA, NULL, style = "width: 30px; height: 30px; background: url('downloading.png');  background-size: cover; background-position: center;")
+}
 
 title_html <- tags$a(
     href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
@@ -113,13 +117,16 @@ navbarPage(
         sidebarLayout(
             sidebarPanel = maps_panels,
             mainPanel = selectize_panel
+            
         )
         # )
     ),
     
     tabPanel(
         "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
-        actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+        tipify(
+            actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+            title = "Click here for help", placement = "bottom", trigger = "hover"),
         DTOutput("tbl")#,
                 # useShinyjs(),
                 # inlineCSS(list("table1" = "font-size: 15px"))
@@ -140,7 +147,15 @@ navbarPage(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
-                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+                tipify(
+                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"), 
+                title = "Click here fof help", placement = "right", trigger = "hover"),
+                
+                tipify(
+                myDownloadButton("download_SAG_Data"),
+                title = "Download the plot data", placement = "right", trigger = "hover"),
+
+
                 withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel,
@@ -172,7 +187,14 @@ navbarPage(
             ),
             tabPanel(
                 "Quality of assessment",
+                tipify(
                 actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+                title = "Click here fof help", placement = "right", trigger = "hover"),
+
+                tipify(
+                myDownloadButton("download_SAG_Quality_Data"),
+                title = "Download the plot data", placement = "right", trigger = "hover"),
+
                 withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
                 quality_of_assessment
                 # panel(
@@ -247,7 +269,9 @@ navbarPage(
     
     tabPanel(
         "Advice",
-        actionButton(inputId = "help_tab5", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+        tipify(
+        actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"),
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel,
             mainPanel = catch_scenarios_right_panel

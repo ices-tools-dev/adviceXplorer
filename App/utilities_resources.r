@@ -66,7 +66,21 @@ make_app_citation <- function() {
       " all public data are under the Creative Commons licence ",
       "<a href='","https://creativecommons.org/licenses/by/4.0/", "' target='_blank'>", "(CC BY 4.0).</a><br/><br/>",
       # img(src = "by.png", height = "100px"),
-      "<img src= 'by.png'", " height= '100px'/>"
+      "<img src= 'by.png'", " height= '100px'/><br/><br/>",
+
+      "<b>", "<font size=", 5, ">", "Resources used in this site", "</font></b><br/>",
+      "<font size=", 2, ">",
+      "Fish illustrations: Food and Agriculture Organization of the United Nations, Original Scientific Illustrations Archive. Reproduced with permission, <br/>",
+      "<a href='https://www.flaticon.com/free-icons/fish' title='fish icons'>Fish icons created by vectorsmarket15 - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/pdf' title='pdf icons'>Pdf icons created by Creative Stall Premium - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/database' title='database icons'>Database icons created by srip - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/seafood' title='seafood icons'>Seafood icons created by iconixar - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/map' title='map icons'>Map icons created by Freepik - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/info' title='info icons'>Info icons created by Stockio - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/calendar' title='calendar icons'>Calendar icons created by Freepik - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/link' title='link icons'>Link icons created by Uniconlabs - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/download' title='download icons'>Download icons created by kosonicon - Flaticon</a>",
+      "</font>"
       
       
      
@@ -75,4 +89,12 @@ make_app_citation <- function() {
   )
 
   return(string_citation)
+}
+
+
+make_app_update_date <- function() {
+  string_update <- HTML(
+    paste0("<font size= 2><i>App last update: ", Sys.Date(),"</i></font>")
+  )
+
 }
