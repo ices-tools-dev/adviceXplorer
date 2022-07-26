@@ -71,20 +71,24 @@ maps_panels <-
   sidebarPanel(
     width = 8,
     # tabsetPanel(
-      tabPanel(
-        "ICES Ecoregions",
-        fillPage(
-          tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
-          withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
-        )
-      )#,
-      # tabPanel(
-      #   "ICES Areas",
-      #   fillPage(
-      #     tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
-      #     leafletOutput("map2", height = "100%", width = "100%")
-      #   )
-      # )
+    tabPanel(
+      "ICES Ecoregions",
+      fillPage(
+        tags$style(type = "text/css", "#map1 {height: calc(100vh - 140px) !important;}"), #
+        withSpinner(
+          leafletOutput("map1", height = "100%", width = "100%")          
+        )        
+      )
+    )
+    
+     # ,
+    # tabPanel(
+    #   "ICES Areas",
+    #   fillPage(
+    #     tags$style(type = "text/css", "#map2 {height: calc(100vh - 200px) !important;}"),
+    #     leafletOutput("map2", height = "100%", width = "100%")
+    #   )
+    # )
     # )
   )
 
@@ -159,7 +163,8 @@ selectize_panel <-
       ),
       heading = "Data filtering",
       status = "primary"
-    )
+    ),
+    htmlOutput("app_last_update")
   )
 ################################## SAG plots tab
 SAG_plots_left_panel <- sidebarPanel(

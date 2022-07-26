@@ -376,6 +376,10 @@ observe({
   )
   
 
+  #### last update of the app 
+  output$app_last_update <- renderUI({
+    make_app_update_date()
+  })
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(
@@ -559,44 +563,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot7 <- renderPlotly(
       ICES_plot_7(advice_action_quality())
   )
-  ######################### Stock development over time
-
-  # output$all_plots <- renderPlotly({
-  #   data_list <- advice_action()
-
-
-  #   rv <- reactiveValues(
-  #     catches_df = data_list$catches,
-  #     r_df = data_list$R,
-  #     f_df = data_list$f,
-  #     SSB_df = data_list$SSB
-  #   )
-  #   figure_1_plots(
-  #     rv$catches_df, rv$r_df, rv$f_df, rv$SSB_df,
-  #           rv$catches_df$Year, rv$catches_df$catches, rv$catches_df$landings, rv$catches_df$discards, rv$catches_df$units, rv$catches_df$stock_name, rv$catches_df$AssessmentYear,
-  #           rv$r_df$recruitment, rv$r_df$low_recruitment, rv$r_df$high_recruitment, rv$r_df$recruitment_age,
-  #           rv$f_df$low_F, rv$f_df$F, rv$f_df$high_F, rv$f_df$FLim, rv$f_df$Fpa, rv$f_df$FMSY, rv$f_df$Fage, rv$f_df$fishingPressureDescription,
-  #           rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger, rv$SSB_df$stockSizeDescription, rv$SSB_df$stockSizeUnits
-  #   )
-  # })
-
-  # #### Plot 5 quality of assessment
-  # output$Q_Ass <- renderPlotly({
-  #   data_list <- advice_action()
-
-  #   rv <- reactiveValues(
-  #     Q_Ass_df1 = data_list$big_data,
-  #     Q_Ass_df2 = data_list$big_data_last_year
-  #   )
-
-  #   ### forth plot
-  #   quality_assessment_plots(rv$Q_Ass_df1, rv$Q_Ass_df2,
-  #                                   rv$Q_Ass_df1$stockSizeDescription, rv$Q_Ass_df1$stockSizeUnits,
-  #                                   rv$Q_Ass_df1$Fage, rv$Q_Ass_df1$fishingPressureDescription,
-  #                                   rv$Q_Ass_df1$RecruitmentAge)
-  #   # figure_4_SSB(rv$SSB_df, rv$SSB_df$Year, rv$SSB_df$low_SSB, rv$SSB_df$SSB, rv$SSB_df$high_SSB, rv$SSB_df$Blim, rv$SSB_df$Bpa, rv$SSB_df$MSYBtrigger)
-  # })
-
+  
 
 ##### Advice view info
 advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
@@ -608,7 +575,6 @@ advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
   get_Advice_View_info(query$stockkeylabel, query$year-1)
 })
-
 
 
 

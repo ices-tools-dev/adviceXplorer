@@ -90,3 +90,11 @@ make_app_citation <- function() {
 
   return(string_citation)
 }
+
+
+make_app_update_date <- function() {
+  string_update <- HTML(
+    paste0("<font size= 2><i>App last update: ", Sys.Date(),"</i></font>")
+  )
+
+}

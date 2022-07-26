@@ -117,6 +117,7 @@ navbarPage(
         sidebarLayout(
             sidebarPanel = maps_panels,
             mainPanel = selectize_panel
+            
         )
         # )
     ),
