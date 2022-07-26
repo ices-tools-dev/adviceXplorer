@@ -502,19 +502,19 @@ output$download_SAG_Data <- downloadHandler(
   )
 
 ######################### Stock development over time plots
-  output$plot1 <- renderPlotly(    
-      ICES_plot_1(SAG_data_reactive())
-  ) #%>%
+  output$plot1 <- renderPlotly(
+    ICES_plot_1(SAG_data_reactive())
+  ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
   output$plot2 <- renderPlotly(
-      ICES_plot_2(SAG_data_reactive())
+    ICES_plot_2(SAG_data_reactive())
   )
   output$plot3 <- renderPlotly(
-      ICES_plot_3(SAG_data_reactive())
+    ICES_plot_3(SAG_data_reactive())
   )
   output$plot4 <- renderPlotly(
-      ICES_plot_4(SAG_data_reactive())
+    ICES_plot_4(SAG_data_reactive())
   )
 
 
@@ -539,10 +539,10 @@ output$download_SAG_Data <- downloadHandler(
     get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
   })
 
-##### button to download SAG data
-output$download_SAG_Quality_Data <- downloadHandler(
+##### button to download SAG data for quality of assessemnt
+  output$download_SAG_Quality_Data <- downloadHandler(
     filename = function() {
-      paste("SAG_data-", Sys.Date(), ".csv", sep="")
+      paste("SAG_data-", Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
       write.csv(advice_action_quality(), file)
@@ -649,14 +649,11 @@ output$Advice_Headline <- renderUI({
 })
 
 
-
-
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({  
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
-
 
 
 
@@ -680,6 +677,7 @@ output$catch_scenarios <- renderUI({
 output$TAC_timeline <- renderPlotly({
     TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
+
 
 ############ Radial plot panel
 output$catch_scenarios_radial <- renderUI({
