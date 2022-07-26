@@ -487,9 +487,19 @@ observe({
   })
 
 ###### info about the stock selected for top of page
-  output$stock_infos <- renderUI({
+output$stock_infos <- renderUI({
   get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
 })
+
+##### button to download SAG data
+output$download_SAG_Data <- downloadHandler(
+    filename = function() {
+      paste("SAG_data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(SAG_data_reactive(), file)
+    }
+  )
 
 ######################### Stock development over time plots
   output$plot1 <- renderPlotly(    
@@ -528,6 +538,16 @@ observe({
   output$stock_infos2 <- renderUI({
     get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
   })
+
+##### button to download SAG data
+output$download_SAG_Quality_Data <- downloadHandler(
+    filename = function() {
+      paste("SAG_data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(advice_action_quality(), file)
+    }
+  )
 
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly(

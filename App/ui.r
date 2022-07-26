@@ -56,7 +56,10 @@ source("utilities_calendar.r")
 source("utilities_resources.r")
 
 
-
+myDownloadButton <- function(outputId){
+  tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
+         target = "_blank", download = NA, NULL, style = "width: 30px; height: 30px; background: url('downloading.png');  background-size: cover; background-position: center;")
+}
 
 title_html <- tags$a(
     href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
@@ -146,6 +149,11 @@ navbarPage(
                 tipify(
                 actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"), 
                 title = "Click here fof help", placement = "right", trigger = "hover"),
+                
+                tipify(
+                myDownloadButton("download_SAG_Data"),
+                title = "Download the plot data", placement = "right", trigger = "hover"),
+
 
                 withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 sidebarLayout(
@@ -181,6 +189,11 @@ navbarPage(
                 tipify(
                 actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
                 title = "Click here fof help", placement = "right", trigger = "hover"),
+
+                tipify(
+                myDownloadButton("download_SAG_Quality_Data"),
+                title = "Download the plot data", placement = "right", trigger = "hover"),
+
                 withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
                 quality_of_assessment
                 # panel(

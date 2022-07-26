@@ -199,7 +199,7 @@ SAG_plots_righ_panel <- sidebarPanel(
 
 ##############################################Quality of assessment tab
 quality_of_assessment <- splitLayout(
-  style = "border: 1px solid silver; height: 90vh; overflow-y: auto;",  
+  style = "border: 1px solid silver; height: 80vh; overflow-y: auto;",  
   cellWidths = c("33%", "33%", "33%"),
   cellArgs = list(style = "padding: 6px"),
   panel(

@@ -21,3 +21,4 @@ Source for VISA tool icon: <a href="https://www.flaticon.com/free-icons/gps" tit
 Source for info icon: <a href="https://www.flaticon.com/free-icons/info" title="info icons">Info icons created by Stockio - Flaticon</a>
 Source for calendar icon: <a href="https://www.flaticon.com/free-icons/calendar" title="calendar icons">Calendar icons created by Freepik - Flaticon</a>
 Source for link icon:<a href="https://www.flaticon.com/free-icons/link" title="link icons">Link icons created by Uniconlabs - Flaticon</a>
+Source for download icon: <a href="https://www.flaticon.com/free-icons/download" title="download icons">Download icons created by kosonicon - Flaticon</a>
