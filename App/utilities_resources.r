@@ -75,7 +75,7 @@ make_app_citation <- function() {
       "<a href='https://www.flaticon.com/free-icons/pdf' title='pdf icons'>Pdf icons created by Creative Stall Premium - Flaticon,</a><br/>",
       "<a href='https://www.flaticon.com/free-icons/database' title='database icons'>Database icons created by srip - Flaticon,</a><br/>",
       "<a href='https://www.flaticon.com/free-icons/seafood' title='seafood icons'>Seafood icons created by iconixar - Flaticon,</a><br/>",
-      "<a href='https://www.flaticon.com/free-icons/gps' title='gps icons'>Gps icons created by geotatah - Flaticon,</a><br/>",
+      "<a href='https://www.flaticon.com/free-icons/map' title='map icons'>Map icons created by Freepik - Flaticon,</a><br/>",
       "<a href='https://www.flaticon.com/free-icons/info' title='info icons'>Info icons created by Stockio - Flaticon,</a><br/>",
       "<a href='https://www.flaticon.com/free-icons/calendar' title='calendar icons'>Calendar icons created by Freepik - Flaticon,</a><br/>",
       "<a href='https://www.flaticon.com/free-icons/link' title='link icons'>Link icons created by Uniconlabs - Flaticon,</a><br/>",
