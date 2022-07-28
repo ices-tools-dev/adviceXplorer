@@ -1777,8 +1777,8 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             scale_color_manual(values = c(
                 "F" = "#ed5f26",
                 "F<sub>MSY</sub>" = "#00AC67",
-                "F<sub>Lim</sub>" = "#a1a1a1",
-                "F<sub>pa</sub>" = "#a1a1a1"
+                "F<sub>Lim</sub>" = "#000000",
+                "F<sub>pa</sub>" = "#000000"
             )),
             scale_linetype_manual(values = c(
                 "F" = "solid",
@@ -1813,8 +1813,8 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             scale_color_manual(values = c(
                 "SSB" = "#047c6c",
                 "MSY B<sub>trigger</sub>" = "#689dff",
-                "B<sub>Lim</sub>" = "#a1a1a1",
-                "B<sub>pa</sub>" = "#a1a1a1"
+                "B<sub>Lim</sub>" = "#000000",
+                "B<sub>pa</sub>" = "#000000"
             )),
             scale_linetype_manual(values = c(
                 "SSB" = "solid",
@@ -1856,8 +1856,8 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2018" = "#737373",
                 "2017" = "#969696",
                 "MSY B<sub>trigger</sub>" = "#689dff",
-                "B<sub>Lim</sub>" = "#a1a1a1",
-                "B<sub>pa</sub>" = "#a1a1a1"
+                "B<sub>Lim</sub>" = "#000000",
+                "B<sub>pa</sub>" = "#000000"
             )),
             scale_linetype_manual(values = c(
                 "2021" = "solid",
@@ -1907,8 +1907,8 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2018" = "#737373",
                 "2017" = "#969696",
                 "F<sub>MSY</sub>" = "#00AC67",
-                "F<sub>Lim</sub>" = "#a1a1a1",
-                "F<sub>pa</sub>" = "#a1a1a1"
+                "F<sub>Lim</sub>" = "#000000",
+                "F<sub>pa</sub>" = "#000000"
             )),
             scale_linetype_manual(values = c(
                 "2021" = "solid",
