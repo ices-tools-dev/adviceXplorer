@@ -1,8 +1,8 @@
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
+
+#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form),
+#' Data Sources, Data disclaimer, Citation, Data policy and Resources
+#' 
+#' @param null
 #'
 #' @return 
 #'
@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' make_app_citation()
 #' }
 #'
 #' @references

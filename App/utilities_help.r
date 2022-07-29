@@ -1,10 +1,8 @@
-#' Returns a data.table object 
-#'
-#' Downloads ...
+#' Data.table used by rintro.js to document each elements on each tab of the app.
 #'
 #' @param null
 #'
-#' @return 
+#' @return a data.table object
 #'
 #' @note
 #' Can add some helpful information here
@@ -13,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' help_datatable()
 #' }
 #'
 #' @references
@@ -21,7 +19,7 @@
 #' 
 #'
 #' @export
-
+#' 
 help_datatable <- function() {
     data.table(
         tab = c(
