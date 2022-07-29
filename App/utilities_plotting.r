@@ -1141,22 +1141,21 @@ legend_format <- function() {
 
 
 
-#' Returns ....
+#' Radial plot to compare the % of change of the different catch scenarios for a particular stock/year
 #'
-#' Downloads ...
+#' @param tmp (catch scenario table scaled in percentages)
+#' @param catch_scenarios (one or more catch scenarios chosen by the user using selectizeInput)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return a ggradar plot embedded in a ggplotly container
 #'
 #' @note
-#' Can add some helpful information here
-#'
-#' @seealso
+#' The ggradar function works only if the values are scaled between 0 and 1, so the original 
+#' catch scenario table is first scaled based on the values of the previous year advice (% of change, see scale_catch_scenarios_for_radialPlot())
+#' and then it is scaled here between 0 and 1 (see rescale_function())
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'radial_plot(df,"F = 0")
 #' }
 #'
 #' @references
@@ -1291,22 +1290,21 @@ radial_plot <- function(tmp, catch_scenarios) {
 #     fig
 # }
 
-#' Returns ....
+#' Plot to visualise the effect of the different catch scenarios on F, SSB and the resulting total catches
+#' 
+#' @param tmp (catch scenario table)
+#' @param df (SAG data)
 #'
-#' Downloads ...
-#'
-#' @param stock_name
-#'
-#' @return 
+#' @return a plotly object
 #'
 #' @note
-#' Can add some helpful information here
+#' source = "ranking" is used to link the hovering on the different catch scenarios with
+#' the highlighting of the corresponding row in the table
 #'
-#' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 #' }
 #'
 #' @references
@@ -1470,9 +1468,11 @@ catch_scenarios_plot2 <- function(tmp, df) {
 #'
 #' Downloads ...
 #'
-#' @param stock_name
+#' @param final_df (a df created with wrangle_catches_with_scenarios())
+#' @param catch_scenarios (one or more catch scenarios chosen by the user using selectizeInput)
+#' @param df (SAG data)
 #'
-#' @return 
+#' @return a plotly object
 #'
 #' @note
 #' Can add some helpful information here
@@ -1481,7 +1481,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 #' }
 #'
 #' @references
@@ -1558,81 +1558,6 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
     )
 }
 
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
-#'
-#' @return 
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-# get_advice_timeline <- function(stock_code, tbl_sid, tbl_rows_selected) {
-#     ## this gets the initial dates from the advice view
-#     timeL <- get_Advice_View_info(stock_code)
-
-#     release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
-#     applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
-#     applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
-
-#     ## This block formats the dates from dd/mm/yyy to Yyyy-mm-dd
-#     release_date <- strptime(as.character(release_date), "%d/%m/%Y")
-#     release_date <- format(release_date, "%Y-%m-%d")
-#     applicable_from <- strptime(as.character(applicable_from), "%d/%m/%Y")
-#     applicable_from <- format(applicable_from, "%Y-%m-%d")
-#     applicable_until <- strptime(as.character(applicable_until), "%d/%m/%Y")
-#     applicable_until <- format(applicable_until, "%Y-%m-%d")
-
-
-#     ## This block gets the name of the working group from the currently selected row
-#     filtered_row <- tbl_sid[tbl_rows_selected, ]
-#     WG <- filtered_row$ExpertGroupUrl
-#     WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
-
-#     ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
-#     page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
-    
-#     start_date <- page %>%
-#         html_nodes("td") %>%
-#         html_text()
-
-#     title_meeting <- start_date[1]
-#     ## This block extracts and formats the dates as above
-#     start_WG <- strapplyc(start_date[2], "\\d+/\\d+/\\d+", simplify = TRUE)
-#     end_WG <- strapplyc(start_date[3], "\\d+/\\d+/\\d+", simplify = TRUE)
-#     start_WG <- strptime(as.character(start_WG), "%d/%m/%Y")
-#     start_WG <- format(start_WG, "%Y-%m-%d")
-#     end_WG <- strptime(as.character(end_WG), "%d/%m/%Y")
-#     end_WG <- format(end_WG, "%Y-%m-%d")
-
-#     ## This blocks create the df that timevis will display
-#     data <- data.frame(
-#         id      = 1:3,
-#         content = c("Advice Release Date", "Advice Applicable Between", title_meeting),
-#         start   = c(release_date, applicable_from, start_WG),
-#         end     = c(NA, applicable_until, end_WG)
-#     )
-    
-
-#     return(data)
-# }
-
-
 
 
 
@@ -1642,23 +1567,22 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
 
 
 
-##### ICES Theme function
-#' Returns ....
+#' This function is used to produce a standardised ICES theme for all SAG and quality of assessement plots.
+#' The idea is to have a common base that then can be modified based on the plot formatting options specified in SAG.
 #'
-#' Downloads ...
+#' @param type (specify the type of plot)
+#' @param df (SAG data)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return a list to be used in a ggplot function as a theme
 #'
 #' @note
-#' Can add some helpful information here
+#' in development
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' theme_ICES_plots(type = "catches", df)
 #' }
 #'
 #' @references
@@ -1989,22 +1913,30 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 }
 
 
-#### SAG stamp
-# get_SAG_stamp <- function(df) {
-#     # list_stocks <- getListStocks(year)
-#     # stock <- list_stocks %>% filter(AssessmentKey == assessmentkey)
-#     SAGstamp <- list(
-#         showarrow = FALSE,
-#         text = tail(df$SAGStamp),
-#         font = list(family = "Calibri, serif", size = 10, color = "black"),
-#         yref = "paper", y = 1, xref = "paper", x = 1,
-#         yanchor = "right", xanchor = "right"
-#     )
-#     return(SAGstamp)
-# }
 
-####### Plots 
 
+#' Function to plot landings ans discards
+#'
+#' @param df (SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_1(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_1 <- function(df) {
     p1 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, landings, discards, units, SAGStamp) %>%  
@@ -2047,8 +1979,30 @@ ICES_plot_1 <- function(df) {
         # print(df %>% filter(Purpose == "Advice"))
     fig1
 }
-# ICES_plot_1(df, SAGstamp)
-######################################recruitment###################################################
+
+
+#' Function to plot recruitment
+#'
+#' @param df (SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_2(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_2 <- function(df) {
     p2 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp) %>%
@@ -2106,6 +2060,30 @@ ICES_plot_2 <- function(df) {
 }
 # ICES_plot_2(df, SAGstamp)
 
+
+
+#' Function to plot fishing pressure (F)
+#'
+#' @param df (SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_3(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_3 <- function(df) {
 p3 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
@@ -2214,10 +2192,7 @@ p3 <- df %>% filter(Purpose == "Advice") %>%
     theme_ICES_plots(type = "F", df) 
     
    
-# plot <- p + text_labels
-# plot
-# p3
-#converting
+
 fig3 <- ggplotly(p3, tooltip = "text") %>%
     layout(
         legend = list(
@@ -2243,16 +2218,33 @@ for (i in 1:length(fig3$x$data)) {
 }
 fig3
 }
-# ICES_plot_3(df, SAGstamp)
 
+#' Function to plot spawning stock biomass (SSB)
+#'
+#' @param df (SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_4(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_4 <- function(df) {
 p4 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
     {if (is.na(.[nrow(.),2:4]) == c(TRUE,FALSE,TRUE)) head(., -1) else .} %>% 
-    # fill(c(high_SSB,low_SSB), .direction = "down") %>% 
-    # {if(is.na(tail(high_SSB,1))) head(df, -1) else .} %>%
-    # drop_na(SSB, high_SSB) %>%
-    #    gather(type, count, discards:landings) %>%
     ggplot(., aes(x = Year, y = SSB)) +
     geom_ribbon(aes(
         ymin = low_SSB,
@@ -2325,9 +2317,7 @@ p4 <- df %>% filter(Purpose == "Advice") %>%
     )) +
     theme_ICES_plots(type = "SSB", df)
    
-# plot <- p + text_labels
-# plot
-# p4
+
 #converting
 fig4 <- ggplotly(p4, tooltip = "text") %>%
     layout(
@@ -2358,15 +2348,32 @@ for (i in 1:length(fig4$x$data)){
     }
 }
 
-# print(df %>% filter(Purpose == "Advice") %>% select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp)) #%>% 
-# {if (is.na(df[nrow(df),2:4]) == c(TRUE,FALSE,TRUE)) head(df, -1)})
-# { if(is.na(tail(df$high_SSB,1))) filter(head(df,-1)) } )
-#     # {if(is.na(tail(high_SSB,1))) head(df, -1)  else .})
 fig4
 }
 
-# ICES_plot_4(df, SAGstamp)
 
+#' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)
+#'
+#' @param df (quality of assessement SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_5(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_5 <- function(df) {
     p5 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
@@ -2460,9 +2467,28 @@ ICES_plot_5 <- function(df) {
     fig5
 }
 
-# ICES_plot_5(df_qual[[1]], SAGstamp)
-
-#F
+#' Function to plot fishing pressure (F) for the last 5 years (quality of assessement section)
+#'
+#' @param df (quality of assessement SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_6(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_6 <- function(df) {
     p6 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) %>%
@@ -2523,11 +2549,7 @@ ICES_plot_6 <- function(df) {
             )
         )) +
         theme_ICES_plots(type = "quality_F", df)
-    # theme(legend.position = "none")
-
-    # plot <- p + text_labels
-    # plot
-    # p6
+    
     # converting
     fig6 <- ggplotly(p6, tooltip = "text") %>%
         layout(
@@ -2555,8 +2577,30 @@ ICES_plot_6 <- function(df) {
     }
     fig6
 }
-# ICES_plot_6(df_qual[[1]], SAGstamp)
-#Rec
+
+
+#' Function to plot recruitment (R) for the last 5 years (quality of assessement section)
+#'
+#' @param df (quality of assessement SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_7(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
 ICES_plot_7 <- function(df) {
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
@@ -2584,11 +2628,7 @@ ICES_plot_7 <- function(df) {
             # linetype = "solid",
         ) +
         theme_ICES_plots(type = "quality_R", df)
-    # theme(legend.position = "none")
-
-    # plot <- p + text_labels
-    # plot
-    # p7
+    
     # converting
     fig7 <- ggplotly(p7, tooltip = "text") %>%
         layout(
@@ -2616,4 +2656,3 @@ ICES_plot_7 <- function(df) {
     }
     fig7
 }
-# ICES_plot_7(df_qual[[1]], SAGstamp)
