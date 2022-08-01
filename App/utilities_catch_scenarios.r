@@ -49,7 +49,7 @@ get_Advice_View_info <- function(stock_name, year) {
   # print(catch_scenario_list)
   return(catch_scenario_list)
 }
-# stock_name <- "ple.27.420"
+# stock_name <- "cod.27.47d20"
 # year <- 2020
 # catch_scenario_list <- get_Advice_View_info(stock_name, year)
 #' Returns ....
@@ -456,4 +456,5 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   # print(catch_scen_table_perc)
   return(catch_scen_table_perc)
 }
-# scale_catch_scenarios_for_radialPlot(catch_scenario_table_st_2020, catch_scenario_table_st_2021)
+# df <- scale_catch_scenarios_for_radialPlot(catch_scenario_table_st_2020, catch_scenario_table_st_2021)
+

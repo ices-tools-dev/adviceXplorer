@@ -5,9 +5,10 @@ library(ggthemes)
 library(RColorBrewer)
 library(tidyverse)
 library(ggpubr)
+library(plotly)
 
-setwd("~/ACOM/advice sheets/catch table")
-dd <- read.csv("catch_table.csv" )
+setwd("~/Shiny/catch table")
+dd <- read.csv("Shiny/Scripts_in_development/catch_table.csv" )
 
 # Change the name of the columns and convert it to long format.
 names(dd) <- c('Scenario', 'Catch advice', 'Landings corresponding to advice',
@@ -52,6 +53,21 @@ pvar <- ggplot(dd1, aes(x = Scenario, y = value*100)) +
   theme_hc() + ggtitle('Variation in catch advice and SSB') + 
   geom_vline(xintercept = seq(0.5, 19.5, 2))
 
+# ggplotly(pvar)
 
 ggarrange(pcatch, pssb, pvar, ncol = 2, nrow = 2)
+#########################################################
 
+df <- df %>% select(-Year,-cS_Purpose)
+dd <- df %>% pivot_longer(cols = -1, names_to = 'indicator')
+
+
+pvar <- ggplot(dd, aes(x = cat, y = value, fill = indicator, colour = indicator)) +
+  geom_segment(aes(x = cat, xend = as.factor(cat), y = 0, yend = value),
+    color = "gray", lwd = 2
+  ) +
+  geom_point(size = 4) +
+  coord_flip() +
+  facet_wrap(~indicator)
+
+ggplotly(pvar)
