@@ -2656,3 +2656,46 @@ ICES_plot_7 <- function(df) {
     }
     fig7
 }
+
+
+#' Function to plot recruitment (R) for the last 5 years (quality of assessement section)
+#'
+#' @param df (quality of assessement SAG data)
+#'
+#' @return a ggplotly object
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' ICES_plot_7(df)
+#' }
+#'
+#' @references
+#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#' 
+#'
+#' @export
+#' 
+lollipop_plot <- function(df, indicator_choice_lollipop) {
+    df <- df %>% select(-Year, -cS_Purpose)
+    dd <- df %>% pivot_longer(cols = -1, names_to = "indicator")
+    dd <- dd %>% filter(indicator %in% c(indicator_choice_lollipop))
+    # print(dd)
+    # print(dd$indicator)
+
+    pvar <- ggplot(dd, aes(x = cat, y = value, fill = indicator, colour = indicator)) +
+        geom_segment(aes(x = cat, xend = as.factor(cat), y = 0, yend = value),
+            color = "gray", lwd = 2
+        ) +
+        geom_point(size = 3) +
+        coord_flip() +
+        labs(y = "%", x = NULL) +
+        facet_wrap(~indicator) 
+        
+
+    fig8 <- ggplotly(pvar) %>% layout(showlegend = FALSE)
+}

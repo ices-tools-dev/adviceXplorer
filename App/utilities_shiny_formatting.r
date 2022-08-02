@@ -264,6 +264,15 @@ catch_scenarios_left_panel <- sidebarPanel(
       uiOutput("catch_scenarios_radial"),
       withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
     )
+  ),
+  panel(
+    title = "Lollipop plot",
+    fillPage(
+      tags$style(type = "text/css", "#Lollipop_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+      # uiOutput("catch_scenarios"),
+      uiOutput("catch_indicators_lollipop"),
+      withSpinner(plotlyOutput("Lollipop_plot", height = "20%", width = "100%"))
+    )
   )
 )
 

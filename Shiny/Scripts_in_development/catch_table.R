@@ -70,4 +70,7 @@ pvar <- ggplot(dd, aes(x = cat, y = value, fill = indicator, colour = indicator)
   coord_flip() +
   facet_wrap(~indicator)
 
-ggplotly(pvar)
+fig8 <- ggplotly(pvar)
+
+
+

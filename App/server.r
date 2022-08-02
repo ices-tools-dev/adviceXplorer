@@ -660,6 +660,24 @@ output$Radial_plot <- renderPlotly({
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
+
+############ lollipop plot panel
+output$catch_indicators_lollipop <- renderUI({
+  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+    selectizeInput(
+        inputId = "indicator_choice_lollipop",
+        label = "Select an indicator",
+        choices = names(catch_scenario_table_percentages()),
+        selected = c("F"),
+        multiple = TRUE
+      )
+})
+output$Lollipop_plot <- renderPlotly({
+  lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
+})
+
+
+
 ###### Calendar of stock with modal
 observeEvent(input$preview, {
     # Show a modal when the button is pressed
