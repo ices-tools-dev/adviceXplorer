@@ -2658,9 +2658,10 @@ ICES_plot_7 <- function(df) {
 }
 
 
-#' Function to plot recruitment (R) for the last 5 years (quality of assessement section)
+#' Function to plot % of change from previous year assessement using a lollipop plot
 #'
-#' @param df (quality of assessement SAG data)
+#' @param tmp (catch scenario table scaled in percentages)
+#' @param indicator_choice_lollipop (one or more catch indicators chosen by the user using selectizeInput)
 #'
 #' @return a ggplotly object
 #'
@@ -2671,31 +2672,44 @@ ICES_plot_7 <- function(df) {
 #'
 #' @examples
 #' \dontrun{
-#' ICES_plot_7(df)
+#' 
 #' }
 #'
 #' @references
-#'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
+#'
 #' 
 #'
 #' @export
 #' 
 lollipop_plot <- function(df, indicator_choice_lollipop) {
+    
+    Basis <- df[df$cS_Purpose == "Basis Of Advice",]
+    
     df <- df %>% select(-Year, -cS_Purpose)
     dd <- df %>% pivot_longer(cols = -1, names_to = "indicator")
     dd <- dd %>% filter(indicator %in% c(indicator_choice_lollipop))
-    # print(dd)
-    # print(dd$indicator)
 
+
+    highlight = function(x, pat, color = "black", family = "") {
+        ifelse(grepl(pat, x), glue("<b style='font-family:{family}; color:{color}'>{x}</b>"), x)
+    }
+    
+    
+    
     pvar <- ggplot(dd, aes(x = cat, y = value, fill = indicator, colour = indicator)) +
         geom_segment(aes(x = cat, xend = as.factor(cat), y = 0, yend = value),
             color = "gray", lwd = 2
         ) +
         geom_point(size = 3) +
         coord_flip() +
+        scale_x_discrete(labels= function(x) highlight(x, Basis$cat, "#ff7300")) +
+        theme(axis.text.x=element_markdown()) +
         labs(y = "%", x = NULL) +
-        facet_wrap(~indicator) 
+        facet_wrap(~indicator)
+        
+        
         
 
     fig8 <- ggplotly(pvar) %>% layout(showlegend = FALSE)
 }
+

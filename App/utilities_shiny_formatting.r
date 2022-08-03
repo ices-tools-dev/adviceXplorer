@@ -248,30 +248,46 @@ catch_scenarios_left_panel <- sidebarPanel(
       withSpinner(plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%"))
     )
   ),
+  # panel(
+  #   title = "TAC_timeline",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     uiOutput("catch_scenarios"),
+  #     withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+  #   )
+  # ),
+  # panel(
+  #   title = "Radial_plot",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     # uiOutput("catch_scenarios"),
+  #     uiOutput("catch_scenarios_radial"),
+  #     withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
+  #   )
+  # ),
+  # panel(
+  #   title = "Lollipop plot",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Lollipop_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     # uiOutput("catch_scenarios"),
+  #     uiOutput("catch_indicators_lollipop"),
+  #     withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
+  #   )
+  # ),
   panel(
-    title = "TAC_timeline",
-    fillPage(
-      tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      uiOutput("catch_scenarios"),
-      withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
-    )
-  ),
-  panel(
-    title = "Radial_plot",
-    fillPage(
-      tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      # uiOutput("catch_scenarios"),
-      uiOutput("catch_scenarios_radial"),
-      withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
-    )
-  ),
-  panel(
-    title = "Lollipop plot",
-    fillPage(
-      tags$style(type = "text/css", "#Lollipop_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      # uiOutput("catch_scenarios"),
-      uiOutput("catch_indicators_lollipop"),
-      withSpinner(plotlyOutput("Lollipop_plot", height = "20%", width = "100%"))
+    tabsetPanel(
+      tabPanel("Historical catches",
+        uiOutput("catch_scenarios"),
+        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+      ),
+      tabPanel("% of change: radial plot",
+        uiOutput("catch_scenarios_radial"),
+        withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
+      ),
+      tabPanel("% of change: lollipop plot",
+        uiOutput("catch_indicators_lollipop"),
+        withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
+      )
     )
   )
 )
