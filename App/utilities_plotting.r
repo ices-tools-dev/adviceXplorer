@@ -2003,27 +2003,27 @@ ICES_plot_1 <- function(df) {
 #'
 #' @export
 #'
-ICES_plot_2 <- function(df, sagSettings = NULL) {
+ICES_plot_2 <- function(df) {
 
   df2 <- df %>%
     filter(Purpose == "Advice") %>%
     select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp)
 
-  if (is.null(sagSettings)) {
-    key <-
-      df %>%filter(Purpose == "Advice") %>%
-      head(1) %>%
-      pull(AssessmentKey)
+  key <-
+    df %>%filter(Purpose == "Advice") %>%
+    head(1) %>%
+    pull(AssessmentKey)
 
-    options(icesSAG.use_token = TRUE)
-    sagSettings <- icesSAG::getSAGSettingsForAStock(key)
-  }
+  options(icesSAG.use_token = TRUE)
+  sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
   shadeYears <- sagSettings2 %>%
     filter(settingKey == 14) %>%
-    pull(settingValue)
+    pull(settingValue) %>%
+    str_split(pattern = ",", simplify = TRUE) %>%
+    as.numeric()
 
     p2 <-
       ggplot(df2, aes(
@@ -2040,7 +2040,7 @@ ICES_plot_2 <- function(df, sagSettings = NULL) {
       )) +
       geom_bar(stat = "identity", data = df2 %>% filter(!Year %in% shadeYears)) +
       geom_errorbar(
-        data = df2 %>% filter(!Year %in% shadeYears),
+        data = df2 %>% filter(!is.na(high_recruitment)),
         aes(
         ymin = low_recruitment,
         ymax = high_recruitment,
