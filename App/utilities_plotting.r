@@ -2003,59 +2003,85 @@ ICES_plot_1 <- function(df) {
 #'
 #' @export
 #'
-ICES_plot_2 <- function(df) {
-    p2 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp) %>%
-        #    gather(type, count, discards:landings) %>%
-        ggplot(., aes(
-            x = Year,
-            y = recruitment,
-            fill = "recruitment",
-            text = map(
-                paste0(
-                    "<b>Year: </b>", Year,
-                    "<br>",
-                    "<b>Recruitment: </b>", recruitment
-                ), HTML
-            )
-        )) +
-        geom_bar(stat = "identity") +
-        geom_errorbar(aes(
-            ymin = low_recruitment,
-            ymax = high_recruitment,
-            text = map(
-                paste0(
-                    "<b>Year: </b>", Year,
-                    "<br>",
-                    "<b>High recruitment: </b>", high_recruitment,
-                    "<br>",
-                    "<b>Low recruitment: </b>", low_recruitment
-                ), HTML
-            )
-        ), # , color = "2*sd"
-        width = .3
-        ) +
-        theme_ICES_plots(type = "recruitment",df)
+ICES_plot_2 <- function(df, sagSettings = NULL) {
+
+  df2 <- df %>%
+    filter(Purpose == "Advice") %>%
+    select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp)
+
+  if (is.null(sagSettings)) {
+    key <-
+      df %>%filter(Purpose == "Advice") %>%
+      head(1) %>%
+      pull(AssessmentKey)
+
+    options(icesSAG.use_token = TRUE)
+    sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+  }
+
+  sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
+
+  shadeYears <- sagSettings2 %>%
+    filter(settingKey == 14) %>%
+    pull(settingValue)
+
+    p2 <-
+      ggplot(df2, aes(
+        x = Year,
+        y = recruitment,
+        fill = "recruitment",
+        text = map(
+          paste0(
+            "<b>Year: </b>", Year,
+            "<br>",
+            "<b>Recruitment: </b>", recruitment
+          ), HTML
+        )
+      )) +
+      geom_bar(stat = "identity", data = df2 %>% filter(!Year %in% shadeYears)) +
+      geom_errorbar(
+        data = df2 %>% filter(!Year %in% shadeYears),
+        aes(
+        ymin = low_recruitment,
+        ymax = high_recruitment,
+        text = map(
+          paste0(
+            "<b>Year: </b>", Year,
+            "<br>",
+            "<b>High recruitment: </b>", high_recruitment,
+            "<br>",
+            "<b>Low recruitment: </b>", low_recruitment
+          ), HTML
+        )
+      ), # , color = "2*sd"
+      width = .3
+      ) +
+      theme_ICES_plots(type = "recruitment", df)
+
+    if (length(shadeYears)) {
+      p2 <- p2 + geom_bar(stat = "identity", data = df2 %>% filter(Year %in% shadeYears), alpha = 0.5, show.legend = FALSE)
+    }
 
     # p2
     # converting
     fig2 <- ggplotly(p2, tooltip = "text") %>%
-        layout(
-            legend = list(
-                orientation = "h",
-                y = -.3,
-                yanchor = "bottom",
-                x = 0.5,
-                xanchor = "center",
-                title = list(text = "")
-            ),
-            annotations = list(
-                showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
-                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right")
+      layout(
+        legend = list(
+          orientation = "h",
+          y = -.3,
+          yanchor = "bottom",
+          x = 0.5,
+          xanchor = "center",
+          title = list(text = "")
+        ),
+        annotations = list(
+          showarrow = FALSE,
+          text = tail(df$SAGStamp, 1),
+          font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+          yref = "paper", y = 1, xref = "paper", x = 1,
+          yanchor = "right", xanchor = "right"
         )
+      )
     fig2
 }
 # ICES_plot_2(df, SAGstamp)
