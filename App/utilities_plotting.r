@@ -2689,10 +2689,14 @@ lollipop_plot <- function(df, indicator_choice_lollipop) {
     dd <- df %>% pivot_longer(cols = -1, names_to = "indicator")
     dd <- dd %>% filter(indicator %in% c(indicator_choice_lollipop))
 
-
-    highlight = function(x, pat, color = "black", family = "") {
-        ifelse(grepl(pat, x), glue("<b style='font-family:{family}; color:{color}'>{x}</b>"), x)
-    }
+    #### this is a function to highlight the basis of advice tick label
+    #### at the moment is not working with all stocks, might have to do with 
+    #### special characters in the string like "/". When it works it moves 
+    #### the plot to the leaft leaving a big space on the left of the y labels
+    
+    # highlight = function(x, pat, color = "black", family = "") {
+    #     ifelse(grepl(pat, x), glue("<b style='font-family:{family}; color:{color}'>{x}</b>"), x)
+    # }
     
     
     
@@ -2702,8 +2706,8 @@ lollipop_plot <- function(df, indicator_choice_lollipop) {
         ) +
         geom_point(size = 3) +
         coord_flip() +
-        scale_x_discrete(labels= function(x) highlight(x, Basis$cat, "#ff7300")) +
-        theme(axis.text.x=element_markdown()) +
+        # scale_x_discrete(labels= function(x) highlight(x, Basis$cat, "#ff7300")) +
+        # theme(axis.text.x=element_markdown()) +
         labs(y = "%", x = NULL) +
         facet_wrap(~indicator)
         
