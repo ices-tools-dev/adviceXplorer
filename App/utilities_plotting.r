@@ -55,7 +55,7 @@ legend_format <- function() {
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -64,15 +64,15 @@ legend_format <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ################## Plot 1 - Catches ################
 # figure_1_catches <- function(data, years, catches, landings, discards) {
 #     #Make sure that if the column landings is empy, the column catches is plotted
@@ -131,7 +131,7 @@ legend_format <- function() {
 # #'
 # #' @param stock_name
 # #'
-# #' @return 
+# #' @return
 # #'
 # #' @note
 # #' Can add some helpful information here
@@ -140,15 +140,15 @@ legend_format <- function() {
 # #'
 # #' @examples
 # #' \dontrun{
-# #' 
+# #'
 # #' }
 # #'
 # #' @references
 # #'
-# #' 
+# #'
 # #'
 # #' @export
-# #' 
+# #'
 # ################## Plot 2 - Recruitment ################
 # figure_2_recruitment <- function(data, years, recruitment, low_recruitment, high_recruitment){
 #     fig2 <- plot_ly(
@@ -210,7 +210,7 @@ legend_format <- function() {
 # #'
 # #' @param stock_name
 # #'
-# #' @return 
+# #' @return
 # #'
 # #' @note
 # #' Can add some helpful information here
@@ -219,86 +219,86 @@ legend_format <- function() {
 # #'
 # #' @examples
 # #' \dontrun{
-# #' 
+# #'
 # #' }
 # #'
 # #' @references
 # #'
-# #' 
+# #'
 # #'
 # #' @export
-# #' 
+# #'
 # ################## Plot 3 - Fish Mortality ################
 # figure_3_fish_mortality <- function(data, years, low_F, F, high_F, FLim, Fpa, FMSY){
 #     fig3 <- plot_ly(
-#         data = data, 
-#         x = ~years, 
-#         y = ~high_F, 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~high_F,
+#         type = "scatter",
 #         mode = "lines",
 #         line = list(color = "transparent", shape = "linear"),#
-#         showlegend = FALSE, 
+#         showlegend = FALSE,
 #         name = "high_F"
 #     )
 #     fig3 <- fig3 %>% add_trace(
-#         data = data, 
-#         y = ~low_F, 
-#         type = "scatter", 
+#         data = data,
+#         y = ~low_F,
+#         type = "scatter",
 #         mode = "lines",
-#         fill = "tonexty", 
+#         fill = "tonexty",
 #         fillcolor = "rgba(255,71,26,0.2)", #"rgba(0,100,80,0.2)"
 #         line = list(color = "transparent", shape = "linear"),
-#         showlegend = FALSE, 
+#         showlegend = FALSE,
 #         name = "low_F"
 #     )
 #     fig3 <- fig3 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~F, 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~F,
+#         type = "scatter",
 #         mode = "lines+markers",
-#         line = list(color = "rgb(255,71,26)", shape = "linear"), 
+#         line = list(color = "rgb(255,71,26)", shape = "linear"),
 #         name = "F",
-#         marker = list(size = 10, color = "rgb(255,71,26)"), 
+#         marker = list(size = 10, color = "rgb(255,71,26)"),
 #         showlegend = TRUE
 #     )
 
 #     ## Add horizontal lines
 #     fig3 <- fig3 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~FLim, 
-#         name = "FLim", 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~FLim,
+#         name = "FLim",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "black", shape = "linear", dash = "dash"), 
+#         line = list(color = "black", shape = "linear", dash = "dash"),
 #         showlegend = TRUE
 #     )
 #     fig3 <- fig3 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~Fpa, 
-#         name = "Fpa", 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~Fpa,
+#         name = "Fpa",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "black", shape = "linear", dash = "dot"), 
+#         line = list(color = "black", shape = "linear", dash = "dot"),
 #         showlegend = TRUE
 #     )
 #     fig3 <- fig3 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~FMSY, 
-#         name = "FMSY", 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~FMSY,
+#         name = "FMSY",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "orange", shape = "linear", dash = "dash"), 
+#         line = list(color = "orange", shape = "linear", dash = "dash"),
 #         showlegend = TRUE
 #     )
 
 #     fig3 <- fig3 %>% layout(
-#         title = "F", 
+#         title = "F",
 #         legend = legend_format(),
-#         paper_bgcolor = "rgb(255,255,255)", 
+#         paper_bgcolor = "rgb(255,255,255)",
 #         plot_bgcolor = "rgb(229,229,229)",
 #         xaxis = list(
 #             title = "Years",
@@ -336,7 +336,7 @@ legend_format <- function() {
 # #'
 # #' @param stock_name
 # #'
-# #' @return 
+# #' @return
 # #'
 # #' @note
 # #' Can add some helpful information here
@@ -345,87 +345,87 @@ legend_format <- function() {
 # #'
 # #' @examples
 # #' \dontrun{
-# #' 
+# #'
 # #' }
 # #'
 # #' @references
 # #'
-# #' 
+# #'
 # #'
 # #' @export
-# #' 
+# #'
 # ################## Plot 4 - SBB ################
 # figure_4_SSB <- function(data, years, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger){
 #     fig4 <- plot_ly(
-#         data = data, 
-#         x = ~years, 
-#         y = ~high_SSB, 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~high_SSB,
+#         type = "scatter",
 #         mode = "lines",
 #         line = list(color = "transparent", shape = "linear"),
-#         showlegend = FALSE, 
+#         showlegend = FALSE,
 #         name = "high_SSB"
 #     )
 #     fig4 <- fig4 %>% add_trace(
-#         data = data, 
+#         data = data,
 #          x = ~years,
-#         y = ~low_SSB, 
-#         type = "scatter", 
+#         y = ~low_SSB,
+#         type = "scatter",
 #         mode = "lines",
-#         fill = "tonexty", 
+#         fill = "tonexty",
 #         fillcolor = "rgba(0,100,80,0.2)",
 #         line = list(color = "transparent", shape = "linear"),
-#         showlegend = FALSE, 
+#         showlegend = FALSE,
 #         name = "low_SSB"
 #     )
 #     fig4 <- fig4 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~SSB, 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~SSB,
+#         type = "scatter",
 #         mode = "lines+markers",
-#         line = list(color = "rgb(0,100,80)", shape = "linear"), 
+#         line = list(color = "rgb(0,100,80)", shape = "linear"),
 #         name = "SSB",
-#         marker = list(size = 10), 
+#         marker = list(size = 10),
 #         showlegend = TRUE
 #     )
 
 #     ## Add horizontal lines
 #     fig4 <- fig4 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~Blim, 
-#         name = "Blim", 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~Blim,
+#         name = "Blim",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "black", shape = "linear", dash = "dash"), 
+#         line = list(color = "black", shape = "linear", dash = "dash"),
 #         showlegend = TRUE
 #     )
 #     fig4 <- fig4 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~Bpa, 
-#         name = "Bpa", 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~Bpa,
+#         name = "Bpa",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "black", shape = "linear", dash = "dot"), 
+#         line = list(color = "black", shape = "linear", dash = "dot"),
 #         showlegend = TRUE
 #     )
 #     fig4 <- fig4 %>% add_trace(
-#         data = data, 
-#         x = ~years, 
-#         y = ~MSYBtrigger, 
-#         name = "MSYBtrigger", 
-#         type = "scatter", 
+#         data = data,
+#         x = ~years,
+#         y = ~MSYBtrigger,
+#         name = "MSYBtrigger",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "orange", shape = "linear", dash = "dash"), 
+#         line = list(color = "orange", shape = "linear", dash = "dash"),
 #         showlegend = TRUE
 #     )
 
 #     fig4 <- fig4 %>% layout(
-#         title = "SSB", 
+#         title = "SSB",
 #         legend = legend_format(),
-#         paper_bgcolor = "rgb(255,255,255)", 
+#         paper_bgcolor = "rgb(255,255,255)",
 #         plot_bgcolor = "rgb(229,229,229)",
 #         xaxis = list(
 #             title = "Years",
@@ -466,7 +466,7 @@ legend_format <- function() {
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -475,15 +475,15 @@ legend_format <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 #####################Subplots quality of assessment
 # quality_assessment_plots <- function(big_data, big_data_last_year,
 #                                         stockSizeDescription,stockSizeUnits,
@@ -513,42 +513,42 @@ legend_format <- function() {
 #  )
 #  fig1 <- fig1 %>% add_trace(
 #         data = big_data_last_year, ###select for last reference points last year
-#         x = ~Year, 
-#         y = ~Blim, 
-#         name = "Blim", 
-#         type = "scatter", 
+#         x = ~Year,
+#         y = ~Blim,
+#         name = "Blim",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "black", shape = "linear", dash = "dash", width = 2), 
+#         line = list(color = "black", shape = "linear", dash = "dash", width = 2),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
 #     fig1 <- fig1 %>% add_trace(
-#         data = big_data_last_year, 
-#         x = ~Year, 
-#         y = ~Bpa, 
-#         name = "Bpa", 
-#         type = "scatter", 
+#         data = big_data_last_year,
+#         x = ~Year,
+#         y = ~Bpa,
+#         name = "Bpa",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "black", shape = "linear", dash = "dot", width = 2), 
+#         line = list(color = "black", shape = "linear", dash = "dot", width = 2),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
 
 #     fig1 <- fig1 %>% add_trace(
-#         data = big_data_last_year, 
-#         x = ~Year, 
-#         y = ~MSYBtrigger, 
-#         name = "MSYBtrigger", 
-#         type = "scatter", 
+#         data = big_data_last_year,
+#         x = ~Year,
+#         y = ~MSYBtrigger,
+#         name = "MSYBtrigger",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "#689dff", shape = "linear", width = 1), 
+#         line = list(color = "#689dff", shape = "linear", width = 1),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
 #  fig1 <- fig1 %>% layout(
-#         # title = "SSB", 
+#         # title = "SSB",
 #         legend = legend_format(),
-#         paper_bgcolor = "rgb(246,250,251)", 
+#         paper_bgcolor = "rgb(246,250,251)",
 #         plot_bgcolor = "rgb(255,255,255)",
 #         # images = watermark(),
 
@@ -594,43 +594,43 @@ legend_format <- function() {
 #  )
 #  ## Add horizontal lines
 #     fig2 <- fig2 %>% add_trace(
-#         data = big_data_last_year, 
-#         x = ~Year, 
-#         y = ~FLim, 
-#         name = "FLim", 
-#         type = "scatter", 
+#         data = big_data_last_year,
+#         x = ~Year,
+#         y = ~FLim,
+#         name = "FLim",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2), 
+#         line = list(color = "#a1a1a1", shape = "linear", dash = "dash", width = 2),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
 #     fig2 <- fig2 %>% add_trace(
-#         data = big_data_last_year, 
-#         x = ~Year, 
-#         y = ~Fpa, 
-#         name = "Fpa", 
-#         type = "scatter", 
+#         data = big_data_last_year,
+#         x = ~Year,
+#         y = ~Fpa,
+#         name = "Fpa",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2), 
+#         line = list(color = "#a1a1a1", shape = "linear", dash = "dot", width = 2),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
 
 #     fig2 <- fig2 %>% add_trace(
-#         data = big_data_last_year, 
-#         x = ~Year, 
-#         y = ~FMSY, 
-#         name = "FMSY", 
-#         type = "scatter", 
+#         data = big_data_last_year,
+#         x = ~Year,
+#         y = ~FMSY,
+#         name = "FMSY",
+#         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "#00AC67", shape = "linear", width = 1), 
+#         line = list(color = "#00AC67", shape = "linear", width = 1),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
 # fig2 <- fig2 %>% layout(
-#         # title = "F", 
+#         # title = "F",
 #         legend = legend_format(),
-#         paper_bgcolor = "rgb(246,250,251)", 
+#         paper_bgcolor = "rgb(246,250,251)",
 #         plot_bgcolor = "rgb(255,255,255)",
 #         # images = watermark(),
 
@@ -676,9 +676,9 @@ legend_format <- function() {
 #      legendgroup = "A"
 #  )
 # fig3 <- fig3 %>% layout(
-#         # title = "R", 
+#         # title = "R",
 #         legend = legend_format(),
-#         paper_bgcolor = "rgb(246,250,251)", 
+#         paper_bgcolor = "rgb(246,250,251)",
 #         plot_bgcolor = "rgb(255,255,255)",
 #         # images = watermark(),
 
@@ -709,7 +709,7 @@ legend_format <- function() {
 #         )
 #     )
 
-#  fig_qass <- subplot(fig1, fig2, fig3, 
+#  fig_qass <- subplot(fig1, fig2, fig3,
 #  nrows = 3, shareX = TRUE, titleX = TRUE, titleY = TRUE,  heights = c(0.33, 0.33, 0.33), margin = c(0.05,0.05,0.01,0.01))#, ,
 # #  nrows = 1,
 # #    widths = NULL,
@@ -732,7 +732,7 @@ legend_format <- function() {
 #'
 #' @param stock_name
 #'
-#' @return 
+#' @return
 #'
 #' @note
 #' Can add some helpful information here
@@ -741,19 +741,19 @@ legend_format <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' }
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
-# figure_1_plots <- function(data1, data2, data3, data4, 
-#                             years, 
+#'
+# figure_1_plots <- function(data1, data2, data3, data4,
+#                             years,
 #                             catches, landings, discards, units, stock_name, AssessmentYear,
-#                             recruitment, low_recruitment, high_recruitment, recruitment_age, 
+#                             recruitment, low_recruitment, high_recruitment, recruitment_age,
 #                             low_F, F, high_F, FLim, Fpa, FMSY,Fage, fishingPressureDescription,
 #                             low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits) {
 #     if (all(is.na(data1[, "landings"]))) {
@@ -765,7 +765,7 @@ legend_format <- function() {
 #     R_yaxis_label <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(recruitment_age))
 #     F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(fishingPressureDescription), dplyr::last(Fage))
 #     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(stockSizeDescription), dplyr::last(stockSizeUnits))
-    
+
 #     Stockcode_year_annotation_1 <- list( showarrow = FALSE,
 #                                         text = sprintf("%s, %s", dplyr::last(stock_name), dplyr::last(AssessmentYear)),
 #                                         font = list(family = "Calibri, serif",size = 10, color = "black"),
@@ -787,7 +787,7 @@ legend_format <- function() {
 #                                         yref = 'paper', y = 0.97, xref = "paper", x = 0.95
 #                                         )
 
-    
+
 
 #     # Start the plot
 #     fig1 <- plot_ly(
@@ -1086,7 +1086,7 @@ legend_format <- function() {
 #         name = "MSYBtrigger",
 #         type = "scatter",
 #         mode = "lines",
-#         line = list(color = "#689dff", shape = "linear", width = 1),#, dash = "dash"), 
+#         line = list(color = "#689dff", shape = "linear", width = 1),#, dash = "dash"),
 #         showlegend = TRUE,
 #         legendgroup = "B"
 #     )
@@ -1135,7 +1135,7 @@ legend_format <- function() {
 #     #                                     yref = 'paper', y =0.6, xref = "paper", x = 1.2
 #     #                                   )
 
-#     # fig <- fig %>%layout(annotations =  RefPoints_annotation)                                 
+#     # fig <- fig %>%layout(annotations =  RefPoints_annotation)
 #     fig
 # }
 
@@ -1149,7 +1149,7 @@ legend_format <- function() {
 #' @return a ggradar plot embedded in a ggplotly container
 #'
 #' @note
-#' The ggradar function works only if the values are scaled between 0 and 1, so the original 
+#' The ggradar function works only if the values are scaled between 0 and 1, so the original
 #' catch scenario table is first scaled based on the values of the previous year advice (% of change, see scale_catch_scenarios_for_radialPlot())
 #' and then it is scaled here between 0 and 1 (see rescale_function())
 #'
@@ -1160,16 +1160,16 @@ legend_format <- function() {
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ####### plots 1 catch scenarios
 radial_plot <- function(tmp, catch_scenarios) {
-    
+
     not_all_na <- function(x) any(!is.na(x))
     tmp <- tmp %>% select(where(not_all_na))
-    
+
     rescale_function <- function(x) rescale(x, to = c(0, 1), from = range(c(min(x), max(x))))
     tmp <- tmp %>% select(-c(Year)) %>% na.omit() %>% mutate_if(is.numeric, rescale_function)
 
@@ -1218,7 +1218,7 @@ radial_plot <- function(tmp, catch_scenarios) {
     # zz <- zz %>% layout(autosize = T, margin = list(l = 0, r = 100, b = 0, t = 0, pad = 4))
 
     zz
-    
+
 }
 
 # catch_scenarios_plot1(catch_scen_table_perc)
@@ -1291,7 +1291,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 # }
 
 #' Plot to visualise the effect of the different catch scenarios on F, SSB and the resulting total catches
-#' 
+#'
 #' @param tmp (catch scenario table)
 #' @param df (SAG data)
 #'
@@ -1309,12 +1309,12 @@ radial_plot <- function(tmp, catch_scenarios) {
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 # catch_scenarios_plot2 <- function(tmp, Fage, fishingPressureDescription, stockSizeDescription, stockSizeUnits, units) {
-catch_scenarios_plot2 <- function(tmp, df) {   
+catch_scenarios_plot2 <- function(tmp, df) {
     F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
@@ -1324,11 +1324,11 @@ catch_scenarios_plot2 <- function(tmp, df) {
     labels <- sprintf(
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
-    
+
     # F0 <- tmp[tmp$cat == "F = 0", ] taking this out because spmetimes F0 is not present
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
 
-    fig_catch <- plot_ly(tmp, source = "ranking") %>%  
+    fig_catch <- plot_ly(tmp, source = "ranking") %>%
         add_trace(
             x = ~ TotCatch,
             y = ~ F,
@@ -1357,7 +1357,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
         name = "SSB",
         yaxis = "y2"
     )
-    
+
     # a <- list(
     #     x = F0$TotCatch,
     #     y = F0$F,
@@ -1428,7 +1428,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
         yaxis2 = ay,
         annotations = b,
         legend = list(
-            font = list(size = 20, 
+            font = list(size = 20,
             color = "black"),
             bgcolor = "rgba(255,255,255, 0.2)",
             x = 0.1,
@@ -1461,7 +1461,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
         )
     )
 
-    
+
 }
 
 #' Returns ....
@@ -1486,10 +1486,10 @@ catch_scenarios_plot2 <- function(tmp, df) {
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 TAC_timeline <- function(final_df, catch_scenarios, df) {
     # palette <- brewer.pal(length(unique(final_df$cat)), "Paired")
     # colourCount <- length(unique(catch_scenarios))
@@ -1517,7 +1517,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
     #         titlefont = list(size = 25),
     #         tickfont = list(size = 20)
     #     ),
-    
+
     catch_time <- catch_time %>% layout(
         # title = "Catches",
         paper_bgcolor = "rgb(255,255,255)",
@@ -1587,10 +1587,10 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
 #'
 #' @references
 #'
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df) {
     font <- "Calibri, sans-serif" # assign font family up front
 
@@ -1645,11 +1645,11 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 family = "sans-serif",
                 size = 15,
                 color = "black"
-                
+
             ),
             legend.title = element_blank(),
             legend.position = "bottom"
-            
+
         )
 
     #   axis.text.x = element_text(            #margin for axis text
@@ -1862,7 +1862,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1))
-                
+
             )
         )
     } else if (type == "quality_R") {
@@ -1878,21 +1878,21 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
                 "2020" = "#252525",
                 "2019" = "#525252",
                 "2018" = "#737373",
-                "2017" = "#969696"                
+                "2017" = "#969696"
             )),
             scale_linetype_manual(values = c(
                 "2021" = "solid",
                 "2020" = "solid",
                 "2019" = "solid",
                 "2018" = "solid",
-                "2017" = "solid"                
+                "2017" = "solid"
             )),
             scale_size_manual(values = c(
                 "2021" = 1,
                 "2020" = 1,
                 "2019" = 1,
                 "2018" = 1,
-                "2017" = 1                
+                "2017" = 1
             )),
             # scale_fill_manual(values = c("#94b0a9")),
 
@@ -1922,7 +1922,7 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -1933,13 +1933,13 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_1 <- function(df) {
     p1 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, landings, discards, units, SAGStamp) %>%  
+        select(Year, landings, discards, units, SAGStamp) %>%
         gather(type, count, discards:landings) %>%
         ggplot(., aes(
             x = Year,
@@ -1954,7 +1954,7 @@ ICES_plot_1 <- function(df) {
             )
         )) +
         geom_bar(position = "stack", stat = "identity") +
-        theme_ICES_plots(type = "catches", df) 
+        theme_ICES_plots(type = "catches", df)
 
 
     # converting
@@ -1988,7 +1988,7 @@ ICES_plot_1 <- function(df) {
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -1999,10 +1999,10 @@ ICES_plot_1 <- function(df) {
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_2 <- function(df) {
     p2 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp) %>%
@@ -2069,7 +2069,7 @@ ICES_plot_2 <- function(df) {
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -2080,10 +2080,10 @@ ICES_plot_2 <- function(df) {
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_3 <- function(df) {
 p3 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
@@ -2189,9 +2189,9 @@ p3 <- df %>% filter(Purpose == "Advice") %>%
     #         ), HTML
     #     )
     )) +
-    theme_ICES_plots(type = "F", df) 
-    
-   
+    theme_ICES_plots(type = "F", df)
+
+
 
 fig3 <- ggplotly(p3, tooltip = "text") %>%
     layout(
@@ -2210,7 +2210,7 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-    ) 
+    )
 for (i in 1:length(fig3$x$data)) {
     if (!is.null(fig3$x$data[[i]]$name)) {
         fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
@@ -2226,7 +2226,7 @@ fig3
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -2237,14 +2237,14 @@ fig3
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_4 <- function(df) {
 p4 <- df %>% filter(Purpose == "Advice") %>%
     select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
-    {if (is.na(.[nrow(.),2:4]) == c(TRUE,FALSE,TRUE)) head(., -1) else .} %>% 
+    {if (is.na(.[nrow(.),2:4]) == c(TRUE,FALSE,TRUE)) head(., -1) else .} %>%
     ggplot(., aes(x = Year, y = SSB)) +
     geom_ribbon(aes(
         ymin = low_SSB,
@@ -2316,7 +2316,7 @@ p4 <- df %>% filter(Purpose == "Advice") %>%
         )
     )) +
     theme_ICES_plots(type = "SSB", df)
-   
+
 
 #converting
 fig4 <- ggplotly(p4, tooltip = "text") %>%
@@ -2359,7 +2359,7 @@ fig4
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -2370,10 +2370,10 @@ fig4
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_5 <- function(df) {
     p5 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
@@ -2474,7 +2474,7 @@ ICES_plot_5 <- function(df) {
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -2485,10 +2485,10 @@ ICES_plot_5 <- function(df) {
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_6 <- function(df) {
     p6 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) %>%
@@ -2549,7 +2549,7 @@ ICES_plot_6 <- function(df) {
             )
         )) +
         theme_ICES_plots(type = "quality_F", df)
-    
+
     # converting
     fig6 <- ggplotly(p6, tooltip = "text") %>%
         layout(
@@ -2586,7 +2586,7 @@ ICES_plot_6 <- function(df) {
 #' @return a ggplotly object
 #'
 #' @note
-#' 
+#'
 #'
 #' @seealso
 #'
@@ -2597,10 +2597,10 @@ ICES_plot_6 <- function(df) {
 #'
 #' @references
 #'https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx
-#' 
+#'
 #'
 #' @export
-#' 
+#'
 ICES_plot_7 <- function(df) {
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
@@ -2628,7 +2628,7 @@ ICES_plot_7 <- function(df) {
             # linetype = "solid",
         ) +
         theme_ICES_plots(type = "quality_R", df)
-    
+
     # converting
     fig7 <- ggplotly(p7, tooltip = "text") %>%
         layout(
