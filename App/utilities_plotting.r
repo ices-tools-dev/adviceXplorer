@@ -2284,29 +2284,52 @@ fig3
 #' @export
 #'
 ICES_plot_4 <- function(df) {
-p4 <- df %>% filter(Purpose == "Advice") %>%
-    select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
-    {if (is.na(.[nrow(.),2:4]) == c(TRUE,FALSE,TRUE)) head(., -1) else .} %>%
-    ggplot(., aes(x = Year, y = SSB)) +
+
+  key <-
+    df %>%filter(Purpose == "Advice") %>%
+    head(1) %>%
+    pull(AssessmentKey)
+
+  options(icesSAG.use_token = TRUE)
+  sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+
+  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+
+
+df4 <- df %>%
+  filter(Purpose == "Advice") %>%
+  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
+  {
+    if (all(is.na(.[nrow(.), 2:4]) == c(TRUE, FALSE, TRUE))) head(., -1) else .
+  }
+
+p4 <- df4 %>%
+    ggplot(., aes(x = Year, y = SSB))
+
+if (any(!is.na(df4$low_SSB))) {
+  p4 <- p4 +
     geom_ribbon(aes(
-        ymin = low_SSB,
-        ymax = high_SSB,
-        fill = "2*sd",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>SSB: </b>", SSB,
-                "<br>",
-                "<b>High SSB: </b>", high_SSB,
-                "<br>",
-                "<b>Low SSB: </b>", low_SSB
-            ), HTML
-        )
+      ymin = low_SSB,
+      ymax = high_SSB,
+      fill = "2*sd",
+      text = map(
+        paste0(
+          "<b>Year: </b>", Year,
+          "<br>",
+          "<b>SSB: </b>", SSB,
+          "<br>",
+          "<b>High SSB: </b>", high_SSB,
+          "<br>",
+          "<b>Low SSB: </b>", low_SSB
+        ), HTML
+      )
     ),
     linetype = "blank",
     size = 0
-    ) +
+    )
+}
+
+p4 <- p4 +
     geom_line(aes(
         x = Year,
         y = SSB,
@@ -2320,31 +2343,42 @@ p4 <- df %>% filter(Purpose == "Advice") %>%
         )
     )
     # size = 1.5
-    ) +
+    )
+
+if (any(!is.na(df4$Blim))) {
+  p4 <- p4 +
     geom_line(aes(
-        x = Year,
-        y = Blim,
-        linetype = "B<sub>Lim</sub>",
-        colour = "B<sub>Lim</sub>",
-        size = "B<sub>Lim</sub>",
-        text = map(
-            paste0(
-                "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-            ), HTML
-        )
-    )) +
+      x = Year,
+      y = Blim,
+      linetype = "B<sub>Lim</sub>",
+      colour = "B<sub>Lim</sub>",
+      size = "B<sub>Lim</sub>",
+      text = map(
+        paste0(
+          "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+        ), HTML
+      )
+    ))
+}
+
+if (any(!is.na(df4$Bpa))) {
+  p4 <- p4 +
     geom_line(aes(
-        x = Year,
-        y = Bpa,
-        linetype = "B<sub>pa</sub>",
-        colour = "B<sub>pa</sub>",
-        size = "B<sub>pa</sub>",
-        text = map(
-            paste0(
-                "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-            ), HTML
-        )
-    )) +
+      x = Year,
+      y = Bpa,
+      linetype = "B<sub>pa</sub>",
+      colour = "B<sub>pa</sub>",
+      size = "B<sub>pa</sub>",
+      text = map(
+        paste0(
+          "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+        ), HTML
+      )
+    ))
+}
+
+if (any(!is.na(df4$MSYBtrigger))) {
+  p4 <- p4 +
     geom_line(aes(
         x = Year,
         y = MSYBtrigger,
@@ -2356,8 +2390,10 @@ p4 <- df %>% filter(Purpose == "Advice") %>%
                 "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
             ), HTML
         )
-    )) +
-    theme_ICES_plots(type = "SSB", df)
+    ))
+}
+
+  p4 <- p4 + theme_ICES_plots(type = "SSB", df)
 
 
 #converting
