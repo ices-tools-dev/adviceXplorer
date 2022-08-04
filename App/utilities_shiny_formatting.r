@@ -275,16 +275,16 @@ catch_scenarios_left_panel <- sidebarPanel(
   #   )
   # ),
   panel(
-    tabsetPanel(
-      tabPanel("Historical catches",
+    tabsetPanel(id = "tabset",
+      tabPanel("Historical catches", id = "hist_catch",
         uiOutput("catch_scenarios"),
         withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
       ),
-      tabPanel("% of change: radial plot",
+      tabPanel("% of change: radial plot",  id = "radial",
         uiOutput("catch_scenarios_radial"),
         withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
       ),
-      tabPanel("% of change: lollipop plot",
+      tabPanel("% of change: lollipop plot", id = "lollipop",
         uiOutput("catch_indicators_lollipop"),
         withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
       )
