@@ -1938,9 +1938,25 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 #' @export
 #'
 ICES_plot_1 <- function(df) {
-    p1 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, landings, discards, units, SAGStamp) %>%
-        gather(type, count, discards:landings) %>%
+
+  key <-
+    df %>%filter(Purpose == "Advice") %>%
+    head(1) %>%
+    pull(AssessmentKey)
+
+  options(icesSAG.use_token = TRUE)
+  sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+
+  sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
+
+  df1 <- df %>%
+    filter(Purpose == "Advice") %>%
+    select(Year, landings, discards, units, SAGStamp)
+
+  df1 <- df1 %>%
+    gather(type, count, discards:landings)
+
+    p1 <- df1 %>%
         ggplot(., aes(
             x = Year,
             y = count,
