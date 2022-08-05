@@ -23,7 +23,7 @@ year <- 2021
 update_SAG(year)
 update_SID(year)
 
-stock <- c("ple.27.7d", "had.27.46a20", "wit.27.3a47d", "bll.27.3a47de")[4]
+stock <- c("ple.27.7d", "had.27.46a20", "wit.27.3a47d", "bll.27.3a47de", "fle.27.3a4")[5]
 df <- access_sag_data_local(stock, year)
 
 # view sag page
