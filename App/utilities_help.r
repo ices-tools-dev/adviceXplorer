@@ -54,9 +54,16 @@ help_datatable <- function() {
             "help_tab5", # 24
             "help_tab5", # 25
             "help_tab5",  # 26
-            "help_tab5" # 27
+            "help_tab5", # 27
+            "help_tab5", #28
+            "help_tab5", #29
+            "help_tab5", #30
+            "help_tab5", #31
+            "help_tab5" #32
+
+
         ),
-        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27),
+        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32),
         element = c(
             #data filtering
             "#help_tab1",
@@ -84,10 +91,15 @@ help_datatable <- function() {
             # Advice
             "#Advice_Summary",
             "#preview",
+            "#advice_view_link",
             "#catch_scenario_plot_3",
             "#catch_choice-label",
             "#TAC_timeline",
-            "#Radial_plot",            
+            "#catch_scenarios_radial",
+            "#Radial_plot",
+            "#catch_indicators_lollipop",
+            "#Lollipop_plot",
+            "#Advice_Headline",         
             "#table",
             "#footnotes"
         ),
@@ -118,10 +130,15 @@ help_datatable <- function() {
             # Advice
             "<font size='4'>A few information about the stock, the assessment year and the advice requesters</font>",
             "<font size='4'>You can click here to see the calendar (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
+            "<font size='4'>You can click here to see the full advice view record for this stock</font>",
             "<font size='4'>Relationshp between F, SSB, Total Catches and the differen basis of advice..... lorem ipsum</font>",
             "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
             "<font size='4'>Catches plot and effect on catches of different scenarios</font>",
-            "<font size='4'>Radial plot to compare the different scenarios in relative terms</font>",           
+            "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
+            "<font size='4'>Radial plot to compare the different scenarios in % of advice change</font>",           
+            "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
+            "<font size='4'>Lollipop plot to compare the different scenarios in % of advice change</font>", 
+            "<font size='4'>Headline of the advice....lorem ipsun</font>",
             "<font size='4'>chatch scenario table....lorem ipsun</font>",
             "<font size='4'>Footnotes of catch scenario table</font>"
         ),
@@ -152,12 +169,17 @@ help_datatable <- function() {
             # Advice
             "bottom",#20
             "right",#21
-            "top",#22
-            "right",#23
-            "left",#24
-            "top",#25
-            "left",#26
-            "left"  #27
+            "right",#22
+            "top",#23
+            "right",#24
+            "left",#25
+            "top",#26
+            "top",#27
+            "top",#28
+            "top",#29
+            "left",#30
+            "left",#31
+            "left"  #32
         )
     )
 }
