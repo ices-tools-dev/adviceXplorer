@@ -506,20 +506,29 @@ output$download_SAG_Data <- downloadHandler(
   )
 
 ######################### Stock development over time plots
-  output$plot1 <- renderPlotly(
+  output$plot1 <- renderPlotly(    
     ICES_plot_1(SAG_data_reactive())
   ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
-  output$plot2 <- renderPlotly(
+  output$plot2 <- renderPlotly({
+    validate(
+      need(SAG_data_reactive()$recruitment != "", "Data not available for this stock")
+    )
     ICES_plot_2(SAG_data_reactive())
-  )
-  output$plot3 <- renderPlotly(
+  })
+  output$plot3 <- renderPlotly({
+    validate(
+      need(SAG_data_reactive()$F != "", "Data not available for this stock")
+    )
     ICES_plot_3(SAG_data_reactive())
-  )
-  output$plot4 <- renderPlotly(
+  })
+  output$plot4 <- renderPlotly({
+    validate(
+      need(SAG_data_reactive()$SSB != "", "Data not available for this stock")
+    )
     ICES_plot_4(SAG_data_reactive())
-  )
+  })
 
 
 ####################### Quality of assessment data
@@ -554,15 +563,24 @@ output$download_SAG_Data <- downloadHandler(
   )
 
   ######################### quality of assessment plots
-  output$plot5 <- renderPlotly(
-      ICES_plot_5(advice_action_quality())
-  )
-  output$plot6 <- renderPlotly(
-      ICES_plot_6(advice_action_quality())
-  )
-  output$plot7 <- renderPlotly(
-      ICES_plot_7(advice_action_quality())
-  )
+  output$plot5 <- renderPlotly({
+    validate(
+      need(advice_action_quality()$SSB != "", "Data not available for this stock")
+    )
+    ICES_plot_5(advice_action_quality())
+  })
+  output$plot6 <- renderPlotly({
+    validate(
+      need(advice_action_quality()$F != "", "Data not available for this stock")
+    )
+    ICES_plot_6(advice_action_quality())
+  })
+  output$plot7 <- renderPlotly({
+    validate(
+      need(advice_action_quality()$recruitment != "", "Data not available for this stock")
+    )
+    ICES_plot_7(advice_action_quality())
+  })
   
 
 ##### Advice view info
