@@ -1591,7 +1591,10 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
 #'
 #' @export
 #'
-theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df) {
+theme_ICES_plots <-
+  function(
+    type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
+    title = NULL, ylegend = NULL, ymax = NULL) {
     font <- "Calibri, sans-serif" # assign font family up front
 
     # scale_color_manual(values = mycolors)
@@ -1727,11 +1730,31 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
         )
     } else if (type == "SSB") {
         # mycolors <- c("#ed5f26")#, "#f2a497")
+        if (is.null(title)) {
+          title <- "Spawning Stock Biomass"
+        }
+        if (is.null(ylegend)) {
+          ylegend <- sprintf("%s in millions %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+          ylabels_func <- function(l) {
+            trans <- l / 1000000
+          }
+        } else {
+          ylabels_func <- function(l) {
+            trans <- l
+          }
+        }
+
+        if (is.null(ymax)) {
+          limits <- expand_limits(y = 0)
+        } else {
+          limits <- expand_limits(y = c(0, ymax))
+        }
+
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = "Spawning Stock Biomass", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-                y = sprintf("%s in millions %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits)),
+                title = title, # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
+                y = ylegend,
                 x = "Year"
             ),
             scale_color_manual(values = c(
@@ -1757,12 +1780,10 @@ theme_ICES_plots <- function(type = c("catches", "recruitment", "F", "SSB", "qua
 
             # scale_color_manual(values = c("#047c6c")),
             # scale_fill_manual(values = c("#94b0a9")),
-            expand_limits(y = 0),
+            limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000
-                }
+                labels = ylabels_func
             )
         )
     } else if (type == "quality_SSB") {
@@ -2298,10 +2319,10 @@ ICES_plot_4 <- function(df) {
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
-  {
-    if (all(is.na(.[nrow(.), 2:4]) == c(TRUE, FALSE, TRUE))) head(., -1) else .
-  }
+  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) #%>%
+#  {
+#    if (all(is.na(.[nrow(.), 2:4]) == c(TRUE, FALSE, TRUE))) head(., -1) else .
+#  }
 
 p4 <- df4 %>%
     ggplot(., aes(x = Year, y = SSB))
@@ -2393,7 +2414,44 @@ if (any(!is.na(df4$MSYBtrigger))) {
     ))
 }
 
-  p4 <- p4 + theme_ICES_plots(type = "SSB", df)
+# add average lines
+averageYears <-
+  sagSettings4 %>%
+  filter(settingKey == 46) %>%
+  pull(settingValue) %>%
+  str_split(",", simplify = TRUE) %>%
+  as.numeric()
+if (length(averageYears)) {
+  id1 <- nrow(df4) - 1:averageYears[1] + 1
+  id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+  avedf1 <- data.frame(
+    Year = range(df4$Year[id1]) + c(-0.5, 0.5),
+    SSB = mean(df4$SSB[id1], na.rm = TRUE)
+  )
+  avedf2 <- data.frame(
+    Year = range(df4$Year[id2]) + c(-0.5, 0.5),
+    SSB = mean(df4$SSB[id2], na.rm = TRUE)
+  )
+
+  p4 <-
+    p4 + geom_line(data = avedf1) + geom_line(data = avedf2)
+
+}
+
+nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+  p4 <-
+    p4 +
+    theme_ICES_plots(
+      type = "SSB", df,
+      title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+      ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty(),
+      ymax = sagSettings4 %>%
+        filter(settingKey == 6) %>%
+        pull(settingValue) %>%
+        as.numeric() %>%
+        nullifempty()
+    )
 
 
 #converting

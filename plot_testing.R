@@ -35,7 +35,7 @@ source("utilities_plotting.r")
 #ICES_plot_1(df)
 #ICES_plot_2(df)
 #ICES_plot_3(df)
-#ICES_plot_4(df)
+ICES_plot_4(df)
 
 # test in app
 
