@@ -410,15 +410,15 @@ theme_ICES_plots <-
 #'
 #' @export
 #'
-ICES_plot_1 <- function(df) {
+ICES_plot_1 <- function(df, sagSettings) {
 
-  key <-
-    df %>%filter(Purpose == "Advice") %>%
-    head(1) %>%
-    pull(AssessmentKey)
+#   key <-
+#     df %>%filter(Purpose == "Advice") %>%
+#     head(1) %>%
+#     pull(AssessmentKey)
 
-  options(icesSAG.use_token = TRUE)
-  sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+#   options(icesSAG.use_token = TRUE)
+#   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
@@ -492,19 +492,19 @@ ICES_plot_1 <- function(df) {
 #'
 #' @export
 #'
-ICES_plot_2 <- function(df) {
+ICES_plot_2 <- function(df, sagSettings) {
 
   df2 <- df %>%
     filter(Purpose == "Advice") %>%
     select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp)
 
-  key <-
-    df %>%filter(Purpose == "Advice") %>%
-    head(1) %>%
-    pull(AssessmentKey)
+#   key <-
+#     df %>%filter(Purpose == "Advice") %>%
+#     head(1) %>%
+#     pull(AssessmentKey)
 
-  options(icesSAG.use_token = TRUE)
-  sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+#   options(icesSAG.use_token = TRUE)
+#   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
@@ -600,15 +600,15 @@ ICES_plot_2 <- function(df) {
 #'
 #' @export
 #'
-ICES_plot_3 <- function(df) {
-    key <-
-        df %>%
-        filter(Purpose == "Advice") %>%
-        head(1) %>%
-        pull(AssessmentKey)
+ICES_plot_3 <- function(df, sagSettings) {
+    # key <-
+    #     df %>%
+    #     filter(Purpose == "Advice") %>%
+    #     head(1) %>%
+    #     pull(AssessmentKey)
 
-    options(icesSAG.use_token = TRUE)
-    sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+    # options(icesSAG.use_token = TRUE)
+    # sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
     # print(sagSettings3)
@@ -776,15 +776,15 @@ fig3
 #'
 #' @export
 #'
-ICES_plot_4 <- function(df) {
+ICES_plot_4 <- function(df, sagSettings) {
 
-  key <-
-    df %>%filter(Purpose == "Advice") %>%
-    head(1) %>%
-    pull(AssessmentKey)
+#   key <-
+#     df %>%filter(Purpose == "Advice") %>%
+#     head(1) %>%
+#     pull(AssessmentKey)
 
-  options(icesSAG.use_token = TRUE)
-  sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+#   options(icesSAG.use_token = TRUE)
+#   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
 #   print(sagSettings4)

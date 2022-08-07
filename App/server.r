@@ -490,6 +490,11 @@ observe({
     access_sag_data_local(stock_name, year)
   })
 
+  sagSettings <- eventReactive(req(query$assessmentkey),{
+    options(icesSAG.use_token = TRUE)
+    icesSAG::getSAGSettingsForAStock(query$assessmentkey)
+  })
+
 ###### info about the stock selected for top of page
 output$stock_infos <- renderUI({
   get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
@@ -507,18 +512,18 @@ output$download_SAG_Data <- downloadHandler(
 
 ######################### Stock development over time plots
   output$plot1 <- renderPlotly(
-    ICES_plot_1(SAG_data_reactive())
+    ICES_plot_1(SAG_data_reactive(), sagSettings())
   ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
   output$plot2 <- renderPlotly(
-    ICES_plot_2(SAG_data_reactive())
+    ICES_plot_2(SAG_data_reactive(), sagSettings())
   )
   output$plot3 <- renderPlotly(
-    ICES_plot_3(SAG_data_reactive())
+    ICES_plot_3(SAG_data_reactive(), sagSettings())
   )
   output$plot4 <- renderPlotly(
-    ICES_plot_4(SAG_data_reactive())
+    ICES_plot_4(SAG_data_reactive(), sagSettings())
   )
 
 
