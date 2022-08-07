@@ -1694,11 +1694,26 @@ theme_ICES_plots <-
         )
     } else if (type == "F") {
         # mycolors <- c("#ed5f26")#, "#f2a497")
+        if (is.null(title)) {
+          title <- "Fishing pressure"
+        }
+        if (is.null(ylegend)) {
+          ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+        }
+        #   ylabels_func <- function(l) {
+        #     trans <- l / 1000000
+        #   }
+        # } else {
+        #   ylabels_func <- function(l) {
+        #     trans <- l
+        #   }
+        # }
+
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = "Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-                y = sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)), # sprintf("Catches in 1000 %s", dplyr::last(df$units))
+                title = title, #"Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
+                y = ylegend, #sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)), # sprintf("Catches in 1000 %s", dplyr::last(df$units))
                 x = "Year"
             ),
             scale_color_manual(values = c(
@@ -2148,30 +2163,53 @@ ICES_plot_2 <- function(df) {
 #' @export
 #'
 ICES_plot_3 <- function(df) {
-p3 <- df %>% filter(Purpose == "Advice") %>%
-    select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
-    drop_na(F) %>%
+    key <-
+        df %>%
+        filter(Purpose == "Advice") %>%
+        head(1) %>%
+        pull(AssessmentKey)
+
+    options(icesSAG.use_token = TRUE)
+    sagSettings <- icesSAG::getSAGSettingsForAStock(key)
+
+    sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
+    print(sagSettings3)
+
+
+    df3 <- df %>%
+        filter(Purpose == "Advice") %>%
+        select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
+        drop_na(F) # %>%
     #    gather(type, count, discards:landings) %>%
-    ggplot(., aes(x = Year, y = F)) +
-    # , alpha = 0.2
+    
+    
+    p3 <- df3 %>%
+        ggplot(., aes(x = Year, y = F))
 
-
-    geom_ribbon(aes(
-        ymin = low_F,
-        ymax = high_F,
-        fill = "2*sd",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>F: </b>", F,
-                "<br>",
-                "<b>High F: </b>", high_F,
-                "<br>",
-                "<b>Low F: </b>", low_F
-            ), HTML
-        )
-    ), linetype = "blank", size = 0) +
+    if (any(!is.na(df3$low_F))) {
+        p3 <- p3 +
+            geom_ribbon(aes(
+                ymin = low_F,
+                ymax = high_F,
+                fill = "2*sd",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>F: </b>", F,
+                        "<br>",
+                        "<b>High F: </b>", high_F,
+                        "<br>",
+                        "<b>Low F: </b>", low_F
+                    ), HTML
+                )
+            ),
+            linetype = "blank",
+            size = 0
+            )
+    }
+    
+    p3 <- p3 +
     geom_line(aes(
         x = Year,
         y = F,
@@ -2183,76 +2221,72 @@ p3 <- df %>% filter(Purpose == "Advice") %>%
                 "<b>F: </b>", F
             ), HTML
         )
-    )) + #, size = 1.5
-    geom_line(aes(
-        x = Year,
-        y = FMSY,
-        colour = "F<sub>MSY</sub>",
-        linetype = "F<sub>MSY</sub>",
-        size = "F<sub>MSY</sub>",
-        text = map(
-            paste0(
-                "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
-            ), HTML
+    )
+    # size = 1.5
+    )
+    
+    if (any(!is.na(df3$FLim))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = FLim,
+                linetype = "F<sub>Lim</sub>",
+                colour = "F<sub>Lim</sub>",
+                size = "F<sub>Lim</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
+                    ), HTML
+                )
+            ))
+    }
+    
+    if (any(!is.na(df3$Fpa))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = Fpa,
+                linetype = "F<sub>pa</sub>",
+                colour = "F<sub>pa</sub>",
+                size = "F<sub>pa</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
+                    ), HTML
+                )
+            ))
+    }
+    
+    if (any(!is.na(df3$FMSY))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = FMSY,
+                linetype = "F<sub>MSY</sub>",
+                colour = "F<sub>MSY</sub>",
+                size = "F<sub>MSY</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+                    ), HTML
+                )
+            ))
+    }
+    
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+    p3 <-
+        p3 +
+        theme_ICES_plots(
+        type = "F", df,
+        title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+        ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty()#,
+        # ymax = sagSettings3 %>%
+        #     filter(settingKey == 6) %>%
+        #     pull(settingValue) %>%
+        #     as.numeric() %>%
+        #     nullifempty()
         )
-    )) +
-    geom_line(aes(
-        x = Year,
-        y = FLim,
-        colour = "F<sub>Lim</sub>",
-        linetype = "F<sub>Lim</sub>",
-        size = "F<sub>Lim</sub>",
-        text = map(
-            paste0(
-                "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
-            ), HTML
-        )
-    )) +
-    geom_line(aes(
-        x = Year,
-        y = Fpa,
-        colour = "F<sub>pa</sub>",
-        linetype = "F<sub>pa</sub>",
-        size = "F<sub>pa</sub>",
-        text = map(
-            paste0(
-                "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
-            ), HTML
-        )
-    # geom_hline(aes(
-    #     yintercept = tail(FMSY, 1),
-    #     colour = "FMSY",
-    #     linetype = "FMSY",
-    #     size = "FMSY",
-    #     text = map(
-    #         paste0(
-    #             "<b>FMSY: </b>", tail(FMSY, 1)
-    #         ), HTML
-    #     )
-    # )) +
-    # geom_hline(aes(
-    #     yintercept = tail(FLim, 1),
-    #     colour = "FLim",
-    #     linetype = "FLim",
-    #     size = "FLim",
-    #     text = map(
-    #         paste0(
-    #             "<b>FLim: </b>", tail(FLim, 1)
-    #         ), HTML
-    #     )
-    # )) +
-    # geom_hline(aes(
-    #     yintercept = tail(Fpa, 1),
-    #     colour = "Fpa",
-    #     linetype = "Fpa",
-    #     size = "Fpa",
-    #     text = map(
-    #         paste0(
-    #             "<b>Fpa: </b>", tail(Fpa, 1)
-    #         ), HTML
-    #     )
-    )) +
-    theme_ICES_plots(type = "F", df)
 
 
 
