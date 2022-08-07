@@ -1754,6 +1754,7 @@ theme_ICES_plots <-
             trans <- l / 1000000
           }
         } else {
+          if (is.na(ylegend)) ylegend <- ""
           ylabels_func <- function(l) {
             trans <- l
           }
@@ -2353,7 +2354,8 @@ ICES_plot_4 <- function(df) {
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) #%>%
+  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
+  filter(!is.na(SSB))
 #  {
 #    if (all(is.na(.[nrow(.), 2:4]) == c(TRUE, FALSE, TRUE))) head(., -1) else .
 #  }
@@ -2479,7 +2481,7 @@ nullifempty <- function(x) if (length(x) == 0) NULL else x
     theme_ICES_plots(
       type = "SSB", df,
       title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-      ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty(),
+      ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
       ymax = sagSettings4 %>%
         filter(settingKey == 6) %>%
         pull(settingValue) %>%
