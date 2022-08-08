@@ -200,7 +200,7 @@ access_sag_data_local <- function(stock_code, year) {
 # function to dowload the quality assessemnt data
 quality_assessment_data_local <- function(stock_code, year){
 
-years <- c(2022, 2021, 2020, 2019, 2018, 2017)
+years <- c(2022, 2021, 2020, 2019, 2018)
 years <- years[years <= year]
 datalist = list()
 
@@ -254,7 +254,7 @@ big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
 # big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
 
 # df_list <- list(big_data, big_data_last_year)
-# print(df_list)
+# print(big_data)
 return(big_data)
 }
 

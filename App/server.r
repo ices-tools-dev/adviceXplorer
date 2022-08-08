@@ -560,7 +560,7 @@ output$download_SAG_Data <- downloadHandler(
 
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly(
-      ICES_plot_5(advice_action_quality())
+      ICES_plot_5(advice_action_quality(), sagSettings())
   )
   output$plot6 <- renderPlotly(
       ICES_plot_6(advice_action_quality())

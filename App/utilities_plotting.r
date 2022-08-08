@@ -1,8 +1,3 @@
-
-########################################################## NEW SAG PLOTS ########################################################
-
-
-
 #' This function is used to produce a standardised ICES theme for all SAG and quality of assessement plots.
 #' The idea is to have a common base that then can be modified based on the plot formatting options specified in SAG.
 #'
@@ -239,43 +234,73 @@ theme_ICES_plots <-
             )
         )
     } else if (type == "quality_SSB") {
+
+        if (is.null(title)) {
+          title <- sprintf("%s in 1000 %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+        }
+
+        rfpt <- c("MSY B<sub>trigger</sub>", "B<sub>Lim</sub>", "B<sub>pa</sub>")
+
+        line_color <- c("#969696","#737373","#525252","#252525","#047c6c") %>% tail(length(unique(df$AssessmentYear)))
+        names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
+        line_color_rfpt <- c("#689dff", "#000000","#000000")
+        names(line_color_rfpt) <- rfpt
+        line_color <- append(line_color, line_color_rfpt)
+
+        line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
+        line_type_rfpt <- c("solid","dashed", "dotted")
+        names(line_type_rfpt) <- rfpt
+        line_type <- append(line_type, line_type_rfpt)
+
+        line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
+        line_size_rfpt <- c( .8, 1,.5)
+        names(line_size_rfpt) <- rfpt
+        line_size <- append(line_size, line_size_rfpt)
+        
+
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = sprintf("%s in 1000 %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits)),
+                title = title,
                 y = "",
                 x = ""
             ),
-            scale_color_manual(values = c(
-                "2021" = "#047c6c",
-                "2020" = "#252525",
-                "2019" = "#525252",
-                "2018" = "#737373",
-                "2017" = "#969696",
-                "MSY B<sub>trigger</sub>" = "#689dff",
-                "B<sub>Lim</sub>" = "#000000",
-                "B<sub>pa</sub>" = "#000000"
-            )),
-            scale_linetype_manual(values = c(
-                "2021" = "solid",
-                "2020" = "solid",
-                "2019" = "solid",
-                "2018" = "solid",
-                "2017" = "solid",
-                "B<sub>Lim</sub>" = "dashed",
-                "B<sub>pa</sub>" = "dotted",
-                "MSY B<sub>trigger</sub>" = "solid"
-            )),
-            scale_size_manual(values = c(
-                "2021" = 1,
-                "2020" = 1,
-                "2019" = 1,
-                "2018" = 1,
-                "2017" = 1,
-                "B<sub>Lim</sub>" = .8,
-                "B<sub>pa</sub>" = 1,
-                "MSY B<sub>trigger</sub>" = .5
-            )),
+            scale_color_manual(values = line_color
+            # c(
+            #     "2021" = "#047c6c",
+            #     "2020" = "#252525",
+            #     "2019" = "#525252",
+            #     "2018" = "#737373",
+            #     "2017" = "#969696",
+            #     "MSY B<sub>trigger</sub>" = "#689dff",
+            #     "B<sub>Lim</sub>" = "#000000",
+            #     "B<sub>pa</sub>" = "#000000"
+            # )
+            ),
+            scale_linetype_manual(values = line_type
+            # c(
+            #     "2021" = "solid",
+            #     "2020" = "solid",
+            #     "2019" = "solid",
+            #     "2018" = "solid",
+            #     "2017" = "solid",
+            #     "B<sub>Lim</sub>" = "dashed",
+            #     "B<sub>pa</sub>" = "dotted",
+            #     "MSY B<sub>trigger</sub>" = "solid"
+            # )
+            ),
+            scale_size_manual(values = line_size
+            # c(
+            #     "2021" = 1,
+            #     "2020" = 1,
+            #     "2019" = 1,
+            #     "2018" = 1,
+            #     "2017" = 1,
+            #     "B<sub>Lim</sub>" = .8,
+            #     "B<sub>pa</sub>" = 1,
+            #     "MSY B<sub>trigger</sub>" = .5
+            # )
+            ),
             # scale_fill_manual(values = c("#94b0a9")),
 
 
@@ -290,6 +315,24 @@ theme_ICES_plots <-
             )
         )
     } else if (type == "quality_F") {
+        rfpt <- c("F<sub>MSY</sub>", "F<sub>Lim</sub>","F<sub>pa</sub>")
+
+        line_color <- c("#969696","#737373","#525252","#252525","#ed5f26") %>% tail(length(unique(df$AssessmentYear)))
+        names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
+        line_color_rfpt <- c("#00AC67", "#000000","#000000")
+        names(line_color_rfpt) <- rfpt
+        line_color <- append(line_color, line_color_rfpt)
+
+        line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
+        line_type_rfpt <- c("solid","dashed", "dotted")
+        names(line_type_rfpt) <- rfpt
+        line_type <- append(line_type, line_type_rfpt)
+
+        line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
+        line_size_rfpt <- c( .8, 1,.5)
+        names(line_size_rfpt) <- rfpt
+        line_size <- append(line_size, line_size_rfpt)
+
         theme_ICES_plots <- list(
             tmp,
             labs(
@@ -297,36 +340,42 @@ theme_ICES_plots <-
                 y = "",
                 x = "Year"
             ),
-            scale_color_manual(values = c(
-                "2021" = "#ed5f26",
-                "2020" = "#252525",
-                "2019" = "#525252",
-                "2018" = "#737373",
-                "2017" = "#969696",
-                "F<sub>MSY</sub>" = "#00AC67",
-                "F<sub>Lim</sub>" = "#000000",
-                "F<sub>pa</sub>" = "#000000"
-            )),
-            scale_linetype_manual(values = c(
-                "2021" = "solid",
-                "2020" = "solid",
-                "2019" = "solid",
-                "2018" = "solid",
-                "2017" = "solid",
-                "F<sub>Lim</sub>" = "dashed",
-                "F<sub>pa</sub>" = "dotted",
-                "F<sub>MSY</sub>" = "solid"
-            )),
-            scale_size_manual(values = c(
-                "2021" = 1,
-                "2020" = 1,
-                "2019" = 1,
-                "2018" = 1,
-                "2017" = 1,
-                "F<sub>Lim</sub>" = .8,
-                "F<sub>pa</sub>" = 1,
-                "F<sub>MSY</sub>" = .5
-            )),
+            scale_color_manual(values = line_color
+            # c(
+            #     "2021" = "#ed5f26",
+            #     "2020" = "#252525",
+            #     "2019" = "#525252",
+            #     "2018" = "#737373",
+            #     "2017" = "#969696",
+            #     "F<sub>MSY</sub>" = "#00AC67",
+            #     "F<sub>Lim</sub>" = "#000000",
+            #     "F<sub>pa</sub>" = "#000000"
+            # )
+            ),
+            scale_linetype_manual(values = line_type
+            # c(
+            #     "2021" = "solid",
+            #     "2020" = "solid",
+            #     "2019" = "solid",
+            #     "2018" = "solid",
+            #     "2017" = "solid",
+            #     "F<sub>Lim</sub>" = "dashed",
+            #     "F<sub>pa</sub>" = "dotted",
+            #     "F<sub>MSY</sub>" = "solid"
+            # )
+            ),
+            scale_size_manual(values = line_size
+            # c(
+            #     "2021" = 1,
+            #     "2020" = 1,
+            #     "2019" = 1,
+            #     "2018" = 1,
+            #     "2017" = 1,
+            #     "F<sub>Lim</sub>" = .8,
+            #     "F<sub>pa</sub>" = 1,
+            #     "F<sub>MSY</sub>" = .5
+            # )
+            ),
             # scale_fill_manual(values = c("#94b0a9")),
 
 
@@ -339,6 +388,11 @@ theme_ICES_plots <-
             )
         )
     } else if (type == "quality_R") {
+        line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
+        line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
+        line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
+        names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
+
         theme_ICES_plots <- list(
             tmp,
             labs(
@@ -346,27 +400,33 @@ theme_ICES_plots <-
                 y = "",
                 x = ""
             ),
-            scale_color_manual(values = c(
-                "2021" = "#28b3e8",
-                "2020" = "#252525",
-                "2019" = "#525252",
-                "2018" = "#737373",
-                "2017" = "#969696"
-            )),
-            scale_linetype_manual(values = c(
-                "2021" = "solid",
-                "2020" = "solid",
-                "2019" = "solid",
-                "2018" = "solid",
-                "2017" = "solid"
-            )),
-            scale_size_manual(values = c(
-                "2021" = 1,
-                "2020" = 1,
-                "2019" = 1,
-                "2018" = 1,
-                "2017" = 1
-            )),
+            scale_color_manual(values = line_color
+            # c(
+            #     "2021" = "#28b3e8",
+            #     "2020" = "#252525",
+            #     "2019" = "#525252",
+            #     "2018" = "#737373",
+            #     "2017" = "#969696"
+            # )
+            ),
+            scale_linetype_manual(values = line_type
+            # c(
+            #     "2021" = "solid", #sapply(as.character(2020:2025), function(x) "solid")
+            #     "2020" = "solid",
+            #     "2019" = "solid",
+            #     "2018" = "solid",
+            #     "2017" = "solid"
+            # )
+            ),
+            scale_size_manual(values = line_size
+            # c(
+            #     "2021" = 1, #x <- rep(1,10);names(x) <- 2010:2019
+            #     "2020" = 1,
+            #     "2019" = 1,
+            #     "2018" = 1,
+            #     "2017" = 1
+            # )
+            ),
             # scale_fill_manual(values = c("#94b0a9")),
 
 
@@ -787,23 +847,23 @@ ICES_plot_4 <- function(df, sagSettings) {
 #   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
-#   print(sagSettings4)
+  print(sagSettings4)
 
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
+  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) #%>%
 #   filter(!is.na(SSB))
- {
-   if (all(is.na(.[nrow(.), 2:4]) == c(TRUE, FALSE, TRUE))) head(., -1) else .
- }
+#  {
+#    if (all(is.na(.[nrow(.), 2:4]) == c(TRUE, FALSE, TRUE))) head(., -1) else .
+#  }
 
 p4 <- df4 %>%
     ggplot(., aes(x = Year, y = SSB))
 
 if (any(!is.na(df4$low_SSB))) {
   p4 <- p4 +
-    geom_ribbon(aes(
+    geom_ribbon(data =  df4 %>% filter(!is.na(high_SSB)), aes(
       ymin = low_SSB,
       ymax = high_SSB,
       fill = "2*sd",
@@ -823,9 +883,9 @@ if (any(!is.na(df4$low_SSB))) {
     size = 0
     )
 }
-
+# df_ssb <- df4 %>% select(Year,SSB) %>% na.omit()
 p4 <- p4 +
-    geom_line(aes(
+    geom_line(data =  df4 %>% filter(!is.na(SSB)), aes(
         x = Year,
         y = SSB,
         color = "SSB",
@@ -984,12 +1044,20 @@ fig4
 #'
 #' @export
 #'
-ICES_plot_5 <- function(df) {
-    p5 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) %>%
+ICES_plot_5 <- function(df, sagSettings) {
+
+    sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+    
+    df5 <- df %>%
+        filter(Purpose == "Advice") %>%
+        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) #%>%
         # drop_na(SSB, high_SSB) %>%
         #    gather(type, count, discards:landings) %>%
-        ggplot(., aes(x = Year, y = SSB, color = AssessmentYear)) +
+
+    p5 <- df5 %>%
+        ggplot(., aes(x = Year, y = SSB, color = AssessmentYear))
+        
+    p5 <- p5 +    
         geom_line(
             aes(
                 x = Year,
@@ -1009,41 +1077,96 @@ ICES_plot_5 <- function(df) {
             ) # ,
             # size = 1,
             # linetype = "solid",
-        ) +
-        geom_hline(aes(
-            yintercept = tail(Blim, 1),
-            linetype = "B<sub>Lim</sub>",
-            colour = "B<sub>Lim</sub>",
-            size = "B<sub>Lim</sub>",
-            text = map(
-                paste0(
-                    "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-                ), HTML
+        )
+
+        if (any(!is.na(df5$Blim))) {
+            p5 <- p5 +
+                geom_hline(aes(
+                    yintercept = tail(Blim, 1),
+                    linetype = "B<sub>Lim</sub>",
+                    colour = "B<sub>Lim</sub>",
+                    size = "B<sub>Lim</sub>",
+                    text = map(
+                        paste0(
+                            "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
+        if (any(!is.na(df5$Bpa))) {
+            p5 <- p5 +
+                geom_hline(aes(
+                    yintercept = tail(Bpa, 1),
+                    linetype = "B<sub>pa</sub>",
+                    colour = "B<sub>pa</sub>",
+                    size = "B<sub>pa</sub>",
+                    text = map(
+                        paste0(
+                            "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
+        if (any(!is.na(df5$MSYBtrigger))) {
+            p5 <- p5 +
+                geom_hline(aes(
+                    yintercept = tail(MSYBtrigger, 1),
+                    linetype = "MSY B<sub>trigger</sub>",
+                    colour = "MSY B<sub>trigger</sub>",
+                    size = "MSY B<sub>trigger</sub>",
+                    text = map(
+                        paste0(
+                            "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
+        # geom_hline(aes(
+        #     yintercept = tail(Blim, 1),
+        #     linetype = "B<sub>Lim</sub>",
+        #     colour = "B<sub>Lim</sub>",
+        #     size = "B<sub>Lim</sub>",
+        #     text = map(
+        #         paste0(
+        #             "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+        #         ), HTML
+        #     )
+        # )) +
+        # geom_hline(aes(
+        #     yintercept = tail(Bpa, 1),
+        #     linetype = "B<sub>pa</sub>",
+        #     colour = "B<sub>pa</sub>",
+        #     size = "B<sub>pa</sub>",
+        #     text = map(
+        #         paste0(
+        #             "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+        #         ), HTML
+        #     )
+        # )) +
+        # geom_hline(aes(
+        #     yintercept = tail(MSYBtrigger, 1),
+        #     linetype = "MSY B<sub>trigger</sub>",
+        #     colour = "MSY B<sub>trigger</sub>",
+        #     size = "MSY B<sub>trigger</sub>",
+        #     text = map(
+        #         paste0(
+        #             "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+        #         ), HTML
+        #     )
+        # ))
+        
+        nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+        p5 <-
+            p5 +
+            theme_ICES_plots(
+            type = "quality_SSB", df,
+            title = sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% nullifempty()
             )
-        )) +
-        geom_hline(aes(
-            yintercept = tail(Bpa, 1),
-            linetype = "B<sub>pa</sub>",
-            colour = "B<sub>pa</sub>",
-            size = "B<sub>pa</sub>",
-            text = map(
-                paste0(
-                    "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-                ), HTML
-            )
-        )) +
-        geom_hline(aes(
-            yintercept = tail(MSYBtrigger, 1),
-            linetype = "MSY B<sub>trigger</sub>",
-            colour = "MSY B<sub>trigger</sub>",
-            size = "MSY B<sub>trigger</sub>",
-            text = map(
-                paste0(
-                    "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-                ), HTML
-            )
-        )) +
-        theme_ICES_plots(type = "quality_SSB", df)
+        # theme_ICES_plots(type = "quality_SSB", df)
     # theme(legend.position = "none")
 
     # plot <- p + text_labels
