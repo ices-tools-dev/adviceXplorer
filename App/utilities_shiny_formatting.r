@@ -236,8 +236,8 @@ catch_scenarios_left_panel <- sidebarPanel(
   panel(
     title = "Advice Summary",
     fillPage(
-      tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
-      
+      tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+
       withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%"))
     )
   ),
@@ -249,23 +249,43 @@ catch_scenarios_left_panel <- sidebarPanel(
     )
   ),
   panel(
-    title = "TAC_timeline",
-    fillPage(
-      tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      uiOutput("catch_scenarios"),
-      withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
-    )
-  ),
-  panel(
-    title = "Radial_plot",
-    fillPage(
-      tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      # uiOutput("catch_scenarios"),
-      uiOutput("catch_scenarios_radial"),
-      withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
+    tabsetPanel(
+      tabPanel(
+        "Historical catches",
+        uiOutput("catch_scenarios"),
+        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+      ),
+      tabPanel(
+        "% of change: radial plot",
+        uiOutput("catch_scenarios_radial"),
+        withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
+      ),
+      tabPanel(
+        "% of change: lollipop plot",
+        uiOutput("catch_indicators_lollipop"),
+        withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
+      )
     )
   )
 )
+  # panel(
+  #   title = "TAC_timeline",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     uiOutput("catch_scenarios"),
+  #     withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
+  #   )
+  # ),
+  # panel(
+  #   title = "Radial_plot",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     # uiOutput("catch_scenarios"),
+  #     uiOutput("catch_scenarios_radial"),
+  #     withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
+  #   )
+  # )
+
 
 
 catch_scenarios_right_panel <- sidebarPanel(

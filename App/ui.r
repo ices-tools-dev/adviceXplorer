@@ -37,6 +37,7 @@ library(rintrojs)
 library(scales)
 library(ggradar)
 library(shinyBS)
+library(ggtext)
 
 
 

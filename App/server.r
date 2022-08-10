@@ -516,15 +516,24 @@ output$download_SAG_Data <- downloadHandler(
   ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
-  output$plot2 <- renderPlotly(
+  output$plot2 <- renderPlotly({
+    validate(
+      need(SAG_data_reactive()$recruitment != "", "Data not available for this stock")
+    )
     ICES_plot_2(SAG_data_reactive(), sagSettings())
-  )
-  output$plot3 <- renderPlotly(
+  })
+  output$plot3 <- renderPlotly({
+    validate(
+      need(SAG_data_reactive()$F != "", "Data not available for this stock")
+    )
     ICES_plot_3(SAG_data_reactive(), sagSettings())
-  )
-  output$plot4 <- renderPlotly(
+  })
+  output$plot4 <- renderPlotly({
+    validate(
+      need(SAG_data_reactive()$SSB != "", "Data not available for this stock")
+    )
     ICES_plot_4(SAG_data_reactive(), sagSettings())
-  )
+  })
 
 
 ####################### Quality of assessment data
@@ -559,15 +568,24 @@ output$download_SAG_Data <- downloadHandler(
   )
 
   ######################### quality of assessment plots
-  output$plot5 <- renderPlotly(
-      ICES_plot_5(advice_action_quality(), sagSettings())
-  )
-  output$plot6 <- renderPlotly(
-      ICES_plot_6(advice_action_quality())
-  )
-  output$plot7 <- renderPlotly(
-      ICES_plot_7(advice_action_quality())
-  )
+  output$plot5 <- renderPlotly({
+    validate(
+      need(advice_action_quality()$SSB != "", "Data not available for this stock")
+    )
+    ICES_plot_5(advice_action_quality(), sagSettings())
+  })
+  output$plot6 <- renderPlotly({
+    validate(
+      need(advice_action_quality()$F != "", "Data not available for this stock")
+    )
+    ICES_plot_6(advice_action_quality())
+  })
+  output$plot7 <- renderPlotly({
+    validate(
+      need(advice_action_quality()$recruitment != "", "Data not available for this stock")
+    )
+    ICES_plot_7(advice_action_quality())
+  })
   
 
 ##### Advice view info
@@ -664,6 +682,23 @@ output$catch_scenarios_radial <- renderUI({
 output$Radial_plot <- renderPlotly({
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
+
+############ lollipop plot panel
+output$catch_indicators_lollipop <- renderUI({
+  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+    selectizeInput(
+        inputId = "indicator_choice_lollipop",
+        label = "Select an indicator",
+        choices = names(catch_scenario_table_percentages()),
+        selected = c("F"),
+        multiple = TRUE
+      )
+})
+output$Lollipop_plot <- renderPlotly({
+  lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
+})
+
+
 
 ###### Calendar of stock with modal
 observeEvent(input$preview, {
