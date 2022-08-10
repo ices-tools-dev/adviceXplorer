@@ -578,7 +578,7 @@ output$download_SAG_Data <- downloadHandler(
     validate(
       need(advice_action_quality()$F != "", "Data not available for this stock")
     )
-    ICES_plot_6(advice_action_quality())
+    ICES_plot_6(advice_action_quality(), sagSettings())
   })
   output$plot7 <- renderPlotly({
     validate(

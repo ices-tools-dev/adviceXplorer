@@ -89,17 +89,31 @@ theme_ICES_plots <-
     #   axis.text.x = element_text(            #margin for axis text
     #                 margin=margin(5, b = 10))
     if (type == "catches") {
-        # mycolors <- c("#fda500", "#002b5f")
+
+        if (is.null(title)) {
+          title <- "Catches"
+        }
+        if (is.null(ylegend)) {
+          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$units))
+        }
+
+        if (is.null(ymax)) {
+          limits <- expand_limits(y = 0)
+        } else {
+          limits <- expand_limits(y = c(0, ymax))
+        }
+        
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = "Catches",
-                y = sprintf("Catches in 1000 %s", dplyr::last(df$units))
+                title = title,
+                y = ylegend
             ),
             scale_fill_manual(values = c(
                 "landings" = "#002b5f",
                 "discards" = "#fda500"
             )),
+            limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) {
@@ -481,6 +495,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 #   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
+#   print(sagSettings1)
 
   df1 <- df %>%
     filter(Purpose == "Advice") %>%
@@ -502,8 +517,25 @@ ICES_plot_1 <- function(df, sagSettings) {
                 ), HTML
             )
         )) +
-        geom_bar(position = "stack", stat = "identity") +
-        theme_ICES_plots(type = "catches", df)
+    geom_bar(position = "stack", stat = "identity") #+
+    #theme_ICES_plots(type = "catches", df)
+
+
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+  p1 <-
+    p1 +
+    theme_ICES_plots(
+      type = "catches", df,
+      title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+      ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
+      ###### this part below is not working
+      ymax = sagSettings1 %>%
+        filter(settingKey == 6) %>%
+        pull(settingValue) %>%
+        as.numeric() %>%
+        nullifempty()
+    )
 
 
     # converting
@@ -847,7 +879,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 #   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
   sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
-  print(sagSettings4)
+#   print(sagSettings4)
 
 
 df4 <- df %>%
@@ -1222,12 +1254,18 @@ ICES_plot_5 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_6 <- function(df) {
-    p6 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) %>%
+ICES_plot_6 <- function(df, sagSettings) {
+    sagSettings6 <- sagSettings %>% filter(SAGChartKey == 3)
+
+    df6 <- df %>%
+        filter(Purpose == "Advice") %>%
+        select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) # %>%
         # drop_na(SSB, high_SSB) %>%
         #    gather(type, count, discards:landings) %>%
-        ggplot(., aes(x = Year, y = F, color = AssessmentYear)) +
+    p6 <- df6 %>%
+        ggplot(., aes(x = Year, y = F, color = AssessmentYear)) 
+
+    p6 <- p6 +    
         geom_line(
             aes(
                 x = Year,
@@ -1247,41 +1285,93 @@ ICES_plot_6 <- function(df) {
             ) # ,
             # size = 1,
             # linetype = "solid",
-        ) +
-        geom_hline(aes(
-            yintercept = tail(FLim, 1),
-            linetype = "F<sub>Lim</sub>",
-            colour = "F<sub>Lim</sub>",
-            size = "F<sub>Lim</sub>",
-            text = map(
-                paste0(
-                    "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
-                ), HTML
+        ) 
+
+        if (any(!is.na(df6$FLim))) {
+            p6 <- p6 +
+                geom_hline(aes(
+                    yintercept = tail(FLim, 1),
+                    linetype = "F<sub>Lim</sub>",
+                    colour = "F<sub>Lim</sub>",
+                    size = "F<sub>Lim</sub>",
+                    text = map(
+                        paste0(
+                            "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
+        if (any(!is.na(df6$Fpa))) {
+            p6 <- p6 +
+                geom_hline(aes(
+                    yintercept = tail(Fpa, 1),
+                    linetype = "F<sub>pa</sub>",
+                    colour = "F<sub>pa</sub>",
+                    size = "F<sub>pa</sub>",
+                    text = map(
+                        paste0(
+                            "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
+        if (any(!is.na(df6$FMSY))) {
+            p6 <- p6 +
+                geom_hline(aes(
+                    yintercept = tail(FMSY, 1),
+                    linetype = "F<sub>MSY</sub>",
+                    colour = "F<sub>MSY</sub>",
+                    size = "F<sub>MSY</sub>",
+                    text = map(
+                        paste0(
+                            "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+                        ), HTML
+                    )
+                ))
+        }
+        # geom_hline(aes(
+        #     yintercept = tail(FLim, 1),
+        #     linetype = "F<sub>Lim</sub>",
+        #     colour = "F<sub>Lim</sub>",
+        #     size = "F<sub>Lim</sub>",
+        #     text = map(
+        #         paste0(
+        #             "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
+        #         ), HTML
+        #     )
+        # )) +
+        # geom_hline(aes(
+        #     yintercept = tail(Fpa, 1),
+        #     linetype = "F<sub>pa</sub>",
+        #     colour = "F<sub>pa</sub>",
+        #     size = "F<sub>pa</sub>",
+        #     text = map(
+        #         paste0(
+        #             "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
+        #         ), HTML
+        #     )
+        # )) +
+        # geom_hline(aes(
+        #     yintercept = tail(FMSY, 1),
+        #     linetype = "F<sub>MSY</sub>",
+        #     colour = "F<sub>MSY</sub>",
+        #     size = "F<sub>MSY</sub>",
+        #     text = map(
+        #         paste0(
+        #             "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+        #         ), HTML
+        #     )
+        # )) +
+        nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+        p6 <-
+            p6 +
+            theme_ICES_plots(
+            type = "quality_F", df,
+            title = sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% nullifempty()
             )
-        )) +
-        geom_hline(aes(
-            yintercept = tail(Fpa, 1),
-            linetype = "F<sub>pa</sub>",
-            colour = "F<sub>pa</sub>",
-            size = "F<sub>pa</sub>",
-            text = map(
-                paste0(
-                    "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
-                ), HTML
-            )
-        )) +
-        geom_hline(aes(
-            yintercept = tail(FMSY, 1),
-            linetype = "F<sub>MSY</sub>",
-            colour = "F<sub>MSY</sub>",
-            size = "F<sub>MSY</sub>",
-            text = map(
-                paste0(
-                    "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
-                ), HTML
-            )
-        )) +
-        theme_ICES_plots(type = "quality_F", df)
 
     # converting
     fig6 <- ggplotly(p6, tooltip = "text") %>%
