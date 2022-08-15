@@ -233,14 +233,14 @@ quality_of_assessment <- splitLayout(
 ####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
   width = 6, style = "height: 90vh; overflow-y: auto;",
-  panel(
-    title = "Advice Summary",
-    fillPage(
-      tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+  # panel(
+  #   title = "Advice Summary",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
 
-      withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%"))
-    )
-  ),
+  #     withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%"))
+  #   )
+  # ),
   panel(
     title = "Catch_scenario_F_SSB",
     fillPage(

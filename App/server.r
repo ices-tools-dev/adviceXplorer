@@ -619,6 +619,11 @@ catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previ
 })
 
 
+#### link for the advice view link button to the full stock record
+onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", advice_view_info()$adviceKey,"', '_blank')")))
+
+
+
 ##### Advice and stock infos
 advice_view_summary <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
