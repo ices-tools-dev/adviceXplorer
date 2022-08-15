@@ -232,7 +232,7 @@ quality_of_assessment <- splitLayout(
 
 ####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   # panel(
   #   title = "Advice Summary",
   #   fillPage(
@@ -289,7 +289,7 @@ catch_scenarios_left_panel <- sidebarPanel(
 
 
 catch_scenarios_right_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   panel(
     withSpinner(htmlOutput("Advice_Headline", height = "10%", width = "100%"))
     # htmlOutput("Advice_Sentence2", height = "10%", width = "100%"),
