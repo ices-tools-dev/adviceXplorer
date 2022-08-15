@@ -59,7 +59,7 @@ source("utilities_resources.r")
 
 myDownloadButton <- function(outputId){
   tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
-         target = "_blank", download = NA, NULL, style = "width: 40px; height: 40px; background: url('downloading.png');  background-size: cover; background-position: center;")
+         target = "_blank", download = NA, NULL, style = "width: 40px; height: 40px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
 }
 
 title_html <- tags$a(
@@ -126,7 +126,7 @@ navbarPage(
     tabPanel(
         "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
         tipify(
-            actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center;"),
+            actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
             title = "Click here for help", placement = "bottom", trigger = "hover"),
         DTOutput("tbl")#,
                 # useShinyjs(),
@@ -149,7 +149,7 @@ navbarPage(
             tabPanel(
                 "Development over time",
                 tipify(
-                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center;"), 
+                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"), 
                 title = "Click here fof help", placement = "right", trigger = "hover"),
                 
                 tipify(
@@ -190,7 +190,7 @@ navbarPage(
             tabPanel(
                 "Quality of assessment",
                 tipify(
-                actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center;"),
+                actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
                 title = "Click here fof help", placement = "right", trigger = "hover"),
 
                 tipify(
@@ -272,16 +272,16 @@ navbarPage(
     tabPanel(
         "Advice",
         tipify(
-            actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center;"),
+            actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
             title = "Click here fof help", placement = "right", trigger = "hover"),
 
         tipify(
-            actionButton(inputId = "preview", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('calendar.png');  background-size: cover; background-position: center; padding-right:25px;"), 
+            actionButton(inputId = "preview", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('calendar.png');  background-size: cover; background-position: center; padding-right:25px; border: 1px solid transparent;"), 
             title = "Useful dates for the stock's advice process", placement = "bottom", trigger = "hover"),
             
             
         tipify(
-            actionButton(inputId = "advice_view_link", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center;"),
+            actionButton(inputId = "advice_view_link", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center; border: 1px solid transparent;"),
             # actionButton(inputId = "advice_view_link", label = NULL, hover=T, onclick = paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", catch_scenario_list$adviceKey,"', '_blank')"), style = "top: 1%; left:15%; width: 50px; height: 50px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center;"), 
             title = "Link for the full advice view record", placement = "right", trigger = "hover"),
 
