@@ -644,7 +644,11 @@ output$Advice_Headline <- renderUI({
 
 
 ### F_SSB and chatches plot linked to table
-output$catch_scenario_plot_3 <- renderPlotly({  
+output$catch_scenario_plot_3 <- renderPlotly({
+  # validate( this does not work cause the error is comeing from the function Warning: Error in UseMethod: no applicable method for 'pivot_wider' applied to an object of class "list" L 177
+  #     need(catch_scenario_table()$SSB != "", "Data not available for this stock")
+      
+  #   )
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
