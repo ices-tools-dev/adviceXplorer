@@ -385,7 +385,7 @@ sid_table_links <- function(df){
 createLink_advice_pdf <- function(df) {
   
   
-  advice_DOI_data <- fread("Data/DOI/single_stock_2017_4.5.2022.csv", 
+  advice_DOI_data <- fread("Data/DOI/single_stock_2017_15.8.2022.csv", 
                             header = TRUE, 
                             col.names = c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi"))
   # advice_DOI_data <- advice_DOI_data %>% filter(Stock_code %in% advice_view_stocks)
