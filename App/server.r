@@ -491,8 +491,9 @@ observe({
   })
 
   sagSettings <- eventReactive(req(query$assessmentkey),{
-    options(icesSAG.use_token = TRUE)
-    icesSAG::getSAGSettingsForAStock(query$assessmentkey)
+    # options(icesSAG.use_token = TRUE)
+    # icesSAG::getSAGSettingsForAStock(query$assessmentkey)
+    getSAGSettings(query$assessmentkey)
   })
 
 ###### info about the stock selected for top of page

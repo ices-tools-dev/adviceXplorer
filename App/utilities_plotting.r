@@ -494,7 +494,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 #   options(icesSAG.use_token = TRUE)
 #   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
-  sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
+  sagSettings1 <- sagSettings %>% filter(sagChartKey == 1)
 #   print(sagSettings1)
 
   df1 <- df %>%
@@ -598,7 +598,7 @@ ICES_plot_2 <- function(df, sagSettings) {
 #   options(icesSAG.use_token = TRUE)
 #   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
-  sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
+  sagSettings2 <- sagSettings %>% filter(sagChartKey == 2)
 
 
   shadeYears <- sagSettings2 %>%
@@ -702,7 +702,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     # options(icesSAG.use_token = TRUE)
     # sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
-    sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
+    sagSettings3 <- sagSettings %>% filter(sagChartKey == 3)
     # print(sagSettings3)
 
 
@@ -878,7 +878,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 #   options(icesSAG.use_token = TRUE)
 #   sagSettings <- icesSAG::getSAGSettingsForAStock(key)
 
-  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+  sagSettings4 <- sagSettings %>% filter(sagChartKey == 4)
 #   print(sagSettings4)
 
 
@@ -1078,7 +1078,7 @@ fig4
 #'
 ICES_plot_5 <- function(df, sagSettings) {
 
-    sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+    sagSettings4 <- sagSettings %>% filter(sagChartKey == 4)
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
@@ -1255,7 +1255,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_6 <- function(df, sagSettings) {
-    sagSettings6 <- sagSettings %>% filter(SAGChartKey == 3)
+    sagSettings6 <- sagSettings %>% filter(sagChartKey == 3)
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%

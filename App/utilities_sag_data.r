@@ -290,3 +290,11 @@ getStockAreas <- function(stockCode) {
   areas$Key
 }
 
+
+getSAGSettings <- function(assessmentkey) {
+    sagSettings <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/StockSettings?assessmentKey=%s", assessmentkey)
+        )
+    )
+}
