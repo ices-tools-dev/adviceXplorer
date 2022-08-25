@@ -60,8 +60,10 @@ help_datatable <- function() {
             "help_tab5", #30
             "help_tab5", #31
             "help_tab5" #32
+
         ),
         step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30),
+
         element = c(
             #data filtering
             "#help_tab1",
@@ -88,8 +90,10 @@ help_datatable <- function() {
             "#plot7",
             # Advice
             "#Advice_Summary",
+
             # "#preview",
             # "#advice_view_link",
+
             "#catch_scenario_plot_3",
             "#catch_choice-label",
             "#TAC_timeline",
@@ -127,8 +131,10 @@ help_datatable <- function() {
             "REC lorem ipsum",
            # Advice
             "<font size='4'>A few information about the stock, the assessment year and the advice requesters</font>",
+
             # "<font size='4'>You can click here to see the calendar (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
             # "<font size='4'>You can click here to see the full advice view record for this stock</font>",
+
             "<font size='4'>Relationshp between F, SSB, Total Catches and the differen basis of advice..... lorem ipsum</font>",
             "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
             "<font size='4'>Catches plot and effect on catches of different scenarios</font>",
@@ -165,6 +171,7 @@ help_datatable <- function() {
             "bottom", # 18
             "bottom", # 19
             # Advice
+
             "bottom", # 20
             "right", # 21
             "top", # 22
@@ -178,6 +185,7 @@ help_datatable <- function() {
             "left", # 30
             "left", # 31
             "left" # 32
+
         )
     )
 }
