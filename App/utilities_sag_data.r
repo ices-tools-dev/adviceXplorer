@@ -298,3 +298,46 @@ getSAGSettings <- function(assessmentkey) {
         )
     )
 }
+
+getSAGSummary <- function(assessmentkey) {
+    sagSummary <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", assessmentkey)
+            # sprintf("https://sag.ices.dk/SAG_API/api/StockSettings?assessmentKey=%s", assessmentkey)
+        )
+    )    
+}
+
+
+# sagSummary <- flatten(sagSummary)
+
+#     sagSummary$assessmentKey <- rep(sagSummary$assessmentKey, length(sagSummary$lines$year))
+#     sagSummary$stockPublishNote <- rep(sagSummary$stockPublishNote, length(sagSummary$lines$year))
+#     sagSummary$purpose <- rep(sagSummary$purpose, length(sagSummary$lines$year))
+#     sagSummary$fAge <- rep(sagSummary$fAge, length(sagSummary$lines$year))
+#     sagSummary$fishStock <- rep(sagSummary$fishStock, length(sagSummary$lines$year))
+#     sagSummary$recruitmentAge <- rep(sagSummary$recruitmentAge, length(sagSummary$lines$year))
+#     sagSummary$assessmentYear <- rep(sagSummary$assessmentYear, length(sagSummary$lines$year))
+#     sagSummary$units <- rep(sagSummary$units, length(sagSummary$lines$year))
+#     sagSummary$stockSizeDescription <- rep(sagSummary$stockSizeDescription, length(sagSummary$lines$year))
+#     sagSummary$stockSizeUnits <- rep(sagSummary$stockSizeUnits, length(sagSummary$lines$year))
+#     sagSummary$fishingPressureDescription <- rep(sagSummary$fishingPressureDescription, length(sagSummary$lines$year))
+#     sagSummary$fishingPressureUnits <- rep(sagSummary$fishingPressureUnits, length(sagSummary$lines$year))
+
+#     sagSummaryf <- do.call(cbind.data.frame, sagSummary)
+# SAGsummary <- getSAG("had.27.46a20", 2021,
+#         data = "summary", combine = TRUE, purpose = "Advice"
+#     )
+# sagSummary$lines$ibc
+
+# library(tidyverse)
+# flatten(sagSummary)
+# length(sagSummary$lines$year)
+# rep(sagSummary$assessmentKey,50)
+
+# sagSummary %>% 
+# mutate(Value = map(Value, as.data.frame),
+#          Value = map(Value, rownames_to_column, 'a'),
+#          Value = map(Value, ~gather(., assessmentKey, lines, -a))) %>% 
+#   unnest(Value) %>% 
+#   complete(Step, a, b)
