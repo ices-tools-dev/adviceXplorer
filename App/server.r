@@ -490,6 +490,12 @@ observe({
     access_sag_data_local(stock_name, year)
   })
 
+  sagSettings <- eventReactive(req(query$assessmentkey),{
+    # options(icesSAG.use_token = TRUE)
+    # icesSAG::getSAGSettingsForAStock(query$assessmentkey)
+    getSAGSettings(query$assessmentkey)
+  })
+
 ###### info about the stock selected for top of page
 output$stock_infos <- renderUI({
   get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
@@ -506,8 +512,10 @@ output$download_SAG_Data <- downloadHandler(
   )
 
 ######################### Stock development over time plots
-  output$plot1 <- renderPlotly(    
-    ICES_plot_1(SAG_data_reactive())
+
+  output$plot1 <- renderPlotly(
+    ICES_plot_1(SAG_data_reactive(), sagSettings())
+
   ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
 
@@ -515,19 +523,22 @@ output$download_SAG_Data <- downloadHandler(
     validate(
       need(SAG_data_reactive()$recruitment != "", "Data not available for this stock")
     )
-    ICES_plot_2(SAG_data_reactive())
+    ICES_plot_2(SAG_data_reactive(), sagSettings())
   })
+  
   output$plot3 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$F != "", "Data not available for this stock")
     )
-    ICES_plot_3(SAG_data_reactive())
+
+    ICES_plot_3(SAG_data_reactive(), sagSettings())
   })
+  
   output$plot4 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$SSB != "", "Data not available for this stock")
     )
-    ICES_plot_4(SAG_data_reactive())
+    ICES_plot_4(SAG_data_reactive(), sagSettings())
   })
 
 
@@ -567,13 +578,17 @@ output$download_SAG_Data <- downloadHandler(
     validate(
       need(advice_action_quality()$SSB != "", "Data not available for this stock")
     )
-    ICES_plot_5(advice_action_quality())
+
+    ICES_plot_5(advice_action_quality(), sagSettings())
+
   })
   output$plot6 <- renderPlotly({
     validate(
       need(advice_action_quality()$F != "", "Data not available for this stock")
     )
-    ICES_plot_6(advice_action_quality())
+
+    ICES_plot_6(advice_action_quality(), sagSettings())
+
   })
   output$plot7 <- renderPlotly({
     validate(
@@ -614,6 +629,11 @@ catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previ
 })
 
 
+#### link for the advice view link button to the full stock record
+onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", advice_view_info()$adviceKey,"', '_blank')")))
+
+
+
 ##### Advice and stock infos
 advice_view_summary <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
@@ -634,7 +654,11 @@ output$Advice_Headline <- renderUI({
 
 
 ### F_SSB and chatches plot linked to table
-output$catch_scenario_plot_3 <- renderPlotly({  
+output$catch_scenario_plot_3 <- renderPlotly({
+  # validate( this does not work cause the error is comeing from the function Warning: Error in UseMethod: no applicable method for 'pivot_wider' applied to an object of class "list" L 177
+  #     need(catch_scenario_table()$SSB != "", "Data not available for this stock")
+      
+  #   )
   catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
