@@ -1,19 +1,20 @@
-#' Returns ....
+
+#' This function collates the information necessary for the calandar for a specific stock/year.
 #'
-#' Downloads ...
+#' @param timeL (df dowloaded from advice view info record)
+#' @param tbl_sid (SID df)
+#' @param radio_button (input from radio button used to select a stock in the SID table)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return a character string (that will need to be converted with HTML())
 #'
 #' @note
-#' Can add some helpful information here
+#' 
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' html_calendar(advice_view_info(), res_mod(), input$rdbtn)
 #' }
 #'
 #' @references

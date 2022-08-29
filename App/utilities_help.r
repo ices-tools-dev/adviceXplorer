@@ -1,10 +1,8 @@
-#' Returns a data.table object 
-#'
-#' Downloads ...
+#' Data.table used by rintro.js to document each elements on each tab of the app.
 #'
 #' @param null
 #'
-#' @return 
+#' @return a data.table object
 #'
 #' @note
 #' Can add some helpful information here
@@ -13,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' help_datatable()
 #' }
 #'
 #' @references
@@ -21,7 +19,7 @@
 #' 
 #'
 #' @export
-
+#' 
 help_datatable <- function() {
     data.table(
         tab = c(
@@ -50,15 +48,22 @@ help_datatable <- function() {
             "help_tab4", # 19
             # Advice
             "help_tab5", # 20
-            "help_tab5", # 21
-            "help_tab5", # 22
+            # "help_tab5", # 21
+            # "help_tab5", # 22
             "help_tab5", # 23
             "help_tab5", # 24
             "help_tab5", # 25
             "help_tab5",  # 26
-            "help_tab5" # 27
+            "help_tab5", # 27
+            "help_tab5", #28
+            "help_tab5", #29
+            "help_tab5", #30
+            "help_tab5", #31
+            "help_tab5" #32
+
         ),
-        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27),
+        step = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30),
+
         element = c(
             #data filtering
             "#help_tab1",
@@ -85,11 +90,18 @@ help_datatable <- function() {
             "#plot7",
             # Advice
             "#Advice_Summary",
-            "#preview",
+
+            # "#preview",
+            # "#advice_view_link",
+
             "#catch_scenario_plot_3",
             "#catch_choice-label",
             "#TAC_timeline",
-            "#Radial_plot",            
+            "#catch_scenarios_radial",
+            "#Radial_plot",
+            "#catch_indicators_lollipop",
+            "#Lollipop_plot",
+            "#Advice_Headline",         
             "#table",
             "#footnotes"
         ),
@@ -117,49 +129,63 @@ help_datatable <- function() {
             "SSB lorem ipsum",
             "F lorem ipsum",
             "REC lorem ipsum",
-            # Advice
+           # Advice
             "<font size='4'>A few information about the stock, the assessment year and the advice requesters</font>",
-            "<font size='4'>You can click here to see the calendar (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
+
+            # "<font size='4'>You can click here to see the calendar (advice release date, advice validity, WG dates etcc) of the stock you selected</font>",
+            # "<font size='4'>You can click here to see the full advice view record for this stock</font>",
+
             "<font size='4'>Relationshp between F, SSB, Total Catches and the differen basis of advice..... lorem ipsum</font>",
             "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
             "<font size='4'>Catches plot and effect on catches of different scenarios</font>",
-            "<font size='4'>Radial plot to compare the different scenarios in relative terms</font>",           
+            "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
+            "<font size='4'>Radial plot to compare the different scenarios in % of advice change</font>",           
+            "<font size='4'>Here you can choose one or multiple scenarios of advice to be diplayed below.....lorem ipsum</font>",
+            "<font size='4'>Lollipop plot to compare the different scenarios in % of advice change</font>", 
+            "<font size='4'>Headline of the advice....lorem ipsun</font>",
             "<font size='4'>chatch scenario table....lorem ipsun</font>",
             "<font size='4'>Footnotes of catch scenario table</font>"
         ),
         position = c(
-            #data filtering
-            "left", #1
-            "bottom",#2
-            "right",#3
-            "left",#4
-            "left",#5
-            "left",#6
-            "left",#7
-            "left",#8
-            "left",#9
-            "left",#10
-            "left",#11
+            # data filtering
+            "left", # 1
+            # "bottom", # 2
+            # "right", # 3
+            "left", # 4
+            "left", # 5
+            "left", # 6
+            "left", # 7
+            "left", # 8
+            "left", # 9
+            "left", # 10
+            "left", # 11
             # stock selection
-            "left",#12
+            "left", # 12
             # stock assessment trends - development over time
-            "right",#13
-            "left", #14
-            "right", #15
-            "left", #16
+            "right", # 13
+            "left", # 14
+            "right", # 15
+            "left", # 16
             # stock assessment trends - quality of assessemnt
-            "bottom", #17
-            "bottom", #18
-            "bottom", #19
+            "bottom", # 17
+            "bottom", # 18
+            "bottom", # 19
             # Advice
-            "bottom",#20
-            "right",#21
-            "top",#22
-            "right",#23
-            "left",#24
-            "top",#25
-            "left",#26
-            "left"  #27
+
+            "bottom", # 20
+            "right", # 21
+            "top", # 22
+            "right", # 23
+            "left", # 24
+            "top", # 25
+            "left", # 26
+            "top", # 27
+            "top", # 28
+            "top", # 29
+            "left", # 30
+            "left", # 31
+            "left" # 32
+
         )
     )
 }

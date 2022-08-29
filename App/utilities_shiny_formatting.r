@@ -97,7 +97,7 @@ selectize_panel <-
     width = 4, style = "max-height: 90vh; overflow-y: auto;",
     # actionButton("help_tab1", "About this Page", icon = icon("circle-info", "fa-solid"), width = "100%"),
     tipify(
-      actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center;"),
+      actionButton(inputId = "help_tab1", label = NULL, style = "position: absolute; top: 1%; right:4%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
       title = "Click here for help", placement = "left", trigger = "hover"),
     panel(
       selectizeInput(
@@ -232,15 +232,15 @@ quality_of_assessment <- splitLayout(
 
 ####################################### Advice tab
 catch_scenarios_left_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
-  panel(
-    title = "Advice Summary",
-    fillPage(
-      tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
-      
-      withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%"))
-    )
-  ),
+  width = 6, style = "height: 80vh; overflow-y: auto;",
+  # panel(
+  #   title = "Advice Summary",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Advice_Summary  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+
+  #     withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%"))
+  #   )
+  # ),
   panel(
     title = "Catch_scenario_F_SSB",
     fillPage(
@@ -248,28 +248,76 @@ catch_scenarios_left_panel <- sidebarPanel(
       withSpinner(plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%"))
     )
   ),
+  # panel(
+  #   title = "TAC_timeline",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     uiOutput("catch_scenarios"),
+  #     withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+  #   )
+  # ),
+  # panel(
+  #   title = "Radial_plot",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     # uiOutput("catch_scenarios"),
+  #     uiOutput("catch_scenarios_radial"),
+  #     withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
+  #   )
+  # ),
+  # panel(
+  #   title = "Lollipop plot",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Lollipop_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     # uiOutput("catch_scenarios"),
+  #     uiOutput("catch_indicators_lollipop"),
+  #     withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
+  #   )
+  # ),
   panel(
-    title = "TAC_timeline",
-    fillPage(
-      tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      uiOutput("catch_scenarios"),
-      withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
-    )
-  ),
-  panel(
-    title = "Radial_plot",
-    fillPage(
-      tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
-      # uiOutput("catch_scenarios"),
-      uiOutput("catch_scenarios_radial"),
-      withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
+
+    tabsetPanel(
+      tabPanel(
+        "Historical catches",
+        uiOutput("catch_scenarios"),
+        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+      ),
+      tabPanel(
+        "% of change: radial plot",
+        uiOutput("catch_scenarios_radial"),
+        withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
+      ),
+      tabPanel(
+        "% of change: lollipop plot",
+
+        uiOutput("catch_indicators_lollipop"),
+        withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
+      )
     )
   )
 )
+  # panel(
+  #   title = "TAC_timeline",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#TAC_timeline  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     uiOutput("catch_scenarios"),
+  #     withSpinner(plotlyOutput("TAC_timeline", height = "20%", width = "100%"))
+  #   )
+  # ),
+  # panel(
+  #   title = "Radial_plot",
+  #   fillPage(
+  #     tags$style(type = "text/css", "#Radial_plot  overflow-y: auto; !important;}"), # {height:calc(20vh - 10px); width: calc(100vw - 10px);
+  #     # uiOutput("catch_scenarios"),
+  #     uiOutput("catch_scenarios_radial"),
+  #     withSpinner(plotlyOutput("Radial_plot", height = "20%", width = "100%"))
+  #   )
+  # )
+
 
 
 catch_scenarios_right_panel <- sidebarPanel(
-  width = 6, style = "height: 90vh; overflow-y: auto;",
+  width = 6, style = "height: 80vh; overflow-y: auto;",
   panel(
     withSpinner(htmlOutput("Advice_Headline", height = "10%", width = "100%"))
     # htmlOutput("Advice_Sentence2", height = "10%", width = "100%"),

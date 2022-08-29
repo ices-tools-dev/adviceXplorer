@@ -190,22 +190,30 @@
 
 
 
-#' Returns ....
+
+minZoom = 0
+maxZoom = 13
+resolutions <- 2*(2^(maxZoom:minZoom))
+crs_laea <- leafletCRS(crsClass = "L.Proj.CRS", code = "EPSG:3035",
+  proj4def = "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958",
+  resolutions = resolutions)
+
+
+#' Function to plot the map of ecoregions in the intial tab of the app.
 #'
-#' Downloads ...
+#' @param shape_eco (ecoregions' shapefile)
+#' @param eu_shape (europe's shapefile)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return leaflet object
 #'
 #' @note
-#' Can add some helpful information here
+#' 
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' map_ecoregion(shape_eco, eu_shape)
 #' }
 #'
 #' @references
@@ -215,13 +223,6 @@
 #' @export
 #' 
 #' 
-minZoom = 0
-maxZoom = 13
-resolutions <- 2*(2^(maxZoom:minZoom))
-crs_laea <- leafletCRS(crsClass = "L.Proj.CRS", code = "EPSG:3035",
-  proj4def = "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958",
-  resolutions = resolutions)
-
 map_ecoregion <- function(shape_eco, eu_shape) {
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
                 # addTiles() %>%

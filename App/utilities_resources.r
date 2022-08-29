@@ -1,8 +1,8 @@
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
+
+#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form),
+#' Data Sources, Data disclaimer, Citation, Data policy and Resources
+#' 
+#' @param null
 #'
 #' @return 
 #'
@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' make_app_citation()
 #' }
 #'
 #' @references
@@ -29,11 +29,12 @@ make_app_citation <- function() {
       "<b>", "<font size=", 5, ">", "Contact & Feedback", "</font>", "</b>", "<br/>",
       "<font size=", 3, ">",
       "You can contact us via ", "<a href = ", "'mailto: luca.lamoni@ices.dk'", ">email</a>", "<br/>",
-      "You can submit an issue to our GitHub ", "<a href='","https://github.com/ices-tools-dev/online-advice/issues", "' target='_blank'>", "repository.","</a>",
+      "You can submit an issue to our GitHub ", "<a href='","https://github.com/ices-tools-dev/online-advice/issues", "' target='_blank'>", "repository.","</a><br/>",
+      "Please give us your feedback: ","<br/><br/><p align='center'><iframe width='640px' height='480px' src='https://forms.office.com/Pages/ResponsePage.aspx?id=ziCy4DVXaESR3wXK5f8f3DhC6UPgEXpGqPSwaKKiWWRUNDBLOTMwQTdRVTNZQlFET041N0FYWkw3SC4u&embed=true' frameborder='0' marginwidth='0' marginheight='0' style='border: none; max-width:100%; max-height:100vh' allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>",
       "</font>",  "<br/>",
       br(),
 
-      "<b>", "<font size=", 5, ">", "Data sources", "</font>", "</b>", "<br/>",
+      "<p align='left'><b>", "<font size=", 5, ">", "Data sources", "</font>", "</b>", "<br/>",
       "The ICES Online Advice Shiny app diplays data collected from the following sources:
       <ul><li>", a("GIS", href = "https://gis.ices.dk/sf/index.html"), "</li>",
       "<li>", a("SID", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
