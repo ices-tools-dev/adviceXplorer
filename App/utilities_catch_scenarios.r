@@ -28,9 +28,6 @@ get_Advice_View_info <- function(stock_name, year) {
   
   catch_scenario_list <- jsonlite::fromJSON(
     URLencode(
-      # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
-      # sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
-      # sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?assessmentkey=%s", assessmentkey)
       sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
     )
   )
@@ -158,17 +155,7 @@ return(stock_info_sentence)
 #' @export
 #' 
 get_catch_scenario_table <- function(catch_scenario_list) {
-  # catch_scenario_list <- jsonlite::fromJSON(
-  #   URLencode(
-  #     # "https://sg.ices.dk/adviceview/API/getAdviceViewRecord?year=2020"
-  #     # sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s", stock_name)
-  #     sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
-  #   )
-  # )
-  # catch_scenario_list <- get_Advice_View_info(stock_name, year)
-
-  # catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE)
-
+  
   catch_scenario_table <- jsonlite::fromJSON(
     URLencode(
       sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey) # )
@@ -380,15 +367,7 @@ standardize_catch_scenario_table <- function(tmp) {
   # tmp3 <- tmp2 %>% relocate("SSB", .before = "SSBchange")
 }
 
-# install.packages("gt")
-# library(gt)
-# tmp_unified %>% gt() %>% tab_header(
-#     title = "S&P 500") %>% tab_footnote(
-  
-#   footnote = paste0(catch_scenario_table_notes$symbol, catch_scenario_table_notes$notes),
-#   locations = NULL,
-#   placement =  "right"
-# )
+
 # catch_scenario_table_st_2020 <- standardize_catch_scenario_table(catch_scenario_table_2020)
 # catch_scenario_table_st_2021 <- standardize_catch_scenario_table(catch_scenario_table_2021)
 #' Returns ....
