@@ -208,26 +208,12 @@ observe({
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
-    ### reshuffle some columns    
-    stock_list_long <- stock_list_long %>%
-      relocate(icon, .before = SpeciesCommonName) %>% 
-      relocate(c(doi, FO_doi), .before = EcoRegion) %>%
-      relocate(group_url, .before = DataCategory) %>%
-      relocate(c(doi, FO_doi), .before = AssessmentKey) 
-     
-
-    temp_df <- data.frame()
-    for (i in 1:length(input$selected_locations)) {
-      temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
-      temp_df <- rbind(temp_df, temp_1)
-    }
-
-    stock_list_long <- temp_df
-    stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
-    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
-    stock_list_long <- stock_list_long %>%
-      relocate(Select, .before = StockKeyLabel)
-    
+    stock_list_long <- purrr::map_dfr(.x = input$selected_locations,
+                           .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))) %>%
+      dplyr::arrange(StockKeyLabel) %>%
+      dplyr::mutate(Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))) %>%
+      dplyr::relocate(Select, StockKeyLabel, EcoRegion, icon, SpeciesCommonName, ExpertGroup, group_url, DataCategory,
+                      YearOfLastAssessment, AdviceCategory, doi, FO_doi, AssessmentKey, SAG_url, visa_url)
   })
 
   
