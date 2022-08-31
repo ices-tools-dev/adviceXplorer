@@ -6,9 +6,6 @@ eu_shape <- st_read(dsn = "Data/shape_EU_simplified",
 shape_eco <- st_read(dsn = "Data/shape_eco_simplified", 
     layer = "shape_eco_simplified")
 
-
-# ices_areas <- st_transform(shape_ices_areas, crs = 4326)
-
 # Change one Ecoregion name (this comes handy when we filter the stock list table)
 levels(shape_eco$Ecoregion)[match("Icelandic Waters",levels(shape_eco$Ecoregion))] <- "Iceland Sea"
 

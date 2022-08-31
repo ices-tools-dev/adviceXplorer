@@ -26,29 +26,19 @@
 html_calendar <- function(timeL, tbl_sid, radio_button) {
     ## this gets the initial dates from the advice view
     
-    # timeL <- get_Advice_View_info(stock_name, year)
-
-    # release_date <- timeL[timeL["advice View"] == "adviceReleasedDate", 2]
-    # release_date <- strptime(as.character(release_date), "%Y-%m-%d")
     release_date <- strptime(as.character(timeL$adviceReleasedDate), "%Y-%m-%d")
     release_date <- format(release_date, "%d/%m/%Y")
 
-    # applicable_from <- timeL[timeL["advice View"] == "adviceApplicableFrom", 2]
-    # applicable_from <- strptime(as.character(applicable_from), "%Y-%m-%d")
     applicable_from <- strptime(as.character(timeL$adviceApplicableFrom), "%Y-%m-%d")
     applicable_from <- format(applicable_from, "%d/%m/%Y")
 
-    # applicable_until <- timeL[timeL["advice View"] == "adviceApplicableUntil", 2]
-    # applicable_until <- strptime(as.character(applicable_until), "%Y-%m-%d")
     applicable_until <- strptime(as.character(timeL$adviceApplicableUntil), "%Y-%m-%d")
     applicable_until <- format(applicable_until, "%d/%m/%Y")
 
     ## This block gets the name of the working group from the currently selected row
     filtered_row <- tbl_sid[str_detect(tbl_sid$Select, regex(paste0("\\b", radio_button,"\\b"))), ]
-    # filtered_row <- tbl_sid[tbl_rows_selected, ]
     WG <- filtered_row$ExpertGroup
-    # WG <- str_match(WG, "\\>\\s*(.*?)\\s*\\<\\/a>")[,2]
-
+    
     ## This block scrapes the meeting-calendar webpage to find the dates of the upcoming WG meeting
     page <- read_html(paste0("https://www.ices.dk/news-and-events/meeting-calendar/Pages/ICES-CalendarSearch.aspx?k=", WG))
     

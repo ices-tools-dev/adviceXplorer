@@ -13,7 +13,6 @@ library(icesSAG)
 library(icesFO)
 library(data.table)
 library(rsconnect)
-# library(tidyr)
 
 
 source("utilities_SID_data.r")
