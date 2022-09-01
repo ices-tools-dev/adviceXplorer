@@ -255,7 +255,9 @@ observe({
     escape = FALSE,
     selection = 'none', 
     server = FALSE,    
-    caption = "Select the fish stock of interest and then click on one of panels on the right",
+    caption = htmltools::tags$caption("Select the fish stock of interest before viewing the 'Advice' and 'Stock Assessment Trends' tabs above", 
+                                style = "color: black; font-size: 16px; caption-side",
+                                position = "top-left"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
