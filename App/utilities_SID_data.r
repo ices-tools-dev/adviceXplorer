@@ -44,30 +44,26 @@ advice_view_stocks <- c(
   "wit.27.3a47d"
 )
 
-#' Returns ....
+
+#' Downloads the list of stocks from SID for a particular year using a web service
 #'
-#' Downloads ...
+#' @param Year
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return stock_list_all (the list of stocks)
 #'
 #' @note
-#' Can add some helpful information here
+#' In the webservice string we can already subset the SID table for the columns we are interested in
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' df <- download_SID(2021)
 #' }
 #'
 #' @references
-#'
-#' 
-#'
-#' @export
-#' 
+#'https://sid.ices.dk/Default.aspx
+
 
 download_SID <- function(Year) {
   stock_list_all <- jsonlite::fromJSON(
@@ -79,13 +75,11 @@ download_SID <- function(Year) {
   return(stock_list_all)
 }
 
-#' Arrange ecoregions onto one row each, then filter
-#' this function separate rows with multiple ecoregions per row to 1 ecoregion per row + filter for the selection of ecoregions
-#' Downloads ...
+#' This function unlists the Ecoregion column cells so that each row of the resulting df will correspond to one ecoregion only
 #'
-#' @param stock_name
+#' @param stock_list_all (list of stocks returned by download_SID(Year))
 #'
-#' @return 
+#' @return mydf_long (a df in whitch each row corresponds to one ecoregion only)
 #'
 #' @note
 #' Can add some helpful information here
@@ -94,16 +88,11 @@ download_SID <- function(Year) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' separate_ecoregions(df)
 #' }
 #'
 #' @references
-#'
 #' 
-#'
-#' @export
-#' 
-### 
 separate_ecoregions <- function(stock_list_all) {
   mydf <- stock_list_all
   s <- strsplit(mydf$EcoRegion, split = ", ")
@@ -122,14 +111,12 @@ separate_ecoregions <- function(stock_list_all) {
 }
 
 
-#
-#' Returns ....
+
+#' Returns an HTML string to provide the hyperlink to the expert group page withing the list of stocks table
 #'
-#' Downloads ...
+#' @param ExpertGroup
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return HTML string
 #'
 #' @note
 #' Can add some helpful information here
@@ -142,23 +129,18 @@ separate_ecoregions <- function(stock_list_all) {
 #' }
 #'
 #' @references
-#'
-#' 
-#'
-#' @export
-#' 
+
 createLink_expert_group <- function(ExpertGroup) {
   
   paste0("<a href='","https://www.ices.dk/community/groups/Pages/", ExpertGroup, ".aspx", "' target='_blank'>", ExpertGroup,"</a>")
 }
 
-#' Returns ....
+#' Returns a df column with an added column which includes the matching name of the fish drawing files 
 #'
-#' Downloads ...
+#' @param StockKeyLabel (stock code)
+#' @param df (stock list df)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return df_temp$Ill_file
 #'
 #' @note
 #' Can add some helpful information here
@@ -167,15 +149,12 @@ createLink_expert_group <- function(ExpertGroup) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' match_stockcode_to_illustration("wit.27.3a47d", df)
 #' }
 #'
 #' @references
 #'
-#' 
-#'
-#' @export
-#' 
+
 match_stockcode_to_illustration <- function(StockKeyLabel, df) {
   
   df_temp <- data.frame(matrix(NA, nrow = dim(df)[1], ncol = 1))
@@ -366,7 +345,7 @@ createLink_advice_pdf <- function(df) {
 #'
 #' Downloads ...
 #'
-#' @param stock_name
+#' @param df
 #'
 #' @return 
 #'
