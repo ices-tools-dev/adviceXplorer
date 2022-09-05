@@ -64,7 +64,7 @@ access_sag_data <- function(stock_code, year) {
 #' @export
 #'
 access_sag_data_local <- function(stock_code, year) {
-  browser()
+#   
     # Dowload the data
     df_summary <- fread(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
     SAGsummary <- df_summary %>% filter(fishstock == stock_code)

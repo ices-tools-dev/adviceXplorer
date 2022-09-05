@@ -172,13 +172,11 @@ match_stockcode_to_illustration <- function(StockKeyLabel, df) {
   return(df_temp$Ill_file)
 }
 
-#' Returns ....
+#' Returns the HTML string to create the hyperlink to the SAG database
 #'
-#' Downloads ...
+#' @param assessmentKey
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return string
 #'
 #' @note
 #' Can add some helpful information here
@@ -187,27 +185,20 @@ match_stockcode_to_illustration <- function(StockKeyLabel, df) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' createLink_SAG_db(15609)
 #' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
 #'
 createLink_SAG_db <- function(assessmentKey) {
-  paste0("<a href='","https://standardgraphs.ices.dk/ViewCharts.aspx?key=", assessmentKey,"' target='_blank'>",
+  SAG_string <- paste0("<a href='","https://standardgraphs.ices.dk/ViewCharts.aspx?key=", assessmentKey,"' target='_blank'>",
   "<img src= 'database.png'", " height= '30px'/>", "</a>")
+  return(SAG_string)
 }
 
-#' Returns ....
+#' Returns the HTML string to create the hyperlink to the VISA project
 #'
-#' Downloads ...
+#' @param assessmentKey
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return string
 #'
 #' @note
 #' Can add some helpful information here
@@ -216,26 +207,21 @@ createLink_SAG_db <- function(assessmentKey) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' createLink_visa_tool(15609)
 #' }
 #'
-#' @references
-#'
-#' 
-#'
-#' @export
 #'
 createLink_visa_tool <- function(assessmentKey) {
-  paste0("<a href='","https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=", assessmentKey,"' target='_blank'>",
+  VISA_string <- paste0("<a href='","https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=", assessmentKey,"' target='_blank'>",
   "<img src= 'map.png'", " height= '30px'/>", "</a>")
+  return(VISA_string)
 }
-#' Returns ....
+
+#' Adds to the stock list table the images of fish species and the hyperlinks of other ICES products.
 #'
-#' Downloads ...
+#' @param df (stock list table)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return df (enriched with images and links)
 #'
 #' @note
 #' Can add some helpful information here
@@ -244,7 +230,7 @@ createLink_visa_tool <- function(assessmentKey) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' sid_table_links(df)
 #' }
 #'
 #' @references
@@ -265,22 +251,21 @@ sid_table_links <- function(df){
 }
 
 
-#' Returns ....
+#' Returns the stock list table with added hyperlinks towards single-stock advice and fisheries-overviews (new library DOIs)
 #'
-#' Downloads ...
+#' @param df (stock list table)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return df
 #'
 #' @note
-#' Can add some helpful information here
+#' At the moment, this function works on top of a csv file that lists all the new DOIs. 
+#' Ideally, these DOIs will soon be implemented in SAG so that will be easier to access and to maintain.
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' createLink_advice_pdf(df)
 #' }
 #'
 #' @references
@@ -341,13 +326,13 @@ createLink_advice_pdf <- function(df) {
 
   return(df)
 }
-#' Returns ....
-#'
-#' Downloads ...
+
+
+#' Returns a javascript string that allows to pre-select the the first radio-button of the filtered stock list table.
 #'
 #' @param df
 #'
-#' @return 
+#' @return stringjs
 #'
 #' @note
 #' Can add some helpful information here
@@ -356,7 +341,7 @@ createLink_advice_pdf <- function(df) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' callback1(df)
 #' }
 #'
 #' @references
