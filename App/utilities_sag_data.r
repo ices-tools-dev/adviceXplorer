@@ -103,65 +103,53 @@ access_sag_data_local <- function(stock_code, year) {
 #'
 #' @export
 #'
-# function to dowload the quality assessemnt data
-quality_assessment_data_local <- function(stock_code, year){
 
-years <- c(2022, 2021, 2020, 2019, 2018)
-years <- years[years <= year]
-datalist = list()
+quality_assessment_data_local <- function(stock_code, year) {
+    years <- c(2022, 2021, 2020, 2019, 2018)
+    years <- years[years <= year]
+    datalist <- list()
 
-for (year in years) {
-    
-    data_temp <- try(access_sag_data_local(stock_code, year)) 
+    for (year in years) {
+        data_temp <- try(access_sag_data_local(stock_code, year))
 
-    if (isTRUE(class(data_temp) == "try-error")) {
-        next
-    } else {
-      
-        data_temp <- filter(data_temp, between(Year, 2005, 2022))
-        data_temp <- data_temp %>% select(Year,
-                                            recruitment, RecruitmentAge,
-                                            SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
-                                            F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
-                                            AssessmentYear, StockPublishNote,Purpose, SAGStamp)
+        if (isTRUE(class(data_temp) == "try-error")) {
+            next
+        } else {
+            data_temp <- filter(data_temp, between(Year, 2005, 2022))
+            data_temp <- data_temp %>% select(
+                Year,
+                recruitment, RecruitmentAge,
+                SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
+                F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
+                AssessmentYear, StockPublishNote, Purpose, SAGStamp
+            )
 
-        data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
-        data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
-        data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
-        data_temp$Fage <- as.character(data_temp$Fage)
-        data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
+            data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+            data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
+            data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
+            data_temp$Fage <- as.character(data_temp$Fage)
+            data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
 
-        datalist[[year]] <- data_temp
+            datalist[[year]] <- data_temp
+        }
     }
+
+
+    ### bind data in unique df
+    big_data <- dplyr::bind_rows(datalist) #################### probem is with this function
+
+
+    # take out non published data from before 2021 in big data
+    big_data <- filter(big_data, StockPublishNote == "Stock published")
+    big_data <- filter(big_data, Purpose == "Advice")
+
+    big_data <- big_data %>% distinct()
+
+    # make assessmentYear as factor
+    big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+
+    return(big_data)
 }
-
-#print(tibble(datalist))
-### bind data in unique df
-big_data <- dplyr::bind_rows(datalist)  ####################probem is with this function
-
-# find last asseement year
-# last_year <- tail(big_data$AssessmentYear, n=1)
-
-# subset last year
-# big_data_last_year <- big_data  %>% filter(AssessmentYear == last_year)
-
-# take out non published data from before 2021 in big data
-big_data <- filter(big_data, StockPublishNote == "Stock published")
-big_data <- filter(big_data, Purpose == "Advice")
-# put together the published data from before 2021 with the unpublished from 2021
-# big_data <- rbind(big_data, big_data_last_year)
-big_data <- big_data  %>% distinct()
-
-#make assessmentYear as factor
-big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
-# big_data_last_year$AssessmentYear <- as.factor(big_data_last_year$AssessmentYear)
-
-# df_list <- list(big_data, big_data_last_year)
-# print(big_data)
-return(big_data)
-}
-
-
 
 
 
@@ -193,7 +181,28 @@ getStockAreas <- function(stockCode) {
   areas$Key
 }
 
-
+#' Downloads the SAG settings for each SAG plot using the SAG web-service.
+#'
+#' @param assessmentkey
+#'
+#' @return df of SAG settings
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+#' @references
+#'
+#'
+#'
+#' @export
+#'
 getSAGSettings <- function(assessmentkey) {
     sagSettings <- jsonlite::fromJSON(
         URLencode(
@@ -202,6 +211,28 @@ getSAGSettings <- function(assessmentkey) {
     )
 }
 
+#' Downloads the new version of the SAG summary. (output needs to be formatted)
+#'
+#' @param assessmentkey
+#'
+#' @return df of SAG summary
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+#' @references
+#'
+#'
+#'
+#' @export
+#'
 getSAGSummary <- function(assessmentkey) {
     sagSummary <- jsonlite::fromJSON(
         URLencode(
@@ -211,36 +242,29 @@ getSAGSummary <- function(assessmentkey) {
     )    
 }
 
-
-# sagSummary <- flatten(sagSummary)
-
-#     sagSummary$assessmentKey <- rep(sagSummary$assessmentKey, length(sagSummary$lines$year))
-#     sagSummary$stockPublishNote <- rep(sagSummary$stockPublishNote, length(sagSummary$lines$year))
-#     sagSummary$purpose <- rep(sagSummary$purpose, length(sagSummary$lines$year))
-#     sagSummary$fAge <- rep(sagSummary$fAge, length(sagSummary$lines$year))
-#     sagSummary$fishStock <- rep(sagSummary$fishStock, length(sagSummary$lines$year))
-#     sagSummary$recruitmentAge <- rep(sagSummary$recruitmentAge, length(sagSummary$lines$year))
-#     sagSummary$assessmentYear <- rep(sagSummary$assessmentYear, length(sagSummary$lines$year))
-#     sagSummary$units <- rep(sagSummary$units, length(sagSummary$lines$year))
-#     sagSummary$stockSizeDescription <- rep(sagSummary$stockSizeDescription, length(sagSummary$lines$year))
-#     sagSummary$stockSizeUnits <- rep(sagSummary$stockSizeUnits, length(sagSummary$lines$year))
-#     sagSummary$fishingPressureDescription <- rep(sagSummary$fishingPressureDescription, length(sagSummary$lines$year))
-#     sagSummary$fishingPressureUnits <- rep(sagSummary$fishingPressureUnits, length(sagSummary$lines$year))
-
-#     sagSummaryf <- do.call(cbind.data.frame, sagSummary)
-# SAGsummary <- getSAG("had.27.46a20", 2021,
-#         data = "summary", combine = TRUE, purpose = "Advice"
-#     )
-# sagSummary$lines$ibc
-
-# library(tidyverse)
-# flatten(sagSummary)
-# length(sagSummary$lines$year)
-# rep(sagSummary$assessmentKey,50)
-
-# sagSummary %>% 
-# mutate(Value = map(Value, as.data.frame),
-#          Value = map(Value, rownames_to_column, 'a'),
-#          Value = map(Value, ~gather(., assessmentKey, lines, -a))) %>% 
-#   unnest(Value) %>% 
-#   complete(Step, a, b)
+#' Creates a download button to be displayed when SAG data can be downloaded.
+#'
+#' @param outputId
+#'
+#' @return HTML tag
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+#' @references
+#'
+#'
+#'
+#' @export
+#'
+myDownloadButton <- function(outputId){
+  tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
+         target = "_blank", download = NA, NULL, style = "width: 40px; height: 40px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
+}

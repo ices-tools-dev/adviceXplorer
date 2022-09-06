@@ -52,10 +52,7 @@ source("utilities_calendar.r")
 source("utilities_resources.r")
 
 
-myDownloadButton <- function(outputId){
-  tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
-         target = "_blank", download = NA, NULL, style = "width: 40px; height: 40px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
-}
+
 
 title_html <- tags$a(
     href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
