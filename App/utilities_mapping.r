@@ -1,187 +1,4 @@
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
-#'
-#' @return 
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-## Map plot (this function has iceas ecor R and iceas areas as separate layers)
-# map_plot <- function(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_areas) {
-#     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-#         # addProviderTiles("Stamen.Toner") %>%
-#         addPolygons(
-#             # data = st_set_precision(shape_eco, precision=10^2),
-#             data = shape_eco,
-#             color = "#444444",
-#             weight = 1,
-#             smoothFactor = 0.5,
-#             opacity = 0.5,
-#             fillOpacity = 0.5,
-#             fillColor = ~ pal_ecoR(shape_eco$Shape_Area),
-#             group = "ICES Ecoregions",
-#             layerId = ~uid, # unique id for polygons
-#             highlightOptions = highlightOptions(
-#                 color = "white", weight = 3,
-#                 bringToFront = TRUE
-#             ),
-#             label = labels_ecoR,
-#             labelOptions = labelOptions(
-#                 style = list("font-weight" = "normal", padding = "3px 8px"),
-#                 textsize = "15px",
-#                 direction = "auto"
-#             )
-#         ) %>%
-#         addPolygons(
-#             # data = st_set_precision(eu_shape, precision=10^2),
-#             data = eu_shape,
-#             color = "black",
-#             weight = 1,
-#             smoothFactor = 0.5,
-#             opacity = 0.7,
-#             fillOpacity = 0.5,
-#             fillColor = "grey",
-#             group = "Europe"
-#         ) %>%
-#         addPolygons(
-#             data = ices_areas,
-#             color = "black",
-#             weight = 1,
-#             smoothFactor = 0.5,
-#             opacity = 0.5,
-#             fillOpacity = 0.5,
-#             fillColor = ~ pal_ICES_areas(ices_areas$Area_km2),
-#             group = "ICES Areas",
-#             layerId = ~OBJECTID, # unique id for polygons
-#             highlightOptions = highlightOptions(
-#                 color = "#ffffff", weight = 3,
-#                 bringToFront = TRUE
-#             ),
-#             label = labels_ices_areas,
-#             labelOptions = labelOptions(
-#                 style = list("font-weight" = "normal", padding = "3px 8px"),
-#                 textsize = "15px",
-#                 direction = "auto"
-#             )
-#         ) %>%
-#         setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
-#         addLayersControl(
-#             baseGroups = c("ICES Ecoregions", "ICES Areas"),
-#             # overlayGroups =c(),
-#             options = layersControlOptions(collapsed = FALSE)
-#         )
-# }
-# map_plot(shape_eco, eu_shape, ices_areas, labels_ecoR, labels_ices_areas)
-
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
-#'
-#' @return 
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-## this second map function has only ecoregion, the map will be the updated using proxy,
-## the colors are simpler also
-# map_plot_simple <- function(shape_eco, eu_shape){
-#     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-#     addTiles() %>%
-#         addPolygons(
-#             data = shape_eco,
-#             fillColor = "white",
-#             fillOpacity = 0.5,
-#             color = "black",
-#             stroke = TRUE,
-#             weight = 1,
-#             group = "Eco_regions",
-#             layerId = ~Ecoregion, # unique id for polygons
-#             highlightOptions = highlightOptions(
-#                 color = "black", weight = 3,
-#                 bringToFront = TRUE
-#             ),
-#             label = ~Ecoregion,
-#             labelOptions = labelOptions(
-#                 style = list("font-weight" = "normal", padding = "3px 8px"),
-#                 textsize = "15px",
-#                 direction = "auto"
-#             )  %>% 
-#             addPolygons(
-#             data = shape_eco,
-#             fillColor = "red",
-#             fillOpacity = 0.5,
-#             color = "black",
-#             stroke = TRUE,
-#             weight = 1,
-#             layerId = ~OBJECTID,
-#             group = ~Ecoregion),
-#             highlightOptions = highlightOptions(
-#                 color = "black", weight = 3,
-#                 bringToFront = TRUE
-#             ),
-#             label = ~Ecoregion,
-#             labelOptions = labelOptions(
-#                 style = list("font-weight" = "normal", padding = "3px 8px"),
-#                 textsize = "15px",
-#                 direction = "auto"
-#             )  %>% 
-#             hideGroup(group = shape_eco$Ecoregion)
-
-#         ) %>%
-#         addPolygons(
-#             data = eu_shape,
-#             color = "black",
-#             weight = 1,
-#             fillOpacity = 0.5,
-#             fillColor = "grey",
-#             group = "Europe"
-#         ) %>%
-#         setView(lng = -1.235660, lat = 60.346958, zoom = 0.5)
-# }
-
-
-
-
-minZoom = 0
-maxZoom = 13
-resolutions <- 2*(2^(maxZoom:minZoom))
-crs_laea <- leafletCRS(crsClass = "L.Proj.CRS", code = "EPSG:3035",
-  proj4def = "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958",
-  resolutions = resolutions)
-
-
-#' Function to plot the map of ecoregions in the intial tab of the app.
+#' Function to plot the intercative map of ecoregions.
 #'
 #' @param shape_eco (ecoregions' shapefile)
 #' @param eu_shape (europe's shapefile)
@@ -206,100 +23,52 @@ crs_laea <- leafletCRS(crsClass = "L.Proj.CRS", code = "EPSG:3035",
 #' 
 #' 
 map_ecoregion <- function(shape_eco, eu_shape) {
-    leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-                # addTiles() %>%
-                addPolygons(
-                    # data = st_set_precision(eu_shape, precision=10^2),
-                    data = eu_shape,
-                    color = "black",
-                    weight = 1,
-                    fillOpacity = 0.4,
-                    fillColor = "#fddfc2", #"#E8EAEA"
-                    group = "Europe"
-                ) %>%
-                addPolygons(
-                    # data = st_set_precision(shape_eco, precision=10^2),
-                    data = shape_eco,
-                    fillColor = "#71B5BC",
-                    fillOpacity = 0.08,
-                    color = "black",
-                    stroke = TRUE,
-                    weight = 1,
-                    layerId = ~Ecoregion,
-                    group = "Eco_regions",
-                    label = ~Ecoregion
-                ) %>%
-                addPolygons(
-                    # data = st_set_precision(shape_eco, precision=10^2),
-                    data = shape_eco,
-                    fillColor = "#F15D2A",
-                    fillOpacity = 0.7,
-                    weight = 1,
-                    color = "black",
-                    stroke = TRUE,
-                    layerId = ~OBJECTID,
-                    group = ~Ecoregion
-                ) %>%
-                setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
-                hideGroup(group = shape_eco$Ecoregion)
-} 
+    minZoom <- 0
+    maxZoom <- 13
+    resolutions <- 2 * (2^(maxZoom:minZoom))
+    crs_laea <- leafletCRS(
+        crsClass = "L.Proj.CRS", code = "EPSG:3035",
+        proj4def = "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958",
+        resolutions = resolutions
+    )
 
-# map <-map_ecoregion
-#' Returns ....
-#'
-#' Downloads ...
-#'
-#' @param stock_name
-#'
-#' @return 
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-# map_ices_areas <- function(ices_areas, eu_shape) {
-#     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
-#                 addPolygons(
-#                     data = eu_shape,
-#                     color = "black",
-#                     weight = 1,
-#                     fillOpacity = 0.2,
-#                     fillColor = "#fddfc2",
-#                     group = "Europe"
-#                 ) %>%
-#                 addPolygons(
-#                     data = ices_areas,
-#                     fillColor = "white",
-#                     fillOpacity = 0.5,
-#                     color = "black",
-#                     stroke = TRUE,
-#                     weight = 1,
-#                     layerId = ~Area_Full,
-#                     group = "ices_areas",
-#                     label = ~Area_Full
-#                 ) %>%
-#                 addPolygons(
-#                     data = ices_areas,
-#                     fillColor = "#F15D2A",
-#                     fillOpacity = 0.7,
-#                     weight = 1,
-#                     color = "black",
-#                     stroke = TRUE,
-#                     layerId = ~OBJECTID,
-#                     group = ~Area_Full
-#                 ) %>%
-#                 setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
-#                 hideGroup(group = ices_areas$Area_Full)
-# }
+
+
+    leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+        # addTiles() %>%
+        addPolygons(
+            # data = st_set_precision(eu_shape, precision=10^2),
+            data = eu_shape,
+            color = "black",
+            weight = 1,
+            fillOpacity = 0.4,
+            fillColor = "#fddfc2", # "#E8EAEA"
+            group = "Europe"
+        ) %>%
+        addPolygons(
+            # data = st_set_precision(shape_eco, precision=10^2),
+            data = shape_eco,
+            fillColor = "#71B5BC",
+            fillOpacity = 0.08,
+            color = "black",
+            stroke = TRUE,
+            weight = 1,
+            layerId = ~Ecoregion,
+            group = "Eco_regions",
+            label = ~Ecoregion
+        ) %>%
+        addPolygons(
+            # data = st_set_precision(shape_eco, precision=10^2),
+            data = shape_eco,
+            fillColor = "#F15D2A",
+            fillOpacity = 0.7,
+            weight = 1,
+            color = "black",
+            stroke = TRUE,
+            layerId = ~OBJECTID,
+            group = ~Ecoregion
+        ) %>%
+        setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
+        hideGroup(group = shape_eco$Ecoregion)
+}
+
