@@ -1,17 +1,58 @@
-# Load europe shape file
-eu_shape <- st_read(dsn = "Data/shape_EU_simplified", 
-    layer = "shape_EU_simplified")
+#' Loads a simplified shapefile for EU coastline.
+#' 
+#' @return sf file
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#' 
+#'
+#' @export
+#' 
+load_shape_europe <- function(){
+    eu_shape <- st_read(dsn = "Data/shape_EU_simplified", 
+        layer = "shape_EU_simplified")
+    return(eu_shape)
+}
 
-# Load the lighter version of the ecoregions shapefile
-shape_eco <- st_read(dsn = "Data/shape_eco_simplified", 
-    layer = "shape_eco_simplified")
+#' Loads a simplified shapefile for ICES Ecoregions.
+#' 
+#' @return sf file
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#' 
+#'
+#' @export
+#'
+load_shape_ecoregions <- function(){
+    shape_eco <- st_read(dsn = "Data/shape_eco_simplified", 
+        layer = "shape_eco_simplified")
 
-# Change one Ecoregion name (this comes handy when we filter the stock list table)
-levels(shape_eco$Ecoregion)[match("Icelandic Waters",levels(shape_eco$Ecoregion))] <- "Iceland Sea"
+    # Change one Ecoregion name (this comes handy when we filter the stock list table)
+    levels(shape_eco$Ecoregion)[match("Icelandic Waters",levels(shape_eco$Ecoregion))] <- "Iceland Sea"
 
-# Add an id to each ecoregion (this potentially can be eliminated because the ecoregions in the shape file have already an id)
-shape_eco$uid <- paste0("P", 1:17)
-
+    # Add an id to each ecoregion (this potentially can be eliminated because the ecoregions in the shape file have already an id)
+    shape_eco$uid <- paste0("P", 1:17)
+    return(shape_eco)
+}
 ######## this is the library I used to reduce the shape file size for quicker app loading (we can test a keep = 0.01 and see how it looks)
 # library(rmapshaper)
 # # object.size(shape_eco)
@@ -25,3 +66,6 @@ shape_eco$uid <- paste0("P", 1:17)
 
 
 # object.size(df2)
+
+eu_shape <- load_shape_europe()
+shape_eco <- load_shape_ecoregions()
