@@ -233,13 +233,56 @@ getSAGSettings <- function(assessmentkey) {
 #'
 #' @export
 #'
-getSAGSummary <- function(assessmentkey) {
-    sagSummary <- jsonlite::fromJSON(
+getSAGSummary <- function(assessmentkey, combine = TRUE) {
+    out <- jsonlite::fromJSON(
         URLencode(
             sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", assessmentkey)
             # sprintf("https://sag.ices.dk/SAG_API/api/StockSettings?assessmentKey=%s", assessmentkey)
         )
-    )    
+    ) 
+
+# drop any null entries (happens when not published stocks creep in)
+  out <- out[!sapply(out, is.null)]
+    
+  # combine tables
+  if (length(out) > 1 && combine) {
+    # form new column names for combined data frame
+    outNames <- unique(unlist(lapply(out, names)))
+
+    # rbind, adding in missing columns as characters
+    out1 <-
+      do.call(rbind,
+        lapply(unname(out), function(x) {
+          # are any columns missing?
+          missing.cols <- !outNames %in% names(x)
+          if (any(missing.cols)) {
+            # add on missing columns as characters
+            x[outNames[missing.cols]] <- NA
+          }
+          # reorder columns
+          x[outNames]
+        }))
+        
+        # take out rows where all columns are NA
+        df2 <- subset(out1,!is.na(out1[,1]))
+
+        # identify the columns that are not "lines" (ie. where values are stored)
+        columns.to.add <- grep('lines', names(out), invert = TRUE, value = TRUE)
+
+        # turn list to df and replicate values for the size of df2
+        fixed_df <- bind_rows(out[columns.to.add]) %>% slice(rep(1:n(), each = nrow(df2)))
+
+        # combine the 2 df to obtain final SAG data
+        final_df <- cbind(fixed_df, df2)
+
+        # renumber the rows
+        rownames(final_df) = NULL
+    # finally resimplify
+    
+  } else if (length(out) == 1) {
+    final_df <- out[[1]]
+  }
+return(final_df)
 }
 
 #' Creates a download button to be displayed when SAG data can be downloaded.
