@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' load_shape_europe()
 #' }
 #'
 #' @references
@@ -34,7 +34,7 @@ load_shape_europe <- function(){
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' load_shape_ecoregions()
 #' }
 #'
 #' @references
@@ -67,5 +67,3 @@ load_shape_ecoregions <- function(){
 
 # object.size(df2)
 
-eu_shape <- load_shape_europe()
-shape_eco <- load_shape_ecoregions()

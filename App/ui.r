@@ -79,8 +79,8 @@ navbarPage(
     tabPanel(
         "Data Filtering",
         sidebarLayout(
-            sidebarPanel = maps_panels,
-            mainPanel = selectize_panel
+            sidebarPanel = maps_panels(),
+            mainPanel = selectize_panel()
             
         )
     ),
@@ -110,8 +110,8 @@ navbarPage(
                 withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 
                 sidebarLayout(
-                sidebarPanel = SAG_plots_left_panel,
-                mainPanel = SAG_plots_righ_panel
+                sidebarPanel = SAG_plots_left_panel(),
+                mainPanel = SAG_plots_righ_panel()
             )
              
             ),
@@ -126,7 +126,7 @@ navbarPage(
                 title = "Download the plot data", placement = "right", trigger = "hover"),
 
                 withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
-                quality_of_assessment
+                quality_of_assessment()
             )
         ),
 
@@ -150,8 +150,8 @@ navbarPage(
         withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),
 
         sidebarLayout(
-            sidebarPanel = catch_scenarios_left_panel,
-            mainPanel = catch_scenarios_right_panel
+            sidebarPanel = catch_scenarios_left_panel(),
+            mainPanel = catch_scenarios_right_panel()
         )
         
     ),
