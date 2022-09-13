@@ -1,4 +1,3 @@
-
 #' This function collates the information necessary for the calandar for a specific stock/year.
 #'
 #' @param timeL (df dowloaded from advice view info record)

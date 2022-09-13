@@ -68,6 +68,8 @@ tagList(
     introjsUI(),    
     tags$head(tags$script(type="text/javascript", src = "code.js")),
 
+
+
 navbarPage(
     
     # tab title

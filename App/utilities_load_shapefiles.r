@@ -67,3 +67,6 @@ load_shape_ecoregions <- function(){
 
 # object.size(df2)
 
+############# Load shapefiles ###########
+eu_shape <- load_shape_europe()
+shape_eco <- load_shape_ecoregions()

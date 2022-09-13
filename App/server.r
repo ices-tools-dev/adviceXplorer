@@ -10,9 +10,7 @@ sf::sf_use_s2(FALSE)
 
 options(icesSAG.use_token = FALSE)
 
-############# Load shapefiles ###########
-eu_shape <- load_shape_europe()
-shape_eco <- load_shape_ecoregions()
+
 
 
 ############# Start server function ################
