@@ -10,6 +10,9 @@ sf::sf_use_s2(FALSE)
 
 options(icesSAG.use_token = FALSE)
 
+
+
+
 ############# Start server function ################
 
 server <- function(input, output, session) {

@@ -1,3 +1,25 @@
+#' Formats, updates and save the stock list table. It also adds the hyperlinks to the table.
+#'
+#' @param year the year required
+#'
+#' @return stock list table
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#'update_SID(2021)
+#' }
+#'
+#' @references
+#'
+#' https://sid.ices.dk/Default.aspx
+#'
+#' @export
+#'
 update_SID <- function(year){
     mkdir(paste0("Data/SID_", year))
     
@@ -12,8 +34,3 @@ update_SID <- function(year){
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year))
 
 }
-
-# years <- c(2021, 2020, 2019, 2018, 2017)
-# for (year in years) {
-#     update_SID(year)
-# }

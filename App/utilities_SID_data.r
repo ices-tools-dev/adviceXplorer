@@ -44,77 +44,42 @@ advice_view_stocks <- c(
   "wit.27.3a47d"
 )
 
-# #run this before to save time later
-# advice_DOI_data <- fread("Data/DOI/single_stock_2017_4.5.2022.csv", 
-#                             header = TRUE, 
-#                             col.names = c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi"))
-# advice_DOI_data <- advice_DOI_data %>% filter(Stock_code %in% advice_view_stocks)
 
-# FO_DOI_data <- fread("Data/DOI/overviews_2017_4.5.2022.csv", 
-#                             header = TRUE, 
-#                             col.names = c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi"))
-#' Returns ....
+#' Downloads the list of stocks from SID for a particular year using a web service
 #'
-#' Downloads ...
+#' @param Year
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return stock_list_all (the list of stocks)
 #'
 #' @note
-#' Can add some helpful information here
+#' In the webservice string we can already subset the SID table for the columns we are interested in
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' df <- download_SID(2021)
 #' }
 #'
 #' @references
-#'
-#' 
-#'
-#' @export
-#' 
-#### create a function to get SID
+#'https://sid.ices.dk/Default.aspx
+
 
 download_SID <- function(Year) {
   stock_list_all <- jsonlite::fromJSON(
     URLencode(
       sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published, AssessmentKey", Year)
-      # sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s", Year)
     )
   )$value
-  #### I'm adding this next line just to check what happens if I subset for only cat1 stocks
-  # stock_list_all <- stock_list_all %>% filter(DataCategory == "1")
-
   stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks)
-  # stock_list_all <- stock_list_all[!is.na(stock_list_all$AssessmentKey),]
-  
-  
-  
-  # ### loop through the stock labels and find the corresponding iceas areas, add these to a column
-  # for (i in 1:dim(stock_list_all)[1]) {
-  #   tryCatch(
-  #     { # I inserted this to avoid the loop from crashing, Colin is working on the bug icesVocab::getCodeDetail
-  #       # print(i)
-  #       stock_list_all$ICES_area[i] <- str_flatten(getStockAreas(stock_list_all$StockKeyLabel[i]), ", ")
-  #     },
-  #     error = function(e) {}
-  #   )
-  # }
   return(stock_list_all)
 }
 
-# stock_list_all <-  download_SID(2021)
-#' Returns ....
+#' This function unlists the Ecoregion column cells so that each row of the resulting df will correspond to one ecoregion only
 #'
-#' Downloads ...
+#' @param stock_list_all (list of stocks returned by download_SID(Year))
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return mydf_long (a df in whitch each row corresponds to one ecoregion only)
 #'
 #' @note
 #' Can add some helpful information here
@@ -123,63 +88,35 @@ download_SID <- function(Year) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' separate_ecoregions(df)
 #' }
 #'
 #' @references
-#'
 #' 
-#'
-#' @export
-#' 
-### this function separate rows with multiple ecoregions per row to 1 ecoregion per row + filter for the selection of ecoregions
 separate_ecoregions <- function(stock_list_all) {
   mydf <- stock_list_all
   s <- strsplit(mydf$EcoRegion, split = ", ")
-  # a <- strsplit(mydf$ICES_area, split = ", ")
   mydf_long <- data.frame(
-    # StockDatabaseID = rep(mydf$StockDatabaseID, sapply(s, length)),
-    # StockKey = rep(mydf$StockKey, sapply(s, length)),
     StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
     EcoRegion = unlist(s),
-    # ICES_area = rep(mydf$ICES_area, sapply(s, length)),
-    # SpeciesScientificName = rep(mydf$SpeciesScientificName, sapply(s, length)),
     SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
     ExpertGroup = rep(mydf$ExpertGroup, sapply(s, length)),
-    # AdviceDraftingGroup = rep(mydf$AdviceDraftingGroup, sapply(s, length)),
     DataCategory = rep(mydf$DataCategory, sapply(s, length)),
     YearOfLastAssessment = rep(mydf$YearOfLastAssessment, sapply(s, length)),
-    # AssessmentFrequency = rep(mydf$AssessmentFrequency, sapply(s, length)),
-    # YearOfNextAssessment = rep(mydf$YearOfNextAssessment, sapply(s, length)),
-    # AdviceReleaseDate = rep(mydf$AdviceReleaseDate, sapply(s, length)),
     AdviceCategory = rep(mydf$AdviceCategory, sapply(s, length)),
-    # AdviceType = rep(mydf$AdviceType, sapply(s, length)),
-    # TrophicGuild = rep(mydf$TrophicGuild, sapply(s, length)),
-    # FisheriesGuild = rep(mydf$FisheriesGuild, sapply(s, length)),
-    # SizeGuild = rep(mydf$SizeGuild, sapply(s, length)),
-    # Published = rep(mydf$Published, sapply(s, length)),
     AssessmentKey = rep(mydf$AssessmentKey, sapply(s, length))
   )
-  # mydf_long <- mydf_long %>% rename("Advice category" = AdviceCategory, 
-  #                                   "Year of last assessment"= YearOfLastAssessment,
-  #                                   "Data category" = DataCategory)
-  # req(EcoRegion_filter)
-  # mydf_long <- mydf_long %>% filter(str_detect(EcoRegion, EcoRegion_filter))
+  
   return(mydf_long)
 }
 
-# stock_list_all <-  separate_ecoregions(stock_list_all)
-# names(stock_list_all)
 
 
-#
-#' Returns ....
+#' Returns an HTML string to provide the hyperlink to the expert group page withing the list of stocks table
 #'
-#' Downloads ...
+#' @param ExpertGroup
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return HTML string
 #'
 #' @note
 #' Can add some helpful information here
@@ -192,23 +129,18 @@ separate_ecoregions <- function(stock_list_all) {
 #' }
 #'
 #' @references
-#'
-#' 
-#'
-#' @export
-#' 
+
 createLink_expert_group <- function(ExpertGroup) {
-  # paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","'>", StockKeyLabel,"</a>")
+  
   paste0("<a href='","https://www.ices.dk/community/groups/Pages/", ExpertGroup, ".aspx", "' target='_blank'>", ExpertGroup,"</a>")
 }
 
-#' Returns ....
+#' Returns a df column with an added column which includes the matching name of the fish drawing files 
 #'
-#' Downloads ...
+#' @param StockKeyLabel (stock code)
+#' @param df (stock list df)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return df_temp$Ill_file
 #'
 #' @note
 #' Can add some helpful information here
@@ -217,15 +149,12 @@ createLink_expert_group <- function(ExpertGroup) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' match_stockcode_to_illustration("wit.27.3a47d", df)
 #' }
 #'
 #' @references
 #'
-#' 
-#'
-#' @export
-#' 
+
 match_stockcode_to_illustration <- function(StockKeyLabel, df) {
   
   df_temp <- data.frame(matrix(NA, nrow = dim(df)[1], ncol = 1))
@@ -236,20 +165,18 @@ match_stockcode_to_illustration <- function(StockKeyLabel, df) {
     if (identical(temp, character(0))) {
       temp <- "fish.png"
     }
-    # a$stock[i] <- df$StockKeyLabel[i]
+    
     df_temp$Ill_file[i] <- temp
-    # print(df$StockKeyLabel[i])
+    
   }
   return(df_temp$Ill_file)
 }
 
-#' Returns ....
+#' Returns the HTML string to create the hyperlink to the SAG database
 #'
-#' Downloads ...
+#' @param assessmentKey
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return string
 #'
 #' @note
 #' Can add some helpful information here
@@ -258,27 +185,20 @@ match_stockcode_to_illustration <- function(StockKeyLabel, df) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' createLink_SAG_db(15609)
 #' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
 #'
 createLink_SAG_db <- function(assessmentKey) {
-  paste0("<a href='","https://standardgraphs.ices.dk/ViewCharts.aspx?key=", assessmentKey,"' target='_blank'>",
+  SAG_string <- paste0("<a href='","https://standardgraphs.ices.dk/ViewCharts.aspx?key=", assessmentKey,"' target='_blank'>",
   "<img src= 'database.png'", " height= '30px'/>", "</a>")
+  return(SAG_string)
 }
 
-#' Returns ....
+#' Returns the HTML string to create the hyperlink to the VISA project
 #'
-#' Downloads ...
+#' @param assessmentKey
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return string
 #'
 #' @note
 #' Can add some helpful information here
@@ -287,26 +207,21 @@ createLink_SAG_db <- function(assessmentKey) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' createLink_visa_tool(15609)
 #' }
 #'
-#' @references
-#'
-#' 
-#'
-#' @export
 #'
 createLink_visa_tool <- function(assessmentKey) {
-  paste0("<a href='","https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=", assessmentKey,"' target='_blank'>",
+  VISA_string <- paste0("<a href='","https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=", assessmentKey,"' target='_blank'>",
   "<img src= 'map.png'", " height= '30px'/>", "</a>")
+  return(VISA_string)
 }
-#' Returns ....
+
+#' Adds to the stock list table the images of fish species and the hyperlinks of other ICES products.
 #'
-#' Downloads ...
+#' @param df (stock list table)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return df (enriched with images and links)
 #'
 #' @note
 #' Can add some helpful information here
@@ -315,7 +230,7 @@ createLink_visa_tool <- function(assessmentKey) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' sid_table_links(df)
 #' }
 #'
 #' @references
@@ -327,7 +242,6 @@ createLink_visa_tool <- function(assessmentKey) {
 sid_table_links <- function(df){
   
   df$icon <- paste0('<img src=', "'", match_stockcode_to_illustration(df$StockKeyLabel, df), "'", ' height=40>') 
-  # reference fish icon place holder <a href="https://www.flaticon.com/free-icons/fish" title="fish icons">Fish icons created by vectorsmarket15 - Flaticon</a>
   df <- createLink_advice_pdf(df)
   df$group_url <- createLink_expert_group(df$ExpertGroup)
   df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
@@ -337,22 +251,21 @@ sid_table_links <- function(df){
 }
 
 
-#' Returns ....
+#' Returns the stock list table with added hyperlinks towards single-stock advice and fisheries-overviews (new library DOIs)
 #'
-#' Downloads ...
+#' @param df (stock list table)
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return df
 #'
 #' @note
-#' Can add some helpful information here
+#' At the moment, this function works on top of a csv file that lists all the new DOIs. 
+#' Ideally, these DOIs will soon be implemented in SAG so that will be easier to access and to maintain.
 #'
 #' @seealso
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' createLink_advice_pdf(df)
 #' }
 #'
 #' @references
@@ -361,43 +274,19 @@ sid_table_links <- function(df){
 #'
 #' @export
 #'
-# createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
-  
-  
-#   DOI_data <- read_excel("App/Data/DOI/2017 to 4.5.2022 update advice product DOIs.xlsx", sheet = "Single stock advice")
-#   colnames(DOI_data) <- c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi")
-#   StockKeyLabel <- "cod.27.47d20"
-#   AssessmentYear <- 2021
 
-  
-#   list_doi <- subset(DOI_data, Stock_code == StockKeyLabel & Year==AssessmentYear)$doi
-#   list_doi <- strsplit(list_doi, "\\s+")
-  
-#   if (length(list_doi) > 1) {
-#     doi <- list_doi[[length(list_doi)]]
-#   } else {
-#     doi <- list_doi
-#   }
-
-#   paste0("<a href='", doi,"' target='_blank'>",
-#   "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
-# }
 createLink_advice_pdf <- function(df) {
   
   
   advice_DOI_data <- fread("Data/DOI/single_stock_2017_15.8.2022.csv", 
                             header = TRUE, 
                             col.names = c("Stock_code", "Year", "Publication_date", "old_pdf_link", "doi"))
-  # advice_DOI_data <- advice_DOI_data %>% filter(Stock_code %in% advice_view_stocks)
-  
 
-  
   FO_DOI_data <- fread("Data/DOI/overviews_2017_4.5.2022.csv", 
                             header = TRUE, 
                             col.names = c("Year", "Publication_date", "Advice_product", "Ecoregion", "Title", "old_pdf_link", "doi"))
   
   for (i in 1:dim(df)[1]) {
-    # list_doi <- filter(advice_DOI_data, Stock_code == df$StockKeyLabel[i] & Year == df$YearOfLastAssessment[i])$doi
     list_doi <- advice_DOI_data %>% filter(Year == df$YearOfLastAssessment[i]) %>% 
                                     filter(Stock_code == df$StockKeyLabel[i])
     list_doi <- list_doi$doi
@@ -437,13 +326,13 @@ createLink_advice_pdf <- function(df) {
 
   return(df)
 }
-#' Returns ....
+
+
+#' Returns a javascript string that allows to pre-select the the first radio-button of the filtered stock list table.
 #'
-#' Downloads ...
+#' @param df
 #'
-#' @param stock_name
-#'
-#' @return 
+#' @return stringjs
 #'
 #' @note
 #' Can add some helpful information here
@@ -452,7 +341,7 @@ createLink_advice_pdf <- function(df) {
 #'
 #' @examples
 #' \dontrun{
-#' 
+#' callback1(df)
 #' }
 #'
 #' @references
@@ -461,11 +350,6 @@ createLink_advice_pdf <- function(df) {
 #'
 #' @export
 #'
-# createLink_advice_pdf <- function(StockKeyLabel, AssessmentYear) {
-#   paste0("<a href='","https://www.ices.dk/sites/pub/Publication%20Reports/Advice/",AssessmentYear,"/", AssessmentYear,"/", StockKeyLabel,".pdf","' target='_blank'>",
-#   "<img src= 'pdf-file.png'", " height= '30px'/>", "</a>")
-# }
-
 
 callback1 <- function(df) {
   value_rdbtn_to_preSelect <- paste0("rdbtn_", readr::parse_number(df$Select[1]))
