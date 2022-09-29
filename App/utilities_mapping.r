@@ -72,3 +72,32 @@ map_ecoregion <- function(shape_eco, eu_shape) {
         hideGroup(group = shape_eco$Ecoregion)
 }
 
+
+crop_large_map_to_small <- function(large_map, small_map, buffer=0, ...){
+  
+  buffered_bbox <- small_map %>% sf::st_union() %>%
+    sf::st_buffer(dist = buffer) %>%
+    sf::st_bbox() %>% 
+    sf::st_as_sfc()
+  
+  cropped_map <- large_map %>% sf::st_intersection(buffered_bbox)
+}
+
+
+create_eu_map <- function(buffer_size = 1300000, resolution_ratio = 0.15, path){
+  
+  land_masses <- sf::st_read("../../GIS/ne_50m_land/ne_50m_land.shp") 
+  ices_regions <-  sf::st_read(dsn = "App/Data/ICES_areas_low_res/ICES_areas_low_res.shp")
+  land_crs <- sf::st_crs(land_masses)
+  land_masses <- sf::st_transform(land_masses, sf::st_crs(ices_regions))
+  ices_land_areas <- crop_large_map_to_small(large_map = land_masses, small_map = ices_regions, buffer = buffer_size) %>% 
+    rmapshaper::ms_simplify(keep = resolution_ratio, keep_shapes= TRUE) %>% 
+    sf::st_transform(land_crs) %>% 
+    sf::st_combine() %>% 
+    sf::st_segmentize(dfMaxLength = 1000)
+
+  sf::st_write(ices_land_areas, dsn = path, delete_dsn = TRUE)
+}
+# create_eu_map(path = "./App/Data/shape_EU_simplified/shape_EU_simplified2.shp")
+# temp_map <- sf::st_read(dsn = "./App/Data/shape_EU_simplified/shape_EU_simplified2.shp")
+# map_ecoregion(shape_eco, eu_shape = temp_map)
