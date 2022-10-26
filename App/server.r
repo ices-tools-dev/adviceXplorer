@@ -180,6 +180,17 @@ server <- function(input, output, session) {
     getSAGSettings(query$assessmentkey)
   })
 
+######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
+additional_LandingData <- eventReactive((req(query$assessmentkey)),{
+  out <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", query$assessmentkey)
+        )
+    )  
+  data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
+
+})
+
 ###### info about the stock selected for top of page
 output$stock_infos <- renderUI({
   get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
@@ -198,7 +209,7 @@ output$download_SAG_Data <- downloadHandler(
 ######################### Stock development over time plots
 
   output$plot1 <- renderPlotly(
-    ICES_plot_1(SAG_data_reactive(), sagSettings())
+    ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
   ) # %>%
   # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
