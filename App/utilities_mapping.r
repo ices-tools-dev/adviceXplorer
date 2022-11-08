@@ -32,8 +32,6 @@ map_ecoregion <- function(shape_eco, eu_shape) {
         resolutions = resolutions
     )
 
-
-
     leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
         # addTiles() %>%
         addPolygons(
@@ -129,13 +127,13 @@ create_eu_map <- function(buffer_size = 1300000, resolution_reduction = 0.15, pa
 #'
 #' @param input 
 #' @param output 
-#' @param server 
+#' @param session 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-map_panel_server <- function(input, output, server) {
+map_panel_server <- function(input, output, session) {
   
   # Render Map 1
   output$map1 <- renderLeaflet({
