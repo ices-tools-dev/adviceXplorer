@@ -156,8 +156,11 @@ get_catch_scenario_table <- function(catch_scenario_list) {
   catch_scenario_table <- jsonlite::fromJSON(
     URLencode(
       sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey) # )
+      # sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", 1284 ) # )
     )
   )
+
+  if (length(catch_scenario_table) != 0) {
   catch_scenario_table <- catch_scenario_table %>%
     pivot_wider(
       names_from = c(aK_ID, aK_Label, yearLabel, unit, stockDataType),
@@ -168,6 +171,9 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 
 
   catch_scenario_table <- catch_scenario_table %>% add_column(Year = catch_scenario_list$assessmentYear + 1, .before = "cS_Label")
+  } else {
+    catch_scenario_table <- character(0) #setNames(data.frame(matrix(ncol = 9, nrow = 0)), c("Year", "cat", "cS_Purpose","F","TotCatch","TAC change","ADVICE change","SSB","SSB change"))
+  }
 
   return(catch_scenario_table)
 }
@@ -196,15 +202,21 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 #' 
 get_catch_scenario_notes <- function(catch_scenario_list) {
  
-   catch_scenario_table_notes <- jsonlite::fromJSON(
+  catch_scenario_table_notes <- jsonlite::fromJSON(
     URLencode(
       sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosNotes/%s", catch_scenario_list$adviceKey) # )
     )
   )
+
+  if (length(catch_scenario_table_notes) != 0) {
   catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-catchOptionsTableKey, -adviceKey)
 
   string_notes <- HTML(
     paste0("<ul>",paste0("<li><font size=2>",catch_scenario_table_notes$symbol, " "), paste0(catch_scenario_table_notes$notes, "</font></li>"), "</ul>"))
+  } else {
+    string_notes <- character(0)
+  }
+  
   return(string_notes)
 }
 
@@ -234,6 +246,8 @@ get_catch_scenario_notes <- function(catch_scenario_list) {
 #' @export
 #' 
 standardize_catch_scenario_table <- function(tmp) {
+  if (!is_empty(tmp)) {
+  
   tmp_unified <- data.frame()
 
   # Year
@@ -314,6 +328,10 @@ standardize_catch_scenario_table <- function(tmp) {
 
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
+  }
+  else {
+    tmp_unified <- character(0)
+  }
   
   return(tmp_unified)
 }
@@ -345,6 +363,8 @@ standardize_catch_scenario_table <- function(tmp) {
 #' @export
 #' 
 wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year) {
+  # if (!is_empty(catch_scenario_table)) {
+  
   catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
     select(Year, catches)
@@ -367,7 +387,11 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, s
   final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
 
   final_df <- na.omit(final_df)
-
+  # }
+  # else {
+  #   final_df <- character(0)
+  # }
+  # print(final_df)
   return(final_df)
 }
 
@@ -395,6 +419,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, s
 #'
 #' @export
 scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch_scen_table){
+  if (!is_empty(new_catch_scen_table)) {
   Basis <- old_catch_scen_table[old_catch_scen_table$cS_Purpose == "Basis Of Advice",]
   catch_scen_table_perc <- new_catch_scen_table[, c("Year", "cat", "cS_Purpose")]
   
@@ -404,6 +429,9 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
   catch_scen_table_perc$SSB <- (new_catch_scen_table$SSB - Basis$SSB) / Basis$SSB *100
   catch_scen_table_perc$`SSB change` <- new_catch_scen_table$`SSB change`
+  } else {
+    catch_scen_table_perc <- character(0)
+  }
   
   return(catch_scen_table_perc)
 }

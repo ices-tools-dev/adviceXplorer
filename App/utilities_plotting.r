@@ -1367,7 +1367,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
 
-    tmp <- arrange(tmp, F)
+    # tmp <- arrange(tmp, F)
 
     labels <- sprintf(
             "Catch Scenario: %s", tmp$cat

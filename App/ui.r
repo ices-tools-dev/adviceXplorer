@@ -135,7 +135,7 @@ navbarPage(
 ######################################################################################################
 
     tabPanel(
-        "Advice",
+        "Catch Scenarios",
         tipify(
             actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
             title = "Click here fof help", placement = "right", trigger = "hover"),
