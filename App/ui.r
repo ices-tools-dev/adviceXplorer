@@ -136,20 +136,15 @@ navbarPage(
 
     tabPanel(
         "Catch Scenarios",
-        tipify(
-            actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-            title = "Click here fof help", placement = "right", trigger = "hover"),
-
-        tipify(
-            actionButton(inputId = "preview", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('calendar.png');  background-size: cover; background-position: center; padding-right:25px; border: 1px solid transparent;"), 
-            title = "Useful dates for the stock's advice process", placement = "bottom", trigger = "hover"),
-            
-            
-        tipify(
-            actionButton(inputId = "advice_view_link", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center; border: 1px solid transparent;"),
-            title = "Link for the full advice view record", placement = "right", trigger = "hover"),
-
-        withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),
+        splitLayout(
+            # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
+            cellWidths = c("20%", "70%", "10%"),
+            stock_info_left_panel(),
+            stock_info_center_panel(),
+            stock_info_right_panel()
+        ),
+        
+        # withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),
 
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel(),

@@ -124,6 +124,7 @@ server <- function(input, output, session) {
   observeEvent(input$rdbtn, {
     
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
+    print(filtered_row$SpeciesCommonName)
     
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
 
@@ -193,7 +194,8 @@ additional_LandingData <- eventReactive((req(query$assessmentkey)),{
 
 ###### info about the stock selected for top of page
 output$stock_infos <- renderUI({
-  get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
+  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
 })
 
 ##### button to download SAG data

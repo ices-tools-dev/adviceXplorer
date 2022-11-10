@@ -74,7 +74,7 @@ access_sag_data_local <- function(stock_code, year) {
 
     data_sag <- merge(SAGsummary, SAGrefpts)
     data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
-  
+    
     return(data_sag)
 }
 
