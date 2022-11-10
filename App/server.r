@@ -350,66 +350,105 @@ output$Advice_Headline <- renderUI({
 
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({
-  # validate( this does not work cause the error is comeing from the function Warning: Error in UseMethod: no applicable method for 'pivot_wider' applied to an object of class "list" L 177
-  #     need(catch_scenario_table()$SSB != "", "Data not available for this stock")
-      
-  #   )
-  catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
+  
+  validate(
+      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+    )
+  tmp <- arrange(catch_scenario_table(), F)
+  catch_scenarios_plot2(tmp, SAG_data_reactive())
 }) #%>%
   # bindCache(catch_scenario_table(), SAG_data_reactive())
 
 
 
-########## Historical catches panel
-test_table <- eventReactive(catch_scenario_table(),{
+########## Historical catches panel (preparation of data)
+test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table(), query$stockkeylabel,query$year)
+  validate(
+    need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+  )
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table(), query$stockkeylabel, query$year)
 })
-output$catch_scenarios <- renderUI({
-  # req(query$stockkeylabel, query$year, catch_scenario_table())
-  # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+
+########## Historical catches panel (Definition of basisi of advice)
+Basis <- eventReactive(catch_scenario_table_percentages(),{
+  validate(
+    need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
+  )
+  catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice", ]
+})
+
+########## Historical catches panel (Selection panel)
+output$catch_scenarios <- renderUI({  
+  
+  if (!is_empty(test_table())) {
   selectizeInput(
-        inputId = "catch_choice",
-        label = "Select a scenario",
-        choices = unique(test_table()$cat),
-        selected = c("Historical Catches",Basis$cat),
-        multiple = TRUE
-      )
+    inputId = "catch_choice",
+    label = "Select a scenario",
+    choices = unique(test_table()$cat),
+    selected = c("Historical Catches", Basis()$cat),
+    multiple = TRUE
+  )
+  } else {
+    HTML("No data available")
+  }
 })
+
+########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
-    TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
+  # validate(
+  #     need(!is_empty(test_table()), "Data not available for this stock")
+  #   )
+  TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
 
-############ Radial plot panel
+############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+  if (!is_empty(catch_scenario_table_percentages())) {
+
     selectizeInput(
-        inputId = "catch_choice_radial",
-        label = "Select a scenario",
-        choices = unique(catch_scenario_table_percentages()$cat),
-        selected = c(Basis$cat),
-        multiple = TRUE
-      )
+      inputId = "catch_choice_radial",
+      label = "Select a scenario",
+      choices = unique(catch_scenario_table_percentages()$cat),
+      selected = c(Basis()$cat),
+      multiple = TRUE
+    )
+  } else {
+    HTML("No data available")
+  }
 })
+
+############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
+  # validate(
+  #   need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
+  # )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 
-############ lollipop plot panel
+############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+  if (!is_empty(catch_scenario_table_percentages())) {
+    
     selectizeInput(
-        inputId = "indicator_choice_lollipop",
-        label = "Select an indicator",
-        choices = names(catch_scenario_table_percentages()),
-        selected = c("F"),
-        multiple = TRUE
-      )
+      inputId = "indicator_choice_lollipop",
+      label = "Select an indicator",
+      choices = names(catch_scenario_table_percentages()),
+      selected = c("F"),
+      multiple = TRUE
+    )
+  } else {
+    HTML("No data available")
+  }
 })
+
+############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
+  # validate(
+  #     need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
+  #   )
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
@@ -440,11 +479,27 @@ catch_table_names <- eventReactive(catch_scenario_table(),{
 
 })
 
-output$table <- DT::renderDT(
-  tab <- catch_scenario_table() %>%
+catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
+  validate(
+      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+    )
+    catch_scenario_table() %>%
     arrange(F) %>%
     rename_all(funs(catch_table_names())) %>%
-    rename("Basis" = cS_Label, " " = cS_Purpose),
+    rename("Basis" = cS_Label, " " = cS_Purpose)
+})
+
+output$table <- DT::renderDT(
+  # tab <- catch_scenario_table() %>%
+  #   arrange(F) %>%
+  #   rename_all(funs(catch_table_names())) %>%
+  #   rename("Basis" = cS_Label, " " = cS_Purpose),
+
+catch_scenario_table_collated(),
+  # tab <- catch_scenario_table() %>%
+  #   arrange(F) %>%
+  #   rename_all(funs(catch_table_names())) %>%
+  #   rename("Basis" = cS_Label, " " = cS_Purpose),
  
   # arrange(catch_scenario_table(), F) %>% select(-Year),
   selection = "single",
@@ -493,7 +548,13 @@ selected_scenario <- reactive({
 footnotes <- eventReactive(req(advice_view_info()), {
   get_catch_scenario_notes(advice_view_info())
 })
-output$footnotes <-renderUI(footnotes())
+output$footnotes <-renderUI({
+  validate(
+      need(!is_empty(footnotes()), " ")
+    )
+  
+  footnotes()
+  })
 
 
 ##### Last page text, citation, data usage, feedback etcc
