@@ -334,7 +334,7 @@ stock_info_left_panel <- function() {
     style = "height: 20vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Stock Info",
-      withSpinner(htmlOutput("Advice_Summary", height = "100%", width = "100%"))
+      withSpinner(htmlOutput("stock_infos3", height = "100%", width = "100%"))
       )
   )
 }

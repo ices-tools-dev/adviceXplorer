@@ -256,9 +256,10 @@ output$download_SAG_Data <- downloadHandler(
 
 
 ###### info about the stock selected for top of page
-  output$stock_infos2 <- renderUI({
-    get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
-  })
+output$stock_infos2 <- renderUI({
+  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
+})
 
 ##### button to download SAG data for quality of assessemnt
   output$download_SAG_Quality_Data <- downloadHandler(
@@ -340,6 +341,12 @@ output$Advice_Summary <- renderUI({
 }) #%>%
   # bindCache(advice_view_sentence(), advice_view_info())
 
+
+###### info about the stock selected for top of page
+output$stock_infos3 <- renderUI({
+  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
+})
 
 ##### advice headline (right side of page)
 advice_view_headline <- eventReactive(req(advice_view_info()), {
