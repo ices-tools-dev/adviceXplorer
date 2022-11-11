@@ -123,7 +123,8 @@ return(catch_scenario_advice_sentence)
 #'
 #' @export
 get_Stock_info <- function(CommonName, stockcode,  assessmentYear) { #StockDescription,
-stock_info_sentence <- HTML(paste0("<font size=", 3, ">","Common name: ", "<b>", CommonName,"</b><br/>",
+stock_info_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Stock information:","</font></b></i><br/>",
+                                              "<font size=", 3, ">","Common name: ", "<b>", CommonName,"</b><br/>",
                                               "<font size=", 3, ">","Stock code: ", "<b>", stockcode,"</b><br/>",
                                               "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"))
 return(stock_info_sentence)

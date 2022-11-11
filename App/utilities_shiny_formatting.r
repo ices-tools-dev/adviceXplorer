@@ -329,7 +329,99 @@ catch_scenarios_right_panel <- function(){
 }
 
 
-stock_info_left_panel <- function() {
+##### sag plots
+sag_plots_stock_info_left_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Stock Info",
+      withSpinner(htmlOutput("stock_infos1", height = "100%", width = "100%"))
+      )
+  )
+}
+
+sag_plots_stock_info_center_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Headline",
+      withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%"))
+      )
+  )
+}
+
+sag_plots_stock_info_right_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Links",
+      HTML(
+        paste0("<b><i><font size=4>Links:</font></b></i><br/>")
+      ),
+      tipify(
+        actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"
+      ),
+      HTML(
+        paste0("<br/>")
+      ),
+      tipify(
+        myDownloadButton("download_SAG_Data"),
+        title = "Download the plot data", placement = "right", trigger = "hover"
+      )
+    )
+  )
+}
+#### quality of assessment
+qualAssess_plots_stock_info_left_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Stock Info",
+      withSpinner(htmlOutput("stock_infos2", height = "100%", width = "100%"))
+      )
+  )
+}
+
+qualAssess_plots_stock_info_center_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Headline",
+      withSpinner(htmlOutput("Advice_Headline2", height = "100%", width = "100%"))
+      )
+  )
+}
+
+qualAssess_plots_stock_info_right_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Links",
+      HTML(
+        paste0("<b><i><font size=4>Links:</font></b></i><br/>")
+      ),
+      tipify(
+        actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"
+      ),
+      HTML(
+        paste0("<br/>")
+      ),
+      tipify(
+        myDownloadButton("download_SAG_Quality_Data"),
+        title = "Download the plot data", placement = "right", trigger = "hover"
+      )
+    )
+  )
+}
+
+
+
+
+#### catch scenarios
+
+catch_scenario_stock_info_left_panel <- function() {
   wellPanel(
     style = "height: 20vh; overflow-y: auto; white-space: normal;",
     panel(
@@ -339,17 +431,17 @@ stock_info_left_panel <- function() {
   )
 }
 
-stock_info_center_panel <- function() {
+catch_scenario_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 20vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Headline",
-      withSpinner(htmlOutput("Advice_Headline", height = "100%", width = "100%"))
+      withSpinner(htmlOutput("Advice_Headline3", height = "100%", width = "100%"))
       )
   )
 }
 
-stock_info_right_panel <- function() {
+catch_scenario_stock_info_right_panel <- function() {
   wellPanel(
     style = "height: 20vh; overflow-y: auto; white-space: normal;",
     panel(

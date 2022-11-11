@@ -100,34 +100,48 @@ navbarPage(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
-                tipify(
-                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"), 
-                title = "Click here fof help", placement = "right", trigger = "hover"),
+                splitLayout(
+            # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
+                    cellWidths = c("20%", "70%", "10%"),
+                    sag_plots_stock_info_left_panel(),
+                    sag_plots_stock_info_center_panel(),
+                    sag_plots_stock_info_right_panel()
+                ),
+                # tipify(
+                # actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"), 
+                # title = "Click here fof help", placement = "right", trigger = "hover"),
                 
-                tipify(
-                myDownloadButton("download_SAG_Data"),
-                title = "Download the plot data", placement = "right", trigger = "hover"),
+                # tipify(
+                # myDownloadButton("download_SAG_Data"),
+                # title = "Download the plot data", placement = "right", trigger = "hover"),
 
 
-                withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
+                # withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 
                 sidebarLayout(
-                sidebarPanel = SAG_plots_left_panel(),
-                mainPanel = SAG_plots_righ_panel()
+                    sidebarPanel = SAG_plots_left_panel(),
+                    mainPanel = SAG_plots_righ_panel()
             )
              
             ),
             tabPanel(
                 "Quality of assessment",
-                tipify(
-                actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-                title = "Click here fof help", placement = "right", trigger = "hover"),
+                splitLayout(
+            # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
+                    cellWidths = c("20%", "70%", "10%"),
+                    qualAssess_plots_stock_info_left_panel(),
+                    qualAssess_plots_stock_info_center_panel(),
+                    qualAssess_plots_stock_info_right_panel()
+                ),
+                # tipify(
+                # actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+                # title = "Click here fof help", placement = "right", trigger = "hover"),
 
-                tipify(
-                myDownloadButton("download_SAG_Quality_Data"),
-                title = "Download the plot data", placement = "right", trigger = "hover"),
+                # tipify(
+                # myDownloadButton("download_SAG_Quality_Data"),
+                # title = "Download the plot data", placement = "right", trigger = "hover"),
 
-                withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
+                # withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
                 quality_of_assessment()
             )
         ),
@@ -139,9 +153,9 @@ navbarPage(
         splitLayout(
             # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
             cellWidths = c("20%", "70%", "10%"),
-            stock_info_left_panel(),
-            stock_info_center_panel(),
-            stock_info_right_panel()
+            catch_scenario_stock_info_left_panel(),
+            catch_scenario_stock_info_center_panel(),
+            catch_scenario_stock_info_right_panel()
         ),
         
         # withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),

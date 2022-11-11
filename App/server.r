@@ -193,9 +193,17 @@ additional_LandingData <- eventReactive((req(query$assessmentkey)),{
 })
 
 ###### info about the stock selected for top of page
-output$stock_infos <- renderUI({
+output$stock_infos1 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
+})
+
+##### advice headline (right side of page)
+advice_view_headline <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_Headline(advice_view_info())
+})
+output$Advice_Headline1 <- renderUI({
+  advice_view_headline()  
 })
 
 ##### button to download SAG data
@@ -261,6 +269,9 @@ output$stock_infos2 <- renderUI({
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
 })
 
+output$Advice_Headline2 <- renderUI({
+  advice_view_headline()  
+})
 ##### button to download SAG data for quality of assessemnt
   output$download_SAG_Quality_Data <- downloadHandler(
     filename = function() {
@@ -333,15 +344,16 @@ onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/advice
 
 
 ##### Advice and stock infos
-advice_view_summary <- eventReactive(req(advice_view_info()), {
-  get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
-})
-output$Advice_Summary <- renderUI({
-  advice_view_summary()  
-}) #%>%
+# advice_view_summary <- eventReactive(req(advice_view_info()), {
+#   get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
+# })
+# output$Advice_Summary <- renderUI({
+#   advice_view_summary()  
+# }) 
+
+
+#%>%
   # bindCache(advice_view_sentence(), advice_view_info())
-
-
 ###### info about the stock selected for top of page
 output$stock_infos3 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
@@ -349,10 +361,10 @@ output$stock_infos3 <- renderUI({
 })
 
 ##### advice headline (right side of page)
-advice_view_headline <- eventReactive(req(advice_view_info()), {
-  get_Advice_View_Headline(advice_view_info())
-})
-output$Advice_Headline <- renderUI({
+# advice_view_headline <- eventReactive(req(advice_view_info()), {
+#   get_Advice_View_Headline(advice_view_info())
+# })
+output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
 })
 
