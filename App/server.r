@@ -192,6 +192,15 @@ additional_LandingData <- eventReactive((req(query$assessmentkey)),{
 
 })
 
+
+
+##### get link to library pdf advice
+advice_doi <- eventReactive((req(query$assessmentkey)),{
+  # doi <- jsonlite::fromJSON(
+  get_advice_doi(query$assessmentkey)
+
+})
+
 ###### info about the stock selected for top of page
 output$stock_infos1 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
@@ -205,6 +214,10 @@ advice_view_headline <- eventReactive(req(advice_view_info()), {
 output$Advice_Headline1 <- renderUI({
   advice_view_headline()  
 })
+
+#### link to pdf of advice
+onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
+
 
 ##### button to download SAG data
 output$download_SAG_Data <- downloadHandler(
@@ -282,6 +295,9 @@ output$Advice_Headline2 <- renderUI({
     }
   )
 
+#### link to pdf of advice
+onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
+
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
     validate(
@@ -341,7 +357,8 @@ catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previ
 #### link for the advice view link button to the full stock record
 onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", advice_view_info()$adviceKey,"', '_blank')")))
 
-
+#### link to pdf of advice
+onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 ##### Advice and stock infos
 # advice_view_summary <- eventReactive(req(advice_view_info()), {

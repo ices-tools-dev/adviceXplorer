@@ -359,11 +359,12 @@ sag_plots_stock_info_right_panel <- function() {
         paste0("<b><i><font size=4>Links:</font></b></i><br/>")
       ),
       tipify(
-        actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
         title = "Click here fof help", placement = "right", trigger = "hover"
       ),
-      HTML(
-        paste0("<br/>")
+      tipify(
+        actionButton(inputId = "library_advice_link1", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('pdf.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link to ICES library", placement = "right", trigger = "hover"
       ),
       tipify(
         myDownloadButton("download_SAG_Data"),
@@ -402,11 +403,12 @@ qualAssess_plots_stock_info_right_panel <- function() {
         paste0("<b><i><font size=4>Links:</font></b></i><br/>")
       ),
       tipify(
-        actionButton(inputId = "help_tab4", label = NULL, style = "width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        actionButton(inputId = "help_tab4", label = NULL, style = "width: 35px; height: 35px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
         title = "Click here fof help", placement = "right", trigger = "hover"
       ),
-      HTML(
-        paste0("<br/>")
+      tipify(
+        actionButton(inputId = "library_advice_link2", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('pdf.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link to ICES library", placement = "right", trigger = "hover"
       ),
       tipify(
         myDownloadButton("download_SAG_Quality_Data"),
@@ -450,14 +452,15 @@ catch_scenario_stock_info_right_panel <- function() {
         paste0("<b><i><font size=4>Links:</font></b></i><br/>")
       ),
       tipify(
-        actionButton(inputId = "help_tab5", label = NULL, hover = T, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        actionButton(inputId = "help_tab5", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px;"),
         title = "Click here fof help", placement = "right", trigger = "hover"
       ),
-      HTML(
-        paste0("<br/>")
+      tipify(
+        actionButton(inputId = "library_advice_link3", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('pdf.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link to ICES library", placement = "right", trigger = "hover"
       ),
       tipify(
-        actionButton(inputId = "advice_view_link", label = NULL, hover = T, style = "top: 1%; left:7%; width: 30px; height: 30px; background: url('link.png'); background-size: cover; background-position: center; border: 1px solid transparent;"),
+        actionButton(inputId = "advice_view_link", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('link.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
         title = "Link for the full advice view record", placement = "right", trigger = "hover"
       )
     )

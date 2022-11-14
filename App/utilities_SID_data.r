@@ -356,3 +356,12 @@ callback1 <- function(df) {
   stringjs <- paste0("$('input[name=rdbtn]').on('click', function(){ var value = $('input[name=rdbtn]:checked').val(); Shiny.setInputValue('rdbtn', value); }); var btn = document.querySelectorAll('[value=", value_rdbtn_to_preSelect, "]')[0].click(); btn.checked=true;")
   return(stringjs)
 }
+
+get_advice_doi <- function(assessmentKey) {
+  # doi <- jsonlite::fromJSON(
+  url <- URLencode(
+    paste0("https://sag.ices.dk/SAG_API/api/AdviceLink/", assessmentKey)
+  )
+  doi <- getURL(url, followlocation = TRUE)
+  return(doi)
+}

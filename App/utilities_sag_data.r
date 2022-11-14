@@ -309,5 +309,5 @@ return(final_df)
 #'
 myDownloadButton <- function(outputId){
   tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
-         target = "_blank", download = NA, NULL, style = "width: 30px; height: 30px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
+         target = "_blank", download = NA, NULL, style = "width: 35px; height: 35px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
 }
