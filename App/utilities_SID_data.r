@@ -110,7 +110,27 @@ separate_ecoregions <- function(stock_list_all) {
   return(mydf_long)
 }
 
-
+#' Get location description of stock codes from full SID description
+#'
+#' The full description of a stock includes name and Latin name, plus Area and Description 
+#' codes that are not understandable to all. 
+#' This function extracts the location in english names from the description
+#' 
+#' @param stock_description 
+#'
+#' @return stock_location
+#' @export
+#'
+#' @examples 
+#' stock_description_string <- "Brill (Scophthalmus rhombus) in Subarea 4 and divisions 3.a and 7.d-e (North Sea, Skagerrak and Kattegat, English Channel)"
+#' parse_location_from_stock_description(stock_description_string
+#' 
+parse_location_from_stock_description <- function(stock_description) {
+  
+  location_with_codes <- stringr::str_extract(pattern = "(?<=in ).*", stock_description)
+  stock_location <- stringr::str_extract_all(string = location_with_codes, pattern = "(?<=\\().+?(?=\\))") %>% 
+    purrr::map_chr(.f = ~ {stringr::str_c(.x, collapse = ", ")})
+}
 
 #' Returns an HTML string to provide the hyperlink to the expert group page withing the list of stocks table
 #'

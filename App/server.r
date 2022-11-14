@@ -204,7 +204,7 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
 ###### info about the stock selected for top of page
 output$stock_infos1 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
 })
 
 ##### advice headline (right side of page)
@@ -279,7 +279,7 @@ output$download_SAG_Data <- downloadHandler(
 ###### info about the stock selected for top of page
 output$stock_infos2 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
 })
 
 output$Advice_Headline2 <- renderUI({
@@ -374,7 +374,7 @@ onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '
 ###### info about the stock selected for top of page
 output$stock_infos3 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1]) #SAG_data_reactive()$StockDescription[1],
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
 })
 
 ##### advice headline (right side of page)
