@@ -63,7 +63,7 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
   catch_scenario_advice_sentence <- HTML(paste0(
     "<font size=", 3, ">", "Stock description: ", "<b>", StockDescription, "</b><br/>",
     "<font size=", 3, ">", "Stock code: ", "<b>", catch_scenario_list$stockCode, "</b><br/>",
-    "<font size=", 3, ">", "Advice requester: ", "<b>", advice_requester, "</b><br/>",
+    # "<font size=", 3, ">", "Advice requester: ", "<b>", advice_requester, "</b><br/>",
     "<font size=", 3, ">", "Assessment year: ", "<b>", catch_scenario_list$assessmentYear, "</b><br/>"
   ))
 
@@ -122,11 +122,12 @@ return(catch_scenario_advice_sentence)
 #' 
 #'
 #' @export
-get_Stock_info <- function(stockcode, StockDescription, assessmentYear) {
-stock_info_sentence <- HTML(paste0("<font size=", 3, ">","Stock description: ", "<b>", StockDescription,"</b><br/>",
+get_Stock_info <- function(CommonName, stockcode,  assessmentYear, description) { #StockDescription,
+stock_info_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Stock information:","</font></b></i><br/>",
+                                              "<font size=", 3, ">","Common name: ", "<b>", CommonName,"</b><br/>",
                                               "<font size=", 3, ">","Stock code: ", "<b>", stockcode,"</b><br/>",
-                                              "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"))
-# catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
+                                              "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"),
+                                              "<font size=", 3, ">","Location: ", "<b>", parse_location_from_stock_description(description),"</b>")
 return(stock_info_sentence)
 }
 

@@ -74,7 +74,7 @@ access_sag_data_local <- function(stock_code, year) {
 
     data_sag <- merge(SAGsummary, SAGrefpts)
     data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
-  
+    
     return(data_sag)
 }
 
@@ -309,5 +309,5 @@ return(final_df)
 #'
 myDownloadButton <- function(outputId){
   tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
-         target = "_blank", download = NA, NULL, style = "width: 40px; height: 40px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
+         target = "_blank", download = NA, NULL, style = "width: 35px; height: 35px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
 }

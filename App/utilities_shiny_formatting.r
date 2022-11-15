@@ -255,10 +255,10 @@ quality_of_assessment <- function(){
 #'
 #' @export
 #' 
-catch_scenarios_left_panel <- function(){
+catch_scenarios_left_panel <- function() {
   sidebarPanel(
-    width = 6, style = "height: 80vh; overflow-y: auto;",
-      panel(
+    width = 6, style = "height: 70vh; overflow-y: auto;",
+    panel(
       title = "Catch_scenario_F_SSB",
       fillPage(
         tags$style(type = "text/css", "#catch_scenario_plot_3  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
@@ -266,7 +266,6 @@ catch_scenarios_left_panel <- function(){
       )
     ),
     panel(
-
       tabsetPanel(
         tabPanel(
           "Historical catches",
@@ -280,14 +279,13 @@ catch_scenarios_left_panel <- function(){
         ),
         tabPanel(
           "% of change: lollipop plot",
-
           uiOutput("catch_indicators_lollipop"),
           withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
         )
       )
     )
   )
-} 
+}
 
 
 #' Creates the UI element of right panel of the Advice tab, which includes 
@@ -313,11 +311,11 @@ catch_scenarios_left_panel <- function(){
 #' 
 catch_scenarios_right_panel <- function(){
   sidebarPanel(
-    width = 6, style = "height: 80vh; overflow-y: auto;",
-    panel(
-      withSpinner(htmlOutput("Advice_Headline", height = "10%", width = "100%"))
+    width = 6, style = "height: 70vh; overflow-y: auto;",
+    # panel(
+    #   withSpinner(htmlOutput("Advice_Headline", height = "10%", width = "100%"))
     
-    ),
+    # ),
     
     panel(
       title = "Catch scenario table",
@@ -325,6 +323,145 @@ catch_scenarios_right_panel <- function(){
         tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
         withSpinner(DTOutput("table", height = "90%", width = "100%")),
         htmlOutput("footnotes", height = "90%", width = "100%")
+      )
+    )
+  )
+}
+
+
+##### sag plots
+sag_plots_stock_info_left_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Stock Info",
+      withSpinner(htmlOutput("stock_infos1", height = "100%", width = "100%"))
+      )
+  )
+}
+
+sag_plots_stock_info_center_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Headline",
+      withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%"))
+      )
+  )
+}
+
+sag_plots_stock_info_right_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Links",
+      HTML(
+        paste0("<b><i><font size=4>Links:</font></b></i><br/>")
+      ),
+      tipify(
+        actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"
+      ),
+      tipify(
+        actionButton(inputId = "library_advice_link1", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('pdf.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link to ICES library", placement = "right", trigger = "hover"
+      ),
+      tipify(
+        myDownloadButton("download_SAG_Data"),
+        title = "Download the plot data", placement = "right", trigger = "hover"
+      )
+    )
+  )
+}
+#### quality of assessment
+qualAssess_plots_stock_info_left_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Stock Info",
+      withSpinner(htmlOutput("stock_infos2", height = "100%", width = "100%"))
+      )
+  )
+}
+
+qualAssess_plots_stock_info_center_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Headline",
+      withSpinner(htmlOutput("Advice_Headline2", height = "100%", width = "100%"))
+      )
+  )
+}
+
+qualAssess_plots_stock_info_right_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Links",
+      HTML(
+        paste0("<b><i><font size=4>Links:</font></b></i><br/>")
+      ),
+      tipify(
+        actionButton(inputId = "help_tab4", label = NULL, style = "width: 35px; height: 35px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"
+      ),
+      tipify(
+        actionButton(inputId = "library_advice_link2", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('pdf.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link to ICES library", placement = "right", trigger = "hover"
+      ),
+      tipify(
+        myDownloadButton("download_SAG_Quality_Data"),
+        title = "Download the plot data", placement = "right", trigger = "hover"
+      )
+    )
+  )
+}
+
+
+
+
+#### catch scenarios
+
+catch_scenario_stock_info_left_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Stock Info",
+      withSpinner(htmlOutput("stock_infos3", height = "100%", width = "100%"))
+      )
+  )
+}
+
+catch_scenario_stock_info_center_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Headline",
+      withSpinner(htmlOutput("Advice_Headline3", height = "100%", width = "100%"))
+      )
+  )
+}
+
+catch_scenario_stock_info_right_panel <- function() {
+  wellPanel(
+    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    panel(
+      title = "Links",
+      HTML(
+        paste0("<b><i><font size=4>Links:</font></b></i><br/>")
+      ),
+      tipify(
+        actionButton(inputId = "help_tab5", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px;"),
+        title = "Click here fof help", placement = "right", trigger = "hover"
+      ),
+      tipify(
+        actionButton(inputId = "library_advice_link3", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('pdf.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link to ICES library", placement = "right", trigger = "hover"
+      ),
+      tipify(
+        actionButton(inputId = "advice_view_link", label = NULL, hover = T, style = "top: 1%; left:7%; width: 35px; height: 35px; background: url('link.png'); background-size: cover; background-position: center; border: 1px solid transparent; padding: 10px"),
+        title = "Link for the full advice view record", placement = "right", trigger = "hover"
       )
     )
   )
