@@ -378,7 +378,6 @@ callback1 <- function(df) {
 }
 
 get_advice_doi <- function(assessmentKey) {
-  # doi <- jsonlite::fromJSON(
   url <- URLencode(
     paste0("https://sag.ices.dk/SAG_API/api/AdviceLink/", assessmentKey)
   )

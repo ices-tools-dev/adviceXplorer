@@ -33,6 +33,72 @@ maps_panels <- function(){
   )
 }
 
+####### new stock selection tab
+stock_selection_left_side <- function(){
+    sidebarPanel(
+      width = 5,
+      tabPanel(
+        "ICES Ecoregions",
+        # fillPage(
+          tags$style(type = "text/css", "#map1 {height: calc(60vh - 140px) !important;}"), #
+          # withSpinner(
+            leafletOutput("map1", height = "100%", width = "100%")          
+          # )        
+        # )
+      ),
+      HTML("</br>"),
+      panel(
+      selectizeInput(
+        inputId = "selected_locations",
+        label = "ICES Ecoregions",
+        choices = sort(shape_eco$Ecoregion),
+        selected = "Greater North Sea",
+        multiple = TRUE,
+        width = "100%",
+        options = list(
+          placeholder = "Select Ecoregion(s)"
+        )
+      ),
+      #######
+      selectizeInput(
+        inputId = "selected_years",
+        label = "Assessment Year",
+        choices = Years$Year,
+        selected = 2021,
+        multiple = FALSE,
+        width = "100%",
+        options = list(
+          placeholder = "Select assessment year"
+        )
+      ),
+      #######
+      selectizeGroupUI(
+        id = "my-filters",
+        params = list(
+          StockKeyLabel = list(inputId = "StockKeyLabel", title = "Stock code:"),
+          SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:"),
+          ExpertGroup = list(inputId = "ExpertGroup", title = "ExpertGroup:"),
+          DataCategory = list(inputId = "DataCategory", title = "Data category:"),
+          YearOfLastAssessment = list(inputId = "YearOfLastAssessment", title = "Year of last assessment:"),
+          AdviceCategory = list(inputId = "AdviceCategory", title = "Advice category:")
+        ),
+        inline = FALSE
+      ),
+      heading = "Additional data filtering",
+      status = "primary"
+    ),
+    htmlOutput("app_last_update")
+)
+  # )
+
+}
+
+stock_selection_right_side <- function(){
+  mainPanel(
+    width = 7, 
+    DTOutput("tbl")
+  )
+}
 
 #' Creates the UI element of data filtering panel
 #'

@@ -80,21 +80,24 @@ navbarPage(
     # navbar title
     title = title_html,
     tabPanel(
-        "Data Filtering",
+        "Stock Selection",
         sidebarLayout(
-            sidebarPanel = maps_panels(),
-            mainPanel = selectize_panel()
+            # sidebarPanel = maps_panels(),
+            # mainPanel = selectize_panel()
+            # sidebarPanel = 
+            sidebarPanel = stock_selection_left_side(),
+            mainPanel = stock_selection_right_side()
             
         )
     ),
     
-    tabPanel(
-        "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
-        tipify(
-            actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-            title = "Click here for help", placement = "bottom", trigger = "hover"),
-        DTOutput("tbl")
-    ),
+    # tabPanel(
+    #     "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
+    #     tipify(
+    #         actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
+    #         title = "Click here for help", placement = "bottom", trigger = "hover"),
+    #     DTOutput("tbl")
+    # ),
 
 ########################################## New version of SAG plots ############################
     navbarMenu(

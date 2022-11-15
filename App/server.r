@@ -69,8 +69,7 @@ server <- function(input, output, session) {
   
   res_mod <- callModule(
     module = selectizeGroupServer,
-    id = "my-filters",
-    # data = separate_ecoregions(stock_list_all, selected_1$groups),
+    id = "my-filters",    
     data = eco_filter,
     vars = c(
       "StockKeyLabel", "SpeciesCommonName",
@@ -114,8 +113,8 @@ server <- function(input, output, session) {
         list(visible = FALSE, targets = c(0, 6, 13)),
         list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
       )
-    ),
-    callback = JS(callback1(res_mod()))
+    )
+    # callback = JS(callback1(res_mod()))  #####this was the problem
 )
   
   
