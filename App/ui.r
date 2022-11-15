@@ -34,6 +34,7 @@ library(scales)
 library(ggradar)
 library(shinyBS)
 library(ggtext)
+library(RCurl)
 
 
 
