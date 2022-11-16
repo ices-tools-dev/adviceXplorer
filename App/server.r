@@ -13,6 +13,7 @@ options(icesSAG.use_token = FALSE)
 
 
 
+
 ############# Start server function ################
 
 server <- function(input, output, session) {
@@ -32,7 +33,7 @@ server <- function(input, output, session) {
 
   updateSelectizeInput(session,
     inputId = "selected_years",
-    label = "Year",
+    label = "Assessment Year",
     choices = Years$Year,
     selected = 2021
   )
@@ -63,6 +64,7 @@ server <- function(input, output, session) {
     stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
       relocate(Select, .before = StockKeyLabel)
+    # stock_list_long <- stock_list_long %>% filter(-group_url, -DataCategory,-YearOfLastAssessment,-AdviceCategory, -FO_doi,-SAG_url,-visa_url)
     
   })
 
@@ -72,9 +74,9 @@ server <- function(input, output, session) {
     id = "my-filters",    
     data = eco_filter,
     vars = c(
-      "StockKeyLabel", "SpeciesCommonName",
-      "ExpertGroup", "DataCategory", "YearOfLastAssessment",
-      "AdviceCategory"
+      "StockKeyLabel", "SpeciesCommonName"
+      # "ExpertGroup", "DataCategory", "YearOfLastAssessment",
+      # "AdviceCategory"
     )
   )
   
@@ -104,7 +106,7 @@ server <- function(input, output, session) {
     escape = FALSE,
     selection = 'none', 
     server = FALSE,    
-    caption = "Select the fish stock of interest and then click on one of panels on the right",
+    # caption = "Select the fish stock of interest and then click on one of panels on the right",
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
@@ -113,15 +115,15 @@ server <- function(input, output, session) {
         list(visible = FALSE, targets = c(0, 6, 13)),
         list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
       )
-    )
-    # callback = JS(callback1(res_mod()))  #####this was the problem
+    ),
+    callback = JS(callback)  #####this was the problemJS(callback1(res_mod()))
 )
   
   
 
   ## process radio button selection
   observeEvent(input$rdbtn, {
-    
+    print(input$rdbtn)
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
     print(filtered_row$SpeciesCommonName)
     
