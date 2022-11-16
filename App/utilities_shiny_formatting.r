@@ -76,11 +76,11 @@ stock_selection_left_side <- function(){
         id = "my-filters",
         params = list(
           StockKeyLabel = list(inputId = "StockKeyLabel", title = "Stock code:"),
-          SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:"),
-          ExpertGroup = list(inputId = "ExpertGroup", title = "ExpertGroup:"),
-          DataCategory = list(inputId = "DataCategory", title = "Data category:"),
-          YearOfLastAssessment = list(inputId = "YearOfLastAssessment", title = "Year of last assessment:"),
-          AdviceCategory = list(inputId = "AdviceCategory", title = "Advice category:")
+          SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:")
+          # ExpertGroup = list(inputId = "ExpertGroup", title = "ExpertGroup:"),
+          # DataCategory = list(inputId = "DataCategory", title = "Data category:"),
+          # YearOfLastAssessment = list(inputId = "YearOfLastAssessment", title = "Year of last assessment:"),
+          # AdviceCategory = list(inputId = "AdviceCategory", title = "Advice category:")
         ),
         inline = FALSE
       ),
