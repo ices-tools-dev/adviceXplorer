@@ -64,7 +64,9 @@ server <- function(input, output, session) {
     stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
     stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
-      relocate(Select, .before = StockKeyLabel)
+      relocate(Select, .before = StockKeyLabel) %>% 
+      dplyr::mutate(stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1])) %>% 
+      dplyr::mutate(stock_location = parse_location_from_stock_description(stock_description))
     # stock_list_long <- stock_list_long %>% filter(-group_url, -DataCategory,-YearOfLastAssessment,-AdviceCategory, -FO_doi,-SAG_url,-visa_url)
     
   })
@@ -90,7 +92,7 @@ server <- function(input, output, session) {
 
   output$tbl <- DT::renderDT(
     
-    res_modo <- res_mod() %>% select("Select","StockKeyLabel","EcoRegion","icon","SpeciesCommonName") %>% rename("Select" = Select,
+    res_modo <- res_mod() %>% select("Select","StockKeyLabel","EcoRegion","icon","SpeciesCommonName","stock_location") %>% rename("Select" = Select,
                                       "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
