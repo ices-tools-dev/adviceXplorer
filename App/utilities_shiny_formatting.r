@@ -40,7 +40,7 @@ stock_selection_left_side <- function(){
       tabPanel(
         "ICES Ecoregions",
         # fillPage(
-          tags$style(type = "text/css", "#map1 {height: calc(60vh - 200px) !important;}"), #
+          tags$style(type = "text/css", "#map1 {height: calc(60vh - 200px) !important;} overflow-y: auto;"), #
           # withSpinner(
             leafletOutput("map1", height = "100%", width = "100%")          
           # )        
@@ -95,7 +95,7 @@ stock_selection_left_side <- function(){
 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7, 
+    width = 7, style = "max-height: 90vh; overflow-y: auto; ",#margin: auto;
     DTOutput("tbl")
   )
 }

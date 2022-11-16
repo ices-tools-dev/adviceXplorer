@@ -43,7 +43,8 @@ server <- function(input, output, session) {
     req(input$selected_locations, input$selected_years)
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
-    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
+    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
+                                            # subset(StockKeyLabel,EcoRegion,icon,SpeciesCommonName)
 
     ### reshuffle some columns    
     stock_list_long <- stock_list_long %>%
@@ -89,19 +90,19 @@ server <- function(input, output, session) {
 
   output$tbl <- DT::renderDT(
     
-    res_modo <- res_mod() %>% rename("Select" = Select,
+    res_modo <- res_mod() %>% select("Select","StockKeyLabel","EcoRegion","icon","SpeciesCommonName") %>% rename("Select" = Select,
                                       "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
-                                      "Common name" = SpeciesCommonName,
-                                      "Expert group" = group_url,
-                                      "Data category" = DataCategory,
-                                      "Year of last assessment" = YearOfLastAssessment,
-                                      "Advice category" = AdviceCategory,
-                                      "Advice doi" = doi,
-                                      "Fisheries Overview doi" = FO_doi,
-                                      "Assessment data" = SAG_url,
-                                      "GIS data" = visa_url),
+                                      "Common name" = SpeciesCommonName),
+                                      # "Expert group" = group_url,
+                                      # "Data category" = DataCategory,
+                                      # "Year of last assessment" = YearOfLastAssessment,
+                                      # "Advice category" = AdviceCategory,
+                                      # "Advice doi" = doi,
+                                      # "Fisheries Overview doi" = FO_doi,
+                                      # "Assessment data" = SAG_url,
+                                      # "GIS data" = visa_url),
     
     escape = FALSE,
     selection = 'none', 
@@ -110,11 +111,11 @@ server <- function(input, output, session) {
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
-      pageLength = 300,
-      columnDefs = list(
-        list(visible = FALSE, targets = c(0, 6, 13)),
-        list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
-      )
+      pageLength = 300
+      # columnDefs = list(
+      #   list(visible = FALSE, targets = c(0, 6, 13)),
+      #   list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
+      # )
     ),
     callback = JS(callback)  #####this was the problemJS(callback1(res_mod()))
 )
