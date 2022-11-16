@@ -103,10 +103,10 @@ navbarPage(
                 "Development over time",
                 splitLayout(
             # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
-                    cellWidths = c("20%", "70%", "10%"),
+                    cellWidths = c("40%", "60%"), #, "10%"
                     sag_plots_stock_info_left_panel(),
-                    sag_plots_stock_info_center_panel(),
-                    sag_plots_stock_info_right_panel()
+                    sag_plots_stock_info_center_panel()
+                    # sag_plots_stock_info_right_panel()
                 ),
                 # tipify(
                 # actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"), 
@@ -129,10 +129,10 @@ navbarPage(
                 "Quality of assessment",
                 splitLayout(
             # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
-                    cellWidths = c("20%", "70%", "10%"),
+                    cellWidths = c("40%", "60%"), #, "10%"
                     qualAssess_plots_stock_info_left_panel(),
-                    qualAssess_plots_stock_info_center_panel(),
-                    qualAssess_plots_stock_info_right_panel()
+                    qualAssess_plots_stock_info_center_panel()
+                    # qualAssess_plots_stock_info_right_panel()
                 ),
                 # tipify(
                 # actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
@@ -153,10 +153,10 @@ navbarPage(
         "Catch Scenarios",
         splitLayout(
             # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
-            cellWidths = c("20%", "70%", "10%"),
+            cellWidths = c("40%", "60%"), #, "10%"
             catch_scenario_stock_info_left_panel(),
-            catch_scenario_stock_info_center_panel(),
-            catch_scenario_stock_info_right_panel()
+            catch_scenario_stock_info_center_panel()
+            # catch_scenario_stock_info_right_panel()
         ),
         
         # withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),

@@ -332,7 +332,7 @@ catch_scenarios_right_panel <- function(){
 ##### sag plots
 sag_plots_stock_info_left_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Stock Info",
       withSpinner(htmlOutput("stock_infos1", height = "100%", width = "100%"))
@@ -342,7 +342,7 @@ sag_plots_stock_info_left_panel <- function() {
 
 sag_plots_stock_info_center_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Headline",
       withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%"))
@@ -352,7 +352,7 @@ sag_plots_stock_info_center_panel <- function() {
 
 sag_plots_stock_info_right_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Links",
       HTML(
@@ -376,7 +376,7 @@ sag_plots_stock_info_right_panel <- function() {
 #### quality of assessment
 qualAssess_plots_stock_info_left_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Stock Info",
       withSpinner(htmlOutput("stock_infos2", height = "100%", width = "100%"))
@@ -386,7 +386,7 @@ qualAssess_plots_stock_info_left_panel <- function() {
 
 qualAssess_plots_stock_info_center_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Headline",
       withSpinner(htmlOutput("Advice_Headline2", height = "100%", width = "100%"))
@@ -396,7 +396,7 @@ qualAssess_plots_stock_info_center_panel <- function() {
 
 qualAssess_plots_stock_info_right_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Links",
       HTML(
@@ -425,7 +425,7 @@ qualAssess_plots_stock_info_right_panel <- function() {
 
 catch_scenario_stock_info_left_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Stock Info",
       withSpinner(htmlOutput("stock_infos3", height = "100%", width = "100%"))
@@ -435,7 +435,7 @@ catch_scenario_stock_info_left_panel <- function() {
 
 catch_scenario_stock_info_center_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Headline",
       withSpinner(htmlOutput("Advice_Headline3", height = "100%", width = "100%"))
@@ -445,7 +445,7 @@ catch_scenario_stock_info_center_panel <- function() {
 
 catch_scenario_stock_info_right_panel <- function() {
   wellPanel(
-    style = "height: 20vh; overflow-y: auto; white-space: normal;",
+    style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Links",
       HTML(
