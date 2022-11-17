@@ -147,9 +147,11 @@ server <- function(input, output, session) {
 
     msg("stock selected from table:", filtered_row$StockKeyLabel)
     msg("year of SAG/SID selected from table:", input$selected_years) #####
+
+    ### this allow to trigger the new tab when the radio button is clicked
+    updateNavbarPage(session, "tabset", selected = "Development over time")
+    
   })
-
-
 
   observe({
     # read url string
