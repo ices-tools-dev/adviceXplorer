@@ -96,7 +96,8 @@ server <- function(input, output, session) {
                                       "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
-                                      "Common name" = SpeciesCommonName),
+                                      "Common name" = SpeciesCommonName,
+                                      "Location" = stock_location),
                                       # "Expert group" = group_url,
                                       # "Data category" = DataCategory,
                                       # "Year of last assessment" = YearOfLastAssessment,
@@ -113,11 +114,11 @@ server <- function(input, output, session) {
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
-      pageLength = 300
-      # columnDefs = list(
-      #   list(visible = FALSE, targets = c(0, 6, 13)),
-      #   list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
-      # )
+      pageLength = 300,
+      columnDefs = list(
+        list(visible = FALSE, targets = c(0)),
+        list(className = "dt-center", targets = c(1, 4))
+      )
     ),
     callback = JS(callback)  #####this was the problemJS(callback1(res_mod()))
 )
