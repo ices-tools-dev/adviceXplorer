@@ -44,6 +44,7 @@ server <- function(input, output, session) {
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
+    stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
                                             # subset(StockKeyLabel,EcoRegion,icon,SpeciesCommonName)
 
     ### reshuffle some columns    
@@ -67,7 +68,8 @@ server <- function(input, output, session) {
       relocate(Select, .before = StockKeyLabel) %>% 
       dplyr::mutate(stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1])) %>% 
       dplyr::mutate(stock_location = parse_location_from_stock_description(stock_description))
-    # stock_list_long <- stock_list_long %>% filter(-group_url, -DataCategory,-YearOfLastAssessment,-AdviceCategory, -FO_doi,-SAG_url,-visa_url)
+    
+    # stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
     
   })
 
@@ -92,7 +94,13 @@ server <- function(input, output, session) {
 
   output$tbl <- DT::renderDT(
     
-    res_modo <- res_mod() %>% select("Select","StockKeyLabel","EcoRegion","icon","SpeciesCommonName","stock_location") %>% rename("Select" = Select,
+    res_modo <- res_mod() %>% select("Select",
+                                      "StockKeyLabel",
+                                      "EcoRegion",
+                                      "icon",
+                                      "SpeciesCommonName",
+                                      "stock_location") %>% 
+                           rename("Select" = Select,
                                       "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
@@ -127,9 +135,9 @@ server <- function(input, output, session) {
 
   ## process radio button selection
   observeEvent(input$rdbtn, {
-    print(input$rdbtn)
+    # print(input$rdbtn)
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
-    print(filtered_row$SpeciesCommonName)
+    # print(filtered_row$SpeciesCommonName)
     
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
 
