@@ -13,6 +13,7 @@ options(icesSAG.use_token = FALSE)
 
 
 
+
 ############# Start server function ################
 
 server <- function(input, output, session) {
@@ -32,7 +33,7 @@ server <- function(input, output, session) {
 
   updateSelectizeInput(session,
     inputId = "selected_years",
-    label = "Year",
+    label = "Assessment Year",
     choices = Years$Year,
     selected = 2021
   )
@@ -42,7 +43,9 @@ server <- function(input, output, session) {
     req(input$selected_locations, input$selected_years)
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
-    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
+    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
+    stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
+                                            # subset(StockKeyLabel,EcoRegion,icon,SpeciesCommonName)
 
     ### reshuffle some columns    
     stock_list_long <- stock_list_long %>%
@@ -62,20 +65,23 @@ server <- function(input, output, session) {
     stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
     stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
-      relocate(Select, .before = StockKeyLabel)
+      relocate(Select, .before = StockKeyLabel) %>% 
+      dplyr::mutate(stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1])) %>% 
+      dplyr::mutate(stock_location = parse_location_from_stock_description(stock_description))
+    
+    # stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
     
   })
 
   
   res_mod <- callModule(
     module = selectizeGroupServer,
-    id = "my-filters",
-    # data = separate_ecoregions(stock_list_all, selected_1$groups),
+    id = "my-filters",    
     data = eco_filter,
     vars = c(
-      "StockKeyLabel", "SpeciesCommonName",
-      "ExpertGroup", "DataCategory", "YearOfLastAssessment",
-      "AdviceCategory"
+      "StockKeyLabel", "SpeciesCommonName"
+      # "ExpertGroup", "DataCategory", "YearOfLastAssessment",
+      # "AdviceCategory"
     )
   )
   
@@ -88,43 +94,50 @@ server <- function(input, output, session) {
 
   output$tbl <- DT::renderDT(
     
-    res_modo <- res_mod() %>% rename("Select" = Select,
+    res_modo <- res_mod() %>% select("Select",
+                                      "StockKeyLabel",
+                                      "EcoRegion",
+                                      "icon",
+                                      "SpeciesCommonName",
+                                      "stock_location") %>% 
+                           rename("Select" = Select,
                                       "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
                                       "Common name" = SpeciesCommonName,
-                                      "Expert group" = group_url,
-                                      "Data category" = DataCategory,
-                                      "Year of last assessment" = YearOfLastAssessment,
-                                      "Advice category" = AdviceCategory,
-                                      "Advice doi" = doi,
-                                      "Fisheries Overview doi" = FO_doi,
-                                      "Assessment data" = SAG_url,
-                                      "GIS data" = visa_url),
+                                      "Location" = stock_location),
+                                      # "Expert group" = group_url,
+                                      # "Data category" = DataCategory,
+                                      # "Year of last assessment" = YearOfLastAssessment,
+                                      # "Advice category" = AdviceCategory,
+                                      # "Advice doi" = doi,
+                                      # "Fisheries Overview doi" = FO_doi,
+                                      # "Assessment data" = SAG_url,
+                                      # "GIS data" = visa_url),
     
     escape = FALSE,
     selection = 'none', 
     server = FALSE,    
-    caption = "Select the fish stock of interest and then click on one of panels on the right",
+    # caption = "Select the fish stock of interest and then click on one of panels on the right",
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
       pageLength = 300,
       columnDefs = list(
-        list(visible = FALSE, targets = c(0, 6, 13)),
-        list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
+        list(visible = FALSE, targets = c(0)),
+        list(className = "dt-center", targets = c(1, 4))
       )
     ),
-    callback = JS(callback1(res_mod()))
+    callback = JS(callback)  #####this was the problemJS(callback1(res_mod()))
 )
   
   
 
   ## process radio button selection
   observeEvent(input$rdbtn, {
-    
+    # print(input$rdbtn)
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
-    print(filtered_row$SpeciesCommonName)
+    # print(filtered_row$SpeciesCommonName)
     
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
 
@@ -134,9 +147,11 @@ server <- function(input, output, session) {
 
     msg("stock selected from table:", filtered_row$StockKeyLabel)
     msg("year of SAG/SID selected from table:", input$selected_years) #####
+
+    ### this allow to trigger the new tab when the radio button is clicked
+    updateNavbarPage(session, "tabset", selected = "Development over time")
+    
   })
-
-
 
   observe({
     # read url string
