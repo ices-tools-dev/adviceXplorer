@@ -63,7 +63,6 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
   catch_scenario_advice_sentence <- HTML(paste0(
     "<font size=", 3, ">", "Stock description: ", "<b>", StockDescription, "</b><br/>",
     "<font size=", 3, ">", "Stock code: ", "<b>", catch_scenario_list$stockCode, "</b><br/>",
-    # "<font size=", 3, ">", "Advice requester: ", "<b>", advice_requester, "</b><br/>",
     "<font size=", 3, ">", "Assessment year: ", "<b>", catch_scenario_list$assessmentYear, "</b><br/>"
   ))
 
@@ -93,9 +92,9 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #'
 #' @export
 get_Advice_View_Headline <- function(catch_scenario_list) {
-catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
+  catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
                                               "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))
-# catch_scenario_advice_sentence <- paste0("Stock code: ", "<b>", stock_name,"</b><br/><br/>", catch_scenario_advice_sentence)
+
 return(catch_scenario_advice_sentence)
 }
 
@@ -125,7 +124,7 @@ return(catch_scenario_advice_sentence)
 #'
 #' @export
 get_Stock_info <- function(CommonName, stockcode,  assessmentYear, description) { #StockDescription,
-stock_info_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Stock information:","</font></b></i><br/>",
+  stock_info_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Stock information:","</font></b></i><br/>",
                                               "<font size=", 3, ">","Common name: ", "<b>", CommonName,"</b><br/>",
                                               "<font size=", 3, ">","Stock code: ", "<b>", stockcode,"</b><br/>",
                                               "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"),
@@ -158,8 +157,7 @@ return(stock_info_sentence)
 get_catch_scenario_table <- function(catch_scenario_list) {
   catch_scenario_table <- jsonlite::fromJSON(
     URLencode(
-      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey) # )
-      # sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", 1284 ) # )
+      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey)
     )
   )
 
@@ -175,7 +173,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 
   catch_scenario_table <- catch_scenario_table %>% add_column(Year = catch_scenario_list$assessmentYear + 1, .before = "cS_Label")
   } else {
-    catch_scenario_table <- character(0) #setNames(data.frame(matrix(ncol = 9, nrow = 0)), c("Year", "cat", "cS_Purpose","F","TotCatch","TAC change","ADVICE change","SSB","SSB change"))
+    catch_scenario_table <- character(0) 
   }
 
   return(catch_scenario_table)
@@ -366,7 +364,6 @@ standardize_catch_scenario_table <- function(tmp) {
 #' @export
 #' 
 wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year) {
-  # if (!is_empty(catch_scenario_table)) {
   
   catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
@@ -390,11 +387,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, s
   final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
 
   final_df <- na.omit(final_df)
-  # }
-  # else {
-  #   final_df <- character(0)
-  # }
-  # print(final_df)
+
   return(final_df)
 }
 
