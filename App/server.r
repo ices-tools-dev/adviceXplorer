@@ -176,8 +176,6 @@ server <- function(input, output, session) {
   })
 
   sagSettings <- eventReactive(req(query$assessmentkey),{
-    # options(icesSAG.use_token = TRUE)
-    # icesSAG::getSAGSettingsForAStock(query$assessmentkey)
     getSAGSettings(query$assessmentkey)
   })
 
@@ -196,7 +194,7 @@ additional_LandingData <- eventReactive((req(query$assessmentkey)),{
 
 ##### get link to library pdf advice
 advice_doi <- eventReactive((req(query$assessmentkey)),{
-  # doi <- jsonlite::fromJSON(
+  
   get_advice_doi(query$assessmentkey)
 
 })
@@ -234,8 +232,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot1 <- renderPlotly(
     ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
-  ) # %>%
-  # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
+  )
 
   output$plot2 <- renderPlotly({
     validate(
@@ -264,14 +261,12 @@ output$download_SAG_Data <- downloadHandler(
   advice_action_quality <- eventReactive(req(query$assessmentkey,query$year), {
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
-    query$year <- info$AssessmentYear ####
+    query$year <- info$AssessmentYear 
 
     stock_name <- query$stockkeylabel
-    # msg("downloading:", stock_name)
 
-    year <- query$year #####
-    # msg("downloading:", year)
-    #   # Dowload the data
+    year <- query$year 
+    
     quality_assessment_data_local(stock_name, year)
   })
 
@@ -345,12 +340,12 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 ##### catch scenarios table previous year in percentages (for radial plot)
 catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
   standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
-  # scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year, catch_scenario_table())
+  
 })
 
 ##### catch scenario table scaled with the values of previous advice to get percentage of change
 catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
-  # standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  
   scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
 })
 
@@ -382,10 +377,7 @@ output$catch_scenario_plot_3 <- renderPlotly({
     )
   tmp <- arrange(catch_scenario_table(), F)
   catch_scenarios_plot2(tmp, SAG_data_reactive())
-}) #%>%
-  # bindCache(catch_scenario_table(), SAG_data_reactive())
-
-
+}) 
 
 ########## Historical catches panel (preparation of data)
 test_table <- eventReactive(catch_scenario_table(), {
@@ -422,9 +414,7 @@ output$catch_scenarios <- renderUI({
 
 ########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
-  # validate(
-  #     need(!is_empty(test_table()), "Data not available for this stock")
-  #   )
+  
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
@@ -447,9 +437,7 @@ output$catch_scenarios_radial <- renderUI({
 
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
-  # validate(
-  #   need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
-  # )
+ 
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
@@ -472,9 +460,7 @@ output$catch_indicators_lollipop <- renderUI({
 
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
-  # validate(
-  #     need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
-  #   )
+ 
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
@@ -493,9 +479,6 @@ observeEvent(input$preview, {
             size = "s",
             )
   })
-
-# addTooltip(session=session,id="help_tab5",title="Link to Advice View record") # not working
-
 
 
 ############### Catch scenario plot
@@ -516,24 +499,14 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
 })
 
 output$table <- DT::renderDT(
-  # tab <- catch_scenario_table() %>%
-  #   arrange(F) %>%
-  #   rename_all(funs(catch_table_names())) %>%
-  #   rename("Basis" = cS_Label, " " = cS_Purpose),
-
-catch_scenario_table_collated(),
-  # tab <- catch_scenario_table() %>%
-  #   arrange(F) %>%
-  #   rename_all(funs(catch_table_names())) %>%
-  #   rename("Basis" = cS_Label, " " = cS_Purpose),
  
-  # arrange(catch_scenario_table(), F) %>% select(-Year),
+catch_scenario_table_collated(),
+ 
   selection = "single",
   class = "display",
   caption = "Subset of catch scenario table",
   rownames = FALSE,
   options = list(
-    # order = list("cS_Purpose", "asc"),
     dom = "Bfrtip",
     pageLength = 100,
     buttons =
