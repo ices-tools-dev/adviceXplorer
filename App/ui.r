@@ -102,7 +102,7 @@ navbarPage(
                 
                 sidebarLayout(
                     sidebarPanel = SAG_plots_left_panel(),
-                    mainPanel = SAG_plots_righ_panel()
+                    mainPanel = SAG_plots_right_panel()
                 )
              
             ),

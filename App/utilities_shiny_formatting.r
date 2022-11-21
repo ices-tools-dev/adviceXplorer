@@ -257,7 +257,7 @@ SAG_plots_left_panel <- function(){
 #'
 #' @export
 #' 
-SAG_plots_righ_panel <- function(){
+SAG_plots_right_panel <- function(){
   sidebarPanel(
     width = 6, style = "height: 80vh; overflow-y: auto;",
     panel(
