@@ -371,12 +371,34 @@ createLink_advice_pdf <- function(df) {
 #' @export
 #'
 
-# callback1 <- function(df) {
-#   value_rdbtn_to_preSelect <- paste0("rdbtn_", readr::parse_number(df$Select[1]))
-#   stringjs <- paste0("$('input[name=rdbtn]').on('click', function(){ var value = $('input[name=rdbtn]:checked').val(); Shiny.setInputValue('rdbtn', value); }); var btn = document.querySelectorAll('[value=", value_rdbtn_to_preSelect, "]')[0].click(); btn.checked=true;")
-#   return(stringjs)
-# }
+callback1 <- function(df) {
+  value_rdbtn_to_preSelect <- paste0("rdbtn_", readr::parse_number(df$Select[1]))
+  stringjs <- paste0("$('input[name=rdbtn]').on('click', function(){ var value = $('input[name=rdbtn]:checked').val(); Shiny.setInputValue('rdbtn', value); }); var btn = document.querySelectorAll('[value=", value_rdbtn_to_preSelect, "]')[0].click(); btn.checked=true;")
+  return(stringjs)
+}
 
+#' Returns a javascript string that allows to select a stock via the radio-button of the filtered stock list table.
+#'
+#' @param df
+#'
+#' @return stringjs
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' callback1(df)
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#'
 callback <- c(
   "$('input[name=rdbtn]').on('click', function(){",
   "  var value = $('input[name=rdbtn]:checked').val();",
@@ -384,7 +406,27 @@ callback <- c(
   "});"
 )
 
-
+#' Returns a the url of the pdf of the advice in the new library
+#'
+#' @param assessmentKey
+#'
+#' @return stringjs
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#'
 get_advice_doi <- function(assessmentKey) {
   url <- URLencode(
     paste0("https://sag.ices.dk/SAG_API/api/AdviceLink/", assessmentKey)

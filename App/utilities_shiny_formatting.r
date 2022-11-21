@@ -1,4 +1,4 @@
-#' Creates the UI element of the ecoregion map
+#' Creates the UI element of the ecoregion map (NOT ACTIVE)
 #'
 #' @return UI element
 #'
@@ -33,21 +33,37 @@ maps_panels <- function(){
   )
 }
 
-####### new stock selection tab
-stock_selection_left_side <- function(){
-    sidebarPanel(
-      width = 5,
-      tabPanel(
-        "ICES Ecoregions",
-        # fillPage(
-          tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: auto;"), #
-          # withSpinner(
-            leafletOutput("map1", height = "100%", width = "100%")          
-          # )        
-        # )
-      ),
-      HTML("</br>"),
-      panel(
+#' Creates the UI element for the left side of the stock selection tab, which includes
+#' the ecoregion map and the additional filterinr panel
+#'
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
+stock_selection_left_side <- function() {
+  sidebarPanel(
+    width = 5,
+    tabPanel(
+      "ICES Ecoregions",
+      tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: auto;"),
+      leafletOutput("map1", height = "100%", width = "100%")
+    ),
+    HTML("</br>"),
+    panel(
       selectizeInput(
         inputId = "selected_locations",
         label = "ICES Ecoregions",
@@ -59,7 +75,6 @@ stock_selection_left_side <- function(){
           placeholder = "Select Ecoregion(s)"
         )
       ),
-      #######
       selectizeInput(
         inputId = "selected_years",
         label = "Assessment Year",
@@ -71,16 +86,11 @@ stock_selection_left_side <- function(){
           placeholder = "Select assessment year"
         )
       ),
-      #######
       selectizeGroupUI(
         id = "my-filters",
         params = list(
           StockKeyLabel = list(inputId = "StockKeyLabel", title = "Stock code:"),
           SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:")
-          # ExpertGroup = list(inputId = "ExpertGroup", title = "ExpertGroup:"),
-          # DataCategory = list(inputId = "DataCategory", title = "Data category:"),
-          # YearOfLastAssessment = list(inputId = "YearOfLastAssessment", title = "Year of last assessment:"),
-          # AdviceCategory = list(inputId = "AdviceCategory", title = "Advice category:")
         ),
         inline = FALSE
       ),
@@ -88,11 +98,30 @@ stock_selection_left_side <- function(){
       status = "primary"
     ),
     htmlOutput("app_last_update")
-)
-  # )
-
+  )
 }
 
+#' Creates the UI element for the right side of the stock selection tab, which includes
+#' the stock list table
+#'
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 stock_selection_right_side <- function(){
   mainPanel(
     width = 7, style = "max-height: 90vh; overflow-y: auto; ",#margin: auto;
@@ -100,7 +129,7 @@ stock_selection_right_side <- function(){
   )
 }
 
-#' Creates the UI element of data filtering panel
+#' Creates the UI element of data filtering panel (NOT ACTIVE)
 #'
 #' @return UI element
 #'
@@ -395,7 +424,28 @@ catch_scenarios_right_panel <- function(){
 }
 
 
-##### sag plots
+
+#' Creates the UI element of left panel of the stock dev over time tab, which includes 
+#' the stock info.
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 sag_plots_stock_info_left_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -406,6 +456,27 @@ sag_plots_stock_info_left_panel <- function() {
   )
 }
 
+#' Creates the UI element of right panel of the stock dev over time tab, which includes 
+#' the headline of the advice.
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 sag_plots_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -416,6 +487,27 @@ sag_plots_stock_info_center_panel <- function() {
   )
 }
 
+#' Creates the UI element of right panel of the stock dev over time tab, which includes 
+#' links to other ices products (NOT ACTIVE).
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 sag_plots_stock_info_right_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -439,7 +531,28 @@ sag_plots_stock_info_right_panel <- function() {
     )
   )
 }
-#### quality of assessment
+
+#' Creates the UI element of left panel of the qual of assess tab, which includes 
+#' the stock info.
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 qualAssess_plots_stock_info_left_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -450,6 +563,27 @@ qualAssess_plots_stock_info_left_panel <- function() {
   )
 }
 
+#' Creates the UI element of right panel of the qual of assess tab, which includes 
+#' the headline of the advice.
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 qualAssess_plots_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -460,6 +594,27 @@ qualAssess_plots_stock_info_center_panel <- function() {
   )
 }
 
+#' Creates the UI element of right panel of the qual of assess tab, which includes 
+#' links to other ices products (NOT ACTIVE).
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 qualAssess_plots_stock_info_right_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -487,8 +642,27 @@ qualAssess_plots_stock_info_right_panel <- function() {
 
 
 
-#### catch scenarios
-
+#' Creates the UI element of left panel of the catch scenarios tab, which includes 
+#' the stock info.
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 catch_scenario_stock_info_left_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -499,6 +673,27 @@ catch_scenario_stock_info_left_panel <- function() {
   )
 }
 
+#' Creates the UI element of right panel of the catch scenarios tab, which includes 
+#' the headline of the advice.
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 catch_scenario_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
@@ -509,6 +704,27 @@ catch_scenario_stock_info_center_panel <- function() {
   )
 }
 
+#' Creates the UI element of right panel of the catch scenarios tab, which includes 
+#' links to other ices products (NOT ACTIVE).
+#' 
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
 catch_scenario_stock_info_right_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",

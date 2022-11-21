@@ -83,22 +83,11 @@ navbarPage(
     tabPanel(
         "Stock Selection",
         sidebarLayout(
-            # sidebarPanel = maps_panels(),
-            # mainPanel = selectize_panel()
-            # sidebarPanel = 
             sidebarPanel = stock_selection_left_side(),
             mainPanel = stock_selection_right_side()
             
         )
     ),
-    
-    # tabPanel(
-    #     "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
-    #     tipify(
-    #         actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-    #         title = "Click here for help", placement = "bottom", trigger = "hover"),
-    #     DTOutput("tbl")
-    # ),
 
 ########################################## New version of SAG plots ############################
     navbarMenu(
@@ -106,47 +95,24 @@ navbarPage(
             tabPanel(
                 "Development over time",
                 splitLayout(
-            # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
                     cellWidths = c("40%", "60%"),
                     sag_plots_stock_info_left_panel(),
                     sag_plots_stock_info_center_panel()
-                    # sag_plots_stock_info_right_panel()
                 ),
-                # tipify(
-                # actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"), 
-                # title = "Click here fof help", placement = "right", trigger = "hover"),
-                
-                # tipify(
-                # myDownloadButton("download_SAG_Data"),
-                # title = "Download the plot data", placement = "right", trigger = "hover"),
-
-
-                # withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
                 
                 sidebarLayout(
                     sidebarPanel = SAG_plots_left_panel(),
                     mainPanel = SAG_plots_righ_panel()
-            )
+                )
              
             ),
             tabPanel(
                 "Quality of assessment",
                 splitLayout(
-            # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
                     cellWidths = c("40%", "60%"),
                     qualAssess_plots_stock_info_left_panel(),
                     qualAssess_plots_stock_info_center_panel()
-                    # qualAssess_plots_stock_info_right_panel()
                 ),
-                # tipify(
-                # actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-                # title = "Click here fof help", placement = "right", trigger = "hover"),
-
-                # tipify(
-                # myDownloadButton("download_SAG_Quality_Data"),
-                # title = "Download the plot data", placement = "right", trigger = "hover"),
-
-                # withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
                 quality_of_assessment()
             )
         ),
@@ -156,15 +122,10 @@ navbarPage(
     tabPanel(
         "Catch Scenarios",
         splitLayout(
-            # style = "border: 1px solid silver; height: 15vh; overflow-y: auto;",
             cellWidths = c("40%", "60%"),
             catch_scenario_stock_info_left_panel(),
             catch_scenario_stock_info_center_panel()
-            # catch_scenario_stock_info_right_panel()
         ),
-        
-        # withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),
-
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel(),
             mainPanel = catch_scenarios_right_panel()
@@ -176,10 +137,10 @@ navbarPage(
         htmlOutput("citation")
         
     ),
-    # extra tags, css etc
+    ###### extra tags, css, JS etc
     
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
-    tags$script(
+    tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
     '
     var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
     $(function(){
@@ -191,7 +152,7 @@ navbarPage(
     '
   ),
     
-    theme = shinytheme("cerulean"),  ##### need to work on this, the orange is part of the css theme united, check bslib in forked repo
+    theme = shinytheme("cerulean"), 
     position = "fixed-top",
 )   
 )

@@ -45,7 +45,6 @@ server <- function(input, output, session) {
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
     stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
-                                            # subset(StockKeyLabel,EcoRegion,icon,SpeciesCommonName)
 
     ### reshuffle some columns    
     stock_list_long <- stock_list_long %>%
@@ -69,8 +68,6 @@ server <- function(input, output, session) {
       dplyr::mutate(stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1])) %>% 
       dplyr::mutate(stock_location = parse_location_from_stock_description(stock_description))
     
-    # stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
-    
   })
 
   
@@ -80,8 +77,6 @@ server <- function(input, output, session) {
     data = eco_filter,
     vars = c(
       "StockKeyLabel", "SpeciesCommonName"
-      # "ExpertGroup", "DataCategory", "YearOfLastAssessment",
-      # "AdviceCategory"
     )
   )
   
@@ -106,19 +101,12 @@ server <- function(input, output, session) {
                                       " " = icon,
                                       "Common name" = SpeciesCommonName,
                                       "Location" = stock_location),
-                                      # "Expert group" = group_url,
-                                      # "Data category" = DataCategory,
-                                      # "Year of last assessment" = YearOfLastAssessment,
-                                      # "Advice category" = AdviceCategory,
-                                      # "Advice doi" = doi,
-                                      # "Fisheries Overview doi" = FO_doi,
-                                      # "Assessment data" = SAG_url,
-                                      # "GIS data" = visa_url),
+                                      
     
     escape = FALSE,
     selection = 'none', 
     server = FALSE,    
-    # caption = "Select the fish stock of interest and then click on one of panels on the right",
+    caption = HTML("<b><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
@@ -128,27 +116,24 @@ server <- function(input, output, session) {
         list(className = "dt-center", targets = c(1, 4))
       )
     ),
-    callback = JS(callback)  #####this was the problemJS(callback1(res_mod()))
+    callback = JS(callback)
 )
   
   
 
   ## process radio button selection
   observeEvent(input$rdbtn, {
-    # print(input$rdbtn)
-    filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
-    # print(filtered_row$SpeciesCommonName)
     
+    filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
+        
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
-
-    ###
 
     query$query_from_table <- TRUE
 
     msg("stock selected from table:", filtered_row$StockKeyLabel)
     msg("year of SAG/SID selected from table:", input$selected_years) #####
 
-    ### this allow to trigger the new tab when the radio button is clicked
+    ### this allow to trigger the "Development over time" tab when the radio button is clicked
     updateNavbarPage(session, "tabset", selected = "Development over time")
     
   })
@@ -230,7 +215,7 @@ output$Advice_Headline1 <- renderUI({
   advice_view_headline()  
 })
 
-#### link to pdf of advice
+#### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
@@ -297,6 +282,7 @@ output$stock_infos2 <- renderUI({
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
 })
 
+##### advice headline (right side of page)
 output$Advice_Headline2 <- renderUI({
   advice_view_headline()  
 })
@@ -310,7 +296,7 @@ output$Advice_Headline2 <- renderUI({
     }
   )
 
-#### link to pdf of advice
+#### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
   ######################### quality of assessment plots
@@ -369,23 +355,13 @@ catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previ
 })
 
 
-#### link for the advice view link button to the full stock record
+#### link for the advice view link button to the full stock record (NOT ACTIVE)
 onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", advice_view_info()$adviceKey,"', '_blank')")))
 
-#### link to pdf of advice
+#### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
-##### Advice and stock infos
-# advice_view_summary <- eventReactive(req(advice_view_info()), {
-#   get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
-# })
-# output$Advice_Summary <- renderUI({
-#   advice_view_summary()  
-# }) 
 
-
-#%>%
-  # bindCache(advice_view_sentence(), advice_view_info())
 ###### info about the stock selected for top of page
 output$stock_infos3 <- renderUI({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
@@ -393,9 +369,6 @@ output$stock_infos3 <- renderUI({
 })
 
 ##### advice headline (right side of page)
-# advice_view_headline <- eventReactive(req(advice_view_info()), {
-#   get_Advice_View_Headline(advice_view_info())
-# })
 output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
 })

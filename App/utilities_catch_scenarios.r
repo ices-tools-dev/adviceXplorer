@@ -101,9 +101,11 @@ return(catch_scenario_advice_sentence)
 
 #' Returns an HTML string containing some basic info on the selected stock and year
 #'
+#' @param CommonName
 #' @param stockcode
-#' @param StockDescription
 #' @param assessmentYear
+#' @param description
+#' 
 #'
 #' @return HTML string
 #'
