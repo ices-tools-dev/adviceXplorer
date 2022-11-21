@@ -104,7 +104,9 @@ theme_ICES_plots <-
             ),
             scale_fill_manual(values = c(
                 "landings" = "#002b5f",
-                "discards" = "#fda500"
+                "discards" = "#fda500",
+                "industrial bycatch" = "#00b29d",
+                "unallocated_Removals" = "#6eb200"
             )),
             limits,
             scale_y_continuous(
@@ -363,16 +365,22 @@ theme_ICES_plots <-
 #'
 #' @export
 #'
-ICES_plot_1 <- function(df, sagSettings) {
+ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
+    
+    sagSettings1 <- sagSettings %>% filter(sagChartKey == 1)
 
-  sagSettings1 <- sagSettings %>% filter(sagChartKey == 1)
+    df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
     df1 <- df %>%
-    filter(Purpose == "Advice") %>%
-    select(Year, landings, discards, units, SAGStamp)
+        filter(Purpose == "Advice") %>%
+        select(Year, landings, discards, units, SAGStamp, ibc, unallocated_Removals) %>%
+        relocate(c(ibc, unallocated_Removals), .after = discards) %>%
+        rename("industrial bycatch" = ibc)
 
-  df1 <- df1 %>%
-    gather(type, count, discards:landings)
+
+
+    df1 <- df1 %>%
+        gather(type, count, landings:unallocated_Removals)
 
     p1 <- df1 %>%
         ggplot(., aes(
@@ -387,23 +395,18 @@ ICES_plot_1 <- function(df, sagSettings) {
                 ), HTML
             )
         )) +
-    geom_bar(position = "stack", stat = "identity")
+        geom_bar(position = "stack", stat = "identity")
 
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
 
-  p1 <-
-    p1 +
-    theme_ICES_plots(
-      type = "catches", df,
-      title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-      ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
-      ###### this part below is not working
-      ymax = sagSettings1 %>%
-        filter(settingKey == 6) %>%
-        pull(settingValue) %>%
-        as.numeric() %>%
-        nullifempty()
-    )
+    p1 <-
+        p1 +
+        theme_ICES_plots(
+            type = "catches", df,
+            title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+            ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
+        
+        )
 
 
     # converting
@@ -419,7 +422,7 @@ ICES_plot_1 <- function(df, sagSettings) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1359,7 +1362,6 @@ catch_scenarios_plot2 <- function(tmp, df) {
     SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
 
-    tmp <- arrange(tmp, F)
 
     labels <- sprintf(
             "Catch Scenario: %s", tmp$cat

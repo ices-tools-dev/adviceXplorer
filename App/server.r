@@ -13,185 +13,19 @@ options(icesSAG.use_token = FALSE)
 
 
 
+
 ############# Start server function ################
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
 
-
-########## Help functions / page guided tour
-observe({
-        click("help_tab1")
-        
-      })
-
-  helptext <- reactive(
-    help_datatable()
-  )
-  
-  observeEvent(
-    eventExpr = input$help_tab1,
-    handlerExpr = {
-      introjs(session, 
-              options = list(
-                "showBullets"="false", 
-                "showProgress"="true", 
-                "showStepNumbers"="false",
-                "nextLabel"="Next",
-                "prevLabel"="Prev",
-                "skipLabel"="Skip",
-                "setDontShowAgain" = "true",
-                steps=helptext()[tab == "help_tab1"]
-              )
-      )
-    }
-  )
-  observeEvent(
-    eventExpr = input$help_tab2,
-    handlerExpr = {
-      introjs(session, 
-              options = list(
-                "showBullets"="false", 
-                "showProgress"="true", 
-                "showStepNumbers"="false",
-                "nextLabel"="Next",
-                "prevLabel"="Prev",
-                "skipLabel"="Skip",
-                steps=helptext()[tab == "help_tab2"]
-              )
-      )
-    }
-  )
-  observeEvent(
-    eventExpr = input$help_tab3,
-    handlerExpr = {
-      introjs(session, 
-              options = list(
-                "showBullets"="false", 
-                "showProgress"="true", 
-                "showStepNumbers"="false",
-                "nextLabel"="Next",
-                "prevLabel"="Prev",
-                "skipLabel"="Skip",
-                steps=helptext()[tab == "help_tab3"]
-              )
-      )
-    }
-  )
-  observeEvent(
-    eventExpr = input$help_tab4,
-    handlerExpr = {
-      introjs(session, 
-              options = list(
-                "showBullets"="false", 
-                "showProgress"="true", 
-                "showStepNumbers"="false",
-                "nextLabel"="Next",
-                "prevLabel"="Prev",
-                "skipLabel"="Skip",
-                steps=helptext()[tab == "help_tab4"]
-              )
-      )
-    }
-  )
-  observeEvent(
-    eventExpr = input$help_tab5,
-    handlerExpr = {
-      introjs(session, 
-              options = list(
-                "showBullets"="false", 
-                "showProgress"="true", 
-                "showStepNumbers"="false",
-                "nextLabel"="Next",
-                "prevLabel"="Prev",
-                "skipLabel"="Skip",
-                steps=helptext()[tab == "help_tab5"]
-              )
-      )
-    }
-  )
-
-
+  help_server(input, output, session)
 
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
+  map_panel_server(input, output, session)
   
-  ######################### Map panel
-
-  # Render Map 1
-  output$map1 <- renderLeaflet({
-    map_ecoregion(shape_eco, eu_shape)
-  }) # END RENDER LEAFLET map1
-
-  ############################################################### END of MAPS
-
-  ############################## Interactive section Ecoregions ######################
-  # define leaflet proxy for Ecoregion map
-  proxy_1 <- leafletProxy("map1")
-
-  # create empty vector to hold all click ids
-  selected_1 <- reactiveValues(groups = vector())
-
-  # find index
-  observeEvent(input$map1_shape_click, {
-    
-    ## calculate index of ecoregion selected in shape_eco
-    idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
-    
-    if (input$map1_shape_click$group == "Eco_regions") {
-      selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
-      
-      proxy_1 %>%
-        showGroup(group = input$map1_shape_click$id) 
-       
-      
-      ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-      runjs("$(tab).removeClass('disabled');")#%>%
-        
-
-      # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
-    } else {
-      selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
-      proxy_1 %>%
-        hideGroup(group = input$map1_shape_click$group) #%>%
-        
-        
-    }
-    updateSelectizeInput(session,
-      inputId = "selected_locations",
-      label = "ICES Ecoregions",
-      choices = shape_eco$Ecoregion,
-      selected = selected_1$groups
-    )
-    
-  })
-
-  observeEvent(input$selected_locations,
-    {
-      removed_via_selectInput <- setdiff(selected_1$groups, input$selected_locations)
-      added_via_selectInput <- setdiff(input$selected_locations, selected_1$groups)
-
-      if (length(removed_via_selectInput) > 0) {
-        selected_1$groups <- input$selected_locations
-        
-        proxy_1 %>% hideGroup(group = removed_via_selectInput)
-      }
-
-      if (length(added_via_selectInput) > 0) {
-        selected_1$groups <- input$selected_locations
-        
-        proxy_1 %>% showGroup(group = added_via_selectInput)
-        
-        ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-        runjs("$(tab).removeClass('disabled');")
-      }
-    },
-    ignoreNULL = FALSE
-  )
-
-  ########################################################### end Maps reactive part
-
   ###########################################################  function to use the input from the maps and the sid filtering
 
 
@@ -199,7 +33,7 @@ observe({
 
   updateSelectizeInput(session,
     inputId = "selected_years",
-    label = "Year",
+    label = "Assessment Year",
     choices = Years$Year,
     selected = 2021
   )
@@ -209,7 +43,8 @@ observe({
     req(input$selected_locations, input$selected_years)
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
-    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
+    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
+    stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
 
     ### reshuffle some columns    
     stock_list_long <- stock_list_long %>%
@@ -229,20 +64,19 @@ observe({
     stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
     stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
     stock_list_long <- stock_list_long %>%
-      relocate(Select, .before = StockKeyLabel)
+      relocate(Select, .before = StockKeyLabel) %>% 
+      dplyr::mutate(stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1])) %>% 
+      dplyr::mutate(stock_location = parse_location_from_stock_description(stock_description))
     
   })
 
   
   res_mod <- callModule(
     module = selectizeGroupServer,
-    id = "my-filters",
-    # data = separate_ecoregions(stock_list_all, selected_1$groups),
+    id = "my-filters",    
     data = eco_filter,
     vars = c(
-      "StockKeyLabel", "SpeciesCommonName",
-      "ExpertGroup", "DataCategory", "YearOfLastAssessment",
-      "AdviceCategory"
+      "StockKeyLabel", "SpeciesCommonName"
     )
   )
   
@@ -255,34 +89,34 @@ observe({
 
   output$tbl <- DT::renderDT(
     
-    res_modo <- res_mod() %>% rename("Select" = Select,
+    res_modo <- res_mod() %>% select("Select",
+                                      "StockKeyLabel",
+                                      "EcoRegion",
+                                      "icon",
+                                      "SpeciesCommonName",
+                                      "stock_location") %>% 
+                           rename("Select" = Select,
                                       "Stock code" = StockKeyLabel,
                                       "Ecoregion" = EcoRegion,
                                       " " = icon,
                                       "Common name" = SpeciesCommonName,
-                                      "Expert group" = group_url,
-                                      "Data category" = DataCategory,
-                                      "Year of last assessment" = YearOfLastAssessment,
-                                      "Advice category" = AdviceCategory,
-                                      "Advice doi" = doi,
-                                      "Fisheries Overview doi" = FO_doi,
-                                      "Assessment data" = SAG_url,
-                                      "GIS data" = visa_url),
+                                      "Location" = stock_location),
+                                      
     
     escape = FALSE,
     selection = 'none', 
     server = FALSE,    
-    caption = "Select the fish stock of interest and then click on one of panels on the right",
+    caption = HTML("<b><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
       pageLength = 300,
       columnDefs = list(
-        list(visible = FALSE, targets = c(0, 6, 13)),
-        list(className = "dt-center", targets = c(1, 4, 7, 11, 12, 14, 15))
+        list(visible = FALSE, targets = c(0)),
+        list(className = "dt-center", targets = c(1, 4))
       )
     ),
-    callback = JS(callback1(res_mod()))
+    callback = JS(callback)
 )
   
   
@@ -291,18 +125,18 @@ observe({
   observeEvent(input$rdbtn, {
     
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
-    
+        
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
-
-    ###
 
     query$query_from_table <- TRUE
 
     msg("stock selected from table:", filtered_row$StockKeyLabel)
     msg("year of SAG/SID selected from table:", input$selected_years) #####
+
+    ### this allow to trigger the "Development over time" tab when the radio button is clicked
+    updateNavbarPage(session, "tabset", selected = "Development over time")
+    
   })
-
-
 
   observe({
     # read url string
@@ -342,15 +176,46 @@ observe({
   })
 
   sagSettings <- eventReactive(req(query$assessmentkey),{
-    # options(icesSAG.use_token = TRUE)
-    # icesSAG::getSAGSettingsForAStock(query$assessmentkey)
     getSAGSettings(query$assessmentkey)
   })
 
-###### info about the stock selected for top of page
-output$stock_infos <- renderUI({
-  get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
+######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
+additional_LandingData <- eventReactive((req(query$assessmentkey)),{
+  out <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", query$assessmentkey)
+        )
+    )  
+  data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
+
 })
+
+
+
+##### get link to library pdf advice
+advice_doi <- eventReactive((req(query$assessmentkey)),{
+  
+  get_advice_doi(query$assessmentkey)
+
+})
+
+###### info about the stock selected for top of page
+output$stock_infos1 <- renderUI({
+  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
+})
+
+##### advice headline (right side of page)
+advice_view_headline <- eventReactive(req(advice_view_info()), {
+  get_Advice_View_Headline(advice_view_info())
+})
+output$Advice_Headline1 <- renderUI({
+  advice_view_headline()  
+})
+
+#### link to pdf of advice (NOT ACTIVE)
+onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
+
 
 ##### button to download SAG data
 output$download_SAG_Data <- downloadHandler(
@@ -365,10 +230,9 @@ output$download_SAG_Data <- downloadHandler(
 ######################### Stock development over time plots
 
   output$plot1 <- renderPlotly(
-    ICES_plot_1(SAG_data_reactive(), sagSettings())
+    ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
-  ) # %>%
-  # bindCache(SAG_data_reactive(), SAG_stamp(), cache = "session")
+  )
 
   output$plot2 <- renderPlotly({
     validate(
@@ -397,23 +261,26 @@ output$download_SAG_Data <- downloadHandler(
   advice_action_quality <- eventReactive(req(query$assessmentkey,query$year), {
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
-    query$year <- info$AssessmentYear ####
+    query$year <- info$AssessmentYear 
 
     stock_name <- query$stockkeylabel
-    # msg("downloading:", stock_name)
 
-    year <- query$year #####
-    # msg("downloading:", year)
-    #   # Dowload the data
+    year <- query$year 
+    
     quality_assessment_data_local(stock_name, year)
   })
 
 
 ###### info about the stock selected for top of page
-  output$stock_infos2 <- renderUI({
-    get_Stock_info(SAG_data_reactive()$StockKeyLabel[1], SAG_data_reactive()$StockDescription[1], SAG_data_reactive()$AssessmentYear[1])
-  })
+output$stock_infos2 <- renderUI({
+  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
+})
 
+##### advice headline (right side of page)
+output$Advice_Headline2 <- renderUI({
+  advice_view_headline()  
+})
 ##### button to download SAG data for quality of assessemnt
   output$download_SAG_Quality_Data <- downloadHandler(
     filename = function() {
@@ -423,6 +290,9 @@ output$download_SAG_Data <- downloadHandler(
       write.csv(advice_action_quality(), file)
     }
   )
+
+#### link to pdf of advice (NOT ACTIVE)
+onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
@@ -470,102 +340,127 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 ##### catch scenarios table previous year in percentages (for radial plot)
 catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
   standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
-  # scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year, catch_scenario_table())
+  
 })
 
 ##### catch scenario table scaled with the values of previous advice to get percentage of change
 catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
-  # standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  
   scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
 })
 
 
-#### link for the advice view link button to the full stock record
+#### link for the advice view link button to the full stock record (NOT ACTIVE)
 onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", advice_view_info()$adviceKey,"', '_blank')")))
 
+#### link to pdf of advice (NOT ACTIVE)
+onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
-##### Advice and stock infos
-advice_view_summary <- eventReactive(req(advice_view_info()), {
-  get_Advice_View_Summary(advice_view_info(), SAG_data_reactive()$StockDescription[1])
+###### info about the stock selected for top of page
+output$stock_infos3 <- renderUI({
+  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
 })
-output$Advice_Summary <- renderUI({
-  advice_view_summary()  
-}) #%>%
-  # bindCache(advice_view_sentence(), advice_view_info())
-
 
 ##### advice headline (right side of page)
-advice_view_headline <- eventReactive(req(advice_view_info()), {
-  get_Advice_View_Headline(advice_view_info())
-})
-output$Advice_Headline <- renderUI({
+output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
 })
 
 
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({
-  # validate( this does not work cause the error is comeing from the function Warning: Error in UseMethod: no applicable method for 'pivot_wider' applied to an object of class "list" L 177
-  #     need(catch_scenario_table()$SSB != "", "Data not available for this stock")
-      
-  #   )
-  catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
-}) #%>%
-  # bindCache(catch_scenario_table(), SAG_data_reactive())
+  
+  validate(
+      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+    )
+  tmp <- arrange(catch_scenario_table(), F)
+  catch_scenarios_plot2(tmp, SAG_data_reactive())
+}) 
 
-
-
-########## Historical catches panel
-test_table <- eventReactive(catch_scenario_table(),{
+########## Historical catches panel (preparation of data)
+test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table(), query$stockkeylabel,query$year)
+  validate(
+    need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+  )
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table(), query$stockkeylabel, query$year)
 })
-output$catch_scenarios <- renderUI({
-  # req(query$stockkeylabel, query$year, catch_scenario_table())
-  # df_hist_catch <- wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel,query$year),catch_scenario_table())
-  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+
+########## Historical catches panel (Definition of basisi of advice)
+Basis <- eventReactive(catch_scenario_table_percentages(),{
+  validate(
+    need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
+  )
+  catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice", ]
+})
+
+########## Historical catches panel (Selection panel)
+output$catch_scenarios <- renderUI({  
+  
+  if (!is_empty(test_table())) {
   selectizeInput(
-        inputId = "catch_choice",
-        label = "Select a scenario",
-        choices = unique(test_table()$cat),
-        selected = c("Historical Catches",Basis$cat),
-        multiple = TRUE
-      )
+    inputId = "catch_choice",
+    label = "Select a scenario",
+    choices = unique(test_table()$cat),
+    selected = c("Historical Catches", Basis()$cat),
+    multiple = TRUE
+  )
+  } else {
+    HTML("No data available")
+  }
 })
+
+########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
-    TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
+  
+  TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
 
-############ Radial plot panel
+############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+  if (!is_empty(catch_scenario_table_percentages())) {
+
     selectizeInput(
-        inputId = "catch_choice_radial",
-        label = "Select a scenario",
-        choices = unique(catch_scenario_table_percentages()$cat),
-        selected = c(Basis$cat),
-        multiple = TRUE
-      )
+      inputId = "catch_choice_radial",
+      label = "Select a scenario",
+      choices = unique(catch_scenario_table_percentages()$cat),
+      selected = c(Basis()$cat),
+      multiple = TRUE
+    )
+  } else {
+    HTML("No data available")
+  }
 })
+
+############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
+ 
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 
-############ lollipop plot panel
+############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  Basis <- catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice",]
+  if (!is_empty(catch_scenario_table_percentages())) {
+    
     selectizeInput(
-        inputId = "indicator_choice_lollipop",
-        label = "Select an indicator",
-        choices = names(catch_scenario_table_percentages()),
-        selected = c("F"),
-        multiple = TRUE
-      )
+      inputId = "indicator_choice_lollipop",
+      label = "Select an indicator",
+      choices = names(catch_scenario_table_percentages()),
+      selected = c("F"),
+      multiple = TRUE
+    )
+  } else {
+    HTML("No data available")
+  }
 })
+
+############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
+ 
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
@@ -585,9 +480,6 @@ observeEvent(input$preview, {
             )
   })
 
-# addTooltip(session=session,id="help_tab5",title="Link to Advice View record") # not working
-
-
 
 ############### Catch scenario plot
 catch_table_names <- eventReactive(catch_scenario_table(),{
@@ -596,19 +488,25 @@ catch_table_names <- eventReactive(catch_scenario_table(),{
 
 })
 
-output$table <- DT::renderDT(
-  tab <- catch_scenario_table() %>%
+catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
+  validate(
+      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+    )
+    catch_scenario_table() %>%
     arrange(F) %>%
     rename_all(funs(catch_table_names())) %>%
-    rename("Basis" = cS_Label, " " = cS_Purpose),
+    rename("Basis" = cS_Label, " " = cS_Purpose)
+})
+
+output$table <- DT::renderDT(
  
-  # arrange(catch_scenario_table(), F) %>% select(-Year),
+catch_scenario_table_collated(),
+ 
   selection = "single",
   class = "display",
   caption = "Subset of catch scenario table",
   rownames = FALSE,
   options = list(
-    # order = list("cS_Purpose", "asc"),
     dom = "Bfrtip",
     pageLength = 100,
     buttons =
@@ -649,7 +547,13 @@ selected_scenario <- reactive({
 footnotes <- eventReactive(req(advice_view_info()), {
   get_catch_scenario_notes(advice_view_info())
 })
-output$footnotes <-renderUI(footnotes())
+output$footnotes <-renderUI({
+  validate(
+      need(!is_empty(footnotes()), " ")
+    )
+  
+  footnotes()
+  })
 
 
 ##### Last page text, citation, data usage, feedback etcc

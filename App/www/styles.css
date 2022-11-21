@@ -16,7 +16,13 @@ body {
 
 .leaflet-container {
     background: #ffffff; 
+    border-color: #000000;
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: #dddddd;
     }
+
+#tbl {outline:#dddddd solid 1px;}
 
 .navbar-default {
 
