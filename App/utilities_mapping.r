@@ -159,7 +159,7 @@ map_panel_server <- function(input, output, session) {
       
       
       ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-      # runjs("$(tab).removeClass('disabled');")#%>%
+      runjs("$(tab).removeClass('disabled');")#%>%
       
       
       # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
@@ -196,7 +196,7 @@ map_panel_server <- function(input, output, session) {
                    proxy_1 %>% showGroup(group = added_via_selectInput)
                    
                    ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-                  #  runjs("$(tab).removeClass('disabled');")
+                   runjs("$(tab).removeClass('disabled');")
                  }
                },
                ignoreNULL = FALSE

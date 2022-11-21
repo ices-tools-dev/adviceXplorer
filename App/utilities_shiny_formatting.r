@@ -69,7 +69,7 @@ stock_selection_left_side <- function() {
         label = "ICES Ecoregions",
         choices = sort(shape_eco$Ecoregion),
         selected = "Greater North Sea",
-        multiple = TRUE,
+        multiple = FALSE,
         width = "100%",
         options = list(
           placeholder = "Select Ecoregion(s)"
