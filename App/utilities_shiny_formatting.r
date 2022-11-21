@@ -407,10 +407,6 @@ catch_scenarios_left_panel <- function() {
 catch_scenarios_right_panel <- function(){
   sidebarPanel(
     width = 6, style = "height: 70vh; overflow-y: auto;",
-    # panel(
-    #   withSpinner(htmlOutput("Advice_Headline", height = "10%", width = "100%"))
-    
-    # ),
     
     panel(
       title = "Catch scenario table",
