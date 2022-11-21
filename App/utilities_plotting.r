@@ -405,12 +405,7 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
             type = "catches", df,
             title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
-            ###### this part below is not working
-            ymax = sagSettings1 %>%
-                filter(settingKey == 6) %>%
-                pull(settingValue) %>%
-                as.numeric() %>%
-                nullifempty()
+        
         )
 
 
