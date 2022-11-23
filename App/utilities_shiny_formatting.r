@@ -374,10 +374,10 @@ sag_plots_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
     panel(
-      title = "Headline",
+      # title = "Headline",
       withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%"))
-      ),
-    bsTooltip("Advice_Headline1", placement = "bottom", title = 'Click "Headline Advice" to view Advice Sheet in new window')
+      )
+    # bsTooltip("Advice_Headline1", placement = "bottom", title = 'Click "Headline Advice" to view Advice Sheet in new window')
   )
 }
 

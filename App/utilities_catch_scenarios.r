@@ -91,17 +91,35 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
+# get_Advice_View_Headline <- function(catch_scenario_list, session) {
+
+#   catch_scenario_advice_sentence <-  tags$div(
+#     tags$a(href=get_advice_doi(catch_scenario_list$assessmentKey),
+#            HTML(paste0("<b><i><font size=", 4, ">", 
+#                        "Headline advice ",
+#                        "</font></b></i><i class='fa-solid fa-up-right-from-square'></i><br/>"))),
+#     HTML("<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>")
+#     )
+  
+  
+# return(catch_scenario_advice_sentence)
+# }
+
+
 get_Advice_View_Headline <- function(catch_scenario_list, session) {
 
-  catch_scenario_advice_sentence <-  tags$div(
-    tags$a(href=get_advice_doi(catch_scenario_list$assessmentKey),
-           HTML(paste0("<b><i><font size=", 4, ">", 
-                       "Headline advice ",
-                       "</font></b></i><i class='fa-solid fa-up-right-from-square'></i><br/>"))),
-    HTML("<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>")
+ catch_scenario_advice_sentence <- HTML(
+    paste0("<span class='hovertext' data-hover='Click here to access Advice Sheet in new window'>",
+      "<a href='", get_advice_doi(catch_scenario_list$assessmentKey),"' target='_blank'>",
+    "<b><i><font size=4> Headline advice </font></b></i><i class='fa-solid fa-up-right-from-square'></i></a></span>",
+    "<br/>",
+
+          "<font size=3>", catch_scenario_list$adviceSentence,"</font>"
+
     )
+  )
   
-  
+
 return(catch_scenario_advice_sentence)
 }
 
