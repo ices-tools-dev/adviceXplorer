@@ -493,14 +493,14 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
       need(!is_empty(catch_scenario_table()), "Data not available for this stock")
     )
     catch_scenario_table() %>%
-    arrange(F) %>%
+    arrange(cS_Purpose) %>%
     rename_all(funs(catch_table_names())) %>%
     rename("Basis" = cS_Label, " " = cS_Purpose)
 })
 
+
 output$table <- DT::renderDT(
- 
-catch_scenario_table_collated(),
+  catch_scenario_table_collated(),
  
   selection = "single",
   class = "display",
@@ -518,29 +518,8 @@ catch_scenario_table_collated(),
     columnDefs = list(
       list(visible = FALSE, targets = c(0))
     )
-  ),
-  callback = JS("table.on('mouseover', 'td', function() {
-                              $(this).parent().addClass('hover')
-                              });
-                              table.on('mouseout', 'td', function() {
-                              $(this).parent().removeClass('hover')
-                              });
-                         return table;
-                          ")
+  )
 )
-
-##### connection between F/SSB plot points and table rows 
-table_proxy = dataTableProxy('table')
-
-selected_scenario <- reactive({
-      if (is.null(event_data("plotly_hover", source = "ranking")))
-        return(NULL)
-      event_data("plotly_hover", source = "ranking")
-      })
-
-    observe({
-      selectRows(table_proxy, selected=(selected_scenario()[[2]]+1))
-    })
 
 
 ##### footnotes of catch scenario table
