@@ -132,11 +132,27 @@ navbarPage(
         )
         
     ),
-    tabPanel(
-        "Resources", style = "max-height: 90vh; overflow-y: auto;",
-        htmlOutput("citation")
-        
-    ),
+    navbarMenu(
+            "Resources",
+            # style = "max-height: 90vh; overflow-y: auto;",
+            tabPanel(
+                "Contact & Feedback",
+                htmlOutput("contact_feedback")
+            ),
+            tabPanel(
+                "Data sources",
+                htmlOutput("data_sources")
+            ),
+            tabPanel(
+                "Data Disclaimer & Policy",
+                htmlOutput("data_disclaimer_policy")
+            ),
+            tabPanel(
+                "Citation",
+                htmlOutput("citation")
+            )
+        ),
+    
     ###### extra tags, css, JS etc
     
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
