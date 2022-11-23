@@ -112,7 +112,7 @@ server <- function(input, output, session) {
       dom = "Bfrtip",
       pageLength = 300,
       columnDefs = list(
-        list(visible = FALSE, targets = c(0)),
+        list(visible = FALSE, targets = c(0,3)),
         list(className = "dt-center", targets = c(1, 4))
       )
     ),
