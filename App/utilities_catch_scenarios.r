@@ -69,12 +69,12 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
   return(catch_scenario_advice_sentence)
 } 
 
-#' Returns an HTML string containingthe headline advice
+#' Returns an HTML string containing the headline advice and a link to the advice sheet
 #'
 #' @param catch_scenario_list
 
 #'
-#' @return HTML string
+#' @return HTML string with link
 #'
 #' @note
 #' Can add some helpful information here
@@ -91,10 +91,17 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
-get_Advice_View_Headline <- function(catch_scenario_list) {
-  catch_scenario_advice_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Headline advice:","</font></b></i><br/>",
-                                              "<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>"))
+get_Advice_View_Headline <- function(catch_scenario_list, session) {
 
+  catch_scenario_advice_sentence <-  tags$div(
+    tags$a(href=get_advice_doi(catch_scenario_list$assessmentKey),
+           HTML(paste0("<b><i><font size=", 4, ">", 
+                       "Headline advice ",
+                       "</font></b></i><i class='fa-solid fa-up-right-from-square'></i><br/>"))),
+    HTML("<font size=", 3, ">",catch_scenario_list$adviceSentence,"</font>")
+    )
+  
+  
 return(catch_scenario_advice_sentence)
 }
 
