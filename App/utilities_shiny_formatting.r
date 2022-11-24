@@ -374,7 +374,6 @@ sag_plots_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
     panel(
-      title = "Headline",
       withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%"))
       )
   )
@@ -437,7 +436,6 @@ qualAssess_plots_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
     panel(
-      title = "Headline",
       withSpinner(htmlOutput("Advice_Headline2", height = "100%", width = "100%"))
       )
   )
@@ -500,7 +498,6 @@ catch_scenario_stock_info_center_panel <- function() {
   wellPanel(
     style = "height: 22vh; overflow-y: auto; white-space: normal;",
     panel(
-      title = "Headline",
       withSpinner(htmlOutput("Advice_Headline3", height = "100%", width = "100%"))
       )
   )
