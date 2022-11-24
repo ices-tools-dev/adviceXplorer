@@ -557,7 +557,8 @@ output$footnotes <-renderUI({
 
 ##### Last page text, citation, data usage, feedback etcc
 output$contact_feedback <- renderUI({
-  make_contact_and_feedback()
+  make_app_citation()
+  # make_contact_and_feedback()
   
 })
 ##### Last page text, citation, data usage, feedback etcc
