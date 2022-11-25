@@ -23,16 +23,16 @@
 #' 
 #' 
 map_ecoregion <- function(shape_eco, eu_shape) {
-    minZoom <- 0
-    maxZoom <- 13
-    resolutions <- 2 * (2^(maxZoom:minZoom))
+    minZoom <- 1
+    maxZoom <- 14
+    resolutions <- 1.8 * (2^(maxZoom:minZoom))
     crs_laea <- leafletCRS(
         crsClass = "L.Proj.CRS", code = "EPSG:3035",
         proj4def = "+proj=laea +x_0=0 +y_0=0 +lon_0= -1.235660 +lat_0=60.346958",
         resolutions = resolutions
     )
 
-    leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = maxZoom)) %>%
+    leaflet(options = leafletOptions(crs = crs_laea, minZoom = minZoom, maxZoom = 3)) %>%
         # addTiles() %>%
         addPolygons(
             # data = st_set_precision(eu_shape, precision=10^2),
@@ -66,7 +66,8 @@ map_ecoregion <- function(shape_eco, eu_shape) {
             layerId = ~OBJECTID,
             group = ~Ecoregion
         ) %>%
-        setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>%
+        setView(lng = -1.235660, lat = 60.346958, zoom = 0.5) %>% 
+        #fitBounds(lng1 = -5, lat1 = 35, lng2=40, lat2 = 90) %>%
         hideGroup(group = shape_eco$Ecoregion)
 }
 
