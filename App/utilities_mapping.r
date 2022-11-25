@@ -23,7 +23,7 @@
 #' 
 #' 
 map_ecoregion <- function(shape_eco, eu_shape) {
-    minZoom <- 1
+    minZoom <- 0.5
     maxZoom <- 14
     resolutions <- 1.8 * (2^(maxZoom:minZoom))
     crs_laea <- leafletCRS(
