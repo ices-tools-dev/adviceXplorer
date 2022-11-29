@@ -154,7 +154,7 @@ navbarPage(
         ),
     
     ###### extra tags, css, JS etc
-    
+    tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
     '
