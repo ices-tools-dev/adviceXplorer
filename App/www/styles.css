@@ -77,7 +77,7 @@ input[type=radio] {
   border: 2px solid #999;
   transition: 0.2s all linear;
   margin-right: 5px;
-
+  transition: 1s opacity 200ms;
   /*position: relative;
   top: 4px;
 
