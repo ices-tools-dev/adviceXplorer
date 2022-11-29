@@ -1,36 +1,4 @@
-#' Creates a date that should represent the last date the app was updated. (in development)
-#' 
-#' @param null
-#'
-#' @return HTML string
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' make_app_update_date()
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-make_app_update_date <- function() {
-  string_update <- HTML(
-    paste0("<font size= 2><i>App last update: ", Sys.Date(),"</i></font>")
-  )
-
-}
-
-
-
-
-#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form),
-#' Data Sources, Data disclaimer, Citation, Data policy and Resources
+#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form)
 #' 
 #' @param null
 #'
@@ -43,7 +11,7 @@ make_app_update_date <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' make_app_citation()
+#' make_contact_and_feedback()
 #' }
 #'
 #' @references
@@ -69,8 +37,7 @@ make_contact_and_feedback <- function() {
 }
 
 
-#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form),
-#' Data Sources, Data disclaimer, Citation, Data policy and Resources
+#'This function create an HTML output for the Resources tab of the app. It includes the Data Sources
 #' 
 #' @param null
 #'
@@ -83,7 +50,7 @@ make_contact_and_feedback <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' make_app_citation()
+#' make_data_sources()
 #' }
 #'
 #' @references
@@ -109,8 +76,7 @@ make_data_sources <- function() {
   return(string_citation)
 }
 
-#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form),
-#' Data Sources, Data disclaimer, Citation, Data policy and Resources
+#'This function create an HTML output for the Resources tab of the app. It includes the Data disclaimer and Data policy
 #' 
 #' @param null
 #'
@@ -123,7 +89,7 @@ make_data_sources <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' make_app_citation()
+#' make_data_disclaimer_and_policy()
 #' }
 #'
 #' @references
@@ -154,8 +120,7 @@ make_data_disclaimer_and_policy <- function() {
   return(string_citation)
 }
 
-#'This function create an HTML output for the Resources tab of the app. It includes the Contact & Feedback (microsoft form),
-#' Data Sources, Data disclaimer, Citation, Data policy and Resources
+#'This function create an HTML output for the Resources tab of the app. It includes the Citation
 #' 
 #' @param null
 #'
@@ -168,7 +133,7 @@ make_data_disclaimer_and_policy <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' make_app_citation()
+#' make_citation()
 #' }
 #'
 #' @references

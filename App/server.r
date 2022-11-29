@@ -80,11 +80,6 @@ server <- function(input, output, session) {
     )
   )
   
-
-  #### last update of the app 
-  output$app_last_update <- renderUI({
-    make_app_update_date()
-  })
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(
