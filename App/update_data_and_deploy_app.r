@@ -10,10 +10,11 @@ library(icesFO)
 library(data.table)
 library(rsconnect)
 
+setwd("./App")
 
-source("./App/utilities_SID_data.r")
-source("./App/update_SAG_data.r")
-source("./App/update_SID_data.r")
+source("utilities_SID_data.r")
+source("update_SAG_data.r")
+source("update_SID_data.r")
 
 
 
