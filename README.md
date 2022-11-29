@@ -22,3 +22,4 @@ Source for info icon: <a href="https://www.flaticon.com/free-icons/info" title="
 Source for calendar icon: <a href="https://www.flaticon.com/free-icons/calendar" title="calendar icons">Calendar icons created by Freepik - Flaticon</a>
 Source for link icon:<a href="https://www.flaticon.com/free-icons/link" title="link icons">Link icons created by Uniconlabs - Flaticon</a>
 Source for download icon: <a href="https://www.flaticon.com/free-icons/download" title="download icons">Download icons created by kosonicon - Flaticon</a>
+Source for pdf icon:<a href="https://www.flaticon.com/free-icons/pdf" title="pdf icons">Pdf icons created by Freepik - Flaticon</a>

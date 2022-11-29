@@ -189,3 +189,97 @@ help_datatable <- function() {
         )
     )
 }
+
+help_server <- function(input, output, session) {
+  observe({
+    click("help_tab1")
+    
+  })
+  
+  helptext <- reactive(
+    help_datatable()
+  )
+  
+  observeEvent(
+    eventExpr = input$help_tab1,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                "setDontShowAgain" = "true",
+                steps=helptext()[tab == "help_tab1"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab2,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab2"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab3,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab3"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab4,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab4"]
+              )
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$help_tab5,
+    handlerExpr = {
+      introjs(session, 
+              options = list(
+                "showBullets"="false", 
+                "showProgress"="true", 
+                "showStepNumbers"="false",
+                "nextLabel"="Next",
+                "prevLabel"="Prev",
+                "skipLabel"="Skip",
+                steps=helptext()[tab == "help_tab5"]
+              )
+      )
+    }
+  )
+  
+}
