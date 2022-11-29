@@ -18,8 +18,9 @@
 #' @export
 #' 
 load_shape_europe <- function(){
-    eu_shape <- st_read(dsn = "Data/shape_EU_simplified", 
-        layer = "shape_EU_simplified")
+  
+    eu_shape <- st_read(dsn = "Data", 
+        layer = "world_map_simplified")
     return(eu_shape)
 }
 
