@@ -1,44 +1,40 @@
 ############# Libraries ############
-library(glue)
-library(sf)
-library(leaflet)
-library(fisheryO)
-library(DT)
-library(tidyverse)
-library(icesVocab)
-library(tm)
-library(shinyWidgets)
-library(shinyjs)
-library(reshape2)
-# library(scales)
-# library(ggradar)
-library(icesFO)
-library(icesTAF)
-# library(timevis)
-library(rvest)
-library(gsubfn)
-library(stringr)
-library(htmlwidgets)
-library(dplyr)
-library(ggplot2)
-library(dygraphs)
-library(htmltools)
-library(widgetframe)
-library(icesSAG)
-library(plotly)
-library(shinythemes)
-library(shinyalert)
-# library(readxl)
 library(data.table)
-library(RColorBrewer)
-library(shinycssloaders)
-library(tidyr)
-library(rintrojs)
-library(scales)
+library(dplyr)
+library(dygraphs)
+library(DT)
+library(fisheryO)
+library(htmltools)
+library(htmlwidgets)
+library(ggplot2)
 library(ggradar)
-library(shinyBS)
 library(ggtext)
-
+library(glue)
+library(gsubfn)
+library(icesFO)
+library(icesSAG)
+library(icesTAF)
+library(icesVocab)
+library(leaflet)
+library(plotly)
+library(reshape2)
+library(rintrojs)
+library(RColorBrewer)
+library(RCurl)
+library(rvest)
+library(scales)
+library(sf)
+library(shinyalert)
+library(shinyBS)
+library(shinycssloaders)
+library(shinyjs)
+library(shinythemes)
+library(shinyWidgets)
+library(stringr)
+library(tidyr)
+library(tidyverse)
+library(tm)
+library(widgetframe)
 
 
 
@@ -58,10 +54,7 @@ source("utilities_calendar.r")
 source("utilities_resources.r")
 
 
-myDownloadButton <- function(outputId){
-  tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
-         target = "_blank", download = NA, NULL, style = "width: 40px; height: 40px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
-}
+
 
 title_html <- tags$a(
     href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
@@ -77,6 +70,8 @@ tagList(
     introjsUI(),    
     tags$head(tags$script(type="text/javascript", src = "code.js")),
 
+
+
 navbarPage(
     
     # tab title
@@ -85,242 +80,83 @@ navbarPage(
     fluid = TRUE,
     # navbar title
     title = title_html,
-    # actionButton("help_tab1", "About this Page",style = "position: absolute; right: 100px; margin-top: -35px"),
-    
-
-    
-    # tags$head(
-    #     tags$style
-    #     (HTML
-    #                      ("
-    #                      #table tr:hover {
-	#                           background-color: rgba(240, 136, 33, 0.4) !important;
-    #                         }
-    #                         .leaflet-container {
-    #                              background: #ffffff; 
-    #                              }
-    #                         "
-    #                         )
-    #                         )
-    #                         ),
-
-
-#     tags$head(
-#     tags$style(HTML(".leaflet-container { background: #f00; }"))
-#   )
-    # tags$head(tags$style(HTML(
-    #     "img.small-img {
-    #     max-width: 75px;
-    #     }"))),
-    #tabsetPanel(#id = "tabset",
     tabPanel(
-        "Data Filtering",
-        #id = "data_filtering",
+        "Stock Selection",
         sidebarLayout(
-            sidebarPanel = maps_panels,
-            mainPanel = selectize_panel
+            sidebarPanel = stock_selection_left_side(),
+            mainPanel = stock_selection_right_side()
             
         )
-        # )
-    ),
-    
-    tabPanel(
-        "Stock Selection", style = "max-height: 90vh; overflow-y: auto; margin: auto;",
-        tipify(
-            actionButton(inputId = "help_tab2", label = NULL, style = "position: sticky; top: 0%; right:15%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-            title = "Click here for help", placement = "bottom", trigger = "hover"),
-        DTOutput("tbl")#,
-                # useShinyjs(),
-                # inlineCSS(list("table1" = "font-size: 15px"))
     ),
 
-
-    # tabPanel(
-    #     "Stock development over time",
-    #     sidebarLayout(
-    #         sidebarPanel = allocations_infopanel,
-    #         mainPanel = allocations_plotspanel
-    #     )
-    #     # includeMarkdown("Instructions.Rmd")
-    # ),
-    
 ########################################## New version of SAG plots ############################
     navbarMenu(
             "Stock assessment trends",
             tabPanel(
                 "Development over time",
-                tipify(
-                actionButton(inputId = "help_tab3", label = NULL, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"), 
-                title = "Click here fof help", placement = "right", trigger = "hover"),
-                
-                tipify(
-                myDownloadButton("download_SAG_Data"),
-                title = "Download the plot data", placement = "right", trigger = "hover"),
-
-
-                withSpinner(htmlOutput("stock_infos", height = "10%", width = "100%")),
+                splitLayout(
+                    cellWidths = c("40%", "60%"),
+                    sag_plots_stock_info_left_panel(),
+                    sag_plots_stock_info_center_panel()
+                ),
                 
                 sidebarLayout(
-                sidebarPanel = SAG_plots_left_panel,
-                mainPanel = SAG_plots_righ_panel
-            )
-                # panel(
-                #     style = "height: 90vh; overflow-y: auto;",
-                #     fluidRow(
-                #         column(
-                #             width = 6, style = "height: 43vh;",
-                #             plotlyOutput("plot1", height = "100%", width = "100%")
-                #         ),
-                #         column(
-                #             width = 6, style = "height: 43vh;",
-                #             plotlyOutput("plot2", height = "100%", width = "100%")
-                #         ),
-                #     ),
-                #     fluidRow(
-                #         column(
-                #             width = 6, style = "height: 43vh;",
-                #             plotlyOutput("plot3", height = "100%", width = "100%")
-                #         ),
-                #         column(
-                #             width = 6, style = "height: 43vh;",
-                #             plotlyOutput("plot4", height = "100%", width = "100%")
-                #         ),
-                #     )
-                # )
+                    sidebarPanel = SAG_plots_left_panel(),
+                    mainPanel = SAG_plots_right_panel()
+                )
+             
             ),
             tabPanel(
                 "Quality of assessment",
-                tipify(
-                actionButton(inputId = "help_tab4", label = NULL, style = "width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-                title = "Click here fof help", placement = "right", trigger = "hover"),
-
-                tipify(
-                myDownloadButton("download_SAG_Quality_Data"),
-                title = "Download the plot data", placement = "right", trigger = "hover"),
-
-                withSpinner(htmlOutput("stock_infos2", height = "10%", width = "100%")),
-                quality_of_assessment
-                # panel(
-                #     style = "height: 90vh; overflow-y: auto;",
-                #     fluidRow(
-                #         column(
-                #             width = 4, style = "height: 85vh;",
-                #             plotlyOutput("plot5", height = "100%", width = "100%")
-                #         ),
-                #         column(
-                #             width = 4, style = "height: 85vh;",
-                #             plotlyOutput("plot6", height = "100%", width = "100%")
-                #         ),
-                #         column(
-                #             width = 4, style = "height: 85vh;",
-                #             plotlyOutput("plot7", height = "100%", width = "100%")
-                #         )
-                #     )
-                # )
+                splitLayout(
+                    cellWidths = c("40%", "60%"),
+                    qualAssess_plots_stock_info_left_panel(),
+                    qualAssess_plots_stock_info_center_panel()
+                ),
+                quality_of_assessment()
             )
         ),
 
 ######################################################################################################
 
-
-    # tabPanel(
-    #     "Catch Options & Advice",
-    #     sidebarLayout(
-    #         sidebarPanel(
-    #             width = 3, style = "max-height: 90vh; overflow-y: auto;",#style = "overflow-y:scroll; max-height: 600px; position:relative;",
-    #             DTOutput("Advice_View")#,
-    #             # useShinyjs(),
-    #             # inlineCSS(list("table2" = "font-size: 10px"))
-    #         ),
-    #         # browser(),
-    #         # mainPanel(# this is not running 
-    #         #     width = 9,
-    #         #         htmlOutput("Advice_Sentence"),
-    #         #         div(
-    #         #         class = "outer",
-    #         #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-    #         #         plotlyOutput("catch_scenario_plot_1", width = "100%", height = "100%")),
-    #         #         # plotlyOutput("catch_scenario_plot_2"),
-    #         #         div(
-    #         #         class = "outer",
-    #         #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-    #         #         plotlyOutput("catch_scenario_plot_2",width = "100%", height = "100%")),
-    #         #         # DTOutput("catch_scenario_table")
-    #         #         div(
-    #         #         class = "outer",
-    #         #         tags$style(type = "text/css", ".outer {position: relative; top: 61px; left: 0; right: 0; bottom: 61px; overflow: hidden; padding: 50}"),
-    #         #         DTOutput("catch_scenario_table",width = "100%", height = "100%"))
-    #         #         )
-    #         mainPanel(
-    #             width = 9, style = "max-height: 90vh; overflow-y: auto;",
-    #             htmlOutput("Advice_Sentence"),
-    #             tabsetPanel(
-    #                 tabPanel(
-    #                     "option_plot1",
-    #                     plotlyOutput("catch_scenario_plot_1")
-    #                 ),
-    #                 tabPanel(
-    #                     "option_plot2",
-    #                     plotlyOutput("catch_scenario_plot_2")
-    #                 )
-    #             ),
-    #             DTOutput("catch_scenario_table")
-    #         )
-    #     )
-    # ),
-    
-    
     tabPanel(
-        "Advice",
-        tipify(
-            actionButton(inputId = "help_tab5", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('info.png');  background-size: cover; background-position: center; border: 1px solid transparent;"),
-            title = "Click here fof help", placement = "right", trigger = "hover"),
-
-        tipify(
-            actionButton(inputId = "preview", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('calendar.png');  background-size: cover; background-position: center; padding-right:25px; border: 1px solid transparent;"), 
-            title = "Useful dates for the stock's advice process", placement = "bottom", trigger = "hover"),
-            
-            
-        tipify(
-            actionButton(inputId = "advice_view_link", label = NULL, hover=T, style = "top: 1%; left:7%; width: 40px; height: 40px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center; border: 1px solid transparent;"),
-            # actionButton(inputId = "advice_view_link", label = NULL, hover=T, onclick = paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", catch_scenario_list$adviceKey,"', '_blank')"), style = "top: 1%; left:15%; width: 50px; height: 50px; background: url('link.png'); padding-left:25px; background-size: cover; background-position: center;"), 
-            title = "Link for the full advice view record", placement = "right", trigger = "hover"),
-
-
-        withSpinner(htmlOutput("Advice_Summary", height = "10%", width = "100%")),
-
-
+        "Catch Scenarios",
+        splitLayout(
+            cellWidths = c("40%", "60%"),
+            catch_scenario_stock_info_left_panel(),
+            catch_scenario_stock_info_center_panel()
+        ),
         sidebarLayout(
-            sidebarPanel = catch_scenarios_left_panel,
-            mainPanel = catch_scenarios_right_panel
-            # sidebarPanel(
-            #         width = 6, style = "max-height: 90vh; overflow-y: auto;",
-            #         htmlOutput("Advice_Sentence2"),
-            #         plotlyOutput("catch_scenario_plot_3"),
-            #         plotlyOutput("TAC_timeline")
-            # ),
-            # mainPanel(
-            #     width = 6, style = "max-height: 90vh; overflow-y: auto;",
-            #     timevisOutput("advice_timeline"),
-            #     DTOutput("table")
-
-            # )
+            sidebarPanel = catch_scenarios_left_panel(),
+            mainPanel = catch_scenarios_right_panel()
         )
         
-        # verbatimTextOutput("headline")
     ),
-    tabPanel(
-        "Resources", style = "max-height: 90vh; overflow-y: auto;",
-        htmlOutput("citation")
-        
-        # verbatimTextOutput("headline")
-    ),
-    #),# close tabsetpanel
+    navbarMenu(
+            "Resources",
+            # style = "max-height: 90vh; overflow-y: auto;",
+            tabPanel(
+                "Contact & Feedback",
+                htmlOutput("contact_feedback")
+            ),
+            tabPanel(
+                "Data sources",
+                htmlOutput("data_sources")
+            ),
+            tabPanel(
+                "Data Disclaimer & Policy",
+                htmlOutput("data_disclaimer_policy")
+            ),
+            tabPanel(
+                "Citation",
+                htmlOutput("citation")
+            )
+        ),
     
-    # extra tags, css etc
+    ###### extra tags, css, JS etc
     
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
-    tags$script(
+    tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
     '
     var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
     $(function(){
@@ -332,13 +168,8 @@ navbarPage(
     '
   ),
     
-    
-    # tags$head(tags$style(HTML("#go{background-color:#14c6dd}"))), ##dd4814 0range
-    theme = shinytheme("cerulean"),  ##### need to work on this, the orange is part of the css theme united, check bslib in forked repo
+    theme = shinytheme("cerulean"), 
     position = "fixed-top",
-    # tags$script(HTML("var header = $('.navbar > .container-fluid');
-    #                 header.append('<div style=\"float:right\"><a href=\"https://github.com/ices-tools-dev/online-advice\"><img src=\"GitHub-Mark-32px.png\" alt=\"alt\" style=\"margin-top: -14px; padding-right:5px;padding-top:25px;\"></a></div>')
-    #                 console.log(header)"))
 )   
 )
 
