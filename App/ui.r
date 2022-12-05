@@ -133,7 +133,6 @@ navbarPage(
     ),
     navbarMenu(
             "Resources",
-            # style = "max-height: 90vh; overflow-y: auto;",
             tabPanel(
                 "Contact & Feedback",
                 htmlOutput("contact_feedback")
