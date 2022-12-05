@@ -324,8 +324,7 @@ catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previou
 
 ##### catch scenario table scaled with the values of previous advice to get percentage of change
 catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
-  
-  scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
+  scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year()$table, catch_scenario_table()$table)
 })
 
 
@@ -352,9 +351,9 @@ output$Advice_Headline3 <- renderUI({
 output$catch_scenario_plot_3 <- renderPlotly({
   
   validate(
-      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
     )
-  tmp <- arrange(catch_scenario_table(), F)
+  tmp <- arrange(catch_scenario_table()$table, F)
   catch_scenarios_plot2(tmp, SAG_data_reactive())
 }) 
 
@@ -362,9 +361,9 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+    need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basisi of advice)
@@ -461,17 +460,17 @@ observeEvent(input$preview, {
 
 
 ############### Catch scenario plot
-catch_table_names <- eventReactive(catch_scenario_table(),{
+catch_table_names <- eventReactive(catch_scenario_table_previous_year(),{
   req(query$stockkeylabel, query$year)
-  gsub("â€“", " - ",names(fread(file = "Data/catch_scen_col_names.txt", sep = ",")), fixed = TRUE)
+  catch_scenario_table_previous_year()$cols
 
 })
 
 catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
   validate(
-      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
     )
-    catch_scenario_table() %>%
+    catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
     rename_all(funs(catch_table_names())) %>%
     rename("Basis" = cS_Label, " " = cS_Purpose)
