@@ -328,7 +328,7 @@ standardize_catch_scenario_table <- function(tmp) {
 
   # Save the names to re-use them later when diplaying the table
   colnames(tmp_unified) <- sub(" _.*_", "", colnames(tmp_unified))
-  fwrite(as.list(names(tmp_unified)), file = "Data/catch_scen_col_names.txt")
+  col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
   colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
@@ -338,9 +338,10 @@ standardize_catch_scenario_table <- function(tmp) {
   }
   else {
     tmp_unified <- character(0)
+    col_names_for_display <- character(0)
   }
   
-  return(tmp_unified)
+  return(list(table = tmp_unified, cols = col_names_for_display))
 }
 
 

@@ -44,30 +44,14 @@ server <- function(input, output, session) {
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
-    stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
+    stock_list_long <- purrr::map_dfr(.x = input$selected_locations,
+                           .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))) %>%
+      dplyr::arrange(StockKeyLabel) %>%
+      dplyr::mutate(EcoRegion = removeWords(EcoRegion, "Ecoregion"),
+                    Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.)), 
+                    stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
+                    stock_location = parse_location_from_stock_description(stock_description))
 
-    ### reshuffle some columns    
-    stock_list_long <- stock_list_long %>%
-      relocate(icon, .before = SpeciesCommonName) %>% 
-      relocate(c(doi, FO_doi), .before = EcoRegion) %>%
-      relocate(group_url, .before = DataCategory) %>%
-      relocate(c(doi, FO_doi), .before = AssessmentKey) 
-     
-
-    temp_df <- data.frame()
-    for (i in 1:length(input$selected_locations)) {
-      temp_1 <- stock_list_long %>% filter(str_detect(EcoRegion, input$selected_locations[i]))
-      temp_df <- rbind(temp_df, temp_1)
-    }
-
-    stock_list_long <- temp_df
-    stock_list_long <- stock_list_long %>% arrange(StockKeyLabel)
-    stock_list_long$Select <- sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(stock_list_long))
-    stock_list_long <- stock_list_long %>%
-      relocate(Select, .before = StockKeyLabel) %>% 
-      dplyr::mutate(stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1])) %>% 
-      dplyr::mutate(stock_location = parse_location_from_stock_description(stock_description))
-    
   })
 
   
@@ -340,8 +324,7 @@ catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previou
 
 ##### catch scenario table scaled with the values of previous advice to get percentage of change
 catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
-  
-  scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year(), catch_scenario_table())
+  scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year()$table, catch_scenario_table()$table)
 })
 
 
@@ -368,9 +351,9 @@ output$Advice_Headline3 <- renderUI({
 output$catch_scenario_plot_3 <- renderPlotly({
   
   validate(
-      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
     )
-  tmp <- arrange(catch_scenario_table(), F)
+  tmp <- arrange(catch_scenario_table()$table, F)
   catch_scenarios_plot2(tmp, SAG_data_reactive())
 }) 
 
@@ -378,9 +361,9 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+    need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basisi of advice)
@@ -477,17 +460,17 @@ observeEvent(input$preview, {
 
 
 ############### Catch scenario plot
-catch_table_names <- eventReactive(catch_scenario_table(),{
+catch_table_names <- eventReactive(catch_scenario_table_previous_year(),{
   req(query$stockkeylabel, query$year)
-  gsub("â€“", " - ",names(fread(file = "Data/catch_scen_col_names.txt", sep = ",")), fixed = TRUE)
+  catch_scenario_table_previous_year()$cols
 
 })
 
 catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
   validate(
-      need(!is_empty(catch_scenario_table()), "Data not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
     )
-    catch_scenario_table() %>%
+    catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
     rename_all(funs(catch_table_names())) %>%
     rename("Basis" = cS_Label, " " = cS_Purpose)
