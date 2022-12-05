@@ -44,14 +44,13 @@ server <- function(input, output, session) {
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
-    stock_list_long$EcoRegion <- removeWords(stock_list_long$EcoRegion,"Ecoregion")
-
     stock_list_long <- purrr::map_dfr(.x = input$selected_locations,
                            .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))) %>%
       dplyr::arrange(StockKeyLabel) %>%
-      dplyr::mutate(Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))) %>%
-      dplyr::relocate(Select, StockKeyLabel, EcoRegion, icon, SpeciesCommonName, ExpertGroup, group_url, DataCategory,
-                      YearOfLastAssessment, AdviceCategory, doi, FO_doi, AssessmentKey, SAG_url, visa_url)
+      dplyr::mutate(EcoRegion = removeWords(EcoRegion, "Ecoregion"),
+                    Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.)), 
+                    stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
+                    stock_location = parse_location_from_stock_description(stock_description))
 
   })
 
