@@ -89,31 +89,28 @@ navbarPage(
     ),
 
 ########################################## New version of SAG plots ############################
-    navbarMenu(
-            "Stock assessment trends",
-            tabPanel(
-                "Development over time",
-                splitLayout(
-                    cellWidths = c("40%", "60%"),
-                    sag_plots_stock_info_left_panel(),
-                    sag_plots_stock_info_center_panel()
-                ),
-                
-                sidebarLayout(
-                    sidebarPanel = SAG_plots_left_panel(),
-                    mainPanel = SAG_plots_right_panel()
-                )
-             
+    tabPanel(
+            "Development over time",
+            splitLayout(
+                cellWidths = c("40%", "60%"),
+                sag_plots_stock_info_left_panel(),
+                sag_plots_stock_info_center_panel()
             ),
-            tabPanel(
-                "Quality of assessment",
-                splitLayout(
-                    cellWidths = c("40%", "60%"),
-                    qualAssess_plots_stock_info_left_panel(),
-                    qualAssess_plots_stock_info_center_panel()
-                ),
-                quality_of_assessment()
+            
+            sidebarLayout(
+                sidebarPanel = SAG_plots_left_panel(),
+                mainPanel = SAG_plots_right_panel()
             )
+         
+        ),
+    tabPanel(
+            "Quality of assessment",
+            splitLayout(
+                cellWidths = c("40%", "60%"),
+                qualAssess_plots_stock_info_left_panel(),
+                qualAssess_plots_stock_info_center_panel()
+            ),
+            quality_of_assessment()
         ),
 
 ######################################################################################################
