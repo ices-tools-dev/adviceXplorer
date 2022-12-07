@@ -67,12 +67,26 @@ title_html <- tags$a(
 tagList(
     useShinyjs(),
     introjsUI(),    
-    tags$head(tags$script(type="text/javascript", src = "code.js")),
+    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
+    tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
+    '
+    var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
+    $(function(){
+      $(tab.parent()).on("click", "li.disabled", function(e) {
+        e.preventDefault();
+        return false;
+      });
+    });
+    '
+  ),
+    
 
 
 
 navbarPage(
     
+    position = "static-top",
+    collapsible = TRUE,
     # tab title
     windowTitle = "Online Advice",
     id = "tabset",
@@ -146,25 +160,7 @@ navbarPage(
                 "Citation",
                 htmlOutput("citation")
             )
-        ),
-    
-    ###### extra tags, css, JS etc
-    
-    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
-    tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
-    '
-    var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
-    $(function(){
-      $(tab.parent()).on("click", "li.disabled", function(e) {
-        e.preventDefault();
-        return false;
-      });
-    });
-    '
-  ),
-    
-    theme = shinytheme("cerulean"), 
-    position = "fixed-top",
+        )
 )   
 )
 
