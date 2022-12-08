@@ -380,7 +380,7 @@ output$catch_scenarios <- renderUI({
   if (!is_empty(test_table())) {
   selectizeInput(
     inputId = "catch_choice",
-    label = "Select a scenario",
+    label = "Select one or more catch scenarios",
     choices = unique(test_table()$cat),
     selected = c("Historical Catches", Basis()$cat),
     multiple = TRUE
@@ -403,7 +403,7 @@ output$catch_scenarios_radial <- renderUI({
 
     selectizeInput(
       inputId = "catch_choice_radial",
-      label = "Select a scenario",
+      label = "Select one or more catch scenarios",
       choices = unique(catch_scenario_table_percentages()$cat),
       selected = c(Basis()$cat),
       multiple = TRUE

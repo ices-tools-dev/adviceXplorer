@@ -1355,7 +1355,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 
     zz <- ggplotly(
         ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
-            base.size = 8,
+            base.size = 6,
             font.radar = "sans",
             values.radar = c("-100%", "0%","100%"),
             gridline.min.linetype = "longdash",
@@ -1369,15 +1369,15 @@ radial_plot <- function(tmp, catch_scenarios) {
             label.gridline.mid = TRUE,
             label.gridline.max = TRUE,
             axis.label.offset = 1.20,
-            axis.label.size = 8,
+            axis.label.size = 6,
             axis.line.colour = "grey",
-            group.line.width = 1.5,
-            group.point.size = 6,
+            group.line.width = 1,
+            group.point.size = 4,
             group.colours = NULL,
             background.circle.colour = "#D7D6D1",
             background.circle.transparency = 0.2,
             plot.legend = TRUE, # if (nrow(catch_tab_stand_scaled) > 1) TRUE else FALSE,
-            legend.title = "Scenarios:",
+            legend.title = "Catch scenarios:",
             plot.title = "",
             legend.text.size = 8,
             legend.position = "right"
