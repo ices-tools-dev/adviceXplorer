@@ -179,18 +179,24 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
 })
 
 ###### info about the stock selected for top of page
-output$stock_infos1 <- renderUI({
+stock_info <- reactive({
   filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
 })
+
+output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
+  stock_info()
+  )
 
 ##### advice headline (right side of page)
 advice_view_headline <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Headline(advice_view_info())
 })
-output$Advice_Headline1 <- renderUI({
+
+output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
 })
+
 
 #### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
@@ -250,16 +256,7 @@ output$download_SAG_Data <- downloadHandler(
   })
 
 
-###### info about the stock selected for top of page
-output$stock_infos2 <- renderUI({
-  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
-})
 
-##### advice headline (right side of page)
-output$Advice_Headline2 <- renderUI({
-  advice_view_headline()  
-})
 ##### button to download SAG data for quality of assessemnt
   output$download_SAG_Quality_Data <- downloadHandler(
     filename = function() {
@@ -333,18 +330,6 @@ onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/advice
 
 #### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
-
-
-###### info about the stock selected for top of page
-output$stock_infos3 <- renderUI({
-  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
-})
-
-##### advice headline (right side of page)
-output$Advice_Headline3 <- renderUI({
-  advice_view_headline()  
-})
 
 
 ### F_SSB and chatches plot linked to table
