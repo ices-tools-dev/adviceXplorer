@@ -68,7 +68,7 @@ make_data_sources <- function() {
       <ul><li>", a("ICES Spatial Facility", href = "https://gis.ices.dk/sf/index.html"), "</li>",
       "<li>", a("Stock Information Database (SID)", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
       "<li>", a("Stock Asssessment Graphs (SAG)", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"), "</li>",
-      "<li>",  a("ICES Advice View", href = "https://sg.ices.dk/adviceview/Account/Login?ReturnUrl=%2Fadviceview%2Fmanage"), "</li></ul>", "</font>"
+      "<li>",  a("Advice View", href = "https://sg.ices.dk/adviceview/Account/Login?ReturnUrl=%2Fadviceview%2Fmanage"), "</li></ul>", "</font>"
 
     )
   )
