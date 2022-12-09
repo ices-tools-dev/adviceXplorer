@@ -317,8 +317,7 @@ catch_scenarios_right_panel <- function(){
 }
 
 
-
-#' Creates the UI element of left panel of the stock dev over time tab, which includes 
+#' Creates the UI element of left panel of the header, providing
 #' the stock info.
 #' 
 #' @return UI element
@@ -339,17 +338,19 @@ catch_scenarios_right_panel <- function(){
 #'
 #' @export
 #' 
-sag_plots_stock_info_left_panel <- function() {
+header_left_panel_stock_info <- function(id) {
   wellPanel(
     style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
       title = "Stock Info",
-      withSpinner(htmlOutput("stock_infos1", height = "100%", width = "100%"))
-      )
+      withSpinner(htmlOutput(id, height = "100%", width = "100%"))
+    )
   )
 }
 
-#' Creates the UI element of right panel of the stock dev over time tab, which includes 
+
+
+#' Creates the UI element right panel of the header, showing 
 #' the headline of the advice.
 #' 
 #' @return UI element
@@ -370,136 +371,15 @@ sag_plots_stock_info_left_panel <- function() {
 #'
 #' @export
 #' 
-sag_plots_stock_info_center_panel <- function() {
+header_right_panel_headline <- function(id) {
   wellPanel(
     style = "height: 25vh; overflow-y: auto; white-space: normal;",
     panel(
-      withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%"))
-      )
+      withSpinner(htmlOutput(id, height = "100%", width = "100%"))
+    )
   )
 }
 
 
-#' Creates the UI element of left panel of the qual of assess tab, which includes 
-#' the stock info.
-#' 
-#' @return UI element
-#'
-#' @note
-#' 
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-qualAssess_plots_stock_info_left_panel <- function() {
-  wellPanel(
-    style = "height: 25vh; overflow-y: auto; white-space: normal;",
-    panel(
-      title = "Stock Info",
-      withSpinner(htmlOutput("stock_infos2", height = "100%", width = "100%"))
-      )
-  )
-}
 
-#' Creates the UI element of right panel of the qual of assess tab, which includes 
-#' the headline of the advice.
-#' 
-#' @return UI element
-#'
-#' @note
-#' 
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-qualAssess_plots_stock_info_center_panel <- function() {
-  wellPanel(
-    style = "height: 25vh; overflow-y: auto; white-space: normal;",
-    panel(
-      withSpinner(htmlOutput("Advice_Headline2", height = "100%", width = "100%"))
-      )
-  )
-}
-
-
-#' Creates the UI element of left panel of the catch scenarios tab, which includes 
-#' the stock info.
-#' 
-#' @return UI element
-#'
-#' @note
-#' 
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-catch_scenario_stock_info_left_panel <- function() {
-  wellPanel(
-    style = "height: 25vh; overflow-y: auto; white-space: normal;",
-    panel(
-      title = "Stock Info",
-      withSpinner(htmlOutput("stock_infos3", height = "100%", width = "100%"))
-      )
-  )
-}
-
-#' Creates the UI element of right panel of the catch scenarios tab, which includes 
-#' the headline of the advice.
-#' 
-#' @return UI element
-#'
-#' @note
-#' 
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-catch_scenario_stock_info_center_panel <- function() {
-  wellPanel(
-    style = "height: 25vh; overflow-y: auto; white-space: normal;",
-    panel(
-      withSpinner(htmlOutput("Advice_Headline3", height = "100%", width = "100%"))
-      )
-  )
-}
 
