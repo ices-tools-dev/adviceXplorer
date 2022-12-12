@@ -180,7 +180,7 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
 
 ###### info about the stock selected for top of page
 stock_info <- reactive({
-  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
 })
 
