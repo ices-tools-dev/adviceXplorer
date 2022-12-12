@@ -355,7 +355,7 @@ output$Advice_Headline3 <- renderUI({
 output$catch_scenario_plot_3 <- renderPlotly({
   
   validate(
-      need(!is_empty(catch_scenario_table()$table), "F and SSB not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
   tmp <- arrange(catch_scenario_table()$table, F)
   catch_scenarios_plot2(tmp, SAG_data_reactive())
@@ -365,7 +365,7 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Historical catches and catch scenarios not available for this stock")
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
 })
