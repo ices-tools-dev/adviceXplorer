@@ -260,7 +260,7 @@ catch_scenarios_left_panel <- function() {
     panel(
       tabsetPanel(
         tabPanel(
-          "Historical catches",
+          "Catch time series",
           uiOutput("catch_scenarios"),
           withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
         ),
