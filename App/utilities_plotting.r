@@ -1435,7 +1435,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(size = 15),
+            marker = list(size = 10),
             name = "F"
         )
     ay <- list(
@@ -1451,7 +1451,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
         type = "scatter",
         mode = "lines+markers",
         text = labels,
-        marker = list(size = 15, color = "#ff7300"),
+        marker = list(size = 10, color = "#ff7300"),
         name = "SSB",
         yaxis = "y2"
     )
