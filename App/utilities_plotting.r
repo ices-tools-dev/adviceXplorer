@@ -652,6 +652,22 @@ ICES_plot_3 <- function(df, sagSettings) {
    
     )
     
+    if (any(!is.na(df3$FMSY))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = FMSY,
+                linetype = "F<sub>MSY</sub>",
+                colour = "F<sub>MSY</sub>",
+                size = "F<sub>MSY</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+                    ), HTML
+                )
+            ))
+    }
+
     if (any(!is.na(df3$FLim))) {
         p3 <- p3 +
             geom_line(aes(
@@ -684,21 +700,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
-    if (any(!is.na(df3$FMSY))) {
-        p3 <- p3 +
-            geom_line(aes(
-                x = Year,
-                y = FMSY,
-                linetype = "F<sub>MSY</sub>",
-                colour = "F<sub>MSY</sub>",
-                size = "F<sub>MSY</sub>",
-                text = map(
-                    paste0(
-                        "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
-                    ), HTML
-                )
-            ))
-    }
+    
     
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
@@ -797,7 +799,7 @@ if (any(!is.na(df4$low_SSB))) {
 }
 
 p4 <- p4 +
-    geom_line(data =  df4 %>% filter(!is.na(SSB)), aes(
+    geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
         x = Year,
         y = SSB,
         color = "SSB",
@@ -808,79 +810,79 @@ p4 <- p4 +
                 "<b>SSB: </b>", SSB
             ), HTML
         )
-    )
-    )
+    ))
+
+if (any(!is.na(df4$MSYBtrigger))) {
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = MSYBtrigger,
+            linetype = "MSY B<sub>trigger</sub>",
+            colour = "MSY B<sub>trigger</sub>",
+            size = "MSY B<sub>trigger</sub>",
+            text = map(
+                paste0(
+                    "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+                ), HTML
+            )
+        ))
+}
 
 if (any(!is.na(df4$Blim))) {
-  p4 <- p4 +
-    geom_line(aes(
-      x = Year,
-      y = Blim,
-      linetype = "B<sub>Lim</sub>",
-      colour = "B<sub>Lim</sub>",
-      size = "B<sub>Lim</sub>",
-      text = map(
-        paste0(
-          "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-        ), HTML
-      )
-    ))
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Blim,
+            linetype = "B<sub>Lim</sub>",
+            colour = "B<sub>Lim</sub>",
+            size = "B<sub>Lim</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+                ), HTML
+            )
+        ))
 }
 
 if (any(!is.na(df4$Bpa))) {
-  p4 <- p4 +
-    geom_line(aes(
-      x = Year,
-      y = Bpa,
-      linetype = "B<sub>pa</sub>",
-      colour = "B<sub>pa</sub>",
-      size = "B<sub>pa</sub>",
-      text = map(
-        paste0(
-          "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-        ), HTML
-      )
-    ))
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Bpa,
+            linetype = "B<sub>pa</sub>",
+            colour = "B<sub>pa</sub>",
+            size = "B<sub>pa</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                ), HTML
+            )
+        ))
 }
 
-if (any(!is.na(df4$MSYBtrigger))) {
-  p4 <- p4 +
-    geom_line(aes(
-        x = Year,
-        y = MSYBtrigger,
-        linetype = "MSY B<sub>trigger</sub>",
-        colour = "MSY B<sub>trigger</sub>",
-        size = "MSY B<sub>trigger</sub>",
-        text = map(
-            paste0(
-                "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-            ), HTML
-        )
-    ))
-}
+
 
 # add average lines
 averageYears <-
-  sagSettings4 %>%
-  filter(settingKey == 46) %>%
-  pull(settingValue) %>%
-  str_split(",", simplify = TRUE) %>%
-  as.numeric()
+    sagSettings4 %>%
+    filter(settingKey == 46) %>%
+    pull(settingValue) %>%
+    str_split(",", simplify = TRUE) %>%
+    as.numeric()
 if (length(averageYears)) {
-  id1 <- nrow(df4) - 1:averageYears[1] + 1
-  id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
-  avedf1 <- data.frame(
-    Year = range(df4$Year[id1]) + c(-0.5, 0.5),
-    SSB = mean(df4$SSB[id1], na.rm = TRUE)
-  )
-  avedf2 <- data.frame(
-    Year = range(df4$Year[id2]) + c(-0.5, 0.5),
-    SSB = mean(df4$SSB[id2], na.rm = TRUE)
-  )
+    id1 <- nrow(df4) - 1:averageYears[1] + 1
+    id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+    avedf1 <- data.frame(
+        Year = range(df4$Year[id1]) + c(-0.5, 0.5),
+        SSB = mean(df4$SSB[id1], na.rm = TRUE)
+    )
+    avedf2 <- data.frame(
+        Year = range(df4$Year[id2]) + c(-0.5, 0.5),
+        SSB = mean(df4$SSB[id2], na.rm = TRUE)
+    )
 
-  p4 <-
-    p4 + geom_line(data = avedf1) + geom_line(data = avedf2)
-
+    p4 <-
+        p4 + geom_line(data = avedf1) + geom_line(data = avedf2)
 }
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
