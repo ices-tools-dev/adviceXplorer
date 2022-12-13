@@ -340,7 +340,7 @@ catch_scenarios_right_panel <- function(){
 #' 
 header_left_panel_stock_info <- function(id) {
   wellPanel(
-    style = "height: 25vh; overflow-y: auto; white-space: normal;",
+    style = "height: fit-content; overflow-y: auto; white-space: normal;",
     panel(
       title = "Stock Info",
       withSpinner(htmlOutput(id, height = "100%", width = "100%"))
@@ -373,7 +373,7 @@ header_left_panel_stock_info <- function(id) {
 #' 
 header_right_panel_headline <- function(id) {
   wellPanel(
-    style = "height: 25vh; overflow-y: auto; white-space: normal;",
+    style = "height: fit-content; overflow-y: auto; white-space: normal;",
     panel(
       withSpinner(htmlOutput(id, height = "100%", width = "100%"))
     )
