@@ -153,7 +153,7 @@ make_citation <- function() {
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
 
-      <i><b>ICES Single-Stock Online Advice [", Sys.Date(),"]. ICES, Copenhagen, Denmark. (https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), ")</b></i></font><br/><br/>"
+      <i><b>ICES Single-Stock Online Advice. ", Sys.Date(),". ICES, Copenhagen, Denmark.","<a href='https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "'target='_blank'> https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "</a>","</b></i></font><br/><br/>"
  
     )
   )
