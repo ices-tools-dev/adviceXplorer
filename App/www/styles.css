@@ -47,6 +47,14 @@ body {
   background-color: #489199; /*#178acc */
 }
 
+.disabled {
+  background: #819898 !important;
+  cursor: default !important;
+  border-color:#819898;
+  color: #737373;
+}
+
+
 .panel-primary>.panel-heading {
   color: #ffffff;
   background-color: #9AC2B7; /* #2fa4e7  #AEC640*/

@@ -53,8 +53,6 @@ source("utilities_calendar.r")
 source("utilities_resources.r")
 
 
-
-
 title_html <- tags$a(
     href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
         tags$img(
