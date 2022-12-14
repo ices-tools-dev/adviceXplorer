@@ -364,16 +364,16 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+    need(!is_empty(catch_scenario_table()$table), "")
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
 })
 
-########## Historical catches panel (Definition of basisi of advice)
+########## Historical catches panel (Definition of basis of advice)
 Basis <- eventReactive(catch_scenario_table_percentages(),{
-  validate(
-    need(!is_empty(catch_scenario_table_percentages()), "Catch scenarios not available for this stock")
-  )
+  # validate(
+  #   need(!is_empty(catch_scenario_table_percentages()), "Catch scenarios not available for this stock")
+  # )
   catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice", ]
 })
 
@@ -395,14 +395,16 @@ output$catch_scenarios <- renderUI({
 
 ########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
-  
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+  )
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
 
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  if (!is_empty(catch_scenario_table_percentages())) {
+  if (!is_empty(catch_scenario_table()$table)) {
 
     selectizeInput(
       inputId = "catch_choice_radial",
@@ -412,20 +414,22 @@ output$catch_scenarios_radial <- renderUI({
       multiple = TRUE
     )
   } else {
-    HTML("Catch scenarios not available for this stock")
+    HTML("")
   }
 })
 
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
- 
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+  )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  if (!is_empty(catch_scenario_table_percentages())) {
+  if (!is_empty(catch_scenario_table()$table)) {
     
     selectizeInput(
       inputId = "indicator_choice_lollipop",
@@ -435,13 +439,15 @@ output$catch_indicators_lollipop <- renderUI({
       multiple = TRUE
     )
   } else {
-    HTML("Catch scenarios not available for this stock")
+    HTML("")
   }
 })
 
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
- 
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+  )
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
