@@ -18,10 +18,7 @@ options(icesSAG.use_token = FALSE)
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
-   shinyjs::disable(selector = '.navbar-nav a[data-value="Development over time"')
-   shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-   shinyjs::disable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
-   
+
   help_server(input, output, session)
 
   # values of the query string and first visit flag
@@ -105,10 +102,7 @@ server <- function(input, output, session) {
 
   ## process radio button selection
   observeEvent(input$rdbtn, {
-     shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
-     shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-     shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
-  #   
+    
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
         
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
