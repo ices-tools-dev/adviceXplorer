@@ -652,6 +652,22 @@ ICES_plot_3 <- function(df, sagSettings) {
    
     )
     
+    if (any(!is.na(df3$FMSY))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = FMSY,
+                linetype = "F<sub>MSY</sub>",
+                colour = "F<sub>MSY</sub>",
+                size = "F<sub>MSY</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+                    ), HTML
+                )
+            ))
+    }
+
     if (any(!is.na(df3$FLim))) {
         p3 <- p3 +
             geom_line(aes(
@@ -684,21 +700,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
-    if (any(!is.na(df3$FMSY))) {
-        p3 <- p3 +
-            geom_line(aes(
-                x = Year,
-                y = FMSY,
-                linetype = "F<sub>MSY</sub>",
-                colour = "F<sub>MSY</sub>",
-                size = "F<sub>MSY</sub>",
-                text = map(
-                    paste0(
-                        "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
-                    ), HTML
-                )
-            ))
-    }
+    
     
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
@@ -797,7 +799,7 @@ if (any(!is.na(df4$low_SSB))) {
 }
 
 p4 <- p4 +
-    geom_line(data =  df4 %>% filter(!is.na(SSB)), aes(
+    geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
         x = Year,
         y = SSB,
         color = "SSB",
@@ -808,79 +810,79 @@ p4 <- p4 +
                 "<b>SSB: </b>", SSB
             ), HTML
         )
-    )
-    )
+    ))
+
+if (any(!is.na(df4$MSYBtrigger))) {
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = MSYBtrigger,
+            linetype = "MSY B<sub>trigger</sub>",
+            colour = "MSY B<sub>trigger</sub>",
+            size = "MSY B<sub>trigger</sub>",
+            text = map(
+                paste0(
+                    "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+                ), HTML
+            )
+        ))
+}
 
 if (any(!is.na(df4$Blim))) {
-  p4 <- p4 +
-    geom_line(aes(
-      x = Year,
-      y = Blim,
-      linetype = "B<sub>Lim</sub>",
-      colour = "B<sub>Lim</sub>",
-      size = "B<sub>Lim</sub>",
-      text = map(
-        paste0(
-          "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-        ), HTML
-      )
-    ))
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Blim,
+            linetype = "B<sub>Lim</sub>",
+            colour = "B<sub>Lim</sub>",
+            size = "B<sub>Lim</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+                ), HTML
+            )
+        ))
 }
 
 if (any(!is.na(df4$Bpa))) {
-  p4 <- p4 +
-    geom_line(aes(
-      x = Year,
-      y = Bpa,
-      linetype = "B<sub>pa</sub>",
-      colour = "B<sub>pa</sub>",
-      size = "B<sub>pa</sub>",
-      text = map(
-        paste0(
-          "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-        ), HTML
-      )
-    ))
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Bpa,
+            linetype = "B<sub>pa</sub>",
+            colour = "B<sub>pa</sub>",
+            size = "B<sub>pa</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                ), HTML
+            )
+        ))
 }
 
-if (any(!is.na(df4$MSYBtrigger))) {
-  p4 <- p4 +
-    geom_line(aes(
-        x = Year,
-        y = MSYBtrigger,
-        linetype = "MSY B<sub>trigger</sub>",
-        colour = "MSY B<sub>trigger</sub>",
-        size = "MSY B<sub>trigger</sub>",
-        text = map(
-            paste0(
-                "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-            ), HTML
-        )
-    ))
-}
+
 
 # add average lines
 averageYears <-
-  sagSettings4 %>%
-  filter(settingKey == 46) %>%
-  pull(settingValue) %>%
-  str_split(",", simplify = TRUE) %>%
-  as.numeric()
+    sagSettings4 %>%
+    filter(settingKey == 46) %>%
+    pull(settingValue) %>%
+    str_split(",", simplify = TRUE) %>%
+    as.numeric()
 if (length(averageYears)) {
-  id1 <- nrow(df4) - 1:averageYears[1] + 1
-  id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
-  avedf1 <- data.frame(
-    Year = range(df4$Year[id1]) + c(-0.5, 0.5),
-    SSB = mean(df4$SSB[id1], na.rm = TRUE)
-  )
-  avedf2 <- data.frame(
-    Year = range(df4$Year[id2]) + c(-0.5, 0.5),
-    SSB = mean(df4$SSB[id2], na.rm = TRUE)
-  )
+    id1 <- nrow(df4) - 1:averageYears[1] + 1
+    id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+    avedf1 <- data.frame(
+        Year = range(df4$Year[id1]) + c(-0.5, 0.5),
+        SSB = mean(df4$SSB[id1], na.rm = TRUE)
+    )
+    avedf2 <- data.frame(
+        Year = range(df4$Year[id2]) + c(-0.5, 0.5),
+        SSB = mean(df4$SSB[id2], na.rm = TRUE)
+    )
 
-  p4 <-
-    p4 + geom_line(data = avedf1) + geom_line(data = avedf2)
-
+    p4 <-
+        p4 + geom_line(data = avedf1) + geom_line(data = avedf2)
 }
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
@@ -1355,7 +1357,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 
     zz <- ggplotly(
         ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
-            base.size = 8,
+            base.size = 6,
             font.radar = "sans",
             values.radar = c("-100%", "0%","100%"),
             gridline.min.linetype = "longdash",
@@ -1369,15 +1371,15 @@ radial_plot <- function(tmp, catch_scenarios) {
             label.gridline.mid = TRUE,
             label.gridline.max = TRUE,
             axis.label.offset = 1.20,
-            axis.label.size = 8,
+            axis.label.size = 6,
             axis.line.colour = "grey",
-            group.line.width = 1.5,
-            group.point.size = 6,
+            group.line.width = 1,
+            group.point.size = 4,
             group.colours = NULL,
             background.circle.colour = "#D7D6D1",
             background.circle.transparency = 0.2,
             plot.legend = TRUE, # if (nrow(catch_tab_stand_scaled) > 1) TRUE else FALSE,
-            legend.title = "Scenarios:",
+            legend.title = "Catch scenarios:",
             plot.title = "",
             legend.text.size = 8,
             legend.position = "right"
@@ -1433,7 +1435,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(size = 15),
+            marker = list(size = 10),
             name = "F"
         )
     ay <- list(
@@ -1449,7 +1451,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
         type = "scatter",
         mode = "lines+markers",
         text = labels,
-        marker = list(size = 15, color = "#ff7300"),
+        marker = list(size = 10, color = "#ff7300"),
         name = "SSB",
         yaxis = "y2"
     )
