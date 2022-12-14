@@ -112,6 +112,7 @@ navbarPage(
             sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel(),
                 mainPanel = SAG_plots_right_panel()
+
             )
          
         ),
@@ -131,8 +132,8 @@ navbarPage(
         "Catch Scenarios",
         splitLayout(
             cellWidths = c("40%", "60%"),
-            catch_scenario_stock_info_left_panel(),
-            catch_scenario_stock_info_center_panel()
+            header_left_panel_stock_info("stock_infos3"),
+            header_right_panel_headline("Advice_Headline3")
         ),
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel(),

@@ -65,9 +65,9 @@ make_data_sources <- function() {
       
       "<p align='left'><b>", "<font size=", 5, ">", "Data sources", "</font>", "</b>", "<br/>",
       "The ICES Online Advice Shiny app diplays data collected from the following sources:
-      <ul><li>", a("GIS", href = "https://gis.ices.dk/sf/index.html"), "</li>",
-      "<li>", a("SID", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
-      "<li>", a("SAG", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"), "</li>",
+      <ul><li>", a("ICES Spatial Facility", href = "https://gis.ices.dk/sf/index.html"), "</li>",
+      "<li>", a("Stock Information Database (SID)", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
+      "<li>", a("Stock Asssessment Graphs (SAG)", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"), "</li>",
       "<li>",  a("Advice View", href = "https://sg.ices.dk/adviceview/Account/Login?ReturnUrl=%2Fadviceview%2Fmanage"), "</li></ul>", "</font>"
 
     )
@@ -153,7 +153,7 @@ make_citation <- function() {
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
 
-      <i><b>ICES Single-Stock Online Advice (https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(),"), ", Sys.Date(),". ICES, Copenhagen.</b></i></font><br/><br/>"
+      <i><b>ICES Single-Stock Online Advice. ", Sys.Date(),". ICES, Copenhagen, Denmark.","<a href='https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "'target='_blank'> https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "</a>","</b></i></font><br/><br/>"
  
     )
   )

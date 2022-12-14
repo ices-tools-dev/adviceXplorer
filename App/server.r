@@ -185,18 +185,24 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
 })
 
 ###### info about the stock selected for top of page
-output$stock_infos1 <- renderUI({
-  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
+stock_info <- reactive({
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
 })
+
+output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
+  stock_info()
+  )
 
 ##### advice headline (right side of page)
 advice_view_headline <- eventReactive(req(advice_view_info()), {
   get_Advice_View_Headline(advice_view_info())
 })
-output$Advice_Headline1 <- renderUI({
+
+output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
 })
+
 
 #### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
@@ -214,21 +220,24 @@ output$download_SAG_Data <- downloadHandler(
 
 ######################### Stock development over time plots
 
-  output$plot1 <- renderPlotly(
+  output$plot1 <- renderPlotly({
+     validate(
+      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock")
+    )
     ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
-  )
+})
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$recruitment != "", "Data not available for this stock")
+      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock")
     )
     ICES_plot_2(SAG_data_reactive(), sagSettings())
   })
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$F != "", "Data not available for this stock")
+      need(SAG_data_reactive()$F != "", "F not available for this stock")
     )
 
     ICES_plot_3(SAG_data_reactive(), sagSettings())
@@ -236,7 +245,7 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$SSB != "", "Data not available for this stock")
+      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")
     )
     ICES_plot_4(SAG_data_reactive(), sagSettings())
   })
@@ -256,16 +265,7 @@ output$download_SAG_Data <- downloadHandler(
   })
 
 
-###### info about the stock selected for top of page
-output$stock_infos2 <- renderUI({
-  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
-})
 
-##### advice headline (right side of page)
-output$Advice_Headline2 <- renderUI({
-  advice_view_headline()  
-})
 ##### button to download SAG data for quality of assessemnt
   output$download_SAG_Quality_Data <- downloadHandler(
     filename = function() {
@@ -282,7 +282,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
     validate(
-      need(advice_action_quality()$SSB != "", "Data not available for this stock")
+      need(advice_action_quality()$SSB != "", "SSB not available for this stock")
     )
 
     ICES_plot_5(advice_action_quality(), sagSettings())
@@ -290,7 +290,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot6 <- renderPlotly({
     validate(
-      need(advice_action_quality()$F != "", "Data not available for this stock")
+      need(advice_action_quality()$F != "", "F not available for this stock")
     )
 
     ICES_plot_6(advice_action_quality(), sagSettings())
@@ -298,7 +298,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot7 <- renderPlotly({
     validate(
-      need(advice_action_quality()$recruitment != "", "Data not available for this stock")
+      need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock")
     )
     ICES_plot_7(advice_action_quality())
   })
@@ -341,23 +341,11 @@ onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/advice
 onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
-###### info about the stock selected for top of page
-output$stock_infos3 <- renderUI({
-  filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]  
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #SAG_data_reactive()$StockDescription[1],
-})
-
-##### advice headline (right side of page)
-output$Advice_Headline3 <- renderUI({
-  advice_view_headline()  
-})
-
-
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_3 <- renderPlotly({
   
   validate(
-      need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
   tmp <- arrange(catch_scenario_table()$table, F)
   catch_scenarios_plot2(tmp, SAG_data_reactive())
@@ -367,16 +355,16 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
+    need(!is_empty(catch_scenario_table()$table), "")
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
 })
 
-########## Historical catches panel (Definition of basisi of advice)
+########## Historical catches panel (Definition of basis of advice)
 Basis <- eventReactive(catch_scenario_table_percentages(),{
-  validate(
-    need(!is_empty(catch_scenario_table_percentages()), "Data not available for this stock")
-  )
+  # validate(
+  #   need(!is_empty(catch_scenario_table_percentages()), "Catch scenarios not available for this stock")
+  # )
   catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice", ]
 })
 
@@ -386,7 +374,7 @@ output$catch_scenarios <- renderUI({
   if (!is_empty(test_table())) {
   selectizeInput(
     inputId = "catch_choice",
-    label = "Select a scenario",
+    label = "Select one or more catch scenarios",
     choices = unique(test_table()$cat),
     selected = c("Historical Catches", Basis()$cat),
     multiple = TRUE
@@ -398,53 +386,59 @@ output$catch_scenarios <- renderUI({
 
 ########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
-  
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+  )
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
 
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  if (!is_empty(catch_scenario_table_percentages())) {
+  if (!is_empty(catch_scenario_table()$table)) {
 
     selectizeInput(
       inputId = "catch_choice_radial",
-      label = "Select a scenario",
+      label = "Select one or more catch scenarios",
       choices = unique(catch_scenario_table_percentages()$cat),
       selected = c(Basis()$cat),
       multiple = TRUE
     )
   } else {
-    HTML("No data available")
+    HTML("")
   }
 })
 
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
- 
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+  )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  if (!is_empty(catch_scenario_table_percentages())) {
+  if (!is_empty(catch_scenario_table()$table)) {
     
     selectizeInput(
       inputId = "indicator_choice_lollipop",
-      label = "Select an indicator",
-      choices = names(catch_scenario_table_percentages()),
+      label = "Select one ore more indicators",
+      choices = names(catch_scenario_table_percentages()) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
       selected = c("F"),
       multiple = TRUE
     )
   } else {
-    HTML("No data available")
+    HTML("")
   }
 })
 
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
- 
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+  )
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
@@ -474,7 +468,7 @@ catch_table_names <- eventReactive(catch_scenario_table_previous_year(),{
 
 catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
   validate(
-      need(!is_empty(catch_scenario_table()$table), "Data not available for this stock")
+      need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
     catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
