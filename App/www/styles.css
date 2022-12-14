@@ -49,7 +49,7 @@ body {
 
 .disabled {
   background: #819898 !important;
-  cursor: default !important;
+  cursor: not-allowed !important;
   border-color:#819898;
   color: #737373;
 }
