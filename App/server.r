@@ -211,7 +211,6 @@ output$download_SAG_Data <- downloadHandler(
   output$plot1 <- renderPlotly({
      validate(
       need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock")
-      # need(SAG_data_reactive()$catches != "", "Catches not available for this stock")
     )
     ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
