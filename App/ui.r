@@ -105,8 +105,8 @@ navbarPage(
             "Development over time",
             splitLayout(
                 cellWidths = c("40%", "60%"),
-                sag_plots_stock_info_left_panel(),
-                sag_plots_stock_info_center_panel()
+                header_left_panel_stock_info("stock_infos1"),
+                header_right_panel_headline("Advice_Headline1")
             ),
             
             sidebarLayout(
@@ -120,8 +120,8 @@ navbarPage(
             "Quality of assessment",
             splitLayout(
                 cellWidths = c("40%", "60%"),
-                qualAssess_plots_stock_info_left_panel(),
-                qualAssess_plots_stock_info_center_panel()
+                header_left_panel_stock_info("stock_infos2"),
+                header_right_panel_headline("Advice_Headline2")
             ),
             quality_of_assessment()
         ),
