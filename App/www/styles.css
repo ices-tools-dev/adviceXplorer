@@ -49,6 +49,13 @@ body {
   border-color: #dddddd;
 }
 
+.disabled {
+  background: #819898 !important;
+  cursor: not-allowed;
+  border-color:#819898;
+  color: #737373;
+}
+
 .panel-title {
   margin-top: 0;
   margin-bottom: 0;
