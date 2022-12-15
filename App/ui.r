@@ -47,13 +47,10 @@ source("utilities_load_shapefiles.r")
 source("utilities_plotting.r")
 source("utilities_mapping.r")
 source("utilities_sag_data.r")
-source("utilities_shiny_Input.r")
 source("utilities_catch_scenarios.r")
 source("utilities_shiny_formatting.r")
 source("utilities_calendar.r")
 source("utilities_resources.r")
-
-
 
 
 title_html <- tags$a(
@@ -66,13 +63,28 @@ title_html <- tags$a(
 )
 tagList(
     useShinyjs(),
-    introjsUI(),    
-    tags$head(tags$script(type="text/javascript", src = "code.js")),
+    introjsUI(),
+    tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),    
+    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
+    tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
+    '
+    var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
+    $(function(){
+      $(tab.parent()).on("click", "li.disabled", function(e) {
+        e.preventDefault();
+        return false;
+      });
+    });
+    '
+  ),
+    
 
 
 
 navbarPage(
     
+    position = "static-top",
+    collapsible = TRUE,
     # tab title
     windowTitle = "Online Advice",
     id = "tabset",
@@ -89,31 +101,29 @@ navbarPage(
     ),
 
 ########################################## New version of SAG plots ############################
-    navbarMenu(
-            "Stock assessment trends",
-            tabPanel(
-                "Development over time",
-                splitLayout(
-                    cellWidths = c("40%", "60%"),
-                    header_left_panel_stock_info("stock_infos1"),
-                    header_right_panel_headline("Advice_Headline1")
-                ),
-                
-                sidebarLayout(
-                    sidebarPanel = SAG_plots_left_panel(),
-                    mainPanel = SAG_plots_right_panel()
-                )
-             
+    tabPanel(
+            "Development over time",
+            splitLayout(
+                cellWidths = c("40%", "60%"),
+                header_left_panel_stock_info("stock_infos1"),
+                header_right_panel_headline("Advice_Headline1")
             ),
-            tabPanel(
-                "Quality of assessment",
-                splitLayout(
-                    cellWidths = c("40%", "60%"),
-                    header_left_panel_stock_info("stock_infos2"),
-                    header_right_panel_headline("Advice_Headline2")
-                ),
-                quality_of_assessment()
+            
+            sidebarLayout(
+                sidebarPanel = SAG_plots_left_panel(),
+                mainPanel = SAG_plots_right_panel()
+
             )
+         
+        ),
+    tabPanel(
+            "Quality of assessment",
+            splitLayout(
+                cellWidths = c("40%", "60%"),
+                header_left_panel_stock_info("stock_infos2"),
+                header_right_panel_headline("Advice_Headline2")
+            ),
+            quality_of_assessment()
         ),
 
 ######################################################################################################
@@ -149,26 +159,10 @@ navbarPage(
                 "Citation",
                 htmlOutput("citation")
             )
-        ),
-    
-    ###### extra tags, css, JS etc
-    
-    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
-    tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
-    '
-    var tab = $(\'a[data-value="Stock Selection"]\').parent().addClass("disabled");
-    $(function(){
-      $(tab.parent()).on("click", "li.disabled", function(e) {
-        e.preventDefault();
-        return false;
-      });
-    });
-    '
-  ),
-    
-    theme = shinytheme("cerulean"), 
-    position = "fixed-top",
+        )
 )   
 )
+
+
 
 
