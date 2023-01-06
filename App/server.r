@@ -55,7 +55,7 @@ server <- function(input, output, session) {
                     stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
                     stock_location = parse_location_from_stock_description(stock_description))
 
-  })
+  }) %>% bindCache(input$selected_locations, input$selected_years)
 
   
   res_mod <- callModule(
