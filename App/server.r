@@ -195,7 +195,7 @@ stock_info <- reactive({
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
 }) %>% 
   bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-  bindEvent(res_mod(), SAG_data_reactive(), query$assessmentkey)
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
 
 output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
   stock_info()
@@ -204,16 +204,17 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
-}) %>% bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%
-  bindEvent(advice_view_info())
+}) %>% 
+  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
-}) %>% bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-  bindEvent(advice_view_headline())
+}) %>% 
+  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
 
-
- %>% ### link to pdf of advice (NOT ACTIVE)
+ ### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
@@ -271,8 +272,10 @@ output$download_SAG_Data <- downloadHandler(
     year <- query$year 
     
     quality_assessment_data_local(stock_name, year)
-  }) %>% bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-    bindEvent(query$assessmentkey,query$year)
+  }) %>% 
+    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
+    bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+  
   
 
 
@@ -319,7 +322,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 advice_view_info <- reactive({
   get_Advice_View_info(query$stockkeylabel, query$year)
 }) %>% bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-  bindEvent(query$stockkeylabel,query$year)
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+
 
 
 ##### Advice view info previous year
