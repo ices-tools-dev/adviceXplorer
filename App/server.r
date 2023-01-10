@@ -44,8 +44,8 @@ server <- function(input, output, session) {
 
   eco_filter <- reactive({
     req(input$selected_locations, input$selected_years)
-    
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
+    stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
     stock_list_long <- purrr::map_dfr(.x = input$selected_locations,
                            .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))) %>%
