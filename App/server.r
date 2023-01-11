@@ -140,6 +140,10 @@ server <- function(input, output, session) {
       msg("year of SAG/SID selected from url:", query$year) #####
 
       updateNavbarPage(session, "tabset", selected = "Development over time")
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+      
     }
   })
 
