@@ -44,8 +44,8 @@ server <- function(input, output, session) {
 
   eco_filter <- reactive({
     req(input$selected_locations, input$selected_years)
-    
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
+    stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey) 
     stock_list_long <- purrr::map_dfr(.x = input$selected_locations,
                            .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))) %>%
@@ -55,7 +55,7 @@ server <- function(input, output, session) {
                     stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
                     stock_location = parse_location_from_stock_description(stock_description))
 
-  })
+  }) %>% bindCache(input$selected_locations, input$selected_years)
 
   
   res_mod <- callModule(
@@ -140,13 +140,17 @@ server <- function(input, output, session) {
       msg("year of SAG/SID selected from url:", query$year) #####
 
       updateNavbarPage(session, "tabset", selected = "Development over time")
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+      
     }
   })
 
 
 
   ######### SAG data
-  SAG_data_reactive <- eventReactive(req(query$assessmentkey), {
+  SAG_data_reactive <- reactive({
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
@@ -158,14 +162,18 @@ server <- function(input, output, session) {
     msg("downloading:", year)
     #   # Dowload the data
     access_sag_data_local(stock_name, year)
-  })
+  }) %>% 
+    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
+    bindEvent(query$assessmentkey)
 
-  sagSettings <- eventReactive(req(query$assessmentkey),{
+  sagSettings <- reactive({
     getSAGSettings(query$assessmentkey)
-  })
+  })  %>% 
+    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
+    bindEvent(query$assessmentkey)
 
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
-additional_LandingData <- eventReactive((req(query$assessmentkey)),{
+additional_LandingData <- reactive({
   out <- jsonlite::fromJSON(
         URLencode(
             sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", query$assessmentkey)
@@ -173,8 +181,9 @@ additional_LandingData <- eventReactive((req(query$assessmentkey)),{
     )  
   data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
 
-})
-
+}) %>% 
+  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
+  bindEvent(query$assessmentkey)
 
 
 ##### get link to library pdf advice
@@ -188,23 +197,28 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
-})
+}) %>% 
+  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
 
 output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
   stock_info()
   )
 
 ##### advice headline (right side of page)
-advice_view_headline <- eventReactive(req(advice_view_info()), {
+advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
-})
+}) %>% 
+  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
-})
+}) %>% 
+  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
 
-
-#### link to pdf of advice (NOT ACTIVE)
+ ### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
@@ -252,7 +266,7 @@ output$download_SAG_Data <- downloadHandler(
 
 
 ####################### Quality of assessment data
-  advice_action_quality <- eventReactive(req(query$assessmentkey,query$year), {
+  advice_action_quality <- reactive({
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear 
@@ -262,7 +276,11 @@ output$download_SAG_Data <- downloadHandler(
     year <- query$year 
     
     quality_assessment_data_local(stock_name, year)
-  })
+  }) %>% 
+    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
+    bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+  
+  
 
 
 
@@ -305,9 +323,11 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   
 
 ##### Advice view info
-advice_view_info <- eventReactive(req(query$stockkeylabel,query$year), {
+advice_view_info <- reactive({
   get_Advice_View_info(query$stockkeylabel, query$year)
-})
+}) %>% bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
+  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+
 
 
 ##### Advice view info previous year

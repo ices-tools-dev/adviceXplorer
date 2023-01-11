@@ -230,21 +230,21 @@ theme_ICES_plots <-
           title <- sprintf("%s in 1000 %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
         }
 
-        rfpt <- c("MSY B<sub>trigger</sub>", "B<sub>Lim</sub>", "B<sub>pa</sub>")
+        rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
 
         line_color <- c("#969696","#737373","#525252","#252525","#047c6c") %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-        line_color_rfpt <- c("#689dff", "#000000","#000000")
+        line_color_rfpt <- c( "#000000","#000000", "#689dff")
         names(line_color_rfpt) <- rfpt
         line_color <- append(line_color, line_color_rfpt)
 
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
-        line_type_rfpt <- c("solid","dashed", "dotted")
+        line_type_rfpt <- c("dashed", "dotted","solid")
         names(line_type_rfpt) <- rfpt
         line_type <- append(line_type, line_type_rfpt)
 
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_size_rfpt <- c( .8, 1,.5)
+        line_size_rfpt <- c( .8, 1, .5)
         names(line_size_rfpt) <- rfpt
         line_size <- append(line_size, line_size_rfpt)
         
@@ -271,21 +271,21 @@ theme_ICES_plots <-
             )
         )
     } else if (type == "quality_F") {
-        rfpt <- c("F<sub>MSY</sub>", "F<sub>Lim</sub>","F<sub>pa</sub>")
+        rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
 
         line_color <- c("#969696","#737373","#525252","#252525","#ed5f26") %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-        line_color_rfpt <- c("#00AC67", "#000000","#000000")
+        line_color_rfpt <- c( "#000000","#000000", "#00AC67")
         names(line_color_rfpt) <- rfpt
         line_color <- append(line_color, line_color_rfpt)
 
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
-        line_type_rfpt <- c("solid","dashed", "dotted")
+        line_type_rfpt <- c("dashed", "dotted","solid")
         names(line_type_rfpt) <- rfpt
         line_type <- append(line_type, line_type_rfpt)
 
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_size_rfpt <- c( .8, 1,.5)
+        line_size_rfpt <- c( .8, 1, .5)
         names(line_size_rfpt) <- rfpt
         line_size <- append(line_size, line_size_rfpt)
 
@@ -989,6 +989,21 @@ ICES_plot_5 <- function(df, sagSettings) {
             ) 
         )
 
+        if (any(!is.na(df5$MSYBtrigger))) {
+            p5 <- p5 +
+                geom_hline(aes(
+                    yintercept = tail(MSYBtrigger, 1),
+                    linetype = "MSY B<sub>trigger</sub>",
+                    colour = "MSY B<sub>trigger</sub>",
+                    size = "MSY B<sub>trigger</sub>",
+                    text = map(
+                        paste0(
+                            "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
         if (any(!is.na(df5$Blim))) {
             p5 <- p5 +
                 geom_hline(aes(
@@ -1019,20 +1034,7 @@ ICES_plot_5 <- function(df, sagSettings) {
                 ))
         }
 
-        if (any(!is.na(df5$MSYBtrigger))) {
-            p5 <- p5 +
-                geom_hline(aes(
-                    yintercept = tail(MSYBtrigger, 1),
-                    linetype = "MSY B<sub>trigger</sub>",
-                    colour = "MSY B<sub>trigger</sub>",
-                    size = "MSY B<sub>trigger</sub>",
-                    text = map(
-                        paste0(
-                            "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-                        ), HTML
-                    )
-                ))
-        }
+        
     
         nullifempty <- function(x) if (length(x) == 0) NULL else x
 
@@ -1123,6 +1125,21 @@ ICES_plot_6 <- function(df, sagSettings) {
             ) 
         ) 
 
+        if (any(!is.na(df6$FMSY))) {
+            p6 <- p6 +
+                geom_hline(aes(
+                    yintercept = tail(FMSY, 1),
+                    linetype = "F<sub>MSY</sub>",
+                    colour = "F<sub>MSY</sub>",
+                    size = "F<sub>MSY</sub>",
+                    text = map(
+                        paste0(
+                            "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
+                        ), HTML
+                    )
+                ))
+        }
+
         if (any(!is.na(df6$FLim))) {
             p6 <- p6 +
                 geom_hline(aes(
@@ -1153,20 +1170,7 @@ ICES_plot_6 <- function(df, sagSettings) {
                 ))
         }
 
-        if (any(!is.na(df6$FMSY))) {
-            p6 <- p6 +
-                geom_hline(aes(
-                    yintercept = tail(FMSY, 1),
-                    linetype = "F<sub>MSY</sub>",
-                    colour = "F<sub>MSY</sub>",
-                    size = "F<sub>MSY</sub>",
-                    text = map(
-                        paste0(
-                            "<b>F<sub>MSY</sub>: </b>", tail(FMSY, 1)
-                        ), HTML
-                    )
-                ))
-        }
+        
        
         nullifempty <- function(x) if (length(x) == 0) NULL else x
 

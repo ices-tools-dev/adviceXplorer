@@ -12,6 +12,8 @@ library(rsconnect)
 
 setwd("./App")
 
+setwd("./App")
+
 source("utilities_SID_data.r")
 source("update_SAG_data.r")
 source("update_SID_data.r")
@@ -28,5 +30,5 @@ for (year in years) {
     update_SID(year)
 }
 
-source("deploy.r")
+# source("deploy.r")
 
