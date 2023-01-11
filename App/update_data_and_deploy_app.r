@@ -11,9 +11,11 @@ library(data.table)
 library(rsconnect)
 
 
-source("./App/utilities_SID_data.r")
-source("./App/update_SAG_data.r")
-source("./App/update_SID_data.r")
+setwd("./App")
+
+source("utilities_SID_data.r")
+source("update_SAG_data.r")
+source("update_SID_data.r")
 
 
 
@@ -27,5 +29,5 @@ for (year in years) {
     update_SID(year)
 }
 
-source("deploy.r")
+# source("deploy.r")
 
