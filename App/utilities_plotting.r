@@ -117,11 +117,19 @@ theme_ICES_plots <-
             )
         )
     } else if (type == "recruitment") {
+
+        if (is.null(title)) {
+          title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age))
+        }
+        if (is.null(ylegend)) {
+          ylegend <- "Recruitment in billions"
+        }
+
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-                y = "Recruitment in billions" # sprintf("Catches in 1000 %s", dplyr::last(df$units))
+                title = title,
+                y = ylegend
             ),
             scale_fill_manual(values = c("recruitment" = "#28b3e8")),
             scale_y_continuous(
@@ -420,11 +428,23 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, landings, discards, units, SAGStamp, ibc, unallocated_Removals) %>%
+        select(Year, landings, catches, discards, units, SAGStamp, ibc, unallocated_Removals) %>%
         relocate(c(ibc, unallocated_Removals), .after = discards) %>%
-        rename("industrial bycatch" = ibc)
+        rename("industrial bycatch" = ibc) #,"unallocated removals" = unallocated_Removals
 
 
+    # Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
+    if (is_na_column(df,"landings")){
+        df1$landings <- df1$catches
+    }
+    df1 <- df1 %>% select(-catches)
+    
+    
+    df2 <- df1 %>%
+        gather(type, count, landings:discards)
 
     df1 <- df1 %>%
         gather(type, count, landings:unallocated_Removals)
