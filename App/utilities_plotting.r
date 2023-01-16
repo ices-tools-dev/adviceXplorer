@@ -538,10 +538,12 @@ ICES_plot_2 <- function(df, sagSettings) {
     str_split(pattern = ",", simplify = TRUE) %>%
     as.numeric()
 
-    p2 <-
-      ggplot(df2, aes(
-        x = Year,
-        y = recruitment,
+
+#####################################################################
+
+
+p2 <- df2 %>%
+        ggplot(., aes(x = Year, y = recruitment,
         fill = "recruitment",
         text = map(
           paste0(
@@ -550,30 +552,85 @@ ICES_plot_2 <- function(df, sagSettings) {
             "<b>Recruitment: </b>", recruitment
           ), HTML
         )
-      )) +
-      geom_bar(stat = "identity", data = df2 %>% filter(!Year %in% shadeYears)) +
-      geom_errorbar(
-        data = df2 %>% filter(!is.na(high_recruitment)),
-        aes(
-        ymin = low_recruitment,
-        ymax = high_recruitment,
-        text = map(
-          paste0(
-            "<b>Year: </b>", Year,
-            "<br>",
-            "<b>High recruitment: </b>", high_recruitment,
-            "<br>",
-            "<b>Low recruitment: </b>", low_recruitment
-          ), HTML
-        )
-      ), # , color = "2*sd"
-      width = .3
-      ) +
-      theme_ICES_plots(type = "recruitment", df)
+        )) +
+        geom_bar(stat = "identity", data = df2 %>% filter(!Year %in% shadeYears))
+        
 
-    if (length(shadeYears)) {
+if (any(!is.na(df2$high_recruitment))) {
+    p2 <- p2 +
+        geom_errorbar(
+            data = df2 %>% filter(!is.na(high_recruitment)),
+            aes(
+                ymin = low_recruitment,
+                ymax = high_recruitment,
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>High recruitment: </b>", high_recruitment,
+                        "<br>",
+                        "<b>Low recruitment: </b>", low_recruitment
+                    ), HTML
+                )
+            ), 
+            width = .3
+        )
+}
+
+if (length(shadeYears)) {
       p2 <- p2 + geom_bar(stat = "identity", data = df2 %>% filter(Year %in% shadeYears), alpha = 0.5, show.legend = FALSE)
     }
+
+nullifempty <- function(x) if (length(x) == 0) NULL else x
+p2 <-
+        p2 +
+        theme_ICES_plots(
+        type = "recruitment", df,
+        title = sagSettings2 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+        ylegend = sagSettings2 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty() 
+        )
+
+
+
+
+
+#########################################################################
+    # p2 <-
+    #   ggplot(df2, aes(
+    #     x = Year,
+    #     y = recruitment,
+    #     fill = "recruitment",
+    #     text = map(
+    #       paste0(
+    #         "<b>Year: </b>", Year,
+    #         "<br>",
+    #         "<b>Recruitment: </b>", recruitment
+    #       ), HTML
+    #     )
+    #   )) +
+    #   geom_bar(stat = "identity", data = df2 %>% filter(!Year %in% shadeYears)) +
+    #   geom_errorbar(
+    #     data = df2 %>% filter(!is.na(high_recruitment)),
+    #     aes(
+    #     ymin = low_recruitment,
+    #     ymax = high_recruitment,
+    #     text = map(
+    #       paste0(
+    #         "<b>Year: </b>", Year,
+    #         "<br>",
+    #         "<b>High recruitment: </b>", high_recruitment,
+    #         "<br>",
+    #         "<b>Low recruitment: </b>", low_recruitment
+    #       ), HTML
+    #     )
+    #   ), # , color = "2*sd"
+    #   width = .3
+    #   ) +
+    #   theme_ICES_plots(type = "recruitment", df)
+
+    # if (length(shadeYears)) {
+    #   p2 <- p2 + geom_bar(stat = "identity", data = df2 %>% filter(Year %in% shadeYears), alpha = 0.5, show.legend = FALSE)
+    # }
 
     fig2 <- ggplotly(p2, tooltip = "text") %>%
       layout(
