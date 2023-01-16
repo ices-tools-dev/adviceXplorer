@@ -105,6 +105,7 @@ theme_ICES_plots <-
             scale_fill_manual(values = c(
                 "landings" = "#002b5f",
                 "discards" = "#fda500",
+                "catches" = "#002b5f",
                 "industrial bycatch" = "#00b29d",
                 "unallocated_Removals" = "#6eb200"
             )),
@@ -437,17 +438,17 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, ..col_name])))
     }
-    if (is_na_column(df,"landings")){
-        df1$landings <- df1$catches
-    }
-    df1 <- df1 %>% select(-catches)
-    
-    
-    df2 <- df1 %>%
-        gather(type, count, landings:discards)
 
-    df1 <- df1 %>%
+    if (is_na_column(df,"landings")){
+        # df1$landings <- df1$catches
+        df1 <- df1 %>%
+        gather(type, count, catches:unallocated_Removals)
+    } else {
+        df1 <- df1 %>%
+        select(-catches) %>% 
         gather(type, count, landings:unallocated_Removals)
+    }
+    
 
     p1 <- df1 %>%
         ggplot(., aes(
