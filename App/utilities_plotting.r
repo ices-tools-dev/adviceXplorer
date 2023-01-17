@@ -575,8 +575,23 @@ ICES_plot_2 <- function(df, sagSettings) {
             )
     }
 
-    if (length(shadeYears)) {
-        p2 <- p2 + geom_bar(stat = "identity", data = df2 %>% filter(Year %in% shadeYears), alpha = 0.5, show.legend = FALSE)
+    # if (length(shadeYears)) {
+    if (any(!is.na(shadeYears))) {
+        p2 <- p2 + geom_bar(stat = "identity", 
+                            data = df2 %>% filter(Year %in% shadeYears), 
+                            aes(x = Year, 
+                            y = recruitment, 
+                            fill = "recruitment",
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Assumed recruitment: </b>", recruitment
+                                    ), HTML
+                                )),
+                            alpha = 0.5, 
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
     }
 
     nullifempty <- function(x) if (length(x) == 0) NULL else x
