@@ -212,19 +212,22 @@ theme_ICES_plots <-
                 "SSB" = "#047c6c",
                 "MSY B<sub>trigger</sub>" = "#689dff",
                 "B<sub>Lim</sub>" = "#000000",
-                "B<sub>pa</sub>" = "#000000"
+                "B<sub>pa</sub>" = "#000000",
+                "Average" = "#ed5f26"
             )),
             scale_linetype_manual(values = c(
                 "SSB" = "solid",
                 "B<sub>Lim</sub>" = "dashed",
                 "B<sub>pa</sub>" = "dotted",
-                "MSY B<sub>trigger</sub>" = "solid"
+                "MSY B<sub>trigger</sub>" = "solid",
+                "Average" = "solid"
             )),
             scale_size_manual(values = c(
                 "SSB" = 1.5,
                 "B<sub>Lim</sub>" = .8,
                 "B<sub>pa</sub>" = 1,
-                "MSY B<sub>trigger</sub>" = .5
+                "MSY B<sub>trigger</sub>" = .5,
+                "Average" = .8
             )),
             scale_fill_manual(values = c("#94b0a9")),
             limits,
@@ -575,7 +578,6 @@ ICES_plot_2 <- function(df, sagSettings) {
             )
     }
 
-    # if (length(shadeYears)) {
     if (any(!is.na(shadeYears))) {
         p2 <- p2 + geom_bar(stat = "identity", 
                             data = df2 %>% filter(Year %in% shadeYears), 
@@ -931,7 +933,28 @@ if (length(averageYears)) {
     )
 
     p4 <-
-        p4 + geom_line(data = avedf1) + geom_line(data = avedf2)
+        p4 + geom_line(data = avedf1,
+                        aes(x = Year,
+                            y = SSB,
+                            linetype = "Average",
+                            colour = "Average",
+                            size = "Average",
+                            text = map(
+                                paste0(
+                                    "<b>Average: </b>", SSB
+                                ), HTML
+            ))) + 
+            geom_line(data = avedf2,
+                        aes(x = Year,
+                            y = SSB,
+                            linetype = "Average",
+                            colour = "Average",
+                            size = "Average",
+                            text = map(
+                                paste0(
+                                    "<b>Average: </b>", SSB
+                                ), HTML
+            )))
         # p4 + geom_line(data = avedf1, aes(Year,SSB, text("average"))) + geom_line(data = avedf2)
 }
 
