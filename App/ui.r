@@ -64,7 +64,8 @@ title_html <- tags$a(
 tagList(
     useShinyjs(),
     introjsUI(),
-    tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),    
+    tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
+    tags$head(includeHTML(("google-analytics.html"))), 
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
     '
