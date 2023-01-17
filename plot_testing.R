@@ -23,7 +23,7 @@ year <- 2021
 update_SAG(year)
 update_SID(year)
 
-stock <- c("spr.27.22-32", "her.27.3031", "wit.27.3a47d", "bll.27.3a47de", "fle.27.3a4")[1]
+stock <- c("her.27.28", "cap.27.1-2", "ghl.27.1-2", "cod.27.2.coastS", "reg.27.561214")[5]
 access_sag_data_local <- function(stock_code, year) {
 #   
     # Dowload the data
@@ -39,7 +39,9 @@ access_sag_data_local <- function(stock_code, year) {
     return(data_sag)
 }
 df <- access_sag_data_local(stock, year)
-
+df$recruitment
+shadeYears <- c(2018,2019)
+recruitment_shaded <- df %>% filter(Year %in% shadeYears)
 # view sag page
 key <- df %>% head(1) %>% pull(AssessmentKey)
 browseURL(paste0("https://standardgraphs.ices.dk/ViewCharts.aspx?key=", key))
