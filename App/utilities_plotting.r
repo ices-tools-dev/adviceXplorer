@@ -920,7 +920,7 @@ averageYears <-
     pull(settingValue) %>%
     str_split(",", simplify = TRUE) %>%
     as.numeric()
-if (length(averageYears)) {
+if (!is.na(averageYears)) {
     id1 <- nrow(df4) - 1:averageYears[1] + 1
     id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
     avedf1 <- data.frame(
@@ -955,7 +955,6 @@ if (length(averageYears)) {
                                     "<b>Average: </b>", SSB
                                 ), HTML
             )))
-        # p4 + geom_line(data = avedf1, aes(Year,SSB, text("average"))) + geom_line(data = avedf2)
 }
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
