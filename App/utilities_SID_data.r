@@ -74,7 +74,7 @@ advice_view_stocks_for_lunch <- c(
 "dab.27.22-32",
 "dgs.27.nea",
 "gfb.27.nea",
-"ghl.27.1-2",
+# "ghl.27.1-2",
 "gug.27.3a47d",
 "gug.27.nea",
 "gur.27.3-8",
