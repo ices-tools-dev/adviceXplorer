@@ -27,16 +27,7 @@ get_Advice_View_info <- function(stock_name, year) {
       sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
     )
   )
-  # #########################
-  # if (length(catch_scenario_list) == 0) {
-  #   catch_scenario_list <- jsonlite::fromJSON(
-  #     URLencode(
-  #       sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year - 1)
-  #     )
-  #   )
-  # }
-  # ######################
-
+ 
   catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
   return(catch_scenario_list)
 }
