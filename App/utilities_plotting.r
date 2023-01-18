@@ -434,7 +434,7 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
         filter(Purpose == "Advice") %>%
         select(Year, landings, catches, discards, units, SAGStamp, ibc, unallocated_Removals) %>%
         relocate(c(ibc, unallocated_Removals), .after = discards) %>%
-        rename("industrial bycatch" = ibc) #,"unallocated removals" = unallocated_Removals
+        rename("industrial bycatch" = ibc) 
 
 
     # Function to check if a column is made up of all NA values
