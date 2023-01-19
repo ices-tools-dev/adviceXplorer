@@ -27,7 +27,10 @@ get_Advice_View_info <- function(stock_name, year) {
       sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
     )
   )
- 
+  validate(
+    need(!is_empty(catch_scenario_list), glue::glue("No assessment in the year: {year} \n "))
+  )
+  
   catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
   return(catch_scenario_list)
 }
@@ -369,7 +372,7 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #' 
-wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year) {
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, stock_name, year, advice_view_info_previous_year) {
   
   catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
@@ -378,8 +381,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, s
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
   catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
-
-  catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year - 1)
+  catch_scenario_list_previous_year <- advice_view_info_previous_year
 
 
   catches_data <- catches_data %>% mutate(catches = c(catches[-n()], as.numeric(catch_scenario_list_previous_year$adviceValue))) #### this will be substituted by advice value from advice list of previous year

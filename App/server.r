@@ -344,6 +344,7 @@ catch_scenario_table <- eventReactive(req(advice_view_info()), {
 
 ##### catch scenarios table previous year in percentages (for radial plot)
 catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
+  req(advice_view_info_previous_year())
   standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
   
 })
@@ -372,12 +373,8 @@ output$catch_scenario_plot_3 <- renderPlotly({
 }) 
 
 ########## Historical catches panel (preparation of data)
-test_table <- eventReactive(catch_scenario_table(), {
-  req(query$stockkeylabel, query$year)
-  validate(
-    need(!is_empty(catch_scenario_table()$table), "")
-  )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
+test_table <- eventReactive(req(catch_scenario_table(), query$stockkeylabel, query$year, advice_view_info_previous_year()), {
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year, advice_view_info_previous_year = advice_view_info_previous_year())
 })
 
 ########## Historical catches panel (Definition of basis of advice)
@@ -388,7 +385,7 @@ Basis <- eventReactive(catch_scenario_table_percentages(),{
 
 ########## Historical catches panel (Selection panel)
 output$catch_scenarios <- renderUI({  
-  
+  req(advice_view_info_previous_year(), test_table())
   if (!is_empty(test_table())) {
   selectizeInput(
     inputId = "catch_choice",
@@ -404,6 +401,7 @@ output$catch_scenarios <- renderUI({
 
 ########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
+  req(advice_view_info_previous_year())
   validate(
     need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
   )
