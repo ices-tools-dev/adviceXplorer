@@ -920,7 +920,12 @@ averageYears <-
     pull(settingValue) %>%
     str_split(",", simplify = TRUE) %>%
     as.numeric()
-if (!is.na(averageYears)) {
+
+if (is.na(averageYears)){
+    averageYears <- numeric(0)
+}
+
+if (length(averageYears)) {
     id1 <- nrow(df4) - 1:averageYears[1] + 1
     id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
     avedf1 <- data.frame(
