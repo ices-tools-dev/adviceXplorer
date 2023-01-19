@@ -167,7 +167,8 @@ server <- function(input, output, session) {
     bindEvent(query$assessmentkey)
 
   sagSettings <- reactive({
-    getSAGSettings(query$assessmentkey)
+    temp_setting <- getSAGSettings(query$assessmentkey)
+    temp_setting[!(temp_setting$settingValue == ""), ]
   })  %>% 
     bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
     bindEvent(query$assessmentkey)

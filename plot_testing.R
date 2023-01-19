@@ -41,6 +41,9 @@ access_sag_data_local <- function(stock_code, year) {
 df <- access_sag_data_local(stock, year)
 df$recruitment
 shadeYears <- c(2018,2019)
+
+
+
 recruitment_shaded <- df %>% filter(Year %in% shadeYears)
 # view sag page
 key <- df %>% head(1) %>% pull(AssessmentKey)
@@ -58,3 +61,15 @@ ICES_plot_4(df)
 
 library(shiny)
 runApp("App")
+
+
+getSAGSettings <- function(assessmentkey) {
+    sagSettings <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/StockSettings?assessmentKey=%s", assessmentkey)
+        )
+    )
+}
+assessmentkey <- 14296
+settings <- getSAGSettings(assessmentkey)
+df<- settings[!(settings$settingValue == ""), ]
