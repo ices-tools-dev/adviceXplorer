@@ -911,6 +911,32 @@ if (any(!is.na(df4$Bpa))) {
         ))
 }
 
+diamondYears <-
+    sagSettings4 %>%
+    filter(settingKey == 14) %>%
+    pull(settingValue) %>%
+    str_split(pattern = ",", simplify = TRUE) %>%
+    as.numeric()
+
+if (any(!is.na(diamondYears))) {
+        p4 <- p4 + geom_point( 
+                            data = df4 %>% filter(Year %in% diamondYears), 
+                            aes(x = Year, 
+                            y = SSB,
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+                                    ), HTML
+                                )), 
+                            shape = 23, 
+                            fill = "#cfcfcf", 
+                            color = "#3aa6ff", 
+                            size = 2.5,                            
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
+    }
 
 
 # add average lines
@@ -957,6 +983,8 @@ if (length(averageYears)) {
                                 ), HTML
             )))
 }
+
+
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
 
