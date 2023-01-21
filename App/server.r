@@ -72,36 +72,38 @@ server <- function(input, output, session) {
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(
-    
-    res_modo <- res_mod() %>% select("Select",
-                                      "StockKeyLabel",
-                                      "EcoRegion",
-                                      "icon",
-                                      "SpeciesCommonName",
-                                      "stock_location") %>% 
-                           rename("Select" = Select,
-                                      "Stock code" = StockKeyLabel,
-                                      "Ecoregion" = EcoRegion,
-                                      " " = icon,
-                                      "Common name" = SpeciesCommonName,
-                                      "Location" = stock_location),
-                                      
-    
+
+    res_modo <- res_mod() %>% select(
+      "Select",
+      "StockKeyLabel",
+      "EcoRegion",
+      "icon",
+      "SpeciesCommonName",
+      "stock_location"
+    ) %>%
+      rename(
+        "Select" = Select,
+        "Stock code" = StockKeyLabel,
+        "Ecoregion" = EcoRegion,
+        " " = icon,
+        "Common name" = SpeciesCommonName,
+        "Location" = stock_location
+      ),
     escape = FALSE,
-    selection = 'none', 
-    server = FALSE,    
+    selection = "none",
+    server = FALSE,
     caption = HTML("<b><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
       pageLength = 300,
       columnDefs = list(
-        list(visible = FALSE, targets = c(0,3)),
+        list(visible = FALSE, targets = c(0, 3)),
         list(className = "dt-center", targets = c(1, 4))
       )
     ),
     callback = JS(callback)
-)
+  )
   
   
 
@@ -461,10 +463,11 @@ observeEvent(input$preview, {
   })
 
 
+
 ############### Catch scenario plot
-catch_table_names <- eventReactive(catch_scenario_table_previous_year(),{
+catch_table_names <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
-  catch_scenario_table_previous_year()$cols
+  catch_scenario_table()$cols
 
 })
 
