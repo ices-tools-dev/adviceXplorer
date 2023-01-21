@@ -361,9 +361,10 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()$table), "")
+    need(!is_empty(catch_scenario_table()$table), ""),
+    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
@@ -461,8 +462,6 @@ observeEvent(input$preview, {
             size = "s",
             )
   })
-
-
 
 ############### Catch scenario plot
 catch_table_names <- eventReactive(catch_scenario_table(),{

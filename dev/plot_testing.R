@@ -77,7 +77,7 @@ df<- settings[!(settings$settingValue == ""), ]
 
 
 
-catch_scenario_list <- get_Advice_View_info("cod.27.47d20", 2022)
+catch_scenario_list <- get_Advice_View_info("tur.27.4", 2018)
 table <- get_catch_scenario_table(catch_scenario_list)
 table_stand <- standardize_catch_scenario_table(table)
 
@@ -107,3 +107,10 @@ catches_data <- catches_data %>%
 
   final_df <- na.omit(final_df)
 wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
+
+
+  catch_scenario_list <- jsonlite::fromJSON(
+    URLencode(
+      sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", "tur.27.4", 2018)
+    )
+  )
