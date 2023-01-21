@@ -73,3 +73,37 @@ getSAGSettings <- function(assessmentkey) {
 assessmentkey <- 14095
 settings <- getSAGSettings(assessmentkey)
 df<- settings[!(settings$settingValue == ""), ]
+
+
+
+
+catch_scenario_list <- get_Advice_View_info("cod.27.47d20", 2022)
+table <- get_catch_scenario_table(catch_scenario_list)
+table_stand <- standardize_catch_scenario_table(table)
+
+stock_name <- "cod.27.47d20"
+year <- 2022
+catches_data<- access_sag_data_local("cod.27.47d20", 2022)
+catches_data <- catches_data %>%
+    filter(Purpose == "Advice") %>%
+    select(Year, catches) #%>% na.omit()
+
+  catches_data <- catches_data %>% add_column(cat = "Historical Catches")
+  catch_scenario_table <- table_stand$table %>% select(Year, TotCatch, cat)
+
+
+  catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year - 1)
+
+    catches_data <- catches_data %>% mutate(catches = ifelse(Year == year,  as.numeric(catch_scenario_list_previous_year$adviceValue), catches)) %>% na.omit()
+#   catches_data <- catches_data %>% mutate(catches = c(catches[-n()], as.numeric(catch_scenario_list_previous_year$adviceValue))) 
+
+  catches_data_year_before <- catch_scenario_table
+  catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
+
+  catches_data_year_before$TotCatch <- tail(catches_data$catches, 1)
+
+  catches_data <- setNames(catches_data, names(catch_scenario_table))
+  final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
+
+  final_df <- na.omit(final_df)
+wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)

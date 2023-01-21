@@ -381,9 +381,8 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, s
 
   catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year - 1)
 
-
-  catches_data <- catches_data %>% mutate(catches = c(catches[-n()], as.numeric(catch_scenario_list_previous_year$adviceValue))) #### this will be substituted by advice value from advice list of previous year
-
+  catches_data <- catches_data %>% mutate(catches = ifelse(Year == year,  as.numeric(catch_scenario_list_previous_year$adviceValue), catches)) %>% na.omit()
+  
   catches_data_year_before <- catch_scenario_table
   catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
 
