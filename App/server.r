@@ -363,14 +363,16 @@ test_table <- eventReactive(catch_scenario_table(), {
   validate(
     need(!is_empty(catch_scenario_table()$table), ""),
     need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+   
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
-Basis <- eventReactive(catch_scenario_table_percentages(),{
-  
-  catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice", ]
+Basis <- eventReactive(catch_scenario_table(),{
+    
+    catch_scenario_table()$table[catch_scenario_table()$table$cS_Purpose == "Basis Of Advice", ]
+
 })
 
 ########## Historical catches panel (Selection panel)
@@ -400,7 +402,10 @@ output$TAC_timeline <- renderPlotly({
 
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  if (!is_empty(catch_scenario_table()$table)) {
+  validate(
+    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
+  )
+  if (!is_empty(catch_scenario_table_previous_year()$table)) {
 
     selectizeInput(
       inputId = "catch_choice_radial",
@@ -417,7 +422,7 @@ output$catch_scenarios_radial <- renderUI({
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+    need(!is_empty(catch_scenario_table_previous_year()$table), " ")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
@@ -425,8 +430,10 @@ output$Radial_plot <- renderPlotly({
 
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  if (!is_empty(catch_scenario_table()$table)) {
-    
+  validate(
+    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
+  )
+  if (!is_empty(catch_scenario_table_previous_year()$table)) {    
     selectizeInput(
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
@@ -442,7 +449,7 @@ output$catch_indicators_lollipop <- renderUI({
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+    need(!is_empty(catch_scenario_table_previous_year()$table), " ")
   )
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
