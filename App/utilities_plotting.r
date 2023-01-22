@@ -533,6 +533,16 @@ ICES_plot_2 <- function(df, sagSettings) {
 
     sagSettings2 <- sagSettings %>% filter(sagChartKey == 2)
 
+    xmax <- sagSettings2 %>%
+        filter(settingKey == 5) %>%
+        pull(settingValue) %>%
+        as.numeric()
+    
+    
+    if (any(!is.na(xmax))) {
+        df2 <- df2 %>%
+            filter(Year != xmax + 1)
+    }
 
     shadeYears <- sagSettings2 %>%
         filter(settingKey == 14) %>%
