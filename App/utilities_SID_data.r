@@ -105,7 +105,7 @@ advice_view_stocks_for_lunch <- c(
 "mon.27.8c9a",
 "pil.27.7",
 # "ple.27.5a",
-"ple.27.7a",
+# "ple.27.7a",
 "ple.27.7bc",
 "ple.27.7d",
 "ple.27.89a",

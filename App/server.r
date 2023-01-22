@@ -38,7 +38,7 @@ server <- function(input, output, session) {
     inputId = "selected_years",
     label = "Assessment Year",
     choices = Years$Year,
-    selected = 2021
+    selected = 2022
   )
 
 
@@ -477,7 +477,8 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
     catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
     rename_all(funs(catch_table_names())) %>%
-    rename("Basis" = cS_Label, " " = cS_Purpose)
+    rename("Basis" = cS_Label, " " = cS_Purpose) %>% 
+    select_if(~!(all(is.na(.)) | all(. == "")))
 })
 
 
