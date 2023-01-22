@@ -38,7 +38,7 @@ server <- function(input, output, session) {
     inputId = "selected_years",
     label = "Assessment Year",
     choices = Years$Year,
-    selected = 2021
+    selected = 2022
   )
 
 
@@ -55,7 +55,9 @@ server <- function(input, output, session) {
                     stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
                     stock_location = parse_location_from_stock_description(stock_description))
 
-  }) %>% bindCache(input$selected_locations, input$selected_years)
+  }) %>% 
+    bindCache(input$selected_locations, input$selected_years) %>% 
+    bindEvent(input$selected_locations, input$selected_years)
 
   
   res_mod <- callModule(
@@ -70,36 +72,38 @@ server <- function(input, output, session) {
   ###########################################################  Render table in stock selection tab
 
   output$tbl <- DT::renderDT(
-    
-    res_modo <- res_mod() %>% select("Select",
-                                      "StockKeyLabel",
-                                      "EcoRegion",
-                                      "icon",
-                                      "SpeciesCommonName",
-                                      "stock_location") %>% 
-                           rename("Select" = Select,
-                                      "Stock code" = StockKeyLabel,
-                                      "Ecoregion" = EcoRegion,
-                                      " " = icon,
-                                      "Common name" = SpeciesCommonName,
-                                      "Location" = stock_location),
-                                      
-    
+
+    res_modo <- res_mod() %>% select(
+      "Select",
+      "StockKeyLabel",
+      "EcoRegion",
+      "icon",
+      "SpeciesCommonName",
+      "stock_location"
+    ) %>%
+      rename(
+        "Select" = Select,
+        "Stock code" = StockKeyLabel,
+        "Ecoregion" = EcoRegion,
+        " " = icon,
+        "Common name" = SpeciesCommonName,
+        "Location" = stock_location
+      ),
     escape = FALSE,
-    selection = 'none', 
-    server = FALSE,    
+    selection = "none",
+    server = FALSE,
     caption = HTML("<b><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
       pageLength = 300,
       columnDefs = list(
-        list(visible = FALSE, targets = c(0,3)),
+        list(visible = FALSE, targets = c(0, 3)),
         list(className = "dt-center", targets = c(1, 4))
       )
     ),
     callback = JS(callback)
-)
+  )
   
   
 
@@ -162,15 +166,12 @@ server <- function(input, output, session) {
     msg("downloading:", year)
     #   # Dowload the data
     access_sag_data_local(stock_name, year)
-  }) %>% 
-    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
-    bindEvent(query$assessmentkey)
-
+  }) 
+  
   sagSettings <- reactive({
-    getSAGSettings(query$assessmentkey)
-  })  %>% 
-    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
-    bindEvent(query$assessmentkey)
+    temp_setting <- getSAGSettings(query$assessmentkey)
+    temp_setting[!(temp_setting$settingValue == ""), ]
+  })  
 
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
 additional_LandingData <- reactive({
@@ -181,10 +182,7 @@ additional_LandingData <- reactive({
     )  
   data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
 
-}) %>% 
-  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%  
-  bindEvent(query$assessmentkey)
-
+}) 
 
 ##### get link to library pdf advice
 advice_doi <- eventReactive((req(query$assessmentkey)),{
@@ -197,9 +195,7 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
   get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
-}) %>% 
-  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+}) 
 
 output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
   stock_info()
@@ -208,15 +204,11 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
-}) %>% 
-  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>%
-  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+}) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
-}) %>% 
-  bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+}) 
 
  ### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
@@ -276,12 +268,8 @@ output$download_SAG_Data <- downloadHandler(
     year <- query$year 
     
     quality_assessment_data_local(stock_name, year)
-  }) %>% 
-    bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-    bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
+  }) 
   
-  
-
 
 
 ##### button to download SAG data for quality of assessemnt
@@ -325,9 +313,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 ##### Advice view info
 advice_view_info <- reactive({
   get_Advice_View_info(query$stockkeylabel, query$year)
-}) %>% bindCache(input$rdbtn, input$selected_locations, input$selected_years) %>% 
-  bindEvent(input$rdbtn, input$selected_locations, input$selected_years)
-
+}) 
 
 
 ##### Advice view info previous year
@@ -375,15 +361,18 @@ output$catch_scenario_plot_3 <- renderPlotly({
 test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
-    need(!is_empty(catch_scenario_table()$table), "")
+    need(!is_empty(catch_scenario_table()$table), ""),
+    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+   
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
-Basis <- eventReactive(catch_scenario_table_percentages(),{
-  
-  catch_scenario_table_percentages()[catch_scenario_table_percentages()$cS_Purpose == "Basis Of Advice", ]
+Basis <- eventReactive(catch_scenario_table(),{
+    
+    catch_scenario_table()$table[catch_scenario_table()$table$cS_Purpose == "Basis Of Advice", ]
+
 })
 
 ########## Historical catches panel (Selection panel)
@@ -413,7 +402,10 @@ output$TAC_timeline <- renderPlotly({
 
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  if (!is_empty(catch_scenario_table()$table)) {
+  validate(
+    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
+  )
+  if (!is_empty(catch_scenario_table_previous_year()$table)) {
 
     selectizeInput(
       inputId = "catch_choice_radial",
@@ -430,7 +422,7 @@ output$catch_scenarios_radial <- renderUI({
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+    need(!is_empty(catch_scenario_table_previous_year()$table), " ")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
@@ -438,8 +430,10 @@ output$Radial_plot <- renderPlotly({
 
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  if (!is_empty(catch_scenario_table()$table)) {
-    
+  validate(
+    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
+  )
+  if (!is_empty(catch_scenario_table_previous_year()$table)) {    
     selectizeInput(
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
@@ -455,7 +449,7 @@ output$catch_indicators_lollipop <- renderUI({
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
   validate(
-    need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
+    need(!is_empty(catch_scenario_table_previous_year()$table), " ")
   )
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
@@ -476,11 +470,10 @@ observeEvent(input$preview, {
             )
   })
 
-
 ############### Catch scenario plot
-catch_table_names <- eventReactive(catch_scenario_table_previous_year(),{
+catch_table_names <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
-  catch_scenario_table_previous_year()$cols
+  catch_scenario_table()$cols
 
 })
 
@@ -491,7 +484,8 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
     catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
     rename_all(funs(catch_table_names())) %>%
-    rename("Basis" = cS_Label, " " = cS_Purpose)
+    rename("Basis" = cS_Label, " " = cS_Purpose) %>% 
+    select_if(~!(all(is.na(.)) | all(. == "")))
 })
 
 
@@ -500,7 +494,10 @@ output$table <- DT::renderDT(
  
   selection = "single",
   class = "display",
-  caption = "Subset of catch scenario table",
+  caption = HTML(paste0("Subset of catch scenario table (click ", 
+                        "<span class='hovertext' data-hover='Click here to access the Advice View entry for this stock'>",
+                        "<a href='","https://sg.ices.dk/adviceview/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
+                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
   rownames = FALSE,
   options = list(
     dom = "Bfrtip",

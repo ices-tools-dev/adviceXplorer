@@ -44,7 +44,7 @@ stock_selection_left_side <- function() {
         inputId = "selected_years",
         label = "Assessment Year",
         choices = Years$Year,
-        selected = 2021,
+        selected = 2022,
         multiple = FALSE,
         width = "100%",
         options = list(
@@ -306,7 +306,6 @@ catch_scenarios_right_panel <- function(){
     width = 6, style = "height: 65vh; overflow-y: auto;",
     
     panel(
-      title = "Catch scenario table",
       fillPage(
         tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
         withSpinner(DTOutput("table", height = "90%", width = "100%")),
