@@ -1597,6 +1597,38 @@ catch_scenarios_plot2 <- function(tmp, df, sagSettings) {
             size = 20
         )
     )
+
+    if (is_na_column(tmp, "F_wanted")){
+        tmp <- arrange(tmp, HR)
+        fig_catch <- plot_ly(tmp) %>%
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ HR,
+            type = "scatter",
+            mode = "lines+markers",
+            text = labels,
+            marker = list(size = 10),
+            name = "HR"
+        )
+
+        b <- list(
+        x = Basis$TotCatch,
+        y = Basis$HR,
+        text = Basis$cS_Purpose,
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowcolor = "#999999",
+        arrowhead = 15,
+        ax = 7,
+        ay = -50, font = list(
+            color = "#999999",
+            family = "sans serif",
+            size = 20
+        )
+    )
+    
+    }
     } else {
         tmp <- arrange(tmp, F)
         fig_catch <- plot_ly(tmp) %>%
