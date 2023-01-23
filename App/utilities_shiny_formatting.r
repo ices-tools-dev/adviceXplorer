@@ -21,7 +21,7 @@
 #' 
 stock_selection_left_side <- function() {
   sidebarPanel(
-    width = 5,
+    width = 5, style = "max-height: 85vh; overflow-y: auto; ",
     tabPanel(
       "ICES Ecoregions",
       tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: auto;"),
@@ -89,7 +89,7 @@ stock_selection_left_side <- function() {
 #' 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7, style = "max-height: 90vh; overflow-y: auto; ",#margin: auto;
+    width = 7, style = "max-height: 85vh; overflow-y: auto; ",#margin: auto;
     withSpinner(DTOutput("tbl"))
   )
 }
@@ -197,7 +197,7 @@ SAG_plots_right_panel <- function(){
 #' 
 quality_of_assessment <- function(){
   splitLayout(
-    style = "border: 1px solid silver; height: 80vh; overflow-y: auto;",  
+    style = "border: 1px solid silver; height: 80vh; overflow-y: auto; !important;",  
     cellWidths = c("33%", "33%", "33%"),
     cellArgs = list(style = "padding: 6px"),
     panel(
