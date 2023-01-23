@@ -197,7 +197,7 @@ SAG_plots_right_panel <- function(){
 #' 
 quality_of_assessment <- function(){
   splitLayout(
-    style = "border: 1px solid silver; height: 80vh; overflow-y: auto; !important;",  
+    style = "border: 1px solid silver; max-height: 70vh; overflow-y: auto; !important;",  
     cellWidths = c("33%", "33%", "33%"),
     cellArgs = list(style = "padding: 6px"),
     panel(

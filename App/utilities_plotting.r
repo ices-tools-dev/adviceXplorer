@@ -280,7 +280,9 @@ theme_ICES_plots <-
                 labels = function(l) {
                     trans <- l / 1000
                 }
-            )
+            ),
+            scale_x_continuous(breaks= pretty_breaks())
+
         )
     } else if (type == "quality_F") {
         rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
@@ -322,7 +324,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1))
 
-            )
+            ),
+            scale_x_continuous(breaks= pretty_breaks())
         )
     } else if (type == "quality_R") {
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
@@ -349,7 +352,8 @@ theme_ICES_plots <-
                 labels = function(l) {
                     trans <- l / 1000000
                 }
-            )
+            ),
+            scale_x_continuous(breaks= pretty_breaks())
         )
     }
 
