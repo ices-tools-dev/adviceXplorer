@@ -171,8 +171,11 @@ server <- function(input, output, session) {
   sagSettings <- reactive({
     temp_setting <- getSAGSettings(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
+
   })  
 
+  drop_plots <- filter(sagSettings(), settingKey ==22 & settingValue = "yes") %>% pull(sagChartKey)
+  
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
 additional_LandingData <- reactive({
   out <- jsonlite::fromJSON(
@@ -228,7 +231,8 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot1 <- renderPlotly({
      validate(
-      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock")
+      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock"),
+      need(1 %in% drop_plots, "Landings not available for this stock")
     )
     ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
@@ -236,14 +240,16 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock")
+      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock"),
+      need(!2 %in% drop_plots, "Recruitment not available for this stock")
     )
     ICES_plot_2(SAG_data_reactive(), sagSettings())
   })
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$F != "", "F not available for this stock")
+      need(SAG_data_reactive()$F != "", "F not available for this stock"),
+      need(!3 %in% drop_plots, "F not available for this stock")
     )
 
     ICES_plot_3(SAG_data_reactive(), sagSettings())
@@ -251,7 +257,9 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")
+      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
+      need(!4 %in% drop_plots, "SSB not available for this stock")
+      
     )
     ICES_plot_4(SAG_data_reactive(), sagSettings())
   })
@@ -288,7 +296,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
     validate(
-      need(advice_action_quality()$SSB != "", "SSB not available for this stock")
+      need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
+      need(!c(5,10) %in% drop_plots, "SSB not available for this stock")
     )
 
     ICES_plot_5(advice_action_quality(), sagSettings())
@@ -296,7 +305,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot6 <- renderPlotly({
     validate(
-      need(advice_action_quality()$F != "", "F not available for this stock")
+      need(advice_action_quality()$F != "", "F not available for this stock"),
+      need(!c(6,10) %in% drop_plots, "F not available for this stock")
     )
 
     ICES_plot_6(advice_action_quality(), sagSettings())
@@ -304,7 +314,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot7 <- renderPlotly({
     validate(
-      need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock")
+      need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
+      need(!c(7,10) %in% drop_plots, "Recruitment not available for this stock")
     )
     ICES_plot_7(advice_action_quality())
   })
