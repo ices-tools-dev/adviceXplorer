@@ -83,7 +83,7 @@ table_stand <- standardize_catch_scenario_table(table)
 
 stock_name <- "cod.27.47d20"
 year <- 2022
-catches_data<- access_sag_data_local("cod.27.47d20", 2022)
+catches_data<- access_sag_data_local("sol.27.7e", 2019)
 catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
     select(Year, catches) #%>% na.omit()
