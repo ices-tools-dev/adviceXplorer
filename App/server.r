@@ -353,8 +353,8 @@ output$catch_scenario_plot_3 <- renderPlotly({
   validate(
       need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
-  tmp <- arrange(catch_scenario_table()$table, F)
-  catch_scenarios_plot2(tmp, SAG_data_reactive())
+  
+  catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
 }) 
 
 ########## Historical catches panel (preparation of data)
