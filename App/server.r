@@ -438,7 +438,7 @@ output$catch_indicators_lollipop <- renderUI({
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
       choices = names(catch_scenario_table_percentages()) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
-      selected = c("F"),
+      selected = c("TotCatch"),
       multiple = TRUE
     )
   } else {

@@ -462,6 +462,8 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   catch_scen_table_perc <- new_catch_scen_table[, c("Year", "cat", "cS_Purpose")]
   
   catch_scen_table_perc$F <- (new_catch_scen_table$F - Basis$F) / Basis$F *100
+  catch_scen_table_perc$F_wanted <- (new_catch_scen_table$F_wanted - Basis$F_wanted) / Basis$F_wanted *100
+  catch_scen_table_perc$HR <- (new_catch_scen_table$HR - Basis$HR) / Basis$HR *100
   catch_scen_table_perc$TotCatch <- (new_catch_scen_table$TotCatch - Basis$TotCatch) / Basis$TotCatch *100
   catch_scen_table_perc$`TAC change` <- new_catch_scen_table$`TAC change`
   catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
