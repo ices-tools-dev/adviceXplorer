@@ -374,11 +374,25 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #' 
-wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year, additional_LandingData) {
   
   catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
-    select(Year, catches)
+    select(Year, catches, landings, discards) %>% 
+    left_join(y = additional_LandingData, by = "Year")
+
+    
+  #  Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
+
+    if (is_na_column(catches_data,"catches")){
+      catches_data$catches <- rowSums(catches_data[,c("landings", "discards","ibc","unallocated_Removals")], na.rm=TRUE)
+      catches_data <- catches_data %>% select(c("Year", "catches"))
+    } else{
+      catches_data <- catches_data %>% select(c("Year", "catches"))
+    }
 
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
   catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)

@@ -77,16 +77,28 @@ df<- settings[!(settings$settingValue == ""), ]
 
 
 
-catch_scenario_list <- get_Advice_View_info("tur.27.4", 2018)
+catch_scenario_list <- get_Advice_View_info("hom.27.2a4a5b6a7a-ce-k8", 2019)
 table <- get_catch_scenario_table(catch_scenario_list)
 table_stand <- standardize_catch_scenario_table(table)
 
 stock_name <- "cod.27.47d20"
 year <- 2022
-catches_data<- access_sag_data_local("sol.27.7e", 2019)
+catches_data<- access_sag_data_local("hom.27.2a4a5b6a7a-ce-k8", 2019)
 catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
-    select(Year, catches) #%>% na.omit()
+    select(Year, catches, landings, discards) #%>% na.omit()
+
+# Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
+
+    if (is_na_column(catches_data,"catches")){
+      catches_data$catches <- rowSums(catches_data[,c("landings", "discards")], na.rm=TRUE)
+      catches_data <- catches_data %>% select(-c("landings", "discards"))
+    }
+
+
 
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
   catch_scenario_table <- table_stand$table %>% select(Year, TotCatch, cat)
