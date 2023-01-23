@@ -301,10 +301,14 @@ theme_ICES_plots <-
         names(line_size_rfpt) <- rfpt
         line_size <- append(line_size, line_size_rfpt)
 
+        if (is.null(title)) {
+          title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+        }
+
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)),
+                title = title,
                 y = "",
                 x = "Year"
             ),
@@ -1207,7 +1211,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_6 <- function(df, sagSettings) {
-    sagSettings6 <- sagSettings %>% filter(sagChartKey == 3)
+    sagSettings3 <- sagSettings %>% filter(sagChartKey == 3)
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
