@@ -1538,9 +1538,21 @@ radial_plot <- function(tmp, catch_scenarios) {
 #' @export
 #'
 
-catch_scenarios_plot2 <- function(tmp, df) {
-    F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
-    SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+catch_scenarios_plot2 <- function(tmp, df, sagSettings) {
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+    
+    F_yaxis_label <- sagSettings %>% filter(sagChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+    if (is.null(F_yaxis_label)) {
+          F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+        }
+    
+    
+    SSB_yaxis_label <- sagSettings %>% filter(sagChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+    if (is.null(SSB_yaxis_label)) {
+    SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+        }
+   
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
     
     tmp <- data.frame(tmp$table)
@@ -1552,9 +1564,6 @@ catch_scenarios_plot2 <- function(tmp, df) {
     
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
 
-    # Basis <- tmp$table$cS_Purpose == "Basis Of Advice"
-    # Basis <- data.frame(tmp$table[c(Basis),])
-    # print(tmp)
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
@@ -1619,17 +1628,6 @@ catch_scenarios_plot2 <- function(tmp, df) {
     }
 
     
-
-    # fig_catch <- plot_ly(tmp, source = "ranking") %>%
-    #     add_trace(
-    #         x = ~ TotCatch,
-    #         y = ~ F,
-    #         type = "scatter",
-    #         mode = "lines+markers",
-    #         text = labels,
-    #         marker = list(size = 10),
-    #         name = "F"
-    #     )
     ay <- list(
         overlaying = "y",
         side = "right",
@@ -1639,7 +1637,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
     )
     fig_catch <- fig_catch %>% add_trace(
         x = ~ TotCatch,
-        y = ~ SSB,
+        y = ~ SSB/1000,
         type = "scatter",
         mode = "lines+markers",
         text = labels,
@@ -1648,23 +1646,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
         yaxis = "y2"
     )
 
-    # b <- list(
-    #     x = Basis$TotCatch,
-    #     y = Basis$F,
-    #     text = Basis$cS_Purpose,
-    #     xref = "x",
-    #     yref = "y",
-    #     showarrow = TRUE,
-    #     arrowcolor = "#999999",
-    #     arrowhead = 15,
-    #     ax = 7,
-    #     ay = -50, font = list(
-    #         color = "#999999",
-    #         family = "sans serif",
-    #         size = 20
-    #     )
-    # )
-
+    
     fig_catch <- fig_catch %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",

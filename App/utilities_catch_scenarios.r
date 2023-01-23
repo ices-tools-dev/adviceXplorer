@@ -294,6 +294,15 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
+  # Fwanted"
+  pattern <- c("_HR_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(HR = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
   # Total catch"
   pattern <- c("_CatchTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -344,7 +353,7 @@ standardize_catch_scenario_table <- function(tmp) {
   col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted","TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
 
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
