@@ -107,7 +107,8 @@ theme_ICES_plots <-
                 "discards" = "#fda500",
                 "catches" = "#002b5f",
                 "industrial bycatch" = "#00b29d",
-                "unallocated_Removals" = "#6eb200"
+                "unallocated_Removals" = "#6eb200",
+                "Down-weighted catches" = "#6eb5d2"
             )),
             limits,
             scale_y_continuous(
@@ -447,7 +448,12 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
         relocate(c(ibc, unallocated_Removals), .after = discards) %>%
         rename("industrial bycatch" = ibc) 
 
-
+    shadeYears <- sagSettings1 %>%
+        filter(settingKey == 14) %>%
+        pull(settingValue) %>%
+        str_split(pattern = ",", simplify = TRUE) %>%
+        as.numeric()
+    
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, ..col_name])))
@@ -477,10 +483,30 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
                 ), HTML
             )
         )) +
-        geom_bar(position = "stack", stat = "identity")
+        geom_bar(position = "stack", stat = "identity", data = df1 %>% filter(!Year %in% shadeYears))
+    
+    if (any(!is.na(shadeYears))) {
+        p1 <- p1 + geom_bar(stat = "identity", 
+                            data = df1 %>% filter(Year %in% shadeYears), 
+                            aes(x = Year, 
+                            y = count, 
+                            fill = "Down-weighted catches",
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Down-weighted catches: </b>", count
+                                    ), HTML
+                                )),
+                            alpha = 0.5, 
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
+    }
+
+
 
     nullifempty <- function(x) if (length(x) == 0) NULL else x
-
+    
     p1 <-
         p1 +
         theme_ICES_plots(
