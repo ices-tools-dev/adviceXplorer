@@ -306,7 +306,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
     validate(
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock")
     )
-    ICES_plot_7(advice_action_quality())
+    ICES_plot_7(advice_action_quality(), sagSettings())
   })
   
 

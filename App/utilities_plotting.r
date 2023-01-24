@@ -332,11 +332,14 @@ theme_ICES_plots <-
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
         line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-
+        
+        if (is.null(title)) {
+          title <- sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge))
+        }
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge)),
+                title = title,
                 y = "",
                 x = ""
             ),
@@ -1156,12 +1159,19 @@ ICES_plot_5 <- function(df, sagSettings) {
         
     
         nullifempty <- function(x) if (length(x) == 0) NULL else x
+        
+        title_temp <- sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        if (is.null(title_temp)){
+            title_temp <- sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        }
+        
+
 
         p5 <-
             p5 +
             theme_ICES_plots(
             type = "quality_SSB", df,
-            title = sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% nullifempty()
+            title = title_temp
             )
     
     fig5 <- ggplotly(p5, tooltip = "text") %>%
@@ -1293,11 +1303,16 @@ ICES_plot_6 <- function(df, sagSettings) {
        
         nullifempty <- function(x) if (length(x) == 0) NULL else x
 
+        title_temp <- sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        if (is.null(title_temp)){
+            title_temp <- sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        }
+
         p6 <-
             p6 +
             theme_ICES_plots(
             type = "quality_F", df,
-            title = sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% nullifempty()
+            title = title_temp
             )
 
     # converting
@@ -1352,7 +1367,9 @@ ICES_plot_6 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_7 <- function(df) {
+ICES_plot_7 <- function(df, sagSettings) {
+    sagSettings2 <- sagSettings %>% filter(sagChartKey == 2)
+
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
         drop_na(recruitment) %>%
@@ -1374,8 +1391,20 @@ ICES_plot_7 <- function(df) {
                     ), HTML
                 )
             )
-        ) +
-        theme_ICES_plots(type = "quality_R", df)
+        )
+
+        nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+        title_temp <- sagSettings2 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        if (is.null(title_temp)){
+            title_temp <- sagSettings2 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        }
+
+        p7 <- 
+            p7  +
+            theme_ICES_plots(
+                type = "quality_R", df,
+                title = title_temp)
 
     # converting
     fig7 <- ggplotly(p7, tooltip = "text") %>%
