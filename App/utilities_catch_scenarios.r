@@ -294,7 +294,7 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
-  # Fwanted"
+  # HR
   pattern <- c("_HR_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
