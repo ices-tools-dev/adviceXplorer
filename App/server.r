@@ -235,7 +235,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot1 <- renderPlotly({
      validate(
       need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock"),
-      need(all(!1 %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
@@ -244,7 +244,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot2 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock"),
-      need(all(!2 %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     ICES_plot_2(SAG_data_reactive(), sagSettings())
   })
@@ -252,7 +252,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot3 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$F != "", "F not available for this stock"),
-      need(all(!3 %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     ICES_plot_3(SAG_data_reactive(), sagSettings())
@@ -261,7 +261,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot4 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
-      need(all(!4 %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
       
     )
     ICES_plot_4(SAG_data_reactive(), sagSettings())
@@ -300,7 +300,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   output$plot5 <- renderPlotly({
     validate(
       need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
-      need(all(!c(5,10) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(4,10) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     ICES_plot_5(advice_action_quality(), sagSettings())
@@ -309,7 +309,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   output$plot6 <- renderPlotly({
     validate(
       need(advice_action_quality()$F != "", "F not available for this stock"),
-      need(all(!c(6,10) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(3,10) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     ICES_plot_6(advice_action_quality(), sagSettings())
@@ -318,7 +318,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   output$plot7 <- renderPlotly({
     validate(
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
-      need(all(!c(7,10) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(all(!c(2,10) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     ICES_plot_7(advice_action_quality())
   })
