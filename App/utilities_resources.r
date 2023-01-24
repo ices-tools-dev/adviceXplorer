@@ -28,7 +28,7 @@ make_contact_and_feedback <- function() {
       "<font size=3>",
       "You can contact us via ", "<a href = ", "'mailto: luca.lamoni@ices.dk'", ">email</a>", "<br/>",
       "You can submit an issue to our GitHub ", "<a href='","https://github.com/ices-tools-dev/online-advice/issues", "' target='_blank'>", "repository.","</a><br/>",
-      "Please give us your feedback: ","<br/><br/><p align='center'><iframe width='840px' height='580px' src='https://forms.office.com/Pages/ResponsePage.aspx?id=ziCy4DVXaESR3wXK5f8f3DhC6UPgEXpGqPSwaKKiWWRUNDBLOTMwQTdRVTNZQlFET041N0FYWkw3SC4u&embed=true' frameborder='0' marginwidth='0' marginheight='0' style='border: none; max-width:100%; max-height:100vh' allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>",
+      "Please give us your feedback: ","<br/><br/><p align='center'><iframe width='820px' height='580px' src='https://forms.office.com/Pages/ResponsePage.aspx?id=ziCy4DVXaESR3wXK5f8f3DhC6UPgEXpGqPSwaKKiWWRUNDBLOTMwQTdRVTNZQlFET041N0FYWkw3SC4u&embed=true' frameborder='0' marginwidth='0' marginheight='0' style='border: none; max-width:100%; max-height:100vh' allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>",
       "</font>",  "<br/>"
       )
   )
