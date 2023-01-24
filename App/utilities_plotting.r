@@ -107,7 +107,8 @@ theme_ICES_plots <-
                 "discards" = "#fda500",
                 "catches" = "#002b5f",
                 "industrial bycatch" = "#00b29d",
-                "unallocated_Removals" = "#6eb200"
+                "unallocated_Removals" = "#6eb200",
+                "Down-weighted catches" = "#6eb5d2"
             )),
             limits,
             scale_y_continuous(
@@ -280,7 +281,9 @@ theme_ICES_plots <-
                 labels = function(l) {
                     trans <- l / 1000
                 }
-            )
+            ),
+            scale_x_continuous(breaks= pretty_breaks())
+
         )
     } else if (type == "quality_F") {
         rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
@@ -301,10 +304,14 @@ theme_ICES_plots <-
         names(line_size_rfpt) <- rfpt
         line_size <- append(line_size, line_size_rfpt)
 
+        if (is.null(title)) {
+          title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+        }
+
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)),
+                title = title,
                 y = "",
                 x = "Year"
             ),
@@ -318,18 +325,22 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1))
 
-            )
+            ),
+            scale_x_continuous(breaks= pretty_breaks())
         )
     } else if (type == "quality_R") {
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
         line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-
+        
+        if (is.null(title)) {
+          title <- sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge))
+        }
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge)),
+                title = title,
                 y = "",
                 x = ""
             ),
@@ -345,7 +356,8 @@ theme_ICES_plots <-
                 labels = function(l) {
                     trans <- l / 1000000
                 }
-            )
+            ),
+            scale_x_continuous(breaks= pretty_breaks())
         )
     }
 
@@ -436,7 +448,12 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
         relocate(c(ibc, unallocated_Removals), .after = discards) %>%
         rename("industrial bycatch" = ibc) 
 
-
+    shadeYears <- sagSettings1 %>%
+        filter(settingKey == 14) %>%
+        pull(settingValue) %>%
+        str_split(pattern = ",", simplify = TRUE) %>%
+        as.numeric()
+    
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, ..col_name])))
@@ -466,10 +483,30 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
                 ), HTML
             )
         )) +
-        geom_bar(position = "stack", stat = "identity")
+        geom_bar(position = "stack", stat = "identity", data = df1 %>% filter(!Year %in% shadeYears))
+    
+    if (any(!is.na(shadeYears))) {
+        p1 <- p1 + geom_bar(stat = "identity", 
+                            data = df1 %>% filter(Year %in% shadeYears), 
+                            aes(x = Year, 
+                            y = count, 
+                            fill = "Down-weighted catches",
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Down-weighted catches: </b>", count
+                                    ), HTML
+                                )),
+                            alpha = 0.5, 
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
+    }
+
+
 
     nullifempty <- function(x) if (length(x) == 0) NULL else x
-
+    
     p1 <-
         p1 +
         theme_ICES_plots(
@@ -1148,12 +1185,19 @@ ICES_plot_5 <- function(df, sagSettings) {
         
     
         nullifempty <- function(x) if (length(x) == 0) NULL else x
+        
+        title_temp <- sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        if (is.null(title_temp)){
+            title_temp <- sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        }
+        
+
 
         p5 <-
             p5 +
             theme_ICES_plots(
             type = "quality_SSB", df,
-            title = sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% nullifempty()
+            title = title_temp
             )
     
     fig5 <- ggplotly(p5, tooltip = "text") %>%
@@ -1207,7 +1251,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_6 <- function(df, sagSettings) {
-    sagSettings6 <- sagSettings %>% filter(sagChartKey == 3)
+    sagSettings3 <- sagSettings %>% filter(sagChartKey == 3)
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
@@ -1285,11 +1329,16 @@ ICES_plot_6 <- function(df, sagSettings) {
        
         nullifempty <- function(x) if (length(x) == 0) NULL else x
 
+        title_temp <- sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        if (is.null(title_temp)){
+            title_temp <- sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        }
+
         p6 <-
             p6 +
             theme_ICES_plots(
             type = "quality_F", df,
-            title = sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% nullifempty()
+            title = title_temp
             )
 
     # converting
@@ -1344,7 +1393,9 @@ ICES_plot_6 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_7 <- function(df) {
+ICES_plot_7 <- function(df, sagSettings) {
+    sagSettings2 <- sagSettings %>% filter(sagChartKey == 2)
+
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
         drop_na(recruitment) %>%
@@ -1366,8 +1417,20 @@ ICES_plot_7 <- function(df) {
                     ), HTML
                 )
             )
-        ) +
-        theme_ICES_plots(type = "quality_R", df)
+        )
+
+        nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+        title_temp <- sagSettings2 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        if (is.null(title_temp)){
+            title_temp <- sagSettings2 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        }
+
+        p7 <- 
+            p7  +
+            theme_ICES_plots(
+                type = "quality_R", df,
+                title = title_temp)
 
     # converting
     fig7 <- ggplotly(p7, tooltip = "text") %>%
@@ -1530,12 +1593,25 @@ radial_plot <- function(tmp, catch_scenarios) {
 #' @export
 #'
 
-catch_scenarios_plot2 <- function(tmp, df) {
-    F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
-    SSB_yaxis_label<- sprintf("%s (%s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+catch_scenarios_plot2 <- function(tmp, df, sagSettings) {
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+    
+    F_yaxis_label <- sagSettings %>% filter(sagChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+    if (is.null(F_yaxis_label)) {
+          F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+        }
+    
+    
+    SSB_yaxis_label <- sagSettings %>% filter(sagChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+    if (is.null(SSB_yaxis_label)) {
+    SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+        }
+   
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
-
-
+    
+    tmp <- data.frame(tmp$table)
+    
     labels <- sprintf(
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
@@ -1543,7 +1619,74 @@ catch_scenarios_plot2 <- function(tmp, df) {
     
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
 
-    fig_catch <- plot_ly(tmp, source = "ranking") %>%
+    # Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, col_name])))
+    }
+    if (is_na_column(tmp, "F")){
+        tmp <- arrange(tmp, F_wanted)
+        fig_catch <- plot_ly(tmp) %>%
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ F_wanted,
+            type = "scatter",
+            mode = "lines+markers",
+            text = labels,
+            marker = list(size = 10),
+            name = "F wanted"
+        )
+
+        b <- list(
+        x = Basis$TotCatch,
+        y = Basis$F_wanted,
+        text = Basis$cS_Purpose,
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowcolor = "#999999",
+        arrowhead = 15,
+        ax = 7,
+        ay = -50, font = list(
+            color = "#999999",
+            family = "sans serif",
+            size = 20
+        )
+    )
+
+    if (is_na_column(tmp, "F_wanted")){
+        tmp <- arrange(tmp, HR)
+        fig_catch <- plot_ly(tmp) %>%
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ HR,
+            type = "scatter",
+            mode = "lines+markers",
+            text = labels,
+            marker = list(size = 10),
+            name = "HR"
+        )
+
+        b <- list(
+        x = Basis$TotCatch,
+        y = Basis$HR,
+        text = Basis$cS_Purpose,
+        xref = "x",
+        yref = "y",
+        showarrow = TRUE,
+        arrowcolor = "#999999",
+        arrowhead = 15,
+        ax = 7,
+        ay = -50, font = list(
+            color = "#999999",
+            family = "sans serif",
+            size = 20
+        )
+    )
+    
+    }
+    } else {
+        tmp <- arrange(tmp, F)
+        fig_catch <- plot_ly(tmp) %>%
         add_trace(
             x = ~ TotCatch,
             y = ~ F,
@@ -1553,25 +1696,7 @@ catch_scenarios_plot2 <- function(tmp, df) {
             marker = list(size = 10),
             name = "F"
         )
-    ay <- list(
-        overlaying = "y",
-        side = "right",
-        title = SSB_yaxis_label,
-        titlefont = titlefont_format(),
-        tickfont = tickfont_format()
-    )
-    fig_catch <- fig_catch %>% add_trace(
-        x = ~ TotCatch,
-        y = ~ SSB,
-        type = "scatter",
-        mode = "lines+markers",
-        text = labels,
-        marker = list(size = 10, color = "#ff7300"),
-        name = "SSB",
-        yaxis = "y2"
-    )
-
-    b <- list(
+        b <- list(
         x = Basis$TotCatch,
         y = Basis$F,
         text = Basis$cS_Purpose,
@@ -1587,7 +1712,28 @@ catch_scenarios_plot2 <- function(tmp, df) {
             size = 20
         )
     )
+    }
 
+    
+    ay <- list(
+        overlaying = "y",
+        side = "right",
+        title = SSB_yaxis_label,
+        titlefont = titlefont_format(),
+        tickfont = tickfont_format()
+    )
+    fig_catch <- fig_catch %>% add_trace(
+        x = ~ TotCatch,
+        y = ~ SSB/1000,
+        type = "scatter",
+        mode = "lines+markers",
+        text = labels,
+        marker = list(size = 10, color = "#ff7300"),
+        name = "SSB",
+        yaxis = "y2"
+    )
+
+    
     fig_catch <- fig_catch %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",

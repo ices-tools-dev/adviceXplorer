@@ -171,8 +171,14 @@ server <- function(input, output, session) {
   sagSettings <- reactive({
     temp_setting <- getSAGSettings(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
-  })  
 
+  })  
+  
+  drop_plots <- reactive({
+      filter(sagSettings(), settingKey ==22 & settingValue == "yes") %>%
+      pull(sagChartKey) %>%
+      as.numeric})
+  
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
 additional_LandingData <- reactive({
   out <- jsonlite::fromJSON(
@@ -228,7 +234,8 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot1 <- renderPlotly({
      validate(
-      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock")
+      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock"),
+      need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
 
@@ -236,14 +243,16 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock")
+      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock"),
+      need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     ICES_plot_2(SAG_data_reactive(), sagSettings())
   })
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$F != "", "F not available for this stock")
+      need(SAG_data_reactive()$F != "", "F not available for this stock"),
+      need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     ICES_plot_3(SAG_data_reactive(), sagSettings())
@@ -251,7 +260,9 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")
+      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
+      need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      
     )
     ICES_plot_4(SAG_data_reactive(), sagSettings())
   })
@@ -288,7 +299,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
     validate(
-      need(advice_action_quality()$SSB != "", "SSB not available for this stock")
+      need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
+      need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     ICES_plot_5(advice_action_quality(), sagSettings())
@@ -296,7 +308,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot6 <- renderPlotly({
     validate(
-      need(advice_action_quality()$F != "", "F not available for this stock")
+      need(advice_action_quality()$F != "", "F not available for this stock"),
+      need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     ICES_plot_6(advice_action_quality(), sagSettings())
@@ -304,9 +317,10 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot7 <- renderPlotly({
     validate(
-      need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock")
+      need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
+      need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    ICES_plot_7(advice_action_quality())
+    ICES_plot_7(advice_action_quality(), sagSettings())
   })
   
 
@@ -353,8 +367,8 @@ output$catch_scenario_plot_3 <- renderPlotly({
   validate(
       need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
-  tmp <- arrange(catch_scenario_table()$table, F)
-  catch_scenarios_plot2(tmp, SAG_data_reactive())
+  
+  catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive(), sagSettings())
 }) 
 
 ########## Historical catches panel (preparation of data)
@@ -365,7 +379,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year, additional_LandingData())
 })
 
 ########## Historical catches panel (Definition of basis of advice)
@@ -438,7 +452,7 @@ output$catch_indicators_lollipop <- renderUI({
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
       choices = names(catch_scenario_table_percentages()) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
-      selected = c("F"),
+      selected = c("TotCatch"),
       multiple = TRUE
     )
   } else {

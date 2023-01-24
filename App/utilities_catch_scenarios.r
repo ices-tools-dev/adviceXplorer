@@ -285,6 +285,24 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
+  # Fwanted"
+  pattern <- c("_Fwanted_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(F_wanted = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
+  # HR
+  pattern <- c("_HR_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(HR = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
   # Total catch"
   pattern <- c("_CatchTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -335,7 +353,7 @@ standardize_catch_scenario_table <- function(tmp) {
   col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
 
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
@@ -374,11 +392,25 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #' 
-wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year, additional_LandingData) {
   
   catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
-    select(Year, catches)
+    select(Year, catches, landings, discards) %>% 
+    left_join(y = additional_LandingData, by = "Year")
+
+
+  #  Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
+
+    if (is_na_column(catches_data,"catches")){
+      catches_data$catches <- rowSums(catches_data[,c("landings", "discards","ibc","unallocated_Removals")], na.rm=TRUE)
+      catches_data <- catches_data %>% select(c("Year", "catches"))
+    } else{
+      catches_data <- catches_data %>% select(c("Year", "catches"))
+    }
 
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
   catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
@@ -430,6 +462,8 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   catch_scen_table_perc <- new_catch_scen_table[, c("Year", "cat", "cS_Purpose")]
   
   catch_scen_table_perc$F <- (new_catch_scen_table$F - Basis$F) / Basis$F *100
+  catch_scen_table_perc$F_wanted <- (new_catch_scen_table$F_wanted - Basis$F_wanted) / Basis$F_wanted *100
+  catch_scen_table_perc$HR <- (new_catch_scen_table$HR - Basis$HR) / Basis$HR *100
   catch_scen_table_perc$TotCatch <- (new_catch_scen_table$TotCatch - Basis$TotCatch) / Basis$TotCatch *100
   catch_scen_table_perc$`TAC change` <- new_catch_scen_table$`TAC change`
   catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
