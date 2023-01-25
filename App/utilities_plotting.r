@@ -1583,7 +1583,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 #'
 #' @examples
 #' \dontrun{
-#' catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive())
+#' catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive())
 #' }
 #'
 #' @references
@@ -1593,7 +1593,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 #' @export
 #'
 
-catch_scenarios_plot2 <- function(tmp, df, sagSettings) {
+catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     

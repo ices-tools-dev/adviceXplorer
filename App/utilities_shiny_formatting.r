@@ -253,8 +253,8 @@ catch_scenarios_left_panel <- function() {
     panel(
       title = "Catch_scenario_F_SSB",
       fillPage(
-        tags$style(type = "text/css", "#catch_scenario_plot_3  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-        withSpinner(plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%"))
+        tags$style(type = "text/css", "#catch_scenario_plot_F_SSB_Catch  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+        withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%"))
       )
     ),
     panel(

@@ -237,7 +237,7 @@ output$download_SAG_Data <- downloadHandler(
       need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock"),
       need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData())
+    suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData()))
 
 })
 
@@ -246,7 +246,7 @@ output$download_SAG_Data <- downloadHandler(
       need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock"),
       need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    ICES_plot_2(SAG_data_reactive(), sagSettings())
+    suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
   })
   
   output$plot3 <- renderPlotly({
@@ -255,7 +255,7 @@ output$download_SAG_Data <- downloadHandler(
       need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
-    ICES_plot_3(SAG_data_reactive(), sagSettings())
+    suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
   })
   
   output$plot4 <- renderPlotly({
@@ -264,7 +264,7 @@ output$download_SAG_Data <- downloadHandler(
       need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
       
     )
-    ICES_plot_4(SAG_data_reactive(), sagSettings())
+    suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
   })
 
 
@@ -303,7 +303,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
-    ICES_plot_5(advice_action_quality(), sagSettings())
+    suppressWarnings(ICES_plot_5(advice_action_quality(), sagSettings()))
 
   })
   output$plot6 <- renderPlotly({
@@ -312,7 +312,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
-    ICES_plot_6(advice_action_quality(), sagSettings())
+    suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings()))
 
   })
   output$plot7 <- renderPlotly({
@@ -320,7 +320,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    ICES_plot_7(advice_action_quality(), sagSettings())
+    suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
   })
   
 
@@ -367,13 +367,13 @@ onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '
 
 
 ### F_SSB and chatches plot linked to table
-output$catch_scenario_plot_3 <- renderPlotly({
+output$catch_scenario_plot_F_SSB_Catch <- renderPlotly({
   
   validate(
       need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
   
-  catch_scenarios_plot2(catch_scenario_table(), SAG_data_reactive(), sagSettings())
+  catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive(), sagSettings())
 }) 
 
 ########## Historical catches panel (preparation of data)
