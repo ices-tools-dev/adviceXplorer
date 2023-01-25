@@ -456,24 +456,71 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, c
 #' 
 #'
 #' @export
-scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch_scen_table){
-  if (!is_empty(new_catch_scen_table)) {
-  Basis <- old_catch_scen_table[old_catch_scen_table$cS_Purpose == "Basis Of Advice",]
-  catch_scen_table_perc <- new_catch_scen_table[, c("Year", "cat", "cS_Purpose")]
-  
-  catch_scen_table_perc$F <- (new_catch_scen_table$F - Basis$F) / Basis$F *100
-  catch_scen_table_perc$F_wanted <- (new_catch_scen_table$F_wanted - Basis$F_wanted) / Basis$F_wanted *100
-  catch_scen_table_perc$HR <- (new_catch_scen_table$HR - Basis$HR) / Basis$HR *100
-  catch_scen_table_perc$TotCatch <- (new_catch_scen_table$TotCatch - Basis$TotCatch) / Basis$TotCatch *100
-  catch_scen_table_perc$`TAC change` <- new_catch_scen_table$`TAC change`
-  catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
-  catch_scen_table_perc$SSB <- (new_catch_scen_table$SSB - Basis$SSB) / Basis$SSB *100
-  catch_scen_table_perc$`SSB change` <- new_catch_scen_table$`SSB change`
+scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch_scen_table) {
+  if (!is_empty(new_catch_scen_table) | !is_empty(new_catch_scen_table)) {
+    changes_columns <- new_catch_scen_table %>% select("cat", "TAC change", "ADVICE change", "SSB change")
+
+
+    keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "SSB")
+    df_old <- old_catch_scen_table %>% select(all_of(keep.cols))
+    df_new <- new_catch_scen_table %>% select(all_of(keep.cols))
+
+    df_old <- df_old[, colSums(is.na(df_old)) < nrow(df_old)]
+    df_new <- df_new[, colSums(is.na(df_new)) < nrow(df_new)]
+    Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice", ]
+    catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
+    catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
+    names(catch_scen_table_perc) <- names(df_new)
+    # catch_scen_table_perc <- catch_scen_table_perc %>% colnames(names(df_new))
+    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) %>% relocate("SSB change", .after = SSB)
+
   } else {
     catch_scen_table_perc <- character(0)
   }
-  
+
   return(catch_scen_table_perc)
 }
 
+#' Returns a catch scenario plot with values in %. 
+#' The values of the current catch scenario table are adjusted based on the previous year basis of advice.
+#' If the previous year value == 0, the % of change is going to be 100%.
+#' If the current year and previous year value are equal, then the percantage of change is 0.
+#'
+#' @param new_catch_scen_table (from advice view)
+#' @param Basis
+#' @param catch_scen_table_perc 
 
+#'
+#' @return catch_scen_table_perc (df)
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+calculate_perc_change <- function(df_new, Basis, catch_scen_table_perc) {
+
+  for (m in 4:ncol(df_new)) {
+    for (i in seq_len(nrow(df_new))) {
+      if (Basis[1, m] == 0) {
+        catch_scen_table_perc[i, m] <- 1 * 100
+        if (df_new[i, m] == Basis[1, m]) {
+          catch_scen_table_perc[i, m] <- 0
+        }
+      } else {
+        catch_scen_table_perc[i, m] <- 100 * ((df_new[i, m] - Basis[1, m]) / Basis[1, m])
+      }
+    }
+  }
+  return(catch_scen_table_perc)
+}

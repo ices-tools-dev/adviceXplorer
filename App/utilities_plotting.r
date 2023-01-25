@@ -495,7 +495,7 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
                                     paste0(
                                         "<b>Year: </b>", Year,
                                         "<br>",
-                                        "<b>Down-weighted catches: </b>", count
+                                        "<b>Down-weighted or preliminary catches: </b>", count
                                     ), HTML
                                 )),
                             alpha = 0.5, 

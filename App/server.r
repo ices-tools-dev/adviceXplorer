@@ -350,6 +350,11 @@ catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previou
 
 ##### catch scenario table scaled with the values of previous advice to get percentage of change
 catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previous_year(),catch_scenario_table()), {
+  validate(
+    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year"),
+    need(!is_empty(catch_scenario_table()$table), "No catch scenario table in this assessment year")
+  )
+
   scale_catch_scenarios_for_radialPlot(catch_scenario_table_previous_year()$table, catch_scenario_table()$table)
 })
 
@@ -447,11 +452,12 @@ output$catch_indicators_lollipop <- renderUI({
   validate(
     need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
   )
+  not_all_na <- function(x) any(!is.na(x))
   if (!is_empty(catch_scenario_table_previous_year()$table)) {    
     selectizeInput(
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
-      choices = names(catch_scenario_table_percentages()) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
+      choices = names(catch_scenario_table_percentages() %>% select(where(not_all_na))) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
       selected = c("TotCatch"),
       multiple = TRUE
     )
