@@ -120,7 +120,7 @@ stock_selection_right_side <- function(){
 #' 
 SAG_plots_left_panel <- function(){
   sidebarPanel(
-    width = 6, style = "height: 65vh; overflow-y: auto;",
+    width = 6, style = "height: 100vh; overflow-y: auto;",
     panel(
       title = "Catches",
         withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))
@@ -156,7 +156,7 @@ SAG_plots_left_panel <- function(){
 #' 
 SAG_plots_right_panel <- function(){
   sidebarPanel(
-    width = 6, style = "height: 65vh; overflow-y: auto;",
+    width = 6, style = "height: 100vh; overflow-y: auto;",
     panel(
       title = "Recruitment",
       fillPage(

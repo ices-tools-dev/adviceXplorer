@@ -27,6 +27,8 @@ library(sf)
 library(shinyalert)
 library(shinyBS)
 library(shinycssloaders)
+library(shinydashboard)
+library(shinydashboardPlus)
 library(shinyjs)
 library(shinythemes)
 library(shinyWidgets)
@@ -63,6 +65,8 @@ title_html <- tags$a(
 )
 tagList(
     useShinyjs(),
+    # shinyWidgets::useShinydashboard(),
+    shinyWidgets::useShinydashboardPlus(),
     introjsUI(),
     tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
     tags$head(includeHTML(("google-analytics.html"))), 
@@ -83,7 +87,6 @@ tagList(
 
 
 navbarPage(
-    
     position = "static-top",
     collapsible = TRUE,
     # tab title
@@ -94,28 +97,42 @@ navbarPage(
     title = title_html,
     tabPanel(
         "Stock Selection",
+      shinydashboardPlus::box(width=12, style = "height: 90vh; overflow-y: auto;",
         sidebarLayout(
             sidebarPanel = stock_selection_left_side(),
+      
             mainPanel = stock_selection_right_side()
             
         )
+      )
     ),
 
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
+            
+            shinydashboardPlus::box(collapsible = TRUE,width=12,
             splitLayout(
                 cellWidths = c("40%", "60%"),
+                
                 header_left_panel_stock_info("stock_infos1"),
                 header_right_panel_headline("Advice_Headline1")
-            ),
+            )),
             
+              shinydashboardPlus::box(width=12, style = "height: 60vh; overflow-y: auto;",
             sidebarLayout(
                 sidebarPanel = SAG_plots_left_panel(),
                 mainPanel = SAG_plots_right_panel()
 
-            )
-         
+            ))
+            # shinydashboardPlus::box(width=12, style = "height: 250vh; overflow-y: auto;",
+            #                         sidebarLayout(
+            #                             sidebarPanel = SAG_plots_left_panel(),
+            #                             mainPanel = SAG_plots_right_panel()
+            # 
+            #                         ))
+            
+          
         ),
     tabPanel(
             "Quality of assessment",
@@ -136,11 +153,12 @@ navbarPage(
             header_left_panel_stock_info("stock_infos3"),
             header_right_panel_headline("Advice_Headline3")
         ),
+        shinydashboardPlus::box(width=12, style = "height: 90vh; overflow-y: auto;",
         sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel(),
             mainPanel = catch_scenarios_right_panel()
         )
-        
+        )
     ),
     navbarMenu(
             "Resources",
