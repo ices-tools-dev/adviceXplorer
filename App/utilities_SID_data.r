@@ -61,7 +61,7 @@ advice_view_stocks_for_lunch <- c(
 "cod.21.1a-e",
 "cod.2127.1f14",
 "cod.27.1-2",
-"cod.27.2.coastS",
+# "cod.27.2.coastS",
 "cod.27.21",
 "cod.27.22-24",
 "cod.27.24-32",
