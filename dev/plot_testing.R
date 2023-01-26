@@ -208,6 +208,15 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
+  # HR
+  pattern <- c("_HR_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(HR = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
   # Total catch"
   pattern <- c("_CatchTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -258,7 +267,7 @@ standardize_catch_scenario_table <- function(tmp) {
   col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
 
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
@@ -270,9 +279,12 @@ standardize_catch_scenario_table <- function(tmp) {
   
   return(list(table = tmp_unified, cols = col_names_for_display))
 }
-catch_scenario_list <- get_Advice_View_info("cod.27.5a", 2022)
-table <- get_catch_scenario_table(catch_scenario_list)
-table_stand <- standardize_catch_scenario_table(table)
+
+
+
+
+
+
 
 is_na_column <- function(list) {
         return(all(is.na(list)))
@@ -304,3 +316,139 @@ if (is_na_column(tmp, "F")){
   print("yes")
 }
 names(tmp)
+
+catch_scenario_list_1 <- get_Advice_View_info(" gfb.27.nea", 2022)
+catch_scenario_list_2 <- get_Advice_View_info("cod.27.24-32", 2020-1)
+table_1 <- get_catch_scenario_table(catch_scenario_list_1)
+table_2 <- get_catch_scenario_table(catch_scenario_list_2)
+table_stand_1 <- standardize_catch_scenario_table(table_1)
+table_stand_2 <- standardize_catch_scenario_table(table_2)
+
+
+
+
+
+scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch_scen_table){
+  if (!is_empty(new_catch_scen_table)) {
+  Basis <- old_catch_scen_table[old_catch_scen_table$cS_Purpose == "Basis Of Advice",]
+  catch_scen_table_perc <- new_catch_scen_table[, c("Year", "cat", "cS_Purpose")]
+  
+  catch_scen_table_perc$F <- (new_catch_scen_table$F - Basis$F) / Basis$F *100
+  catch_scen_table_perc$F_wanted <- (new_catch_scen_table$F_wanted - Basis$F_wanted) / Basis$F_wanted *100
+  catch_scen_table_perc$HR <- (new_catch_scen_table$HR - Basis$HR) / Basis$HR *100
+  catch_scen_table_perc$TotCatch <- (new_catch_scen_table$TotCatch - Basis$TotCatch) / Basis$TotCatch *100
+  catch_scen_table_perc$`TAC change` <- new_catch_scen_table$`TAC change`
+  catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
+  catch_scen_table_perc$SSB <- (new_catch_scen_table$SSB - Basis$SSB) / Basis$SSB *100
+  catch_scen_table_perc$`SSB change` <- new_catch_scen_table$`SSB change`
+  } else {
+    catch_scen_table_perc <- character(0)
+  }
+  
+  return(catch_scen_table_perc)
+}
+
+
+old_catch_scen_table <- table_stand_2$table
+new_catch_scen_table <- table_stand_1$table
+scale_catch_scenarios_for_radialPlot(table_stand_2$table, table_stand_1$table)
+
+# calculate_perc_change <- function(new_catch_scen_table_column, Basis, catch_scen_table_perc_column){
+#   catch_scen_table_perc$F <- (new_catch_scen_table$F - Basis$F[1]) / Basis$F[1] *100
+#   ifelse(new_catch_scen_table$F == Basis$F[1] & Basis$F[1] == 0, 1, (new_catch_scen_table$F - Basis$F[1]) / Basis$F[1])
+# }
+
+
+
+# calculate_perc_change <- function(new_catch_scen_table, Basis, catch_scen_table_perc) {
+  
+#   for (m in 4:ncol(new_catch_scen_table)) {  
+#   for (i in seq_len(nrow(new_catch_scen_table))) {
+#     if (Basis[1,m] == 0) {
+#       catch_scen_table_perc[i,m] <- 1 * 100
+#       if (new_catch_scen_table[i,m] == Basis[1,m]) {
+#         catch_scen_table_perc[i,m] <- 0
+#       }
+#     } else {
+#       catch_scen_table_perc[i,m] <- 100 * ((new_catch_scen_table[i,m] - Basis[1,m]) / Basis[1,m])
+#     }
+#   }
+# }
+# }
+catch_scenario_list_1 <- get_Advice_View_info("cod.27.47d20", 2022)
+catch_scenario_list_2 <- get_Advice_View_info("cod.27.47d20", 2022-1)
+table_1 <- get_catch_scenario_table(catch_scenario_list_1)
+table_2 <- get_catch_scenario_table(catch_scenario_list_2)
+table_stand_1 <- standardize_catch_scenario_table(table_1)
+table_stand_2 <- standardize_catch_scenario_table(table_2)
+
+changes_columns <- table_stand_1$table %>% select("cat","TAC change","ADVICE change", "SSB change")
+
+
+keep.cols <- c("Year", "cat" , "cS_Purpose","F", "F_wanted","HR","TotCatch","SSB")
+df_old <- table_stand_2$table %>% select(keep.cols)
+df_new <- table_stand_1$table %>% select(keep.cols)
+
+df_old <- df_old[,colSums(is.na(df_old))<nrow(df_old)]
+df_new <- df_new[,colSums(is.na(df_new))<nrow(df_new)]
+Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice",]
+catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
+catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
+catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat"))
+
+calculate_perc_change <- function(df_new, Basis, catch_scen_table_perc) {
+
+  for (m in 4:ncol(df_new)) {
+    for (i in seq_len(nrow(df_new))) {
+      if (Basis[1, m] == 0) {
+        catch_scen_table_perc[i, m] <- 1 * 100
+        if (df_new[i, m] == Basis[1, m]) {
+          catch_scen_table_perc[i, m] <- 0
+        }
+      } else {
+        catch_scen_table_perc[i, m] <- 100 * ((df_new[i, m] - Basis[1, m]) / Basis[1, m])
+      }
+    }
+  }
+  return(catch_scen_table_perc)
+}
+catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat"))
+
+a <- 0
+b<- 0
+# 100*((b-a)/a)
+
+if (a == 0) {
+  c <- 1 * 100
+  if (b == a) {
+    c <- 0
+  }
+} else {
+  c <- 100 * ((b - a) / a)
+}
+print(c)
+
+
+scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch_scen_table){
+  if (!is_empty(new_catch_scen_table) & !is_empty(old_catch_scen_table)) {
+
+
+
+  Basis <- old_catch_scen_table[old_catch_scen_table$cS_Purpose == "Basis Of Advice",]
+  catch_scen_table_perc <- new_catch_scen_table[, c("Year", "cat", "cS_Purpose", "F")]
+  
+  catch_scen_table_perc$F <- calculate_perc_change(new_catch_scen_table$F, Basis$F, catch_scen_table_perc$F)
+  catch_scen_table_perc$F <- (new_catch_scen_table$F - Basis$F) / Basis$F *100
+  catch_scen_table_perc$F_wanted <- (new_catch_scen_table$F_wanted - Basis$F_wanted) / Basis$F_wanted *100
+  catch_scen_table_perc$HR <- (new_catch_scen_table$HR - Basis$HR) / Basis$HR *100
+  catch_scen_table_perc$TotCatch <- (new_catch_scen_table$TotCatch - Basis$TotCatch) / Basis$TotCatch *100
+  catch_scen_table_perc$`TAC change` <- new_catch_scen_table$`TAC change`
+  catch_scen_table_perc$`ADVICE change` <- new_catch_scen_table$`ADVICE change`
+  catch_scen_table_perc$SSB <- (new_catch_scen_table$SSB - Basis$SSB) / Basis$SSB *100
+  catch_scen_table_perc$`SSB change` <- new_catch_scen_table$`SSB change`
+  } else {
+    catch_scen_table_perc <- character(0)
+  }
+  
+  return(catch_scen_table_perc)
+}
