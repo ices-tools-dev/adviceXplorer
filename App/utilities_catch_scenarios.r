@@ -460,18 +460,18 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   if (!is_empty(new_catch_scen_table) | !is_empty(new_catch_scen_table)) {
     changes_columns <- new_catch_scen_table %>% select("cat", "TAC change", "ADVICE change", "SSB change")
 
-
     keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "SSB")
-    df_old <- old_catch_scen_table %>% select(all_of(keep.cols))
-    df_new <- new_catch_scen_table %>% select(all_of(keep.cols))
+    df_old <- old_catch_scen_table %>% 
+      select(all_of(keep.cols)) %>% 
+      drop_cols_with_all_nas()
+    
+    df_new <- new_catch_scen_table %>% 
+      select(all_of(keep.cols)) %>% 
+      drop_cols_with_all_nas()
 
-    df_old <- df_old[, colSums(is.na(df_old)) < nrow(df_old)]
-    df_new <- df_new[, colSums(is.na(df_new)) < nrow(df_new)]
     Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice", ]
     catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
     catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
-    names(catch_scen_table_perc) <- names(df_new)
-    # catch_scen_table_perc <- catch_scen_table_perc %>% colnames(names(df_new))
     catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) %>% relocate("SSB change", .after = SSB)
 
   } else {
@@ -479,6 +479,21 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   }
 
   return(catch_scen_table_perc)
+}
+
+
+#' Drop columns from a data frame if they only contain NA values
+#'
+#' @param df a data frame
+#'
+#' @return a data frame where no columns contain only NA
+#'
+#' @examples
+#' df <- data.frame(a = c(NA, NA, 1), b = rep(NA,3))
+#' drop_all_na_cols(df)
+#' 
+drop_cols_with_all_nas <- function(df){
+  df[,colSums(is.na(df)) < nrow(df)]
 }
 
 #' Returns a catch scenario plot with values in %. 
@@ -522,5 +537,6 @@ calculate_perc_change <- function(df_new, Basis, catch_scen_table_perc) {
       }
     }
   }
+  names(catch_scen_table_perc) <- names(df_new)
   return(catch_scen_table_perc)
 }
