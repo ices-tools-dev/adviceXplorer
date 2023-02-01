@@ -64,11 +64,11 @@ make_data_sources <- function() {
     paste0(
       
       "<p align='left'><b>", "<font size=", 5, ">", "Data sources", "</font>", "</b>", "<br/>",
-      "The ICES Online Advice Shiny app diplays data collected from the following sources:
-      <ul><li>", a("ICES Spatial Facility", href = "https://gis.ices.dk/sf/index.html"), "</li>",
-      "<li>", a("Stock Information Database (SID)", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx"), "</li>",
-      "<li>", a("Stock Asssessment Graphs (SAG)", href = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx"), "</li>",
-      "<li>",  a("Advice View", href = "https://sg.ices.dk/adviceview/Account/Login?ReturnUrl=%2Fadviceview%2Fmanage"), "</li></ul>", "</font>"
+      "The ICES Online Advice Shiny app diplays data collected from the following sources:",
+      "<ul><li><a href='","https://gis.ices.dk/sf/index.html", "' target='_blank'>", "ICES Spatial Facility","</a></li>",
+      "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx", "' target='_blank'>", "Stock Information Database (SID)","</a></li>",
+      "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx", "' target='_blank'>", "Stock Asssessment Graphs (SAG)","</a></li>",
+      "<li><a href='","https://standardgraphs.ices.dk/adviceview/AdviceList", "' target='_blank'>", "Advice and Scenarios Database (ASD)","</a></li></ul></font>"
 
     )
   )
