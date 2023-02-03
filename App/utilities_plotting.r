@@ -1786,12 +1786,13 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         yaxis2 = ay,
         annotations = b,
         legend = list(
-            font = list(size = 15,
-            color = "black"),
-            bgcolor = "rgba(255,255,255, 0.2)",
-            x = 0.4,
-            y = 1
-        ),
+                orientation = "h",
+                y = 1.05,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
         autosize = T,
         margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
         xaxis = list(
