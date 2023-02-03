@@ -1648,24 +1648,16 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             text = "FMSY",
             line = list(color = "#00AC67", width = .9, dash = 'solid'),
             name = "FMSY"
+        ) %>% 
+        add_markers(
+            x = Basis$TotCatch,
+            y = Basis$F_wanted,
+            type = "scatter",
+            mode = "markers",            
+            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            text = "Basis of advice",
+            name = "Basis of advice"
         )
-
-        b <- list(
-        x = Basis$TotCatch,
-        y = Basis$F_wanted,
-        text = Basis$cS_Purpose,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowcolor = "#999999",
-        arrowhead = 15,
-        ax = 7,
-        ay = -50, font = list(
-            color = "#999999",
-            family = "sans serif",
-            size = 20
-        )
-    )
 
     if (is_na_column(tmp, "F_wanted")){
         tmp <- arrange(tmp, HR)
@@ -1688,24 +1680,16 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             text = "FMSY",
             line = list(color = "#00AC67", width = .9, dash = 'solid'),
             name = "FMSY"
+        ) %>% 
+        add_markers(
+            x = Basis$TotCatch,
+            y = Basis$HR,
+            type = "scatter",
+            mode = "markers",            
+            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            text = "Basis of advice",
+            name = "Basis of advice"
         )
-
-        b <- list(
-        x = Basis$TotCatch,
-        y = Basis$HR,
-        text = Basis$cS_Purpose,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowcolor = "#999999",
-        arrowhead = 15,
-        ax = 7,
-        ay = -50, font = list(
-            color = "#999999",
-            family = "sans serif",
-            size = 20
-        )
-    )
     
     }
     } else {
@@ -1716,7 +1700,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             y = ~ F,
             type = "scatter",
             mode = "lines+markers",
-            text = labels,
+            text = labels,            
             marker = list(color = "#ed5f26", size = 10),
             line = list(color = "#ed5f26", width = 2, dash = 'solid'),
             name = "F"
@@ -1729,22 +1713,15 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             text = "FMSY",
             line = list(color = "#00AC67", width = .9, dash = 'solid'),
             name = "FMSY"
-        )
-        b <- list(
+        ) %>% 
+        add_markers(
             x = Basis$TotCatch,
             y = Basis$F,
-            text = Basis$cS_Purpose,
-            xref = "x",
-            yref = "y",
-            showarrow = TRUE,
-            arrowcolor = "#999999",
-            arrowhead = 15,
-            ax = 7,
-            ay = -50, font = list(
-                color = "#999999",
-                family = "sans serif",
-                size = 20
-            )
+            type = "scatter",
+            mode = "markers",            
+            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            text = "Basis of advice",
+            name = "Basis of advice"
         )
     }
 
@@ -1760,7 +1737,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         x = ~ TotCatch,
         y = ~ SSB/1000,
         type = "scatter",
-        mode = "lines+markers",
+        mode = "lines+markers",        
         text = labels,
         line = list(color = "#047c6c", width = 2, dash = 'solid'),
         marker = list(size = 10, color = "#047c6c"),
@@ -1776,7 +1753,17 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             line = list(color = "black", width = .9, dash = 'dash'),
             name = "BLim", 
             yaxis = "y2"
-        )
+        ) %>% 
+    add_markers(
+        x = Basis$TotCatch,
+        y = Basis$SSB/1000,
+        type = "scatter",
+        mode = "markers",            
+        marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
+        text = "Basis of advice",
+        name = "Basis of advice",
+        yaxis = "y2"
+    )
 
     
     fig_catch <- fig_catch %>% layout(
@@ -1784,7 +1771,6 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         plot_bgcolor = "rgb(255,255,255)",
         hovermode = "x",
         yaxis2 = ay,
-        annotations = b,
         legend = list(
                 orientation = "h",
                 y = 1.05,
