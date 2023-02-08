@@ -1612,6 +1612,10 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     
     tmp <- data.frame(tmp$table)
     
+    
+    tmp$fmsy <- tail(df$FMSY,1)
+    tmp$blim <- tail(df$Blim,1)
+    # print(tmp)
     labels <- sprintf(
             "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
@@ -1632,26 +1636,28 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(size = 10),
+            marker = list(color = "#ed5f26", size = 10),
+            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
             name = "F wanted"
+        ) %>% 
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ fmsy,
+            type = "scatter",
+            mode = "lines",
+            text = "FMSY",
+            line = list(color = "#00AC67", width = .9, dash = 'solid'),
+            name = "FMSY"
+        ) %>% 
+        add_markers(
+            x = Basis$TotCatch,
+            y = Basis$F_wanted,
+            type = "scatter",
+            mode = "markers",            
+            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            text = "Basis of advice",
+            name = "Basis of advice"
         )
-
-        b <- list(
-        x = Basis$TotCatch,
-        y = Basis$F_wanted,
-        text = Basis$cS_Purpose,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowcolor = "#999999",
-        arrowhead = 15,
-        ax = 7,
-        ay = -50, font = list(
-            color = "#999999",
-            family = "sans serif",
-            size = 20
-        )
-    )
 
     if (is_na_column(tmp, "F_wanted")){
         tmp <- arrange(tmp, HR)
@@ -1662,26 +1668,28 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(size = 10),
+            marker = list(color = "#ed5f26", size = 10),
+            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
             name = "HR"
+        ) %>% 
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ fmsy,
+            type = "scatter",
+            mode = "lines",
+            text = "FMSY",
+            line = list(color = "#00AC67", width = .9, dash = 'solid'),
+            name = "FMSY"
+        ) %>% 
+        add_markers(
+            x = Basis$TotCatch,
+            y = Basis$HR,
+            type = "scatter",
+            mode = "markers",            
+            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            text = "Basis of advice",
+            name = "Basis of advice"
         )
-
-        b <- list(
-        x = Basis$TotCatch,
-        y = Basis$HR,
-        text = Basis$cS_Purpose,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowcolor = "#999999",
-        arrowhead = 15,
-        ax = 7,
-        ay = -50, font = list(
-            color = "#999999",
-            family = "sans serif",
-            size = 20
-        )
-    )
     
     }
     } else {
@@ -1692,26 +1700,29 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             y = ~ F,
             type = "scatter",
             mode = "lines+markers",
-            text = labels,
-            marker = list(size = 10),
+            text = labels,            
+            marker = list(color = "#ed5f26", size = 10),
+            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
             name = "F"
+        ) %>% 
+        add_trace(
+            x = ~ TotCatch,
+            y = ~ fmsy,
+            type = "scatter",
+            mode = "lines",
+            text = "FMSY",
+            line = list(color = "#00AC67", width = .9, dash = 'solid'),
+            name = "FMSY"
+        ) %>% 
+        add_markers(
+            x = Basis$TotCatch,
+            y = Basis$F,
+            type = "scatter",
+            mode = "markers",            
+            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            text = "Basis of advice",
+            name = "Basis of advice"
         )
-        b <- list(
-        x = Basis$TotCatch,
-        y = Basis$F,
-        text = Basis$cS_Purpose,
-        xref = "x",
-        yref = "y",
-        showarrow = TRUE,
-        arrowcolor = "#999999",
-        arrowhead = 15,
-        ax = 7,
-        ay = -50, font = list(
-            color = "#999999",
-            family = "sans serif",
-            size = 20
-        )
-    )
     }
 
     
@@ -1726,10 +1737,31 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         x = ~ TotCatch,
         y = ~ SSB/1000,
         type = "scatter",
-        mode = "lines+markers",
+        mode = "lines+markers",        
         text = labels,
-        marker = list(size = 10, color = "#ff7300"),
+        line = list(color = "#047c6c", width = 2, dash = 'solid'),
+        marker = list(size = 10, color = "#047c6c"),
         name = "SSB",
+        yaxis = "y2"
+    ) %>% 
+    add_trace(
+            x = ~ TotCatch,
+            y = ~ blim/1000,
+            type = "scatter",
+            mode = "lines",
+            text = "BLim",
+            line = list(color = "black", width = .9, dash = 'dash'),
+            name = "BLim", 
+            yaxis = "y2"
+        ) %>% 
+    add_markers(
+        x = Basis$TotCatch,
+        y = Basis$SSB/1000,
+        type = "scatter",
+        mode = "markers",            
+        marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
+        text = "Basis of advice",
+        name = "Basis of advice",
         yaxis = "y2"
     )
 
@@ -1739,14 +1771,14 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         plot_bgcolor = "rgb(255,255,255)",
         hovermode = "x",
         yaxis2 = ay,
-        annotations = b,
         legend = list(
-            font = list(size = 20,
-            color = "black"),
-            bgcolor = "rgba(255,255,255, 0.2)",
-            x = 0.1,
-            y = 0.5
-        ),
+                orientation = "h",
+                y = 1.05,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
         autosize = T,
         margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
         xaxis = list(
@@ -1760,7 +1792,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             showticklabels = TRUE
         ),
         yaxis = list(
-            title = F_yaxis_label, # "SSB",
+            title = F_yaxis_label, 
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
