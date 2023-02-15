@@ -467,7 +467,8 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
     
     df_new <- new_catch_scen_table %>% 
       select(all_of(keep.cols)) %>% 
-      drop_cols_with_all_nas()
+      drop_cols_with_all_nas() %>% 
+      na.omit()
 
     Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice", ]
     catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
