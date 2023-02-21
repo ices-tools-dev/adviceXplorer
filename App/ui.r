@@ -93,7 +93,7 @@ navbarPage(
     # navbar title
     title = title_html,
     tabPanel(
-        "Stock Selection",
+        "Stock selection",
         sidebarLayout(
             sidebarPanel = stock_selection_left_side(),
             mainPanel = stock_selection_right_side()
@@ -130,7 +130,7 @@ navbarPage(
 ######################################################################################################
 
     tabPanel(
-        "Catch Scenarios",
+        "Catch scenarios",
         splitLayout(
             cellWidths = c("40%", "60%"),
             header_left_panel_stock_info("stock_infos3"),
@@ -145,7 +145,7 @@ navbarPage(
     navbarMenu(
             "Resources",
             tabPanel(
-                "Contact & Feedback",
+                "Contact & feedback",
                 htmlOutput("contact_feedback")
             ),
             tabPanel(
@@ -153,7 +153,7 @@ navbarPage(
                 htmlOutput("data_sources")
             ),
             tabPanel(
-                "Data Disclaimer & Policy",
+                "Data disclaimer & policy",
                 htmlOutput("data_disclaimer_policy")
             ),
             tabPanel(

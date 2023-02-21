@@ -63,12 +63,13 @@ make_data_sources <- function() {
   string_citation <- HTML(
     paste0(
       
-      "<p align='left'><b>", "<font size=", 5, ">", "Data sources", "</font>", "</b>", "<br/>",
+      "<p align='left'><b><font size= 5>", "Data sources", "</font>", "</b>", "<br/>",
       "The ICES Online Advice Shiny app diplays data collected from the following sources:",
       "<ul><li><a href='","https://gis.ices.dk/sf/index.html", "' target='_blank'>", "ICES Spatial Facility","</a></li>",
       "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx", "' target='_blank'>", "Stock Information Database (SID)","</a></li>",
       "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx", "' target='_blank'>", "Stock Asssessment Graphs (SAG)","</a></li>",
-      "<li><a href='","https://standardgraphs.ices.dk/adviceview/AdviceList", "' target='_blank'>", "Advice View","</a></li></ul></font>"
+      "<li><a href='","https://standardgraphs.ices.dk/adviceview/AdviceList", "' target='_blank'>", "Advice and Scenarios Database (ASD)","</a></li></ul></font><br/>",
+      "<font size= 3>The fish illustrations were courteously provided by Food and Agriculture Organization of the United Nations (FAO), Original Scientific Illustrations Archive. Reproduced with permission</font>"
 
     )
   )
@@ -111,9 +112,7 @@ make_data_disclaimer_and_policy <- function() {
       "<font size=", 3, ">","Under the revised ", "<a href='","https://www.ices.dk/data/guidelines-and-policy/Pages/ICES-data-policy.aspx", "' target='_blank'>", "ICES Data Policy","</a>",
       " all public data are under the Creative Commons licence ",
       "<a href='","https://creativecommons.org/licenses/by/4.0/", "' target='_blank'>", "(CC BY 4.0).</a><br/><br/>",
-      # img(src = "by.png", height = "100px"),
       "<img src= 'by.png'", " height= '100px'/><br/><br/>"
-      
     )
   )
 
