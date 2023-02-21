@@ -276,6 +276,15 @@ standardize_catch_scenario_table <- function(tmp) {
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
 
+  # Total catch"
+  pattern <- c("_CatchTotal_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
   # Ftotal"
   pattern <- c("_FTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -303,11 +312,11 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
-  # Total catch"
-  pattern <- c("_CatchTotal_")
+  # SSB"
+  pattern <- c("_StockSize_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
+    tmp_unified <- tmp_unified %>% add_column(SSB = NA)
   } else {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
@@ -330,15 +339,6 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
-  # SSB"
-  pattern <- c("_StockSize_")
-  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(SSB = NA)
-  } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
-  }
-  
   # % SSB change "
   pattern <- c("_StockSizechange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -353,7 +353,7 @@ standardize_catch_scenario_table <- function(tmp) {
   col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB", "TAC change", "ADVICE change", "SSB change")
 
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
