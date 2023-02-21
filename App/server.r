@@ -66,7 +66,8 @@ server <- function(input, output, session) {
     data = eco_filter,
     vars = c(
       "StockKeyLabel", "SpeciesCommonName"
-    )
+    ),
+    inline = FALSE
   )
   
   ###########################################################  Render table in stock selection tab
@@ -515,7 +516,7 @@ output$table <- DT::renderDT(
   selection = "single",
   class = "display",
   caption = HTML(paste0("Subset of catch scenario table (click ", 
-                        "<span class='hovertext' data-hover='Click here to access the Advice View entry for this stock'>",
+                        "<span class='hovertext' data-hover='Click here to access the Advice & Scenarios Database entry for this stock'>",
                         "<a href='","https://sg.ices.dk/adviceview/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
                         "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
   rownames = FALSE,
