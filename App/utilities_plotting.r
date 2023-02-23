@@ -1031,12 +1031,13 @@ if (length(averageYears)) {
             )))
 }
 
-
+min_year <- min(df4$Year[which(!is.na(df4$SSB))])
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
 
   p4 <-
-    p4 +
+    p4 + 
+    # xlim(min_year, max(df4$Year+1)) +
     theme_ICES_plots(
       type = "SSB", df,
       title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),

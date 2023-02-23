@@ -70,7 +70,7 @@ getSAGSettings <- function(assessmentkey) {
         )
     )
 }
-assessmentkey <- 13003
+assessmentkey <- 17565
 settings <- getSAGSettings(assessmentkey)
 df<- settings[!(settings$settingValue == ""), ]
 
@@ -81,9 +81,9 @@ catch_scenario_list <- get_Advice_View_info("hom.27.2a4a5b6a7a-ce-k8", 2019)
 table <- get_catch_scenario_table(catch_scenario_list)
 table_stand <- standardize_catch_scenario_table(table)
 
-stock_name <- "cod.27.47d20"
+stock_name <- "nep.fu.17"
 year <- 2022
-catches_data<- access_sag_data_local("hom.27.2a4a5b6a7a-ce-k8", 2019)
+catches_data<- access_sag_data_local("nep.fu.17", 2022)
 catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
     select(Year, catches, landings, discards) #%>% na.omit()
@@ -190,6 +190,15 @@ standardize_catch_scenario_table <- function(tmp) {
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
 
+  # Total catch"
+  pattern <- c("_CatchTotal_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
   # Ftotal"
   pattern <- c("_FTotal_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -217,11 +226,28 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
-  # Total catch"
-  pattern <- c("_CatchTotal_")
+  # SSB"
+  pattern <- c("_StockSize_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
+    tmp_unified <- tmp_unified %>% add_column(SSB = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+  # surviving discards"
+  pattern <- c("_CatchUnwanted_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(CatchUnwanted = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
+  # surviving discards"
+  pattern <- c( "surviving")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(CatchUnwantedSurviving = NA)
   } else {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
@@ -244,15 +270,6 @@ standardize_catch_scenario_table <- function(tmp) {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
 
-  # SSB"
-  pattern <- c("_StockSize_")
-  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(SSB = NA)
-  } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
-  }
-  
   # % SSB change "
   pattern <- c("_StockSizechange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
@@ -267,7 +284,7 @@ standardize_catch_scenario_table <- function(tmp) {
   col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB","CatchUnwanted","CatchUnwantedSurviving", "TAC change", "ADVICE change", "SSB change")
 
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
@@ -279,6 +296,7 @@ standardize_catch_scenario_table <- function(tmp) {
   
   return(list(table = tmp_unified, cols = col_names_for_display))
 }
+
 
 
 
@@ -317,8 +335,8 @@ if (is_na_column(tmp, "F")){
 }
 names(tmp)
 
-catch_scenario_list_1 <- get_Advice_View_info(" gfb.27.nea", 2022)
-catch_scenario_list_2 <- get_Advice_View_info("cod.27.24-32", 2020-1)
+catch_scenario_list_1 <- get_Advice_View_info("nep.fu.17", 2022)
+catch_scenario_list_2 <- get_Advice_View_info("cod.27.7e-k", 2022-1)
 table_1 <- get_catch_scenario_table(catch_scenario_list_1)
 table_2 <- get_catch_scenario_table(catch_scenario_list_2)
 table_stand_1 <- standardize_catch_scenario_table(table_1)
@@ -375,8 +393,8 @@ scale_catch_scenarios_for_radialPlot(table_stand_2$table, table_stand_1$table)
 #   }
 # }
 # }
-catch_scenario_list_1 <- get_Advice_View_info("cod.27.47d20", 2022)
-catch_scenario_list_2 <- get_Advice_View_info("cod.27.47d20", 2022-1)
+catch_scenario_list_1 <- get_Advice_View_info("her.27.irls", 2022)
+catch_scenario_list_2 <- get_Advice_View_info("her.27.irls", 2022-1)
 table_1 <- get_catch_scenario_table(catch_scenario_list_1)
 table_2 <- get_catch_scenario_table(catch_scenario_list_2)
 table_stand_1 <- standardize_catch_scenario_table(table_1)
@@ -392,7 +410,13 @@ df_new <- table_stand_1$table %>% select(keep.cols)
 df_old <- df_old[,colSums(is.na(df_old))<nrow(df_old)]
 df_new <- df_new[,colSums(is.na(df_new))<nrow(df_new)]
 Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice",]
+df_new <- df_new %>% na.omit()
 catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
+
+which(is.na(df_new), arr.ind=TRUE)
+
+df_new <- df_new[c(-9,-10),]
+catch_scen_table_perc <- catch_scen_table_perc[c(-9,-10),]
 catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
 catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat"))
 
@@ -452,3 +476,11 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   
   return(catch_scen_table_perc)
 }
+
+
+
+# Use which() to find the row indices where second_column is not NA
+not_na_indices <- which(!is.na(catches_data$SSB))
+
+# Use the result to index the first_column vector and find the minimum value
+min_value <- min(catches_data$Year[not_na_indices])
