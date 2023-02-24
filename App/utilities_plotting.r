@@ -1596,7 +1596,6 @@ radial_plot <- function(tmp, catch_scenarios) {
 
 catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     nullifempty <- function(x) if (length(x) == 0) NULL else x
-
     
     F_yaxis_label <- sagSettings %>% filter(sagChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(F_yaxis_label)) {
@@ -1608,7 +1607,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     if (is.null(SSB_yaxis_label)) {
     SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
         }
-   
+    discards_yaxis_label <- "Discards (tonnes)"
+       
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
     
     tmp <- data.frame(tmp$table)
@@ -1727,45 +1727,109 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     }
 
     
-    ay <- list(
-        overlaying = "y",
-        side = "right",
-        title = SSB_yaxis_label,
-        titlefont = titlefont_format(),
-        tickfont = tickfont_format()
-    )
-    fig_catch <- fig_catch %>% add_trace(
-        x = ~ TotCatch,
-        y = ~ SSB/1000,
-        type = "scatter",
-        mode = "lines+markers",        
-        text = labels,
-        line = list(color = "#047c6c", width = 2, dash = 'solid'),
-        marker = list(size = 10, color = "#047c6c"),
-        name = "SSB",
-        yaxis = "y2"
-    ) %>% 
-    add_trace(
-            x = ~ TotCatch,
-            y = ~ blim/1000,
-            type = "scatter",
-            mode = "lines",
-            text = "BLim",
-            line = list(color = "black", width = .9, dash = 'dash'),
-            name = "BLim", 
-            yaxis = "y2"
-        ) %>% 
-    add_markers(
-        x = Basis$TotCatch,
-        y = Basis$SSB/1000,
-        type = "scatter",
-        mode = "markers",            
-        marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
-        text = "Basis of advice",
-        name = "Basis of advice",
-        yaxis = "y2"
-    )
+    if (str_detect(tail(df$StockKeyLabel), "nep")) {
+        ay <- list(
+            overlaying = "y",
+            side = "right",
+            title = discards_yaxis_label,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
+        fig_catch <- fig_catch %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~CatchUnwanted,
+                type = "scatter",
+                mode = "lines+markers",
+                text = labels,
+                line = list(color = "#047c6c", width = 2, dash = "solid"),
+                marker = list(size = 10, color = "#047c6c"),
+                name = "Dead discards",
+                yaxis = "y2"
+            ) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~CatchUnwantedSurviving,
+                type = "scatter",
+                mode = "lines+markers",
+                text = labels,
+                line = list(color = "#00caaf", width = 2, dash = "solid"),
+                marker = list(size = 10, color = "#00caaf"),
+                name = "Surviving discards",
+                yaxis = "y2"
+            ) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~blim,
+                type = "scatter",
+                mode = "lines",
+                text = "BLim",
+                line = list(color = "black", width = .9, dash = "dash"),
+                name = "BLim",
+                yaxis = "y2"
+            ) %>%
+            add_markers(
+                x = Basis$TotCatch,
+                y = Basis$CatchUnwanted,
+                type = "scatter",
+                mode = "markers",
+                marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
+                text = "Basis of advice",
+                name = "Basis of advice",
+                yaxis = "y2"
+            ) %>%
+            add_markers(
+                x = Basis$TotCatch,
+                y = Basis$CatchUnwantedSurviving,
+                type = "scatter",
+                mode = "markers",
+                marker = list(color = "#00caaf", size = 15, symbol = "circle-open"),
+                text = "Basis of advice",
+                name = "Basis of advice",
+                yaxis = "y2"
+            )
+    } else {
+        ay <- list(
+            overlaying = "y",
+            side = "right",
+            title = SSB_yaxis_label,
+            titlefont = titlefont_format(),
+            tickfont = tickfont_format()
+        )
 
+            fig_catch <- fig_catch %>%
+                add_trace(
+                    x = ~TotCatch,
+                    y = ~ SSB / 1000,
+                    type = "scatter",
+                    mode = "lines+markers",
+                    text = labels,
+                    line = list(color = "#047c6c", width = 2, dash = "solid"),
+                    marker = list(size = 10, color = "#047c6c"),
+                    name = "SSB",
+                    yaxis = "y2"
+                ) %>%
+                add_trace(
+                    x = ~TotCatch,
+                    y = ~ blim / 1000,
+                    type = "scatter",
+                    mode = "lines",
+                    text = "BLim",
+                    line = list(color = "black", width = .9, dash = "dash"),
+                    name = "BLim",
+                    yaxis = "y2"
+                ) %>%
+                add_markers(
+                    x = Basis$TotCatch,
+                    y = Basis$SSB / 1000,
+                    type = "scatter",
+                    mode = "markers",
+                    marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
+                    text = "Basis of advice",
+                    name = "Basis of advice",
+                    yaxis = "y2"
+                )
+    }
     
     fig_catch <- fig_catch %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
