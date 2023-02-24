@@ -179,20 +179,12 @@ server <- function(input, output, session) {
   
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
 additional_LandingData <- reactive({
-  out <- jsonlite::fromJSON(
-        URLencode(
-            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", query$assessmentkey)
-        )
-    )  
-  data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
-
+  get_additional_landing_data(query$assessmentkey)
 }) 
 
 ##### get link to library pdf advice
-advice_doi <- eventReactive((req(query$assessmentkey)),{
-  
+advice_doi <- eventReactive((req(query$assessmentkey)),{  
   get_advice_doi(query$assessmentkey)
-
 })
 
 ###### info about the stock selected for top of page

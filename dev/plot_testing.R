@@ -70,7 +70,7 @@ getSAGSettings <- function(assessmentkey) {
         )
     )
 }
-assessmentkey <- 17565
+assessmentkey <- 17630
 settings <- getSAGSettings(assessmentkey)
 df<- settings[!(settings$settingValue == ""), ]
 
@@ -81,7 +81,7 @@ catch_scenario_list <- get_Advice_View_info("hom.27.2a4a5b6a7a-ce-k8", 2019)
 table <- get_catch_scenario_table(catch_scenario_list)
 table_stand <- standardize_catch_scenario_table(table)
 
-stock_name <- "nep.fu.17"
+stock_name <- "ane.27.9a"
 year <- 2022
 catches_data<- access_sag_data_local("nep.fu.17", 2022)
 catches_data <- catches_data %>%
@@ -484,3 +484,10 @@ not_na_indices <- which(!is.na(catches_data$SSB))
 
 # Use the result to index the first_column vector and find the minimum value
 min_value <- min(catches_data$Year[not_na_indices])
+
+
+
+########################################################################5
+library(icesASD)
+
+get_advice_view_info("nep.fu.17", 2022)

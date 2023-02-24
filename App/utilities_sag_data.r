@@ -311,3 +311,36 @@ myDownloadButton <- function(outputId){
   tags$a(id = outputId, class = "btn btn-default shiny-download-link", href = "", 
          target = "_blank", download = NA, NULL, style = "width: 35px; height: 35px; background: url('downloading.png');  background-size: cover; background-position: center; border: 1px solid transparent;")
 }
+
+
+
+#' Returns a data.frame with ibc and unallocated removals (to be integrated with icesSAG)
+#'
+#' @param assessmentKey
+#'
+#' @return data.frame
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#'
+get_additional_landing_data <- function(assessmentKey) {
+  out <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", assessmentKey)
+        )
+    )  
+  df <- data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
+  return(df)
+}
