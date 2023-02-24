@@ -1,1 +1,0 @@
-Year,cS_Label,cS_Purpose,Ftotal (2021),Total catch (2021),% TAC change ^ (2021),% advice change ^^ (2021),SSB (2022),% SSB change *** (2021)

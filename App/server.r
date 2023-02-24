@@ -22,8 +22,6 @@ server <- function(input, output, session) {
   shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"')
   shinyjs::disable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
   
-  help_server(input, output, session)
-
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
@@ -175,7 +173,7 @@ server <- function(input, output, session) {
   })  
   
   drop_plots <- reactive({
-      filter(sagSettings(), settingKey ==22 & settingValue == "yes") %>%
+      filter(sagSettings(), settingKey == 22 & settingValue == "yes" | settingValue == "y") %>%
       pull(sagChartKey) %>%
       as.numeric})
   
@@ -234,8 +232,8 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot1 <- renderPlotly({
      validate(
-      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock"),
-      need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock")#,
+      # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData()))
 
@@ -243,16 +241,16 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock"),
-      need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock")#,
+      # need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
   })
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$F != "", "F not available for this stock"),
-      need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(SAG_data_reactive()$F != "", "F not available for this stock")#,
+      # need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
@@ -260,8 +258,8 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
-      need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")#,
+      # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
       
     )
     suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
@@ -326,25 +324,27 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 
 ##### Advice view info
 advice_view_info <- reactive({
-  get_Advice_View_info(query$stockkeylabel, query$year)
+  # get_Advice_View_info(query$stockkeylabel, query$year)
+  get_advice_view_info(query$stockkeylabel, query$year)
 }) 
 
 
 ##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  get_Advice_View_info(query$stockkeylabel, query$year-1)
+  # get_Advice_View_info(query$stockkeylabel, query$year-1)
+  get_advice_view_info(query$stockkeylabel, query$year-1)
 })
 
 
 
 ##### catch scenarios table
 catch_scenario_table <- eventReactive(req(advice_view_info()), {
-  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()))
+  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()$adviceKey, query$year))
 })
 
 ##### catch scenarios table previous year in percentages (for radial plot)
 catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
-  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()))
+  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()$adviceKey, query$year))
   
 })
 
