@@ -20,7 +20,7 @@ server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
   shinyjs::disable(selector = '.navbar-nav a[data-value="Development over time"')
   shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-  shinyjs::disable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+  shinyjs::disable(selector = '.navbar-nav a[data-value="Catch scenarios"')
   
   help_server(input, output, session)
 
@@ -112,7 +112,7 @@ server <- function(input, output, session) {
   observeEvent(input$rdbtn, {
     shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
     shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-    shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+    shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
     
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
         
@@ -147,7 +147,7 @@ server <- function(input, output, session) {
       updateNavbarPage(session, "tabset", selected = "Development over time")
       shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
       shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
       
     }
   })
