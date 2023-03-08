@@ -364,8 +364,12 @@ output$catch_scenario_plot_F_SSB_Catch <- renderPlotly({
   validate(
       need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
-  
-  catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive(), sagSettings())
+
+  if (str_detect(tail(query$stockkeylabel), "nep")) {
+    catch_scenario_plot_1_nephrops(catch_scenario_table(), SAG_data_reactive(), sagSettings())
+  } else {
+    catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive(), sagSettings())
+  }
 }) 
 
 ########## Historical catches panel (preparation of data)
