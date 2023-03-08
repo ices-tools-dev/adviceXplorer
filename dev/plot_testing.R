@@ -234,7 +234,7 @@ standardize_catch_scenario_table <- function(tmp) {
   } else {
     tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
   }
-  # surviving discards"
+  # dead discards"
   pattern <- c("_CatchUnwanted_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
@@ -491,3 +491,20 @@ min_value <- min(catches_data$Year[not_na_indices])
 library(icesASD)
 
 get_advice_view_info("nep.fu.17", 2022)
+
+
+
+get_additional_landing_data <- function(assessmentKey) {
+  out <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", assessmentKey)
+        )
+    )  
+  df <- data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
+  return(df)
+}
+
+out <- jsonlite::fromJSON(
+            URLencode(
+                sprintf("https://sag.ices.dk/SAG_API/api/S
+    ummaryTable?assessmentKey=%s",17689)))

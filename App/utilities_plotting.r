@@ -1742,7 +1742,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
                 type = "scatter",
                 mode = "lines+markers",
                 text = labels,
-                line = list(color = "#047c6c", width = 2, dash = "solid"),
+                line = list(color = "#047c6c", width = 2, dash = "dot"),
                 marker = list(size = 10, color = "#047c6c"),
                 name = "Dead discards",
                 yaxis = "y2"
@@ -1753,7 +1753,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
                 type = "scatter",
                 mode = "lines+markers",
                 text = labels,
-                line = list(color = "#00caaf", width = 2, dash = "solid"),
+                line = list(color = "#00caaf", width = 2, dash = "dot"),
                 marker = list(size = 10, color = "#00caaf"),
                 name = "Surviving discards",
                 yaxis = "y2"
