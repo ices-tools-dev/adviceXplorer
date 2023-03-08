@@ -68,7 +68,7 @@ make_data_sources <- function() {
       "<ul><li><a href='","https://gis.ices.dk/sf/index.html", "' target='_blank'>", "ICES Spatial Facility","</a></li>",
       "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx", "' target='_blank'>", "Stock Information Database (SID)","</a></li>",
       "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx", "' target='_blank'>", "Stock Asssessment Graphs (SAG)","</a></li>",
-      "<li><a href='","https://standardgraphs.ices.dk/adviceview/AdviceList", "' target='_blank'>", "Advice and Scenarios Database (ASD)","</a></li></ul></font><br/>",
+      "<li><a href='","http://asd.ices.dk/AdviceList", "' target='_blank'>", "Advice and Scenarios Database (ASD)","</a></li></ul></font><br/>",
       "<font size= 3>The fish illustrations were courteously provided by Food and Agriculture Organization of the United Nations (FAO), Original Scientific Illustrations Archive. Reproduced with permission</font>"
 
     )
