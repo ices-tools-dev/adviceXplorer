@@ -489,9 +489,35 @@ min_value <- min(catches_data$Year[not_na_indices])
 
 ########################################################################5
 library(icesASD)
+library(httr)
+library(jsonlite)
 
-get_advice_view_info("nep.fu.17", 2022)
+year <- 2019
+stock <- "aru.27.5a14"
+test <- get_advice_view_info(stock, year)
 
+if (is_empty(test)) {
+  test <- get_advice_view_info(stock, year - 1)
+  if (!is_empty(test)) {
+    test <- test %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+  } else {
+    test <- list()
+  }
+} else {
+  if (nrow(test > 1)) {
+    test <- test %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+  } else {
+    test <- test
+  }
+}
+test
+
+if (nrow(test) > 1) {
+  test <- test %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+} else if (is_empty(test)) {
+  test <- get_advice_view_info("bli.27.5b67", year - 1)
+  test <- test %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+}
 
 
 get_additional_landing_data <- function(assessmentKey) {
@@ -507,4 +533,53 @@ get_additional_landing_data <- function(assessmentKey) {
 out <- jsonlite::fromJSON(
             URLencode(
                 sprintf("https://sag.ices.dk/SAG_API/api/S
-    ummaryTable?assessmentKey=%s",17689)))
+    ummaryTable?assessmentKey=%s", 17689)))
+
+
+
+
+
+
+api <- function(stock_name = NULL, year = NULL, adviceKey = NULL, api = c("record", "table", "notes")) {
+  
+  record_api_url <- "https://sg.ices.dk/adviceview/API/getAdviceViewRecord"
+  table_api_url <- "https://sg.ices.dk/adviceview/API/getCatchScenariosTable"
+  notes_api_url <- "https://sg.ices.dk/adviceview/API/getCatchScenariosNotes"
+
+
+  api <- match.arg(api)
+  if (api == "record") {
+    api_url <- get(paste0(api, "_api_url"))
+    url <- paste0(api_url, "?", "stockcode=", stock_name, "&year=", year)
+    url <- parse_url(url)
+    url <- build_url(url)
+    url
+  } else {
+    api_url <- get(paste0(api, "_api_url"))
+    url <- paste0(api_url, "/", adviceKey)
+    url <- parse_url(url)
+    url <- build_url(url)
+    url
+  }
+}
+get_advice_view_info <- function(stock_name, year) {
+ 
+  catch_scenario_list <-
+        read_json(
+            api(stock_name = stock_name, year = year, api = "record"),
+            simplifyVector = TRUE
+        )
+  
+  if (!is_empty(catch_scenario_list)){
+  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
+  } else {
+     catch_scenario_list <- list()
+  }
+  
+  return(catch_scenario_list)
+}
+
+
+dates <- as.POSIXct(test$adviceApplicableFrom)
+format(as.POSIXct(test$adviceApplicableFrom), format="%Y")
+test$adviceApplicableFrom
