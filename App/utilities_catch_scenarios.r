@@ -447,7 +447,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, c
   final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
 
   final_df <- na.omit(final_df)
-
+  print(final_df)
   return(final_df)
 }
 
@@ -558,4 +558,24 @@ calculate_perc_change <- function(df_new, Basis, catch_scen_table_perc) {
   }
   names(catch_scen_table_perc) <- names(df_new)
   return(catch_scen_table_perc)
+}
+
+
+ASD_entry_check <- function(df,stock, year){  
+
+if (is_empty(df)) {
+  df <- get_advice_view_info(stock, year - 1)
+  if (!is_empty(df)) {
+    df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+  } else {
+    df <- list()
+  }
+} else {
+  if (nrow(df > 1)) {
+    df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+  } else {
+    df <- df
+  }
+}
+return(df)
 }
