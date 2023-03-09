@@ -492,8 +492,8 @@ library(icesASD)
 library(httr)
 library(jsonlite)
 
-year <- 2019
-stock <- "aru.27.5a14"
+year <- 2022
+stock <- "whg.27.3a"
 test <- get_advice_view_info(stock, year)
 
 if (is_empty(test)) {
@@ -504,10 +504,10 @@ if (is_empty(test)) {
     test <- list()
   }
 } else {
-  if (nrow(test > 1)) {
-    test <- test %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
-  } else {
+  if (nrow(test == 1)) {
     test <- test
+  } else {    
+    test <- test %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
   }
 }
 test

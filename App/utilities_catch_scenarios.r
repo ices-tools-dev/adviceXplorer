@@ -433,9 +433,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, c
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
   catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
-
-  # catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year - 1)
-
+  
   catches_data <- catches_data %>% mutate(catches = ifelse(Year == year,  as.numeric(catch_scenario_list_previous_year$adviceValue), catches)) %>% na.omit()
   
   catches_data_year_before <- catch_scenario_table
@@ -447,7 +445,7 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, c
   final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
 
   final_df <- na.omit(final_df)
-  print(final_df)
+  
   return(final_df)
 }
 
@@ -571,10 +569,11 @@ if (is_empty(df)) {
     df <- list()
   }
 } else {
-  if (nrow(df > 1)) {
-    df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
-  } else {
+  if (nrow(df == 1)) {
     df <- df
+    
+  } else {
+    df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
   }
 }
 return(df)
