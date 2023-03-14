@@ -1839,134 +1839,143 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
     nullifempty <- function(x) if (length(x) == 0) NULL else x
-    
-    F_yaxis_label <- sagSettings %>% filter(sagChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+
+    F_yaxis_label <- sagSettings %>%
+        filter(sagChartKey == 3) %>%
+        filter(settingKey == 20) %>%
+        pull(settingValue) %>%
+        as.character() %>%
+        nullifempty()
     if (is.null(F_yaxis_label)) {
-          F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
-        }
-    
-    
-    SSB_yaxis_label <- sagSettings %>% filter(sagChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+    }
+
+
+    SSB_yaxis_label <- sagSettings %>%
+        filter(sagChartKey == 4) %>%
+        filter(settingKey == 20) %>%
+        pull(settingValue) %>%
+        as.character() %>%
+        nullifempty()
     if (is.null(SSB_yaxis_label)) {
-    SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
-        }
-    
-       
+        SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+    }
+
+
     catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
-    
+
     tmp <- data.frame(tmp$table)
-    
-    
-    tmp$fmsy <- tail(df$FMSY,1)
-    tmp$blim <- tail(df$Blim,1)
+
+
+    tmp$fmsy <- tail(df$FMSY, 1)
+    tmp$blim <- tail(df$Blim, 1)
     # print(tmp)
     labels <- sprintf(
-            "Catch Scenario: %s", tmp$cat
-        ) %>% lapply(htmltools::HTML)
+        "Catch Scenario: %s", tmp$cat
+    ) %>% lapply(htmltools::HTML)
 
-    
-    Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
-    
+
+    Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice", ]
+
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
     }
-    if (is_na_column(tmp, "F")){
+    if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         fig_catch <- plot_ly(tmp) %>%
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ F_wanted,
-            type = "scatter",
-            mode = "lines+markers",
-            text = labels,
-            marker = list(color = "#ed5f26", size = 10),
-            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
-            name = "F wanted"
-        ) %>% 
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ fmsy,
-            type = "scatter",
-            mode = "lines",
-            text = "FMSY",
-            line = list(color = "#00AC67", width = .9, dash = 'solid'),
-            name = "FMSY"
-        ) %>% 
-        add_markers(
-            x = Basis$TotCatch,
-            y = Basis$F_wanted,
-            type = "scatter",
-            mode = "markers",            
-            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
-            text = "Basis of advice",
-            name = "Basis of advice"
-        )
+            add_trace(
+                x = ~TotCatch,
+                y = ~F_wanted,
+                type = "scatter",
+                mode = "lines+markers",
+                text = labels,
+                marker = list(color = "#ed5f26", size = 10),
+                line = list(color = "#ed5f26", width = 2, dash = "solid"),
+                name = "F wanted"
+            ) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~fmsy,
+                type = "scatter",
+                mode = "lines",
+                text = "FMSY",
+                line = list(color = "#00AC67", width = .9, dash = "solid"),
+                name = "FMSY"
+            ) %>%
+            add_markers(
+                x = Basis$TotCatch,
+                y = Basis$F_wanted,
+                type = "scatter",
+                mode = "markers",
+                marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+                text = "Basis of advice",
+                name = "Basis of advice"
+            )
 
-    if (is_na_column(tmp, "F_wanted")){
-        tmp <- arrange(tmp, HR)
-        fig_catch <- plot_ly(tmp) %>%
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ HR,
-            type = "scatter",
-            mode = "lines+markers",
-            text = labels,
-            marker = list(color = "#ed5f26", size = 10),
-            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
-            name = "HR"
-        ) %>% 
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ fmsy,
-            type = "scatter",
-            mode = "lines",
-            text = "FMSY",
-            line = list(color = "#00AC67", width = .9, dash = 'solid'),
-            name = "FMSY"
-        ) %>% 
-        add_markers(
-            x = Basis$TotCatch,
-            y = Basis$HR,
-            type = "scatter",
-            mode = "markers",            
-            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
-            text = "Basis of advice",
-            name = "Basis of advice"
-        )
-    
-    }
+        if (is_na_column(tmp, "F_wanted")) {
+            tmp <- arrange(tmp, HR)
+            fig_catch <- plot_ly(tmp) %>%
+                add_trace(
+                    x = ~TotCatch,
+                    y = ~HR,
+                    type = "scatter",
+                    mode = "lines+markers",
+                    text = labels,
+                    marker = list(color = "#ed5f26", size = 10),
+                    line = list(color = "#ed5f26", width = 2, dash = "solid"),
+                    name = "HR"
+                ) %>%
+                add_trace(
+                    x = ~TotCatch,
+                    y = ~fmsy,
+                    type = "scatter",
+                    mode = "lines",
+                    text = "FMSY",
+                    line = list(color = "#00AC67", width = .9, dash = "solid"),
+                    name = "FMSY"
+                ) %>%
+                add_markers(
+                    x = Basis$TotCatch,
+                    y = Basis$HR,
+                    type = "scatter",
+                    mode = "markers",
+                    marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+                    text = "Basis of advice",
+                    name = "Basis of advice"
+                )
+        }
     } else {
         tmp <- arrange(tmp, F)
         fig_catch <- plot_ly(tmp) %>%
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ F,
-            type = "scatter",
-            mode = "lines+markers",
-            text = labels,            
-            marker = list(color = "#ed5f26", size = 10),
-            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
-            name = "F"
-        ) %>% 
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ fmsy,
-            type = "scatter",
-            mode = "lines",
-            text = "FMSY",
-            line = list(color = "#00AC67", width = .9, dash = 'solid'),
-            name = "FMSY"
-        ) %>% 
-        add_markers(
-            x = Basis$TotCatch,
-            y = Basis$F,
-            type = "scatter",
-            mode = "markers",            
-            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
-            text = "Basis of advice",
-            name = "Basis of advice"
-        )
+            add_trace(
+                x = ~TotCatch,
+                y = ~F,
+                type = "scatter",
+                mode = "lines+markers",
+                text = labels,
+                marker = list(color = "#ed5f26", size = 10),
+                line = list(color = "#ed5f26", width = 2, dash = "solid"),
+                name = "F"
+            ) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~fmsy,
+                type = "scatter",
+                mode = "lines",
+                text = "FMSY",
+                line = list(color = "#00AC67", width = .9, dash = "solid"),
+                name = "FMSY"
+            ) %>%
+            add_markers(
+                x = Basis$TotCatch,
+                y = Basis$F,
+                type = "scatter",
+                mode = "markers",
+                marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+                text = "Basis of advice",
+                name = "Basis of advice"
+            )
     }
     fig_catch <- fig_catch %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
@@ -1984,7 +1993,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             showticklabels = TRUE
         ),
         yaxis = list(
-            title = F_yaxis_label, 
+            title = F_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -1996,9 +2005,9 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
-    ) 
+    )
 
-    
+
     fig2 <- plot_ly(tmp,
         x = ~cat,
         y = ~CatchUnwantedSurviving,
@@ -2042,7 +2051,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             tickfont = tickfont_format()
         )
     )
-    
+
     fig_final <- subplot(fig_catch, fig2, nrows = 1, widths = c(0.4, 0.6), margin = 0.07) %>%
         layout(
             autosize = T,
@@ -2051,18 +2060,17 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             yaxis = list(title = F_yaxis_label),
             yaxis2 = list(title = discards_yaxis_label),
             legend = list(
-            orientation = "h",
-            y = 1.05,
-            yanchor = "bottom",
-            x = 0.5,
-            xanchor = "center",
-            title = list(text = ""),
-            traceorder= 'reversed'
+                orientation = "h",
+                y = 1.05,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = ""),
+                traceorder = "reversed"
+            )
         )
-        )
-    fig_final %>% 
+    fig_final %>%
         config(modeBarButtonsToAdd = list(data_download_button()))
-    
 }
 
 #' Returns ....
