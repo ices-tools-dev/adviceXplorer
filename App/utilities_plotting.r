@@ -1726,69 +1726,6 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         )
     }
 
-    
-    # if (str_detect(tail(df$StockKeyLabel), "nep")) {
-    #     ay <- list(
-    #         overlaying = "y",
-    #         side = "right",
-    #         title = discards_yaxis_label,
-    #         titlefont = titlefont_format(),
-    #         tickfont = tickfont_format()
-    #     )
-    #     fig_catch <- fig_catch %>%
-    #         add_trace(
-    #             x = ~TotCatch,
-    #             y = ~CatchUnwanted,
-    #             type = "scatter",
-    #             mode = "lines+markers",
-    #             text = labels,
-    #             line = list(color = "#047c6c", width = 2, dash = "dot"),
-    #             marker = list(size = 10, color = "#047c6c"),
-    #             name = "Dead discards",
-    #             yaxis = "y2"
-    #         ) %>%
-    #         add_trace(
-    #             x = ~TotCatch,
-    #             y = ~CatchUnwantedSurviving,
-    #             type = "scatter",
-    #             mode = "lines+markers",
-    #             text = labels,
-    #             line = list(color = "#00caaf", width = 2, dash = "dot"),
-    #             marker = list(size = 10, color = "#00caaf"),
-    #             name = "Surviving discards",
-    #             yaxis = "y2"
-    #         ) %>%
-    #         add_trace(
-    #             x = ~TotCatch,
-    #             y = ~blim,
-    #             type = "scatter",
-    #             mode = "lines",
-    #             text = "BLim",
-    #             line = list(color = "black", width = .9, dash = "dash"),
-    #             name = "BLim",
-    #             yaxis = "y2"
-    #         ) %>%
-    #         add_markers(
-    #             x = Basis$TotCatch,
-    #             y = Basis$CatchUnwanted,
-    #             type = "scatter",
-    #             mode = "markers",
-    #             marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
-    #             text = "Basis of advice",
-    #             name = "Basis of advice",
-    #             yaxis = "y2"
-    #         ) %>%
-    #         add_markers(
-    #             x = Basis$TotCatch,
-    #             y = Basis$CatchUnwantedSurviving,
-    #             type = "scatter",
-    #             mode = "markers",
-    #             marker = list(color = "#00caaf", size = 15, symbol = "circle-open"),
-    #             text = "Basis of advice",
-    #             name = "Basis of advice",
-    #             yaxis = "y2"
-    #         )
-    # } else {
         ay <- list(
             overlaying = "y",
             side = "right",
@@ -1829,7 +1766,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
                     name = "Basis of advice",
                     yaxis = "y2"
                 )
-    # }
+   
     
     fig_catch <- fig_catch %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
@@ -1875,8 +1812,32 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 
 }
 
+
+#' Plot to visualise the effect of the different catch scenarios on F, discards and the resulting total catches
+#'
+#' @param tmp (catch scenario table)
+#' @param df (SAG data)
+#' @param sagSettings (df of sag settings)
+#'
+#' @return a plotly object
+#'
+#' @note
+#' 
+#'
+#'
+#' @examples
+#' \dontrun{
+#' catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive())
+#' }
+#'
+#' @references
+#'
+#'
+#'
+#' @export
+#'
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
-    discards_yaxis_label <- "Discards (tonnes)"
+    discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
     nullifempty <- function(x) if (length(x) == 0) NULL else x
     
     F_yaxis_label <- sagSettings %>% filter(sagChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
@@ -2011,17 +1972,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
         hovermode = "x",
-        # yaxis2 = ay,
-        legend = list(
-                orientation = "h",
-                y = 1.05,
-                yanchor = "bottom",
-                x = 0.5,
-                xanchor = "center",
-                title = list(text = "")
-            ),
         autosize = T,
-        # margin = list(l = 120, r = 120, b = 120, t = 50, pad = 6),
         xaxis = list(
             title = catches_yaxis_label,
             gridcolor = "rgb(235,235,235)",
@@ -2048,31 +1999,24 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     ) 
 
     
-    fig2 <- plot_ly(tmp, x = ~cat, 
-    y = ~CatchUnwantedSurviving, 
-    type = 'bar', 
-    name = 'Projected surviving discards',
-    marker = list(color = "#91cafd")
+    fig2 <- plot_ly(tmp,
+        x = ~cat,
+        y = ~CatchUnwantedSurviving,
+        type = "bar",
+        name = "Proj. surviving discards",
+        marker = list(color = "#00c7b0")
     )
-    fig2 <- fig2 %>% add_trace(y = ~CatchUnwanted, 
-    name = 'Projected dead discards',
-    marker = list(color = "#0088ff"))
-    # fig2 <- fig2 %>% layout(yaxis = list(title = discards_yaxis_label), barmode = 'stack')
+    fig2 <- fig2 %>% add_trace(
+        y = ~CatchUnwanted,
+        name = "Proj. dead discards",
+        marker = list(color = "#00c7b091")
+    )
     fig2 <- fig2 %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
         hovermode = "x",
-        barmode = 'stack',
-        legend = list(
-                orientation = "h",
-                y = 1.05,
-                yanchor = "bottom",
-                x = 0.5,
-                xanchor = "center",
-                title = list(text = "")
-            ),
+        barmode = "stack",
         autosize = T,
-        # margin = list(l = 300, r = 120, b = 120, t = 50, pad = 6),
         xaxis = list(
             title = "Scenarios",
             tickangle = -45,
@@ -2085,7 +2029,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             showticklabels = TRUE
         ),
         yaxis = list(
-            title = discards_yaxis_label, 
+            title = discards_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -2097,21 +2041,28 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
-    ) 
+    )
     
-    fig_final <- subplot(fig_catch, fig2, nrows = 1, widths = c(0.4, 0.6), margin = 0.07) %>% 
-    layout(autosize = T,
-    xaxis = list(title = catches_yaxis_label), 
-                        xaxis2 = list(title = "Catch scenarios"),
-            yaxis= list(title = F_yaxis_label),
-                        yaxis2 = list(title = discards_yaxis_label)
-                        )
+    fig_final <- subplot(fig_catch, fig2, nrows = 1, widths = c(0.4, 0.6), margin = 0.07) %>%
+        layout(
+            autosize = T,
+            xaxis = list(title = catches_yaxis_label),
+            xaxis2 = list(title = "Catch scenarios", categoryorder = "total ascending"),
+            yaxis = list(title = F_yaxis_label),
+            yaxis2 = list(title = discards_yaxis_label),
+            legend = list(
+            orientation = "h",
+            y = 1.05,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = ""),
+            traceorder= 'reversed'
+        )
+        )
     fig_final %>% 
         config(modeBarButtonsToAdd = list(data_download_button()))
-    # # Function to check if a column is made up of all NA values
-    # is_na_column <- function(dataframe, col_name) {
-    #     return(all(is.na(dataframe[, col_name]))) 
-    # }
+    
 }
 
 #' Returns ....
