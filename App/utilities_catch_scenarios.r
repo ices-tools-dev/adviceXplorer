@@ -491,8 +491,8 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
     Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice", ]
     catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
     catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
-    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) %>% relocate("SSB change", .after = SSB)
-    # catch_scen_table_perc <- catch_scen_table_perc %>% select(c("Year", "cat", "cS_Purpose","TAC change", "ADVICE change", "SSB change"))
+    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) #%>% relocate("SSB change", .after = SSB)
+    
   } else {
     catch_scen_table_perc <- character(0)
   }
