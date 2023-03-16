@@ -1502,6 +1502,38 @@ legend_format <- function() {
        
 }
 
+#' simple function to shorten catch scenario tick labels if they are too long
+#'
+#' @param catch_scenarios_array (char array of catch scenarios)
+
+#'
+#' @return updated char array
+#'
+#' @note
+
+#' @examples
+#' \dontrun{
+#' shorten_labels(tmp$cat)
+#' }
+#'
+#' @references
+#'
+#'
+#'
+#' @export
+#'
+shorten_labels <- function(catch_scenarios_array) {
+        
+        for (i in 1:length(catch_scenarios_array)) {
+            if (nchar(catch_scenarios_array[i]) > 20) {
+                catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 20), "...")
+            } else {
+                catch_scenarios_array[i] <- catch_scenarios_array[i]
+            }
+        }
+        return(catch_scenarios_array)
+    }
+
 #' Radial plot to compare the % of change of the different catch scenarios for a particular stock/year
 #'
 #' @param tmp (catch scenario table scaled in percentages)
@@ -1874,7 +1906,8 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
         "Catch Scenario: %s", tmp$cat
     ) %>% lapply(htmltools::HTML)
 
-
+    
+    tmp$cat <- shorten_labels(tmp$cat)
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice", ]
 
     # Function to check if a column is made up of all NA values

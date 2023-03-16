@@ -393,9 +393,9 @@ scale_catch_scenarios_for_radialPlot(table_stand_2$table, table_stand_1$table)
 #   }
 # }
 # }
-catch_scenario_list_1 <- get_Advice_View_info("her.27.irls", 2022)
+catch_scenario_list_1 <- get_advice_view_info("nep.fu.17", 2022)
 catch_scenario_list_2 <- get_Advice_View_info("her.27.irls", 2022-1)
-table_1 <- get_catch_scenario_table(catch_scenario_list_1)
+table_1 <- get_catch_scenario_table(catch_scenario_list_1$adviceKey, 2022)
 table_2 <- get_catch_scenario_table(catch_scenario_list_2)
 table_stand_1 <- standardize_catch_scenario_table(table_1)
 table_stand_2 <- standardize_catch_scenario_table(table_2)
@@ -583,3 +583,17 @@ get_advice_view_info <- function(stock_name, year) {
 dates <- as.POSIXct(test$adviceApplicableFrom)
 format(as.POSIXct(test$adviceApplicableFrom), format="%Y")
 test$adviceApplicableFrom
+
+
+shorten_labels <- function(catch_scenarios_array) {
+        
+        for (i in 1:length(catch_scenarios_array)) {
+            if (nchar(catch_scenarios_array[i]) > 20) {
+                catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 20), "...")
+            } else {
+                catch_scenarios_array[i] <- catch_scenarios_array[i]
+            }
+        }
+        return(catch_scenarios_array)
+    }
+shorten_labels(table_1$cS_Label)
