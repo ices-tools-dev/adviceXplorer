@@ -1525,8 +1525,8 @@ legend_format <- function() {
 shorten_labels <- function(catch_scenarios_array) {
         
         for (i in 1:length(catch_scenarios_array)) {
-            if (nchar(catch_scenarios_array[i]) > 20) {
-                catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 20), "...")
+            if (nchar(catch_scenarios_array[i]) > 14) {
+                catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 14), "...")
             } else {
                 catch_scenarios_array[i] <- catch_scenarios_array[i]
             }
@@ -2037,6 +2037,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             rangemode = "tozero",
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
+            
         )
     )
 
@@ -2082,10 +2083,11 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             rangemode = "tozero",
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
+            
         )
     )
-
-    fig_final <- subplot(fig_catch, fig2, nrows = 1, widths = c(0.4, 0.6), margin = 0.07) %>%
+    
+    fig_final <- subplot(fig_catch, fig2, nrows = 1, margin = 0.1) %>%
         layout(
             autosize = T,
             xaxis = list(title = catches_yaxis_label),
