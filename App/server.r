@@ -64,7 +64,8 @@ server <- function(input, output, session) {
     data = eco_filter,
     vars = c(
       "StockKeyLabel", "SpeciesCommonName"
-    )
+    ),
+    inline = FALSE
   )
   
   ###########################################################  Render table in stock selection tab
