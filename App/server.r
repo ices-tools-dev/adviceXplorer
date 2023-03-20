@@ -20,7 +20,7 @@ server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
   shinyjs::disable(selector = '.navbar-nav a[data-value="Development over time"')
   shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-  shinyjs::disable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+  shinyjs::disable(selector = '.navbar-nav a[data-value="Catch scenarios"')
   
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
@@ -110,7 +110,7 @@ server <- function(input, output, session) {
   observeEvent(input$rdbtn, {
     shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
     shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-    shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+    shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
     
     filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
         
@@ -145,7 +145,7 @@ server <- function(input, output, session) {
       updateNavbarPage(session, "tabset", selected = "Development over time")
       shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
       shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch Scenarios"')
+      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
       
     }
   })
@@ -510,10 +510,12 @@ output$table <- DT::renderDT(
   selection = "single",
   class = "display",
   caption = HTML(paste0("Subset of catch scenario table (click ", 
+
                         "<span class='hovertext' data-hover='Click here to access the Advice View entry for this stock'>",
                         "<a href='","http://asd.ices.dk/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
                         "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
-  rownames = FALSE,
+
+rownames = FALSE,
   options = list(
     dom = "Bfrtip",
     pageLength = 100,
