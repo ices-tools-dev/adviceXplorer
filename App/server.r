@@ -317,14 +317,12 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 
 ##### Advice view info
 advice_view_info <- reactive({
-  # get_Advice_View_info(query$stockkeylabel, query$year)
   get_advice_view_info(query$stockkeylabel, query$year)
 }) 
 
 
 ##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  # get_Advice_View_info(query$stockkeylabel, query$year-1)
   get_advice_view_info(query$stockkeylabel, query$year-1)
 })
 
