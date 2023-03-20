@@ -1,42 +1,3 @@
-#' Returns a df with the metadata for the advice view record for a specific stock and year. It uses the advice view web-service.
-#'
-#' @param stock_name
-#' @param year
-#' 
-#' @return metadata for the advice view record
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' get_Advice_View_info("bll.27.3a47de", 2021)
-#' }
-#'
-#' @references
-#' https://sg.ices.dk/adviceview/AdviceList
-#' 
-#'
-#' @export
-#' 
-# get_Advice_View_info <- function(stock_name, year) {
-#   catch_scenario_list <- jsonlite::fromJSON(
-#     URLencode(
-#       sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
-#     )
-#   )
-  
-#   if (!is_empty(catch_scenario_list)){
-#   catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
-#   } else {
-#      catch_scenario_list <- list()
-#   }
-  
-#   return(catch_scenario_list)
-# }
-
 #' Returns an HTML string containing the summary of the advice view record to be displayed on top of the Advice page
 #'
 #' @param catch_scenario_list
@@ -141,53 +102,6 @@ get_Stock_info <- function(CommonName, stockcode,  assessmentYear, description) 
                                               "<font size=", 3, ">","Location: ", "<b>", parse_location_from_stock_description(description),"</b>")
 return(stock_info_sentence)
 }
-
-#' Returns the catch scenario table for the selected stock and year using the advice view web service.
-#'
-#' @param catch_scenario_list
-
-#' @return df
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' get_catch_scenario_table(catch_scenario_list)
-#' }
-#'
-#' @references
-#' https://sg.ices.dk/adviceview/AdviceList
-#' 
-#'
-#' @export
-#' 
-# get_catch_scenario_table <- function(catch_scenario_list) {
-#   catch_scenario_table <- jsonlite::fromJSON(
-#     URLencode(
-#       sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey)
-#     )
-#   )
-
-#   if (length(catch_scenario_table) != 0) {
-#   catch_scenario_table <- catch_scenario_table %>%
-#     pivot_wider(
-#       names_from = c(aK_ID, aK_Label, yearLabel, unit, stockDataType),
-#       names_glue = "{aK_Label} ({yearLabel}) _{stockDataType}_",
-#       values_from = value
-#     ) %>%
-#     select(-assessmentKey, -adviceKey, -cS_Basis, -aR_ID)
-
-
-#   catch_scenario_table <- catch_scenario_table %>% add_column(Year = catch_scenario_list$assessmentYear + 1, .before = "cS_Label")
-#   } else {
-#     catch_scenario_table <- character(0) 
-#   }
-
-#   return(catch_scenario_table)
-# }
 
 #' Returns an HTML string containing the catch scenario table's footnotes.
 #'
