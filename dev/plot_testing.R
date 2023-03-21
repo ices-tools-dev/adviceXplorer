@@ -493,7 +493,7 @@ library(httr)
 library(jsonlite)
 
 year <- 2022
-stock <- "whg.27.3a"
+stock <- "bli.27.5b67"
 test <- get_advice_view_info(stock, year)
 
 if (is_empty(test)) {
@@ -583,3 +583,29 @@ get_advice_view_info <- function(stock_name, year) {
 dates <- as.POSIXct(test$adviceApplicableFrom)
 format(as.POSIXct(test$adviceApplicableFrom), format="%Y")
 test$adviceApplicableFrom
+
+
+
+
+ASD_entry_check <- function(df,stock, year){  
+
+if (is_empty(df)) {
+  df <- get_advice_view_info(stock, year - 1)
+  if (!is_empty(df)) {
+    df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+  } else {
+    df <- list()
+  }
+} else {
+  if (nrow(df != 1)) {
+    df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+    
+  } else {
+    
+    df <- df
+  }
+}
+return(df)
+}
+
+ASD_entry_check(test,"bli.27.5b67", 2023)

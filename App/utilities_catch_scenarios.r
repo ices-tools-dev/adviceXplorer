@@ -569,11 +569,11 @@ if (is_empty(df)) {
     df <- list()
   }
 } else {
-  if (nrow(df == 1)) {
-    df <- df
+  if (nrow(df > 1)) {
     
-  } else {
     df <- df %>% filter(year + 1 == format(as.POSIXct(adviceApplicableUntil), format = "%Y"))
+  } else {
+    df <- df
   }
 }
 return(df)
