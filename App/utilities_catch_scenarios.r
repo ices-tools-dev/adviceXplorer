@@ -105,7 +105,7 @@ return(stock_info_sentence)
 
 #' Returns an HTML string containing the catch scenario table's footnotes.
 #'
-#' @param catch_scenario_list
+#' @param ASDadviceKey
 
 #' @return string
 #'
@@ -116,7 +116,7 @@ return(stock_info_sentence)
 #'
 #' @examples
 #' \dontrun{
-#' get_catch_scenario_table(catch_scenario_list)
+#' get_catch_scenario_table(ASDadviceKey)
 #' }
 #'
 #' @references
@@ -125,23 +125,19 @@ return(stock_info_sentence)
 #'
 #' @export
 #' 
-get_catch_scenario_notes <- function(catch_scenario_list) {
- 
-  catch_scenario_table_notes <- jsonlite::fromJSON(
-    URLencode(
-      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosNotes/%s", catch_scenario_list$adviceKey) # )
-    )
-  )
+format_catch_scenario_notes <- function(ASDadviceKey) {
+
+  catch_scenario_table_notes <- icesASD::get_catch_scenario_notes(ASDadviceKey)
 
   if (length(catch_scenario_table_notes) != 0) {
-  catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-catchOptionsTableKey, -adviceKey)
-
-  string_notes <- HTML(
-    paste0("<ul>",paste0("<li><font size=2>",catch_scenario_table_notes$symbol, " "), paste0(catch_scenario_table_notes$notes, "</font></li>"), "</ul>"))
+    catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-adviceKey)
+    string_notes <- HTML(
+      paste0("<ul>", paste0("<li><font size=2>", catch_scenario_table_notes$symbol, " "), paste0(catch_scenario_table_notes$notes, "</font></li>"), "</ul>")
+    )
   } else {
     string_notes <- character(0)
   }
-  
+
   return(string_notes)
 }
 

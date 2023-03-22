@@ -597,3 +597,13 @@ shorten_labels <- function(catch_scenarios_array) {
         return(catch_scenarios_array)
     }
 shorten_labels(table_1$cS_Label)
+
+library(icesASD)
+library(icesASD)
+library(httr)
+library(jsonlite)
+
+year <- 2022
+stock <- "hom.27.2a4a5b6a7a-ce-k8"
+test <- icesASD::get_advice_view_info(stock,year)
+notes <- icesASD::get_catch_scenario_notes(test$adviceKey)

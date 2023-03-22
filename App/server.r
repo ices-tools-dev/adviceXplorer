@@ -534,7 +534,7 @@ rownames = FALSE,
 
 ##### footnotes of catch scenario table
 footnotes <- eventReactive(req(advice_view_info()), {
-  get_catch_scenario_notes(advice_view_info())
+  format_catch_scenario_notes(advice_view_info()$adviceKey)
 })
 output$footnotes <-renderUI({
   validate(
