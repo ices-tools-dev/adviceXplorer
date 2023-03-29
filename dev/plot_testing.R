@@ -607,3 +607,12 @@ year <- 2022
 stock <- "hom.27.2a4a5b6a7a-ce-k8"
 test <- icesASD::get_advice_view_info(stock,year)
 notes <- icesASD::get_catch_scenario_notes(test$adviceKey)
+
+
+
+SAGrefpts <- getSAG("cod.27.47d20", 2022,
+        data = "refpts", combine = TRUE, purpose = "Advice"
+    )
+SAGsummary <- getSAG("cod.27.47d20", 2022,
+        data = "summary", combine = TRUE, purpose = "Advice"
+    )

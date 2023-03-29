@@ -388,7 +388,7 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   if (!is_empty(new_catch_scen_table) | !is_empty(new_catch_scen_table)) {
     changes_columns <- new_catch_scen_table %>% select("cat", "TAC change", "ADVICE change", "SSB change")
 
-    keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "SSB")
+    keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR")
     df_old <- old_catch_scen_table %>% 
       select(all_of(keep.cols)) %>% 
       drop_cols_with_all_nas()
@@ -406,7 +406,7 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   } else {
     catch_scen_table_perc <- character(0)
   }
-
+  
   return(catch_scen_table_perc)
 }
 

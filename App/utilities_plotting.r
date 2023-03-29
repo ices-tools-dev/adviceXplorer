@@ -1559,7 +1559,7 @@ shorten_labels <- function(catch_scenarios_array) {
 #'
 ####### plots 1 catch scenarios
 radial_plot <- function(tmp, catch_scenarios) {
-
+    
     not_all_na <- function(x) any(!is.na(x))
     tmp <- tmp %>% select(where(not_all_na))
 
@@ -1570,7 +1570,7 @@ radial_plot <- function(tmp, catch_scenarios) {
         ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
             base.size = 6,
             font.radar = "sans",
-            values.radar = c("-100%", "0%","100%"),
+            values.radar = c("Min", "0", "Max"),
             gridline.min.linetype = "longdash",
             gridline.mid.linetype = "longdash",
             gridline.max.linetype = "longdash",
@@ -1594,9 +1594,10 @@ radial_plot <- function(tmp, catch_scenarios) {
             plot.title = "",
             legend.text.size = 8,
             legend.position = "right"
-        )
-    ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button()))
+        ),
+        tooltip = c("cat")
+    )
+    
     zz
 }
 
