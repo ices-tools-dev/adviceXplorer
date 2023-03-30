@@ -21,11 +21,11 @@
 #' 
 stock_selection_left_side <- function() {
   sidebarPanel(
-    width = 5,
+    width = 5, style = "max-height: 85vh; overflow-y: auto; ",
     tabPanel(
       "ICES Ecoregions",
       tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: auto;"),
-      leafletOutput("map1", height = "100%", width = "100%")
+      withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
     ),
     HTML("</br>"),
     panel(
@@ -44,7 +44,7 @@ stock_selection_left_side <- function() {
         inputId = "selected_years",
         label = "Assessment Year",
         choices = Years$Year,
-        selected = 2021,
+        selected = 2022,
         multiple = FALSE,
         width = "100%",
         options = list(
@@ -89,8 +89,8 @@ stock_selection_left_side <- function() {
 #' 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7, style = "max-height: 90vh; overflow-y: auto; ",#margin: auto;
-    DTOutput("tbl")
+    width = 7, style = "max-height: 85vh; overflow-y: auto; ",#margin: auto;
+    withSpinner(DTOutput("tbl"))
   )
 }
 
@@ -197,7 +197,7 @@ SAG_plots_right_panel <- function(){
 #' 
 quality_of_assessment <- function(){
   splitLayout(
-    style = "border: 1px solid silver; height: 80vh; overflow-y: auto;",  
+    style = "border: 1px solid silver; max-height: 70vh; overflow-y: auto; !important;",  
     cellWidths = c("33%", "33%", "33%"),
     cellArgs = list(style = "padding: 6px"),
     panel(
@@ -253,8 +253,8 @@ catch_scenarios_left_panel <- function() {
     panel(
       title = "Catch_scenario_F_SSB",
       fillPage(
-        tags$style(type = "text/css", "#catch_scenario_plot_3  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-        withSpinner(plotlyOutput("catch_scenario_plot_3", height = "30%", width = "100%"))
+        tags$style(type = "text/css", "#catch_scenario_plot_F_SSB_Catch  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+        withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%"))
       )
     ),
     panel(
@@ -306,7 +306,6 @@ catch_scenarios_right_panel <- function(){
     width = 6, style = "height: 65vh; overflow-y: auto;",
     
     panel(
-      title = "Catch scenario table",
       fillPage(
         tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
         withSpinner(DTOutput("table", height = "90%", width = "100%")),
