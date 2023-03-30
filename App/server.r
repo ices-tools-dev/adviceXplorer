@@ -441,7 +441,10 @@ output$Radial_plot <- renderPlotly({
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
-
+output$Radial_plot_disclaimer <- renderUI(
+  HTML("Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment. <br/>
+  The scale of the plot is relative across the scenarios presented, please refer to the table or the % of change plot for actual percentage of change.")
+)
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
   validate(
@@ -453,7 +456,7 @@ output$catch_indicators_lollipop <- renderUI({
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
       choices = names(catch_scenario_table_percentages() %>% select(where(not_all_na))) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
-      selected = c("TotCatch"),
+      selected = c("SSB change"),
       multiple = TRUE
     )
   } else {
@@ -469,6 +472,9 @@ output$Lollipop_plot <- renderPlotly({
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
+output$lollipop_plot_disclaimer <- renderUI(
+  HTML("Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment.")
+)
 
 
 ###### Calendar of stock with modal
