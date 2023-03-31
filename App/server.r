@@ -219,9 +219,9 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
- }) #%>% 
-#   bindCache(query$assessmentkey) %>%
-#   bindEvent(query$assessmentkey)
+ }) %>% 
+  bindCache(query$assessmentkey) %>%
+  bindEvent(query$assessmentkey)
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
@@ -252,9 +252,9 @@ output$download_SAG_Data <- downloadHandler(
     )
     suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData()))
 
-}) %>%  bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-
+}) 
+  
+  
   output$plot2 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock"),
@@ -262,9 +262,9 @@ output$download_SAG_Data <- downloadHandler(
     )
 
     suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
-  }) %>%  bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-
+  })
+  
+  
   output$plot3 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$F != "", "F not available for this stock"),
@@ -272,9 +272,8 @@ output$download_SAG_Data <- downloadHandler(
     )
 
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
-  }) %>%  bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-
+  })
+  
   
   output$plot4 <- renderPlotly({
     validate(
@@ -283,11 +282,9 @@ output$download_SAG_Data <- downloadHandler(
     )
     
     suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
-  }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+  })
 
-
+  
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
     info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
