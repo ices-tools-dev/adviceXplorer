@@ -107,7 +107,7 @@ server <- function(input, output, session) {
     escape = FALSE,
     selection = "none",
     server = FALSE,
-    caption = HTML("<b><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
+    caption = HTML("<b><font size= 5>&emsp;To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
