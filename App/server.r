@@ -49,7 +49,8 @@ server <- function(input, output, session) {
       .x = input$selected_locations,
       .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))
     )
-    if (nrow(stock_list_long != 0)) {
+    
+    if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
       dplyr::arrange(StockKeyLabel) %>%
       dplyr::mutate(
@@ -65,6 +66,7 @@ server <- function(input, output, session) {
 
 
   res_mod <- callModule(
+    
     module = selectizeGroupServer,
     id = "my-filters",
     data = eco_filter,
@@ -76,9 +78,12 @@ server <- function(input, output, session) {
   
   ###########################################################  Render table in stock selection tab
 
-  output$tbl <- DT::renderDT(
-
-    res_modo <- res_mod() %>% select(
+  res_modo <- reactive({ 
+    validate(
+      need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
+    )
+    
+   res_mod() %>% select(
       "Select",
       "StockKeyLabel",
       "EcoRegion",
@@ -93,7 +98,12 @@ server <- function(input, output, session) {
         " " = icon,
         "Common name" = SpeciesCommonName,
         "Location" = stock_location
-      ),
+      )
+  })
+  
+  output$tbl <- DT::renderDT(
+   
+    res_modo(),
     escape = FALSE,
     selection = "none",
     server = FALSE,
