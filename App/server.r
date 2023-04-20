@@ -53,10 +53,7 @@ server <- function(input, output, session) {
                     stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
                     stock_location = parse_location_from_stock_description(stock_description))
 
-  }) %>% 
-    bindCache(input$selected_locations, input$selected_years) %>% 
-    bindEvent(input$selected_locations, input$selected_years)
-
+  }) 
   
   res_mod <- callModule(
     module = selectizeGroupServer,
@@ -170,7 +167,6 @@ server <- function(input, output, session) {
   sagSettings <- reactive({
     temp_setting <- getSAGSettings(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
-
   })  
   
   drop_plots <- reactive({
@@ -180,6 +176,7 @@ server <- function(input, output, session) {
   
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
 additional_LandingData <- reactive({
+
   get_additional_landing_data(query$assessmentkey)
 }) 
 
@@ -201,11 +198,13 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
-}) 
+ }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
-}) 
+}) %>% 
+  bindCache(query$assessmentkey) %>% 
+  bindEvent(query$assessmentkey)
 
  ### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
@@ -230,16 +229,19 @@ output$download_SAG_Data <- downloadHandler(
     )
     suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData()))
 
-})
+}) %>%  bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
 
   output$plot2 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock")#,
       # need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
+
     suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
-  })
-  
+  }) %>%  bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
+
   output$plot3 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$F != "", "F not available for this stock")#,
@@ -247,16 +249,21 @@ output$download_SAG_Data <- downloadHandler(
     )
 
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
-  })
+  }) %>%  bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
+
   
   output$plot4 <- renderPlotly({
     validate(
+
       need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")#,
       # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
-      
     )
+    
     suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
-  })
+  }) %>%  
+    bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
 
 
 ####################### Quality of assessment data
@@ -270,8 +277,8 @@ output$download_SAG_Data <- downloadHandler(
     year <- query$year 
     
     quality_assessment_data_local(stock_name, year)
+
   }) 
-  
 
 
 ##### button to download SAG data for quality of assessemnt
@@ -295,8 +302,11 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
     )
 
     suppressWarnings(ICES_plot_5(advice_action_quality(), sagSettings()))
-
-  })
+  }) %>%  
+    bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
+  
+  
   output$plot6 <- renderPlotly({
     validate(
       need(advice_action_quality()$F != "", "F not available for this stock"),
@@ -304,21 +314,29 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
     )
 
     suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings()))
+  }) %>%  
+    bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
+  
 
-  })
-  output$plot7 <- renderPlotly({
+    output$plot7 <- renderPlotly({
     validate(
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
-  })
+  }) %>%  
+      bindCache(query$assessmentkey) %>% 
+      bindEvent(query$assessmentkey)
+    
   
 
 ##### Advice view info
 advice_view_info <- reactive({
+
   get_advice_view_info(query$stockkeylabel, query$year)
 }) 
+
 
 
 ##### Advice view info previous year
@@ -411,7 +429,10 @@ output$TAC_timeline <- renderPlotly({
     need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
   )
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
-})
+}) %>%  
+  bindCache(query$assessmentkey) %>% 
+  bindEvent(query$assessmentkey)
+
 
 
 ############ Radial plot panel (Selection panel)
@@ -431,7 +452,10 @@ output$catch_scenarios_radial <- renderUI({
   } else {
     HTML("")
   }
-})
+}) %>%  
+  bindCache(query$assessmentkey) %>% 
+  bindEvent(query$assessmentkey)
+
 
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
@@ -439,7 +463,10 @@ output$Radial_plot <- renderPlotly({
     need(!is_empty(catch_scenario_table_previous_year()$table), " ")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
-})
+}) %>%  
+  bindCache(query$assessmentkey) %>% 
+  bindEvent(query$assessmentkey)
+
 
 output$Radial_plot_disclaimer <- renderUI(
   HTML("Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment. <br/>
@@ -462,7 +489,10 @@ output$catch_indicators_lollipop <- renderUI({
   } else {
     HTML("")
   }
-})
+}) %>%  
+  bindCache(query$assessmentkey) %>% 
+  bindEvent(query$assessmentkey)
+
 
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
@@ -470,7 +500,10 @@ output$Lollipop_plot <- renderPlotly({
     need(!is_empty(catch_scenario_table_previous_year()$table), " ")
   )
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
-})
+}) %>%  
+  bindCache(query$assessmentkey) %>% 
+  bindEvent(query$assessmentkey)
+
 
 output$lollipop_plot_disclaimer <- renderUI(
   HTML("Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment.")
