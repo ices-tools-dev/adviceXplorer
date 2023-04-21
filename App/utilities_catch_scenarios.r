@@ -228,7 +228,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(SSB = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # dead discards"
@@ -237,7 +237,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(CatchUnwanted = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # surviving discards"
@@ -246,7 +246,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(CatchUnwantedSurviving = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # % TAC change"

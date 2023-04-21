@@ -511,6 +511,7 @@ observeEvent(input$preview, {
 catch_table_names <- eventReactive(catch_scenario_table(),{
   req(query$stockkeylabel, query$year)
   catch_scenario_table()$cols
+  
 
 })
 
@@ -518,6 +519,7 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
   validate(
       need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
     )
+    
     catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
     rename_all(funs(catch_table_names())) %>%
