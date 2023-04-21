@@ -616,3 +616,136 @@ SAGrefpts <- getSAG("cod.27.47d20", 2022,
 SAGsummary <- getSAG("cod.27.47d20", 2022,
         data = "summary", combine = TRUE, purpose = "Advice"
     )
+
+
+
+xx<- icesASD::get_catch_scenario_table(2968, 2022)
+test <- standardize_catch_scenario_table(tmp)
+ tmp <- xx
+standardize_catch_scenario_table <- function(tmp) {
+  if (!is_empty(tmp)) {
+  
+  tmp_unified <- data.frame()
+
+  # Year
+  pattern <- c("Year")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  tmp_unified <-  data.frame(tmp[subset])
+
+  # cS_Label"
+  pattern <- c("cS_Label")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  tmp_unified <- tmp_unified %>% add_column(tmp[subset]) ####this works!
+
+  # cS_Purpose"
+  pattern <- c("cS_Purpose")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+
+  # Total catch"
+  pattern <- c("_CatchTotal_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # Ftotal"
+  pattern <- c("_FTotal_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(F = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # Fwanted"
+  pattern <- c("_Fwanted_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(F_wanted = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # HR
+  pattern <- c("_HR_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(HR = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # SSB"
+  pattern <- c("_StockSize_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(SSB = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  }
+
+  # dead discards"
+  pattern <- c("_CatchUnwanted_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(CatchUnwanted = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # surviving discards"
+  pattern <- c( "surviving")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(CatchUnwantedSurviving = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # % TAC change"
+  pattern <- c("_TACchange_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(TACchange = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # % Advice change"
+  pattern <- c("_Advchange_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(ADVICEchange = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # % SSB change "
+  pattern <- c("_StockSizechange_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(SSBchange = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
+  }
+
+  # Save the names to re-use them later when diplaying the table
+  colnames(tmp_unified) <- sub(" _.*_", "", colnames(tmp_unified))
+  col_names_for_display <- colnames(tmp_unified)
+  
+  # rename columns to standard names
+  # colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB", "TAC change", "ADVICE change", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB","CatchUnwanted","CatchUnwantedSurviving", "TAC change", "ADVICE change", "SSB change")
+  tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
+  tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
+  }
+  else {
+    tmp_unified <- character(0)
+    col_names_for_display <- character(0)
+  }
+  
+  return(list(table = tmp_unified, cols = col_names_for_display))
+}

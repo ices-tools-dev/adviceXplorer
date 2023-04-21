@@ -174,17 +174,17 @@ standardize_catch_scenario_table <- function(tmp) {
   # Year
   pattern <- c("Year")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp[, c(subset)]
+  tmp_unified <-  data.frame(tmp[subset])
 
   # cS_Label"
   pattern <- c("cS_Label")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
+  tmp_unified <- tmp_unified %>% add_column(tmp[subset]) ####this works!
 
   # cS_Purpose"
   pattern <- c("cS_Purpose")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  tmp_unified <- tmp_unified %>% add_column(tmp[subset])
 
   # Total catch"
   pattern <- c("_CatchTotal_")
@@ -192,7 +192,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # Ftotal"
@@ -201,7 +201,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(F = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # Fwanted"
@@ -210,7 +210,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(F_wanted = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # HR
@@ -219,7 +219,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(HR = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # SSB"
@@ -237,7 +237,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(CatchUnwanted = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # surviving discards"
@@ -246,7 +246,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(CatchUnwantedSurviving = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # % TAC change"
@@ -255,7 +255,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(TACchange = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # % Advice change"
@@ -264,7 +264,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(ADVICEchange = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # % SSB change "
@@ -273,7 +273,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(SSBchange = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset])
   }
 
   # Save the names to re-use them later when diplaying the table
