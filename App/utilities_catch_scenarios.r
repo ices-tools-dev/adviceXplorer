@@ -127,7 +127,7 @@ return(stock_info_sentence)
 #' 
 format_catch_scenario_notes <- function(ASDadviceKey) {
 
-  catch_scenario_table_notes <- icesASD::get_catch_scenario_notes(ASDadviceKey)
+  catch_scenario_table_notes <- icesASD::getCatchScenariosNotes(ASDadviceKey)
 
   if (length(catch_scenario_table_notes) != 0) {
     catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-adviceKey)
@@ -179,7 +179,7 @@ standardize_catch_scenario_table <- function(tmp) {
   # cS_Label"
   pattern <- c("cS_Label")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)])
 
   # cS_Purpose"
   pattern <- c("cS_Purpose")

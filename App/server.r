@@ -333,25 +333,25 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 
 ##### Advice view info
 advice_view_info <- reactive({
-  get_advice_view_info(query$stockkeylabel, query$year)
+  getAdviceViewRecord(query$stockkeylabel, query$year) %>% filter(adviceStatus == "Advice")
 }) 
 
 
 ##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  get_advice_view_info(query$stockkeylabel, query$year-1)
+  getAdviceViewRecord(query$stockkeylabel, query$year-1) %>% filter(adviceStatus == "Advice")
 })
 
 
 
 ##### catch scenarios table
 catch_scenario_table <- eventReactive(req(advice_view_info()), {
-  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info()$adviceKey, query$year))
+  standardize_catch_scenario_table(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year))
 })
 
 ##### catch scenarios table previous year in percentages (for radial plot)
 catch_scenario_table_previous_year <- eventReactive(req(advice_view_info_previous_year()), {
-  standardize_catch_scenario_table(get_catch_scenario_table(advice_view_info_previous_year()$adviceKey, query$year))
+  standardize_catch_scenario_table(icesASD::get_catch_scenario_table(advice_view_info_previous_year()$adviceKey, query$year))
   
 })
 
