@@ -333,13 +333,19 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 
 ##### Advice view info
 advice_view_info <- reactive({
-  getAdviceViewRecord(query$stockkeylabel, query$year) %>% filter(adviceStatus == "Advice")
+  asd_record <- getAdviceViewRecord(query$stockkeylabel, query$year)
+  if (!is_empty(asd_record)){ 
+    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
+  }  
 }) 
 
 
 ##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  getAdviceViewRecord(query$stockkeylabel, query$year-1) %>% filter(adviceStatus == "Advice")
+  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year-1) 
+  if (!is_empty(asd_record_previous)){ 
+    asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
+  } 
 })
 
 
@@ -432,9 +438,7 @@ output$TAC_timeline <- renderPlotly({
 
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
-  validate(
-    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
-  )
+ 
   if (!is_empty(catch_scenario_table_previous_year()$table)) {
 
     selectizeInput(
@@ -451,27 +455,29 @@ output$catch_scenarios_radial <- renderUI({
 
 ############ Radial plot panel (radial plot)
 output$Radial_plot <- renderPlotly({
+  
   validate(
-    need(!is_empty(catch_scenario_table_previous_year()$table), " ")
+    need(!is_empty(advice_view_info()), "No Advice View entry in assessment year"),
+    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
 
 output$Radial_plot_disclaimer <- renderUI(
-  HTML("Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment. <br/>
+  HTML("<br><br> Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment. <br/>
   The scale of the plot is relative across the scenarios presented, please refer to the table or the % of change plot for actual percentage of change.")
 )
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-  validate(
-    need(!is_empty(catch_scenario_table_previous_year()$table), "No catch scenario table in previous assessment year")
-  )
-  not_all_na <- function(x) any(!is.na(x))
+
   if (!is_empty(catch_scenario_table_previous_year()$table)) {    
     selectizeInput(
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators",
-      choices = names(catch_scenario_table_percentages() %>% select(where(not_all_na))) %>% str_subset(pattern = c("Year", "cat", "cS_Purpose"), negate = TRUE),
+      choices = catch_scenario_table_percentages() %>% 
+        select(where(~ !any(is.na(.)))) %>%
+        names() %>%
+        str_subset(pattern = c("Year|cat|cS_Purpose"), negate = TRUE),
       selected = c("SSB change"),
       multiple = TRUE
     )
@@ -483,13 +489,15 @@ output$catch_indicators_lollipop <- renderUI({
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
   validate(
-    need(!is_empty(catch_scenario_table_previous_year()$table), " ")
+    need(!is_empty(advice_view_info()), "No Advice View entry in assessment year"),
+    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
   )
+  
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
 output$lollipop_plot_disclaimer <- renderUI(
-  HTML("Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment.")
+  HTML("<br> <br> Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment.")
 )
 
 
