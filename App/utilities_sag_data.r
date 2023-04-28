@@ -105,7 +105,7 @@ access_sag_data_local <- function(stock_code, year) {
 #'
 
 quality_assessment_data_local <- function(stock_code, year) {
-    years <- c(2022, 2021, 2020, 2019, 2018)
+    years <- c(2023, 2022, 2021, 2020, 2019)
     years <- years[years <= year]
     datalist <- list()
 
@@ -115,7 +115,7 @@ quality_assessment_data_local <- function(stock_code, year) {
         if (isTRUE(class(data_temp) == "try-error")) {
             next
         } else {
-            data_temp <- filter(data_temp, between(Year, 2005, 2022))
+            data_temp <- filter(data_temp, between(Year, 2005, 2023))
             data_temp <- data_temp %>% select(
                 Year,
                 recruitment, RecruitmentAge,
