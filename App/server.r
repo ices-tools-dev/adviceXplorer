@@ -82,7 +82,7 @@ server <- function(input, output, session) {
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-    
+  
    res_mod() %>% select(
       "Select",
       "StockKeyLabel",
@@ -142,6 +142,7 @@ server <- function(input, output, session) {
     
   })
 
+  
   observe({
     # read url string
     query_string <- getQueryString()
@@ -153,7 +154,7 @@ server <- function(input, output, session) {
       info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
 
       query$stockkeylabel <- info$StockKeyLabel
-      query$year <- info$AssessmentYear ####
+      query$year <- info$AssessmentYear #### 
 
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year) #####
@@ -165,8 +166,6 @@ server <- function(input, output, session) {
       
     }
   })
-
-
 
   ######### SAG data
   SAG_data_reactive <- reactive({
@@ -342,7 +341,9 @@ advice_view_info <- reactive({
 
 ##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year-1) 
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)
+
   if (!is_empty(asd_record_previous)){ 
     asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   } 
