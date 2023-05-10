@@ -192,7 +192,7 @@ download_SID <- function(Year) {
       sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published, AssessmentKey", Year)
     )
   )$value
-  # stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks_for_lunch)
+  stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks_for_lunch)
   return(stock_list_all)
 }
 
