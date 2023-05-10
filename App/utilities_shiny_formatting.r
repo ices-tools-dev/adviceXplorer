@@ -265,14 +265,16 @@ catch_scenarios_left_panel <- function() {
           withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
         ),
         tabPanel(
-          "% of change: radial plot",
+          "Relative change: radial plot",
           uiOutput("catch_scenarios_radial"),
-          withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"))
+          withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%")),
+          htmlOutput("Radial_plot_disclaimer")
         ),
         tabPanel(
           "% of change: lollipop plot",
           uiOutput("catch_indicators_lollipop"),
-          withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"))
+          withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%")), 
+          htmlOutput("lollipop_plot_disclaimer")
         )
       )
     )

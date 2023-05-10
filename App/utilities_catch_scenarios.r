@@ -1,42 +1,3 @@
-#' Returns a df with the metadata for the advice view record for a specific stock and year. It uses the advice view web-service.
-#'
-#' @param stock_name
-#' @param year
-#' 
-#' @return metadata for the advice view record
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' get_Advice_View_info("bll.27.3a47de", 2021)
-#' }
-#'
-#' @references
-#' https://sg.ices.dk/adviceview/AdviceList
-#' 
-#'
-#' @export
-#' 
-get_Advice_View_info <- function(stock_name, year) {
-  catch_scenario_list <- jsonlite::fromJSON(
-    URLencode(
-      sprintf("https://sg.ices.dk/adviceview/API/getAdviceViewRecord?stockcode=%s&year=%s", stock_name, year)
-    )
-  )
-  
-  if (!is_empty(catch_scenario_list)){
-  catch_scenario_list <- catch_scenario_list %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
-  } else {
-     catch_scenario_list <- list()
-  }
-  
-  return(catch_scenario_list)
-}
-
 #' Returns an HTML string containing the summary of the advice view record to be displayed on top of the Advice page
 #'
 #' @param catch_scenario_list
@@ -142,56 +103,9 @@ get_Stock_info <- function(CommonName, stockcode,  assessmentYear, description) 
 return(stock_info_sentence)
 }
 
-#' Returns the catch scenario table for the selected stock and year using the advice view web service.
-#'
-#' @param catch_scenario_list
-
-#' @return df
-#'
-#' @note
-#' Can add some helpful information here
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' get_catch_scenario_table(catch_scenario_list)
-#' }
-#'
-#' @references
-#' https://sg.ices.dk/adviceview/AdviceList
-#' 
-#'
-#' @export
-#' 
-get_catch_scenario_table <- function(catch_scenario_list) {
-  catch_scenario_table <- jsonlite::fromJSON(
-    URLencode(
-      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosTable/%s", catch_scenario_list$adviceKey)
-    )
-  )
-
-  if (length(catch_scenario_table) != 0) {
-  catch_scenario_table <- catch_scenario_table %>%
-    pivot_wider(
-      names_from = c(aK_ID, aK_Label, yearLabel, unit, stockDataType),
-      names_glue = "{aK_Label} ({yearLabel}) _{stockDataType}_",
-      values_from = value
-    ) %>%
-    select(-assessmentKey, -adviceKey, -cS_Basis, -aR_ID)
-
-
-  catch_scenario_table <- catch_scenario_table %>% add_column(Year = catch_scenario_list$assessmentYear + 1, .before = "cS_Label")
-  } else {
-    catch_scenario_table <- character(0) 
-  }
-
-  return(catch_scenario_table)
-}
-
 #' Returns an HTML string containing the catch scenario table's footnotes.
 #'
-#' @param catch_scenario_list
+#' @param ASDadviceKey
 
 #' @return string
 #'
@@ -202,7 +116,7 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 #'
 #' @examples
 #' \dontrun{
-#' get_catch_scenario_table(catch_scenario_list)
+#' get_catch_scenario_table(ASDadviceKey)
 #' }
 #'
 #' @references
@@ -211,23 +125,19 @@ get_catch_scenario_table <- function(catch_scenario_list) {
 #'
 #' @export
 #' 
-get_catch_scenario_notes <- function(catch_scenario_list) {
- 
-  catch_scenario_table_notes <- jsonlite::fromJSON(
-    URLencode(
-      sprintf("https://sg.ices.dk/adviceview/API/getCatchScenariosNotes/%s", catch_scenario_list$adviceKey) # )
-    )
-  )
+format_catch_scenario_notes <- function(ASDadviceKey) {
+
+  catch_scenario_table_notes <- icesASD::getCatchScenariosNotes(ASDadviceKey)
 
   if (length(catch_scenario_table_notes) != 0) {
-  catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-catchOptionsTableKey, -adviceKey)
-
-  string_notes <- HTML(
-    paste0("<ul>",paste0("<li><font size=2>",catch_scenario_table_notes$symbol, " "), paste0(catch_scenario_table_notes$notes, "</font></li>"), "</ul>"))
+    catch_scenario_table_notes <- catch_scenario_table_notes %>% select(-adviceKey)
+    string_notes <- HTML(
+      paste0("<ul>", paste0("<li><font size=2>", catch_scenario_table_notes$symbol, " "), paste0(catch_scenario_table_notes$notes, "</font></li>"), "</ul>")
+    )
   } else {
     string_notes <- character(0)
   }
-  
+
   return(string_notes)
 }
 
@@ -264,17 +174,26 @@ standardize_catch_scenario_table <- function(tmp) {
   # Year
   pattern <- c("Year")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp[, c(subset)]
+  tmp_unified <-  data.frame(tmp[subset][1])
 
   # cS_Label"
   pattern <- c("cS_Label")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  tmp_unified <- tmp_unified %>% add_column(tmp[subset][1]) ####this works!
 
   # cS_Purpose"
   pattern <- c("cS_Purpose")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+  tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
+
+  # Total catch"
+  pattern <- c("_CatchTotal_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
+  }
 
   # Ftotal"
   pattern <- c("_FTotal_")
@@ -282,7 +201,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(F = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # Fwanted"
@@ -291,7 +210,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(F_wanted = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # HR
@@ -300,34 +219,7 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(HR = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
-  }
-
-  # Total catch"
-  pattern <- c("_CatchTotal_")
-  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(TotCatch = NA)
-  } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
-  }
-
-  # % TAC change"
-  pattern <- c("_TACchange_")
-  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(TACchange = NA)
-  } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
-  }
-
-  # % Advice change"
-  pattern <- c("_Advchange_")
-  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
-  if (!any(subset)) {
-    tmp_unified <- tmp_unified %>% add_column(ADVICEchange = NA)
-  } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # SSB"
@@ -336,16 +228,52 @@ standardize_catch_scenario_table <- function(tmp) {
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(SSB = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
-  
+
+  # dead discards"
+  pattern <- c("_CatchUnwanted_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(CatchUnwanted = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
+  }
+
+  # surviving discards"
+  pattern <- c( "surviving")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(CatchUnwantedSurviving = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
+  }
+
+  # % TAC change"
+  pattern <- c("_TACchange_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(TACchange = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
+  }
+
+  # % Advice change"
+  pattern <- c("_Advchange_")
+  subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
+  if (!any(subset)) {
+    tmp_unified <- tmp_unified %>% add_column(ADVICEchange = NA)
+  } else {
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
+  }
+
   # % SSB change "
   pattern <- c("_StockSizechange_")
   subset <- grepl(paste(pattern, collapse = "|"), names(tmp))
   if (!any(subset)) {
     tmp_unified <- tmp_unified %>% add_column(SSBchange = NA)
   } else {
-    tmp_unified <- tmp_unified %>% add_column(tmp[, c(subset)][1])
+    tmp_unified <- tmp_unified %>% add_column(tmp[subset][1])
   }
 
   # Save the names to re-use them later when diplaying the table
@@ -353,8 +281,8 @@ standardize_catch_scenario_table <- function(tmp) {
   col_names_for_display <- colnames(tmp_unified)
   
   # rename columns to standard names
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "TAC change", "ADVICE change", "SSB", "SSB change")
-
+  # colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB", "TAC change", "ADVICE change", "SSB change")
+  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB","CatchUnwanted","CatchUnwantedSurviving", "TAC change", "ADVICE change", "SSB change")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
   }
@@ -460,24 +388,25 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
   if (!is_empty(new_catch_scen_table) | !is_empty(new_catch_scen_table)) {
     changes_columns <- new_catch_scen_table %>% select("cat", "TAC change", "ADVICE change", "SSB change")
 
-    keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR", "TotCatch", "SSB")
+    keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR")
     df_old <- old_catch_scen_table %>% 
       select(all_of(keep.cols)) %>% 
       drop_cols_with_all_nas()
     
     df_new <- new_catch_scen_table %>% 
       select(all_of(keep.cols)) %>% 
-      drop_cols_with_all_nas()
+      drop_cols_with_all_nas() %>% 
+      na.omit()
 
     Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice", ]
     catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
     catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
-    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) %>% relocate("SSB change", .after = SSB)
-
+    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) #%>% relocate("SSB change", .after = SSB)
+    
   } else {
     catch_scen_table_perc <- character(0)
   }
-
+  
   return(catch_scen_table_perc)
 }
 
