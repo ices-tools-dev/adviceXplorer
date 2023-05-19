@@ -349,6 +349,8 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
     bindEvent(query$assessmentkey)
   
 
+  }) %>%  
+    bindCache(query$assessmentkey)
 
   output$plot7 <- renderPlotly({
   }) %>%  
