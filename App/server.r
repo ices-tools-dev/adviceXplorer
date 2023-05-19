@@ -345,14 +345,12 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
     )
     suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings()))
   }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+    bindCache(query$assessmentkey) #%>% 
+    # bindEvent(query$assessmentkey)
   
 
 
   output$plot7 <- renderPlotly({
-  }) %>%  
-    bindCache(query$assessmentkey)
     validate(
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
@@ -488,9 +486,9 @@ output$catch_scenarios_radial <- renderUI({
   } else {
     HTML("")
   }
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 ############ Radial plot panel (radial plot)
@@ -501,9 +499,9 @@ output$Radial_plot <- renderPlotly({
     need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 output$Radial_plot_disclaimer <- renderUI(
@@ -527,9 +525,9 @@ output$catch_indicators_lollipop <- renderUI({
   } else {
     HTML("")
   }
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 ############ Lollipop plot panel (Lollipop plot) 
@@ -540,9 +538,9 @@ output$Lollipop_plot <- renderPlotly({
   )
   
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 output$lollipop_plot_disclaimer <- renderUI(
