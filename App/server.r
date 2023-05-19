@@ -10,8 +10,8 @@ sf::sf_use_s2(FALSE)
 
 options(icesSAG.use_token = FALSE)
 
-
-
+# hared across multiple R processes
+shinyOptions(cache = cachem::cache_disk(file.path(dirname(tempdir()), "myapp-cache")))
 
 
 ############# Start server function ################
@@ -181,12 +181,17 @@ server <- function(input, output, session) {
     msg("downloading:", year)
     #   # Dowload the data
     access_sag_data_local(stock_name, year)
-  }) 
+  }) %>%  
+    bindCache(query$assessmentkey) #%>% 
+    # bindEvent(query$assessmentkey)
   
   sagSettings <- reactive({
     temp_setting <- getSAGSettings(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
-  })  
+
+  }) %>%  
+    bindCache(query$assessmentkey) #%>% 
+    #bindEvent(query$assessmentkey)
   
   drop_plots <- reactive({
       filter(sagSettings(), settingKey == 22 & settingValue == "yes" | settingValue == "y") %>%
@@ -197,12 +202,16 @@ server <- function(input, output, session) {
 additional_LandingData <- reactive({
 
   get_additional_landing_data(query$assessmentkey)
-}) 
+}) %>%  
+    bindCache(query$assessmentkey) #%>% 
+    #bindEvent(query$assessmentkey)
 
 ##### get link to library pdf advice
 advice_doi <- eventReactive((req(query$assessmentkey)),{  
   get_advice_doi(query$assessmentkey)
-})
+}) #%>%  
+    #bindCache(query$assessmentkey) #%>% 
+    #bindEvent(query$assessmentkey)
 
 ###### info about the stock selected for top of page
 stock_info <- reactive({
@@ -217,7 +226,9 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
- }) 
+}) %>% 
+  bindCache(query$assessmentkey) #%>%
+  #bindEvent(query$assessmentkey)
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
@@ -248,8 +259,9 @@ output$download_SAG_Data <- downloadHandler(
     )
     suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData()))
 
-}) %>%  bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+}) %>%  
+    bindCache(query$assessmentkey)# %>% 
+    #bindEvent(query$assessmentkey)
 
   output$plot2 <- renderPlotly({
     validate(
@@ -258,9 +270,10 @@ output$download_SAG_Data <- downloadHandler(
     )
 
     suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
-  }) %>%  bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-
+  }) %>%  
+    bindCache(query$assessmentkey) #%>% 
+    #bindEvent(query$assessmentkey)
+  
   output$plot3 <- renderPlotly({
     validate(
       need(SAG_data_reactive()$F != "", "F not available for this stock")#,
@@ -268,9 +281,9 @@ output$download_SAG_Data <- downloadHandler(
     )
 
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
-  }) %>%  bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-
+  }) %>%  
+    bindCache(query$assessmentkey) #%>% 
+    #bindEvent(query$assessmentkey)
   
   output$plot4 <- renderPlotly({
     validate(
@@ -281,8 +294,8 @@ output$download_SAG_Data <- downloadHandler(
     
     suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
   }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+    bindCache(query$assessmentkey) #%>% 
+    #bindEvent(query$assessmentkey)
 
 
 ####################### Quality of assessment data
@@ -296,8 +309,9 @@ output$download_SAG_Data <- downloadHandler(
     year <- query$year 
     
     quality_assessment_data_local(stock_name, year)
-
-  }) 
+  }) %>%  
+    bindCache(query$assessmentkey)
+  
 
 
 ##### button to download SAG data for quality of assessemnt
@@ -319,35 +333,31 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
       need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-
     suppressWarnings(ICES_plot_5(advice_action_quality(), sagSettings()))
+
   }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-  
-  
+    bindCache(query$assessmentkey)
+
   output$plot6 <- renderPlotly({
     validate(
       need(advice_action_quality()$F != "", "F not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-
     suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings()))
   }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+    bindCache(query$assessmentkey) #%>% 
+    # bindEvent(query$assessmentkey)
   
 
-    output$plot7 <- renderPlotly({
+
+  output$plot7 <- renderPlotly({
     validate(
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
   }) %>%  
-      bindCache(query$assessmentkey) %>% 
-      bindEvent(query$assessmentkey)
-    
+    bindCache(query$assessmentkey)
   
 
 ##### Advice view info
@@ -356,17 +366,19 @@ advice_view_info <- reactive({
   if (!is_empty(asd_record)){ 
     asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   }  
-}) 
+}) %>%  
+    bindCache(query$assessmentkey)
 
 
 
 ##### Advice view info previous year
-advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
+advice_view_info_previous_year <- reactive({
+  req(query$stockkeylabel,query$year)
   asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year-1) 
   if (!is_empty(asd_record_previous)){ 
     asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   } 
-})
+}) 
 
 
 
@@ -411,10 +423,11 @@ output$catch_scenario_plot_F_SSB_Catch <- renderPlotly({
   } else {
     catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive(), sagSettings())
   }
-}) 
+}) %>%  
+    bindCache(query$assessmentkey)
 
 ########## Historical catches panel (preparation of data)
-test_table <- eventReactive(catch_scenario_table(), {
+test_table <- reactive( {
   req(query$stockkeylabel, query$year)
   validate(
     need(!is_empty(catch_scenario_table()$table), ""),
@@ -422,7 +435,8 @@ test_table <- eventReactive(catch_scenario_table(), {
    
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year, additional_LandingData())
-})
+}) %>%  
+    bindCache(query$assessmentkey)
 
 ########## Historical catches panel (Definition of basis of advice)
 Basis <- eventReactive(catch_scenario_table(),{
@@ -453,9 +467,7 @@ output$TAC_timeline <- renderPlotly({
     need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
   )
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) 
 
 
 
@@ -474,9 +486,9 @@ output$catch_scenarios_radial <- renderUI({
   } else {
     HTML("")
   }
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 ############ Radial plot panel (radial plot)
@@ -487,9 +499,9 @@ output$Radial_plot <- renderPlotly({
     need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 output$Radial_plot_disclaimer <- renderUI(
@@ -513,9 +525,9 @@ output$catch_indicators_lollipop <- renderUI({
   } else {
     HTML("")
   }
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 ############ Lollipop plot panel (Lollipop plot) 
@@ -526,14 +538,14 @@ output$Lollipop_plot <- renderPlotly({
   )
   
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
-}) %>%  
-  bindCache(query$assessmentkey) %>% 
-  bindEvent(query$assessmentkey)
+}) #%>%  
+  #bindCache(query$assessmentkey) %>% 
+  #bindEvent(query$assessmentkey)
 
 
 output$lollipop_plot_disclaimer <- renderUI(
   HTML("<br> <br> Disclaimer: the relative change for F, F wanted and HR has been calculated using the basis of advice of the previous year assessment.")
-)
+) 
 
 
 ###### Calendar of stock with modal
