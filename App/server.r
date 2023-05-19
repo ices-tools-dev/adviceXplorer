@@ -345,16 +345,9 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
     )
     suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings()))
   }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
-  
-
-  }) %>%  
     bindCache(query$assessmentkey)
 
   output$plot7 <- renderPlotly({
-  }) %>%  
-    bindCache(query$assessmentkey)
     validate(
       need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
