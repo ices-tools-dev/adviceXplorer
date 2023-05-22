@@ -184,17 +184,13 @@ server <- function(input, output, session) {
     msg("downloading:", year)
     #   # Dowload the data
     access_sag_data_local(stock_name, year)
-  }) #%>%  
-    #bindCache(query$assessmentkey) #%>% 
-    # bindEvent(query$assessmentkey)
+  }) 
   
   sagSettings <- reactive({
     temp_setting <- getSAGSettings(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
 
-  }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+  }) 
   
   drop_plots <- reactive({
       filter(sagSettings(), settingKey == 22 & settingValue == "yes" | settingValue == "y") %>%
@@ -205,9 +201,7 @@ server <- function(input, output, session) {
 additional_LandingData <- reactive({
 
   get_additional_landing_data(query$assessmentkey)
-}) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+}) 
 
 ##### get link to library pdf advice
 advice_doi <- eventReactive((req(query$assessmentkey)),{  
@@ -230,15 +224,13 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
   get_Advice_View_Headline(advice_view_info())
-}) %>% 
-  bindCache(query$assessmentkey) %>%
-  bindEvent(query$assessmentkey)
+}) %>%  
+    bindCache(query$assessmentkey) %>% 
+    bindEvent(query$assessmentkey)
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
-}) #%>% 
-  #bindCache(query$assessmentkey) %>% 
-  #bindEvent(query$assessmentkey)
+}) 
 
  ### link to pdf of advice (NOT ACTIVE)
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
@@ -311,9 +303,7 @@ output$download_SAG_Data <- downloadHandler(
     year <- query$year 
     
     quality_assessment_data_local(stock_name, year)
-  }) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+  }) 
   
 
 
@@ -369,9 +359,7 @@ advice_view_info <- reactive({
   if (!is_empty(asd_record)){ 
     asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   }  
-}) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+}) 
 
 
 ##### Advice view info previous year
@@ -381,9 +369,7 @@ advice_view_info_previous_year <- reactive({
   if (!is_empty(asd_record_previous)){ 
     asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   } 
-}) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+}) 
 
 
 
@@ -428,8 +414,8 @@ output$catch_scenario_plot_F_SSB_Catch <- renderPlotly({
   } else {
     catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive(), sagSettings())
   }
-}) #%>%  
-    #bindCache(query$assessmentkey)
+}) %>%  
+    bindCache(query$assessmentkey)
 
 ########## Historical catches panel (preparation of data)
 test_table <- reactive( {
@@ -445,8 +431,7 @@ test_table <- reactive( {
     bindEvent(query$assessmentkey)
 
 ########## Historical catches panel (Definition of basis of advice)
-Basis <- eventReactive(catch_scenario_table(),{
-    
+Basis <- eventReactive(catch_scenario_table(),{    
     catch_scenario_table()$table[catch_scenario_table()$table$cS_Purpose == "Basis Of Advice", ]
 
 })
@@ -492,9 +477,7 @@ output$catch_scenarios_radial <- renderUI({
   } else {
     HTML("")
   }
-}) #%>%  
-  #bindCache(query$assessmentkey) %>% 
-  #bindEvent(query$assessmentkey)
+}) 
 
 
 ############ Radial plot panel (radial plot)
@@ -505,9 +488,7 @@ output$Radial_plot <- renderPlotly({
     need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
-}) #%>%  
-  #bindCache(query$assessmentkey) %>% 
-  #bindEvent(query$assessmentkey)
+}) 
 
 
 output$Radial_plot_disclaimer <- renderUI(
@@ -531,10 +512,7 @@ output$catch_indicators_lollipop <- renderUI({
   } else {
     HTML("")
   }
-}) #%>%  
-  #bindCache(query$assessmentkey) %>% 
-  #bindEvent(query$assessmentkey)
-
+}) 
 
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
@@ -544,9 +522,7 @@ output$Lollipop_plot <- renderPlotly({
   )
   
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
-}) #%>%  
-  #bindCache(query$assessmentkey) %>% 
-  #bindEvent(query$assessmentkey)
+}) 
 
 
 output$lollipop_plot_disclaimer <- renderUI(
