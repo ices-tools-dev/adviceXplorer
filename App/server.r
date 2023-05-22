@@ -199,7 +199,6 @@ server <- function(input, output, session) {
   
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
 additional_LandingData <- reactive({
-
   get_additional_landing_data(query$assessmentkey)
 }) 
 
@@ -414,8 +413,7 @@ output$catch_scenario_plot_F_SSB_Catch <- renderPlotly({
   } else {
     catch_scenario_plot_1(catch_scenario_table(), SAG_data_reactive(), sagSettings())
   }
-}) %>%  
-    bindCache(query$assessmentkey)
+}) 
 
 ########## Historical catches panel (preparation of data)
 test_table <- reactive( {
@@ -426,9 +424,7 @@ test_table <- reactive( {
    
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year, additional_LandingData())
-}) %>%  
-    bindCache(query$assessmentkey) %>% 
-    bindEvent(query$assessmentkey)
+}) 
 
 ########## Historical catches panel (Definition of basis of advice)
 Basis <- eventReactive(catch_scenario_table(),{    
