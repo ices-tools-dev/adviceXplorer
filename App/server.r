@@ -10,8 +10,11 @@ sf::sf_use_s2(FALSE)
 
 options(icesSAG.use_token = FALSE)
 
+# Set the application-level cache
+shinyOptions(cache = cachem::cache_mem(max_size = 500e6))
 # hared across multiple R processes
-shinyOptions(cache = cachem::cache_disk(file.path(dirname(tempdir()), "IA-cache")))
+# shinyOptions(cache = cachem::cache_disk(file.path(dirname(tempdir()), "IA-cache")))
+shinyOptions(cache = cachem::cache_disk("./IA-cache"))
 
 
 ############# Start server function ################
