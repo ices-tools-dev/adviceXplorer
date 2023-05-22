@@ -85,7 +85,7 @@ tagList(
 
 navbarPage(
     
-    position = "static-top",
+    position = "fixed-top",
     collapsible = TRUE,
     # tab title
     windowTitle = "Online Advice",
@@ -95,6 +95,7 @@ navbarPage(
     title = title_html,
     tabPanel(
         "Stock selection",
+        style = "max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
         sidebarLayout(
             sidebarPanel = stock_selection_left_side(),
             mainPanel = stock_selection_right_side()
@@ -105,33 +106,54 @@ navbarPage(
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
+            style = " max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos1"),
                 header_right_panel_headline("Advice_Headline1")
             ),
             
-            sidebarLayout(
-                sidebarPanel = SAG_plots_left_panel(),
-                mainPanel = SAG_plots_right_panel()
+            # sidebarLayout(
+            #     sidebarPanel = SAG_plots_left_panel(),
+            #     mainPanel = SAG_plots_right_panel()
 
+            # )
+            fluidRow(
+                  
+                column(6,withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),   
+                column(6,withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
             )
+            ,
+            fluidRow(
+                column(6,withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
+                column(6,withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+                # )
+                # )
+                )
          
         ),
     tabPanel(
             "Quality of assessment",
+            style = " max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos2"),
                 header_right_panel_headline("Advice_Headline2")
             ),
-            quality_of_assessment()
+            fluidRow(
+                  
+                column(4,withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))),   
+                column(4,withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))),
+                column(4,withSpinner(plotlyOutput("plot7", height = "100%", width = "100%")))
+            )
+            # quality_of_assessment()
         ),
 
 ######################################################################################################
 
     tabPanel(
         "Catch scenarios",
+        style = " max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
         splitLayout(
             cellWidths = c("40%", "60%"),
             header_left_panel_stock_info("stock_infos3"),

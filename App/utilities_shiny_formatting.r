@@ -28,7 +28,7 @@ stock_selection_left_side <- function() {
       withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
     ),
     HTML("</br>"),
-    panel(
+    # panel(
       selectizeInput(
         inputId = "selected_locations",
         label = "ICES Ecoregions",
@@ -59,9 +59,9 @@ stock_selection_left_side <- function() {
         ),
         inline = FALSE
       ),
-      heading = "Additional data filtering",
-      status = "primary"
-    ),
+    #   heading = "Additional data filtering",
+    #   status = "primary"
+    # ),
     htmlOutput("app_last_update")
   )
 }
@@ -121,14 +121,14 @@ stock_selection_right_side <- function(){
 SAG_plots_left_panel <- function(){
   sidebarPanel(
     width = 6, style = "height: 65vh; overflow-y: auto;",
-    panel(
-      title = "Catches",
-        withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))
-    ),
-    panel(
-      title = "F",
+    # panel(
+      # title = "Catches",
+        withSpinner(plotlyOutput("plot1", height = "100%", width = "100%")),
+    # ),
+    # panel(
+    #   title = "F",
         withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))
-    )
+    # )
   )
 }
 
@@ -157,22 +157,40 @@ SAG_plots_left_panel <- function(){
 SAG_plots_right_panel <- function(){
   sidebarPanel(
     width = 6, style = "height: 65vh; overflow-y: auto;",
-    panel(
-      title = "Recruitment",
-      fillPage(
-        tags$style(type = "text/css", "#plot2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
-        withSpinner(plotlyOutput("plot2", height = "100%", width = "100%"))
-      )
-    ),
-    panel(
-      title = "SSB",
-      fillPage(
-        tags$style(type = "text/css", "#plot4  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+    # panel(
+    #   title = "Recruitment",
+    #   fillPage(
+    #     tags$style(type = "text/css", "#plot2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
+        withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")),
+    #   )
+    # ),
+    # panel(
+    #   title = "SSB",
+    #   fillPage(
+    #     tags$style(type = "text/css", "#plot4  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
         withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))
-      )
-    )
+      # )
+    # )
   )
 }
+
+
+
+# SAG_plots_fluid_row <- function(){
+#   mainPanel(
+#     fluidRow(    
+#         column(5,withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),   
+#         column(5,withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
+#     )
+#   ,
+#   fluidRow(
+#     column(5,withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
+#     column(5,withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+#       # )
+#     # )
+#     )
+#   )
+# }
 ##############################################Quality of assessment tab
 
 #' Creates the UI element of the quality of assessment plots
@@ -249,15 +267,16 @@ quality_of_assessment <- function(){
 #' 
 catch_scenarios_left_panel <- function() {
   sidebarPanel(
-    width = 6, style = "height: 65vh; overflow-y: auto;",
-    panel(
-      title = "Catch_scenario_F_SSB",
-      fillPage(
-        tags$style(type = "text/css", "#catch_scenario_plot_F_SSB_Catch  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-        withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%"))
-      )
-    ),
-    panel(
+    width = 6, #style = "height: 65vh; overflow-y: auto;",
+    # panel(
+    #   title = "Catch_scenario_F_SSB",
+      # fillPage(
+      #   tags$style(type = "text/css", "#catch_scenario_plot_F_SSB_Catch  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
+        withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%")),
+      # )
+    # ),
+    # panel(
+      br(),
       tabsetPanel(
         tabPanel(
           "Catch time series",
@@ -275,7 +294,7 @@ catch_scenarios_left_panel <- function() {
           uiOutput("catch_indicators_lollipop"),
           withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%")), 
           htmlOutput("lollipop_plot_disclaimer")
-        )
+        # )
       )
     )
   )
@@ -305,15 +324,15 @@ catch_scenarios_left_panel <- function() {
 #' 
 catch_scenarios_right_panel <- function(){
   sidebarPanel(
-    width = 6, style = "height: 65vh; overflow-y: auto;",
+    width = 6, style = "height: 100vh; overflow-y: auto;",
     
-    panel(
-      fillPage(
-        tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
-        withSpinner(DTOutput("table", height = "90%", width = "100%")),
-        htmlOutput("footnotes", height = "90%", width = "100%")
-      )
-    )
+    # panel(
+    #   fillPage(
+    #     tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
+        withSpinner(DTOutput("table", height = "100%", width = "100%")),
+        htmlOutput("footnotes", height = "100%", width = "100%")
+    #   )
+    # )
   )
 }
 
@@ -342,10 +361,10 @@ catch_scenarios_right_panel <- function(){
 header_left_panel_stock_info <- function(id) {
   wellPanel(
     style = "height: fit-content; overflow-y: auto; white-space: normal;",
-    panel(
-      title = "Stock Info",
+    # panel(
+    #   title = "Stock Info",
       withSpinner(htmlOutput(id, height = "100%", width = "100%"))
-    )
+    # )
   )
 }
 
@@ -375,9 +394,9 @@ header_left_panel_stock_info <- function(id) {
 header_right_panel_headline <- function(id) {
   wellPanel(
     style = "height: fit-content; overflow-y: auto; white-space: normal;",
-    panel(
+    # panel(
       withSpinner(htmlOutput(id, height = "100%", width = "100%"))
-    )
+    # )
   )
 }
 
