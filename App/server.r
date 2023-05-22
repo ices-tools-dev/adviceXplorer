@@ -14,7 +14,7 @@ options(icesSAG.use_token = FALSE)
 shinyOptions(cache = cachem::cache_mem(max_size = 500e6))
 # hared across multiple R processes
 # shinyOptions(cache = cachem::cache_disk(file.path(dirname(tempdir()), "IA-cache")))
-shinyOptions(cache = cachem::cache_disk("./IA-cache"))
+shinyOptions(cache = cachem::cache_disk("./app_cache/cache/"))
 
 
 ############# Start server function ################
