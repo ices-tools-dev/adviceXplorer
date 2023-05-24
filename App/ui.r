@@ -85,7 +85,7 @@ tagList(
 
 navbarPage(
     
-    position = "fixed-top",
+    position = "static-top",
     collapsible = TRUE,
     # tab title
     windowTitle = "Online Advice",
@@ -95,7 +95,7 @@ navbarPage(
     title = title_html,
     tabPanel(
         "Stock selection",
-        style = "max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
+        style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
         sidebarLayout(
             sidebarPanel = stock_selection_left_side(),
             mainPanel = stock_selection_right_side()
@@ -106,7 +106,7 @@ navbarPage(
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
-            style = " max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
+            style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos1"),
@@ -134,7 +134,7 @@ navbarPage(
         ),
     tabPanel(
             "Quality of assessment",
-            style = " max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
+            style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos2"),
@@ -153,7 +153,7 @@ navbarPage(
 
     tabPanel(
         "Catch scenarios",
-        style = " max-height: 100vh; overflow-y: auto; overflow-x: auto; !important;", 
+        style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
         splitLayout(
             cellWidths = c("40%", "60%"),
             header_left_panel_stock_info("stock_infos3"),

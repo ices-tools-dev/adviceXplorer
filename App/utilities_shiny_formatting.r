@@ -24,7 +24,7 @@ stock_selection_left_side <- function() {
     width = 5, style = "max-height: 85vh; overflow-y: auto; ",
     tabPanel(
       "ICES Ecoregions",
-      tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: auto;"),
+      tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: hidden;"),
       withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
     ),
     HTML("</br>"),
@@ -89,7 +89,7 @@ stock_selection_left_side <- function() {
 #' 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7, style = "max-height: 85vh; overflow-y: auto; ",#margin: auto;
+    width = 7, style = "max-height: 95vh; overflow-y: auto; ",#margin: auto;
     withSpinner(DTOutput("tbl"))
   )
 }
@@ -120,7 +120,7 @@ stock_selection_right_side <- function(){
 #' 
 SAG_plots_left_panel <- function(){
   sidebarPanel(
-    width = 6, style = "height: 65vh; overflow-y: auto;",
+    width = 6, style = "height: 95vh; overflow-y: hidden;",
     # panel(
       # title = "Catches",
         withSpinner(plotlyOutput("plot1", height = "100%", width = "100%")),
@@ -156,7 +156,7 @@ SAG_plots_left_panel <- function(){
 #' 
 SAG_plots_right_panel <- function(){
   sidebarPanel(
-    width = 6, style = "height: 65vh; overflow-y: auto;",
+    width = 6, style = "height: 95vh; overflow-y: hidden;",
     # panel(
     #   title = "Recruitment",
     #   fillPage(
