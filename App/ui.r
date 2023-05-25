@@ -112,26 +112,10 @@ navbarPage(
                 header_left_panel_stock_info("stock_infos1"),
                 header_right_panel_headline("Advice_Headline1")
             ),
-            
-            # sidebarLayout(
-            #     sidebarPanel = SAG_plots_left_panel(),
-            #     mainPanel = SAG_plots_right_panel()
+            SAG_plots_1_2_fluid(),
+            SAG_plots_3_4_fluid()
+            ),
 
-            # )
-            fluidRow(
-                  
-                column(6,withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),   
-                column(6,withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
-            )
-            ,
-            fluidRow(
-                column(6,withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
-                column(6,withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
-                # )
-                # )
-                )
-         
-        ),
     tabPanel(
             "Quality of assessment",
             style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
@@ -139,14 +123,8 @@ navbarPage(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos2"),
                 header_right_panel_headline("Advice_Headline2")
-            ),
-            fluidRow(
-                  
-                column(4,withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))),   
-                column(4,withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))),
-                column(4,withSpinner(plotlyOutput("plot7", height = "100%", width = "100%")))
-            )
-            # quality_of_assessment()
+            ),            
+            quality_of_assessment_fluid()
         ),
 
 ######################################################################################################

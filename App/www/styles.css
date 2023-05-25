@@ -35,8 +35,15 @@ body {
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
   color: #000000;
-  background-color: #99C9FF; 
+  /*
+  background-color: #F15D2A;
+  
+  opacity: .9;
+  */
+  background-color: #C2DEFF; 
+  /*
   background-image: linear-gradient(#EBF4FF, #C2DEFF 60%, #99C9FF);/*#178acc */
+  
 }
 
 .navbar-default .navbar-nav>li>a {

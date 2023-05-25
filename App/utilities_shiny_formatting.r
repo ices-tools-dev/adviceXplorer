@@ -174,23 +174,61 @@ SAG_plots_right_panel <- function(){
   )
 }
 
+#' Creates the UI element of the right panel of the "Stock dev over time" tab,
+#' which includes the landings and recruitment.
+#'
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
+SAG_plots_1_2_fluid <- function() {
+  fluidRow(
+    column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),
+    column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
+  )
+}
 
-
-# SAG_plots_fluid_row <- function(){
-#   mainPanel(
-#     fluidRow(    
-#         column(5,withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),   
-#         column(5,withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
-#     )
-#   ,
-#   fluidRow(
-#     column(5,withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
-#     column(5,withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
-#       # )
-#     # )
-#     )
-#   )
-# }
+#' Creates the UI element of the right panel of the "Stock dev over time" tab,
+#' which includes the F and SSB.
+#'
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
+SAG_plots_3_4_fluid <- function(){
+            fluidRow(
+                column(6,withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
+                column(6,withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+            )
+}              
 ##############################################Quality of assessment tab
 
 #' Creates the UI element of the quality of assessment plots
@@ -239,6 +277,34 @@ quality_of_assessment <- function(){
         withSpinner(plotlyOutput("plot7", height = "100%", width = "100%"))
       )
     )
+  )
+}
+
+#' Creates the UI element of the quality of assessment plots
+#'
+#' @return UI element
+#'
+#' @note
+#' 
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#' 
+quality_of_assessment_fluid <- function() {
+  fluidRow(
+    column(4, withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))),
+    column(4, withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))),
+    column(4, withSpinner(plotlyOutput("plot7", height = "100%", width = "100%")))
   )
 }
 ####################################### Advice tab
