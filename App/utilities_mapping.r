@@ -59,7 +59,7 @@ map_ecoregion <- function(shape_eco, eu_shape) {
             # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
             fillColor = "#F15D2A",
-            fillOpacity = 0.7,
+            fillOpacity = .7,
             weight = 1,
             color = "black",
             stroke = TRUE,
