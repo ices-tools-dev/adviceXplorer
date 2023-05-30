@@ -750,3 +750,22 @@ standardize_catch_scenario_table <- function(tmp) {
   
   return(list(table = tmp_unified, cols = col_names_for_display))
 }
+
+
+library(icesSAG)
+SAGsummary <- getSAG("cod.27.47d20", 2022,
+         purpose = "Replaced"
+    )
+codKeys <- findAssessmentKey("cod.27.47d20", year = 2022)
+
+
+out <- jsonlite::fromJSON(
+            URLencode(
+                sprintf("https://sag.ices.dk/SAG_API/api/StockList?year=%s", 2022))) %>% filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+                
+out <- out %>% filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+
+
+
+test <- getListStocks(2022) %>% filter(StockKeyLabel == "cod.27.47d20") %>% filter(Purpose == "Replaced") %>% pull(LinkToAdvice)
+test <- filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)

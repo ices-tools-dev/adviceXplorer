@@ -203,6 +203,9 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
   get_advice_doi(query$assessmentkey)
 })
 
+replaced_advice_doi <- eventReactive(req(query$year, query$stockkeylabel), {
+  get_link_replaced_advice(query$year, query$stockkeylabel)
+})
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
@@ -215,7 +218,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info())
+  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
