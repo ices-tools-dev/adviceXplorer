@@ -106,7 +106,7 @@ navbarPage(
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
-            style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+            style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos1"),
@@ -118,7 +118,7 @@ navbarPage(
 
     tabPanel(
             "Quality of assessment",
-            style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+            style = "overflow-y: auto; overflow-x: hidden;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos2"),
