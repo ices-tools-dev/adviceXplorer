@@ -64,11 +64,14 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi) {
       "<b><i><font size=4> Headline advice </font></b></i><i class='fa-solid fa-up-right-from-square'></i></a></span>",
       "<br/>",
       "<font size=3>", catch_scenario_list$adviceSentence, "</font>",
-      "<br/>",
-      "<br/>",
-      "<span class='hovertext' data-hover='Click here to access the pdf version of the replaced Advice'>",
-      "<a href='", replaced_advice_doi, "' target='_blank'>",
-      "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
+      if (!is_empty(replaced_advice_doi)) {
+        paste0(
+          "<br/>",
+          "<span class='hovertext' data-hover='Click here to access the pdf version of the replaced Advice'>",
+          "<a href='", replaced_advice_doi, "' target='_blank'>",
+          "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
+        )
+      }
     )
   )
   return(catch_scenario_advice_sentence)
