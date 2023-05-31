@@ -40,27 +40,22 @@ body {
   
   opacity: .9;
   */
-  background-color: #C2DEFF; 
+  background-color: #C2DEFF
   /*
   background-image: linear-gradient(#EBF4FF, #C2DEFF 60%, #99C9FF);/*#178acc */
   
 }
 
 .navbar-default .navbar-nav>li>a {
-  color: #ffffff;
+  color: #ffffff
 }
 
 
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus {
   color: #000000;
-  background-color: #C2DEFF;
+  background-color: #C2DEFF
 }
-/*
-.navbar-default .navbar-nav>.disabled>a, .navbar-default .navbar-nav>.disabled>a:focus, .navbar-default .navbar-nav>.disabled>a:hover{
-  color: #000000;
-  background-color: #C2DEFF;
-}
-*/
+
 .disabled {
   /*
   background: #819898 !important;
@@ -68,18 +63,16 @@ body {
   border-color:#819898;
   color: #737373;
 */
-  cursor: not-allowed;
   color: #ffffff;
-  background-color: transparent;
+  cursor: not-allowed;  
+  background-color: transparent
 }
 
- /*
-.navbar-nav>li>a:hover {
-  color: #ffffff;
+
+.navbar-default .navbar-nav>li>a:hover {
+  color: #cecece;
   background-color: transparent;
 }
-*/
-
 
 .panel-primary {
   border-color: #ffffff;
@@ -173,5 +166,3 @@ input[type=radio]:checked {
   opacity: 1;
   visibility: visible;
 }
-
-
