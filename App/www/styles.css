@@ -50,6 +50,17 @@ body {
   color: #ffffff;
 }
 
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+  color: #000000;
+  background-color: #C2DEFF;
+}
+/*
+.navbar-default .navbar-nav>.disabled>a, .navbar-default .navbar-nav>.disabled>a:focus, .navbar-default .navbar-nav>.disabled>a:hover{
+  color: #000000;
+  background-color: #C2DEFF;
+}
+*/
 .disabled {
   /*
   background: #819898 !important;
@@ -61,11 +72,13 @@ body {
   color: #ffffff;
   background-color: transparent;
 }
+
+ /*
 .navbar-nav>li>a:hover {
   color: #ffffff;
   background-color: transparent;
 }
-
+*/
 
 
 .panel-primary {
@@ -161,6 +174,4 @@ input[type=radio]:checked {
   visibility: visible;
 }
 
-.nav a:hover {
-  color: maroon;    
-}
+
