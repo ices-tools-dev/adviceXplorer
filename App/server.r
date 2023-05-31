@@ -402,7 +402,7 @@ test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
     need(!is_empty(catch_scenario_table()$table), ""),
-    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+    need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year, additional_LandingData())
@@ -461,8 +461,8 @@ output$catch_scenarios_radial <- renderUI({
 output$Radial_plot <- renderPlotly({
   
   validate(
-    need(!is_empty(advice_view_info()), "No Advice View entry in assessment year"),
-    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+    need(!is_empty(advice_view_info()), "No ASD entry in assessment year"),
+    need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
@@ -493,8 +493,8 @@ output$catch_indicators_lollipop <- renderUI({
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
   validate(
-    need(!is_empty(advice_view_info()), "No Advice View entry in assessment year"),
-    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+    need(!is_empty(advice_view_info()), "No ASD entry in assessment year"),
+    need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
   )
   
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
@@ -547,7 +547,7 @@ output$table <- DT::renderDT(
   class = "display",
   caption = HTML(paste0("Subset of catch scenario table (click ", 
 
-                        "<span class='hovertext' data-hover='Click here to access the Advice View entry for this stock'>",
+                        "<span class='hovertext' data-hover='Click here to access the ASD entry for this stock'>",
                         "<a href='","http://asd.ices.dk/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
                         "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
 
