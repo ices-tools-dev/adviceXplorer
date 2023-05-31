@@ -39,8 +39,10 @@ body {
   background-color: #F15D2A;
   
   opacity: .9;
-  */
+  
   background-color: #C2DEFF
+  */
+  background-color: #80AEA0
   /*
   background-image: linear-gradient(#EBF4FF, #C2DEFF 60%, #99C9FF);/*#178acc */
   
@@ -53,7 +55,10 @@ body {
 
 .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus {
   color: #000000;
-  background-color: #C2DEFF
+  /*
+  background-color: #C2DEFF;
+  */
+  background-color: #80AEA0
 }
 
 .disabled {
@@ -131,7 +136,8 @@ input[type=radio] {
   height: 2em;*/
 }
 input[type=radio]:checked {
-  border: 10px solid #f15d2a;
+  /*border: 10px solid #f15d2a;*/
+  border: 10px solid #80AEA0;
   outline: unset !important /* I added this one for Edge (chromium) support */
 }
 

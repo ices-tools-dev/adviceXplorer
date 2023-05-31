@@ -58,8 +58,9 @@ map_ecoregion <- function(shape_eco, eu_shape) {
         addPolygons(
             # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
-            fillColor = "#F15D2A",
-            fillOpacity = .7,
+            # fillColor = "#F15D2A",
+            fillColor = "#80AEA0",
+            fillOpacity = .8,
             weight = 1,
             color = "black",
             stroke = TRUE,
