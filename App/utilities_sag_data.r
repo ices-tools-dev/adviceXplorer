@@ -344,3 +344,9 @@ get_additional_landing_data <- function(assessmentKey) {
   df <- data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
   return(df)
 }
+
+
+get_link_replaced_advice <- function(year, stock_code){
+link <- getListStocks(year) %>% filter(StockKeyLabel == stock_code) %>% filter(Purpose == "Replaced") %>% pull(LinkToAdvice)
+return(link)
+}

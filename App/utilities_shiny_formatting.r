@@ -21,47 +21,43 @@
 #' 
 stock_selection_left_side <- function() {
   sidebarPanel(
-    width = 5, style = "max-height: 85vh; overflow-y: auto; ",
+    width = 5,
     tabPanel(
       "ICES Ecoregions",
       tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: hidden;"),
       withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
     ),
     HTML("</br>"),
-    # panel(
-      selectizeInput(
-        inputId = "selected_locations",
-        label = "ICES Ecoregions",
-        choices = sort(shape_eco$Ecoregion),
-        selected = "Greater North Sea",
-        multiple = FALSE,
-        width = "100%",
-        options = list(
-          placeholder = "Select Ecoregion(s)"
-        )
+    selectizeInput(
+      inputId = "selected_locations",
+      label = "ICES Ecoregions",
+      choices = sort(shape_eco$Ecoregion),
+      selected = "Greater North Sea",
+      multiple = FALSE,
+      width = "100%",
+      options = list(
+        placeholder = "Select Ecoregion(s)"
+      )
+    ),
+    selectizeInput(
+      inputId = "selected_years",
+      label = "Assessment Year",
+      choices = Years$Year,
+      selected = 2022,
+      multiple = FALSE,
+      width = "100%",
+      options = list(
+        placeholder = "Select assessment year"
+      )
+    ),
+    selectizeGroupUI(
+      id = "my-filters",
+      params = list(
+        StockKeyLabel = list(inputId = "StockKeyLabel", title = "Stock code:"),
+        SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:")
       ),
-      selectizeInput(
-        inputId = "selected_years",
-        label = "Assessment Year",
-        choices = Years$Year,
-        selected = 2022,
-        multiple = FALSE,
-        width = "100%",
-        options = list(
-          placeholder = "Select assessment year"
-        )
-      ),
-      selectizeGroupUI(
-        id = "my-filters",
-        params = list(
-          StockKeyLabel = list(inputId = "StockKeyLabel", title = "Stock code:"),
-          SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:")
-        ),
-        inline = FALSE
-      ),
-    #   heading = "Additional data filtering",
-    #   status = "primary"
-    # ),
+      inline = FALSE
+    ),
     htmlOutput("app_last_update")
   )
 }
@@ -89,7 +85,8 @@ stock_selection_left_side <- function() {
 #' 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7, style = "max-height: 95vh; overflow-y: auto; ",#margin: auto;
+    width = 7,
+    style = "overflow-x: auto;",
     withSpinner(DTOutput("tbl"))
   )
 }
@@ -118,17 +115,11 @@ stock_selection_right_side <- function(){
 #'
 #' @export
 #' 
-SAG_plots_left_panel <- function(){
+SAG_plots_left_panel <- function() {
   sidebarPanel(
-    width = 6, style = "height: 95vh; overflow-y: hidden;",
-    # panel(
-      # title = "Catches",
-        withSpinner(plotlyOutput("plot1", height = "100%", width = "100%")),
-    # ),
-    # panel(
-    #   title = "F",
-        withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))
-    # )
+    width = 6,
+    withSpinner(plotlyOutput("plot1", height = "100%", width = "100%")),
+    withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))
   )
 }
 
@@ -154,23 +145,11 @@ SAG_plots_left_panel <- function(){
 #'
 #' @export
 #' 
-SAG_plots_right_panel <- function(){
+SAG_plots_right_panel <- function() {
   sidebarPanel(
-    width = 6, style = "height: 95vh; overflow-y: hidden;",
-    # panel(
-    #   title = "Recruitment",
-    #   fillPage(
-    #     tags$style(type = "text/css", "#plot2  overflow-y: auto; !important;}"), #{height: calc(5vh - 10px); width:calc(100vw - 10px)
-        withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")),
-    #   )
-    # ),
-    # panel(
-    #   title = "SSB",
-    #   fillPage(
-    #     tags$style(type = "text/css", "#plot4  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-        withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))
-      # )
-    # )
+    width = 6,
+    withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")),
+    withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))
   )
 }
 
@@ -223,12 +202,12 @@ SAG_plots_1_2_fluid <- function() {
 #'
 #' @export
 #' 
-SAG_plots_3_4_fluid <- function(){
-            fluidRow(
-                column(6,withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
-                column(6,withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
-            )
-}              
+SAG_plots_3_4_fluid <- function() {
+  fluidRow(
+    column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
+    column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+  )
+}
 ##############################################Quality of assessment tab
 
 #' Creates the UI element of the quality of assessment plots
@@ -253,7 +232,6 @@ SAG_plots_3_4_fluid <- function(){
 #' 
 quality_of_assessment <- function(){
   splitLayout(
-    style = "border: 1px solid silver; max-height: 70vh; overflow-y: auto; !important;",  
     cellWidths = c("33%", "33%", "33%"),
     cellArgs = list(style = "padding: 6px"),
     panel(
@@ -333,33 +311,26 @@ quality_of_assessment_fluid <- function() {
 #' 
 catch_scenarios_left_panel <- function() {
   sidebarPanel(
-    width = 6, #style = "height: 65vh; overflow-y: auto;",
-    # panel(
-    #   title = "Catch_scenario_F_SSB",
-      # fillPage(
-      #   tags$style(type = "text/css", "#catch_scenario_plot_F_SSB_Catch  overflow-y: auto; !important;}"), # {height:calc(50vh - 10px); width: calc(100vw - 10px)
-        withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%")),
-      # )
-    # ),
-    # panel(
-      br(),
-      tabsetPanel(
-        tabPanel(
-          "Catch time series",
-          uiOutput("catch_scenarios"),
-          withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
-        ),
-        tabPanel(
-          "Relative change: radial plot",
-          uiOutput("catch_scenarios_radial"),
-          withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%")),
-          htmlOutput("Radial_plot_disclaimer")
-        ),
-        tabPanel(
-          "% of change: lollipop plot",
-          uiOutput("catch_indicators_lollipop"),
-          withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%")), 
-          htmlOutput("lollipop_plot_disclaimer")
+    width = 6,
+    withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%")),
+    br(),
+    tabsetPanel(
+      tabPanel(
+        "Catch time series",
+        uiOutput("catch_scenarios"),
+        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+      ),
+      tabPanel(
+        "Relative change: radial plot",
+        uiOutput("catch_scenarios_radial"),
+        withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%")),
+        htmlOutput("Radial_plot_disclaimer")
+      ),
+      tabPanel(
+        "% of change: lollipop plot",
+        uiOutput("catch_indicators_lollipop"),
+        withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%")),
+        htmlOutput("lollipop_plot_disclaimer")
         # )
       )
     )
@@ -388,17 +359,12 @@ catch_scenarios_left_panel <- function() {
 #'
 #' @export
 #' 
-catch_scenarios_right_panel <- function(){
+catch_scenarios_right_panel <- function() {
   sidebarPanel(
-    width = 6, style = "height: 100vh; overflow-y: auto;",
-    
-    # panel(
-    #   fillPage(
-    #     tags$style(type = "text/css", "#table overflow-y: auto; !important;"), #{height: calc(80vh - 10px); calc(100vw - 10px)}
-        withSpinner(DTOutput("table", height = "100%", width = "100%")),
-        htmlOutput("footnotes", height = "100%", width = "100%")
-    #   )
-    # )
+    width = 6,
+    style = "overflow-x: auto;",
+    withSpinner(DTOutput("table", height = "100%", width = "100%")),
+    htmlOutput("footnotes", height = "100%", width = "100%")
   )
 }
 
@@ -426,11 +392,8 @@ catch_scenarios_right_panel <- function(){
 #' 
 header_left_panel_stock_info <- function(id) {
   wellPanel(
-    style = "height: fit-content; overflow-y: auto; white-space: normal;",
-    # panel(
-    #   title = "Stock Info",
-      withSpinner(htmlOutput(id, height = "100%", width = "100%"))
-    # )
+    style = "height: fit-content; overflow-y: hidden; white-space: normal;",
+    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
   )
 }
 
@@ -459,10 +422,8 @@ header_left_panel_stock_info <- function(id) {
 #' 
 header_right_panel_headline <- function(id) {
   wellPanel(
-    style = "height: fit-content; overflow-y: auto; white-space: normal;",
-    # panel(
-      withSpinner(htmlOutput(id, height = "100%", width = "100%"))
-    # )
+    style = "height: fit-content; overflow-y: hidden; white-space: normal;",
+    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
   )
 }
 
