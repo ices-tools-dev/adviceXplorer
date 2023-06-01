@@ -705,7 +705,7 @@ ICES_plot_3 <- function(df, sagSettings) {
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp) %>%
+        select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp, confidenceIntervalDefinition) %>%
         drop_na(F) # %>%
     
     p3 <- df3 %>%
@@ -716,7 +716,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             geom_ribbon(aes(
                 ymin = low_F,
                 ymax = high_F,
-                fill = "2*sd",
+                fill = confidenceIntervalDefinition,
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
@@ -868,7 +868,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) #%>%
+  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp, confidenceIntervalDefinition) #%>%
 
 p4 <- df4 %>%
     ggplot(., aes(x = Year, y = SSB))
@@ -878,7 +878,7 @@ if (any(!is.na(df4$low_SSB))) {
     geom_ribbon(data =  df4 %>% filter(!is.na(high_SSB)), aes(
       ymin = low_SSB,
       ymax = high_SSB,
-      fill = "2*sd",
+      fill = confidenceIntervalDefinition,
       text = map(
         paste0(
           "<b>Year: </b>", Year,

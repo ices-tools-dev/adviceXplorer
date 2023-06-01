@@ -43,6 +43,10 @@ update_SAG <- function(year){
     write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
     refpts <- load_sag_refpts(year)
+    ###
+    CI <- get_CI(refpts)
+    refpts <- left_join(refpts,CI)
+
     write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year))
 }
 
@@ -149,4 +153,25 @@ load_sag_refpts <- function(year) {
   out <- merge(out1, out2, all = TRUE)
   out <- subset(out, select = -PreviousStockKeyLabel)
   unique(out)
+}
+
+
+
+
+get_CI <- function(df) {
+  out <- data.frame()
+  for (AssessmentKey in df$AssessmentKey) {
+    out_temp <- jsonlite::fromJSON(
+      URLencode(
+        sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey) 
+      )
+    )
+    out_temp <- out_temp %>% select(assessmentKey,confidenceIntervalDefinition)
+    out <- rbind(out, out_temp)
+    
+  }
+
+  colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+  
+  return(out)
 }
