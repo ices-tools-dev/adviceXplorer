@@ -106,20 +106,13 @@ map_panel_server <- function(input, output, session) {
       
       proxy_1 %>%
         showGroup(group = input$map1_shape_click$id) 
+    } #else {
+    #   selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
+    #   proxy_1 %>%
+    #     hideGroup(group = input$map1_shape_click$group) #%>%
       
       
-      ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-      runjs("$(tab).removeClass('disabled');")#%>%
-      
-      
-      # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
-    } else {
-      selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
-      proxy_1 %>%
-        hideGroup(group = input$map1_shape_click$group) #%>%
-      
-      
-    }
+    # }
     updateSelectizeInput(session,
                          inputId = "selected_locations",
                          label = "ICES Ecoregions",
@@ -144,9 +137,6 @@ map_panel_server <- function(input, output, session) {
                    selected_1$groups <- input$selected_locations
                    
                    proxy_1 %>% showGroup(group = added_via_selectInput)
-                   
-                   ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-                   runjs("$(tab).removeClass('disabled');")
                  }
                },
                ignoreNULL = FALSE
