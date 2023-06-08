@@ -112,8 +112,12 @@ navbarPage(
                 header_left_panel_stock_info("stock_infos1"),
                 header_right_panel_headline("Advice_Headline1")
             ),
+            sidebarPanel(
+             width = 12,
             SAG_plots_1_2_fluid(),
+            br(),
             SAG_plots_3_4_fluid()
+            )
             ),
 
     tabPanel(

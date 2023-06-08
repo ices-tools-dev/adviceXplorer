@@ -178,6 +178,7 @@ SAG_plots_right_panel <- function() {
 SAG_plots_1_2_fluid <- function() {
   fluidRow(
     column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),
+    
     column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
   )
 }
@@ -206,6 +207,7 @@ SAG_plots_1_2_fluid <- function() {
 SAG_plots_3_4_fluid <- function() {
   fluidRow(
     column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
+    
     column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
   )
 }
@@ -280,10 +282,15 @@ quality_of_assessment <- function(){
 #' @export
 #' 
 quality_of_assessment_fluid <- function() {
+  sidebarPanel(
+    width = 12,
   fluidRow(
     column(4, withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))),
+    
     column(4, withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))),
+    
     column(4, withSpinner(plotlyOutput("plot7", height = "100%", width = "100%")))
+  )
   )
 }
 ####################################### Advice tab
