@@ -173,6 +173,11 @@ input[type=radio]:checked {
   visibility: visible;
 }
 
+.dataTables_wrapper {
+  position: relative;
+  clear: both;
+  background-color: #80AEA0;
+}
 /*
 @media(max-width:1000px)  {
 
