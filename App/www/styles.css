@@ -178,6 +178,14 @@ input[type=radio]:checked {
   clear: both;
   background-color: #80AEA0;
 }
+
+
+caption {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #112247;
+  text-align: left;
+}
 /*
 @media(max-width:1000px)  {
 
