@@ -427,6 +427,7 @@ data_download_button <- function(disclaimer_text) {
         ),
         click = htmlwidgets::JS(paste0("
             function(gd) {
+                console.log(gd.data);
                 var text = '';
                 for(var i = 0; i < gd.data.length; i++) {
                     text += gd.layout.xaxis.title.text + gd.data[i].name + ',' + gd.data[i].x + '\\n';
