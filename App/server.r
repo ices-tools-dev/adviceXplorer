@@ -545,11 +545,10 @@ output$table <- DT::renderDT(
  
   selection = "single",
   class = "display",
-  caption = HTML(paste0("Subset of catch scenario table (click ", 
-
+  caption = HTML(paste0("<font size= 4>Subset of catch scenario table (click ", 
                         "<span class='hovertext' data-hover='Click here to access the ASD entry for this stock'>",
                         "<a href='","http://asd.ices.dk/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
-                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
+                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)</font>")),
 
 rownames = FALSE,
   options = list(

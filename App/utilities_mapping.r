@@ -39,15 +39,15 @@ map_ecoregion <- function(shape_eco, eu_shape) {
             data = eu_shape,
             color = "black",
             weight = 1,
-            fillOpacity = 0.4,
-            fillColor = "#fddfc2", # "#E8EAEA"
+            fillOpacity = 1,
+            fillColor = "#99AABF", # "#E8EAEA"
             group = "Europe"
         ) %>%
         addPolygons(
             # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
-            fillColor = "#71B5BC",
-            fillOpacity = 0.08,
+            fillColor = "#E6E7E8",
+            fillOpacity = 1,
             color = "black",
             stroke = TRUE,
             weight = 1,
@@ -59,8 +59,8 @@ map_ecoregion <- function(shape_eco, eu_shape) {
             # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
             # fillColor = "#F15D2A",
-            fillColor = "#80AEA0",
-            fillOpacity = .8,
+            fillColor = "#F15D22",
+            fillOpacity = 1,
             weight = 1,
             color = "black",
             stroke = TRUE,

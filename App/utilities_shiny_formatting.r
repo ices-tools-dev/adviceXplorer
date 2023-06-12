@@ -24,8 +24,9 @@ stock_selection_left_side <- function() {
     width = 5,
     tabPanel(
       "ICES Ecoregions",
-      tags$style(type = "text/css", "#map1 {height: calc(62vh - 220px) !important;} overflow-y: hidden;"),
-      tags$img(src = "AdviceXplorerdraft.png", height = "50px"),
+      tags$style(type = "text/css", "#logo {height: 60px !important; margin-top: 10px;  padding-bottom: 20px; }"),
+      tags$img(id = "logo", src = "adviceXplorer logo_color.png"),
+      tags$style(type = "text/css", "#map1 {height: calc(72vh - 220px) !important;} overflow-y: hidden;"),      
       withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
     ),
     HTML("</br>"),
