@@ -345,8 +345,32 @@ get_additional_landing_data <- function(assessmentKey) {
   return(df)
 }
 
-
-get_link_replaced_advice <- function(year, stock_code){
-link <- getListStocks(year) %>% filter(StockKeyLabel == stock_code) %>% filter(Purpose == "Replaced") %>% pull(LinkToAdvice)
-return(link)
+#' Returns a link to the replaced advice, if present
+#'
+#' @param year
+#' @param stock_code
+#'
+#' @return char array
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#' }
+#'
+#' @references
+#'
+#' 
+#'
+#' @export
+#'
+get_link_replaced_advice <- function(year, stock_code) {
+  link <- getListStocks(year) %>%
+    filter(StockKeyLabel == stock_code) %>%
+    filter(Purpose == "Replaced") %>%
+    pull(LinkToAdvice)
+  return(link)
 }

@@ -39,15 +39,15 @@ map_ecoregion <- function(shape_eco, eu_shape) {
             data = eu_shape,
             color = "black",
             weight = 1,
-            fillOpacity = 0.4,
-            fillColor = "#fddfc2", # "#E8EAEA"
+            fillOpacity = 1,
+            fillColor = "#99AABF", # "#E8EAEA"
             group = "Europe"
         ) %>%
         addPolygons(
             # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
-            fillColor = "#71B5BC",
-            fillOpacity = 0.08,
+            fillColor = "#E6E7E8",
+            fillOpacity = 1,
             color = "black",
             stroke = TRUE,
             weight = 1,
@@ -58,8 +58,9 @@ map_ecoregion <- function(shape_eco, eu_shape) {
         addPolygons(
             # data = st_set_precision(shape_eco, precision=10^2),
             data = shape_eco,
-            fillColor = "#F15D2A",
-            fillOpacity = .7,
+            # fillColor = "#F15D2A",
+            fillColor = "#F15D22",
+            fillOpacity = 1,
             weight = 1,
             color = "black",
             stroke = TRUE,
@@ -105,20 +106,8 @@ map_panel_server <- function(input, output, session) {
       
       proxy_1 %>%
         showGroup(group = input$map1_shape_click$id) 
-      
-      
-      ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-      runjs("$(tab).removeClass('disabled');")#%>%
-      
-      
-      # print(match(input$map_shape_click$id, shape_eco$Ecoregion))
-    } else {
-      selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
-      proxy_1 %>%
-        hideGroup(group = input$map1_shape_click$group) #%>%
-      
-      
-    }
+    } 
+    
     updateSelectizeInput(session,
                          inputId = "selected_locations",
                          label = "ICES Ecoregions",
@@ -143,9 +132,6 @@ map_panel_server <- function(input, output, session) {
                    selected_1$groups <- input$selected_locations
                    
                    proxy_1 %>% showGroup(group = added_via_selectInput)
-                   
-                   ## this js code allows for the stock slection tab to be enabled once one coregion is clicked
-                   runjs("$(tab).removeClass('disabled');")
                  }
                },
                ignoreNULL = FALSE

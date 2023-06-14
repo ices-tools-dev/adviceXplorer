@@ -107,7 +107,7 @@ server <- function(input, output, session) {
     escape = FALSE,
     selection = "none",
     server = FALSE,
-    caption = HTML("<b><font size= 5>&emsp;To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
+    caption = HTML("<b><font size= 6> Stock selection</b></font></br><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
@@ -545,11 +545,10 @@ output$table <- DT::renderDT(
  
   selection = "single",
   class = "display",
-  caption = HTML(paste0("Subset of catch scenario table (click ", 
-
+  caption = HTML(paste0("<font size= 4>Subset of catch scenario table (click ", 
                         "<span class='hovertext' data-hover='Click here to access the ASD entry for this stock'>",
                         "<a href='","http://asd.ices.dk/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
-                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
+                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)</font>")),
 
 rownames = FALSE,
   options = list(

@@ -67,7 +67,7 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi) {
       if (!is_empty(replaced_advice_doi)) {
         paste0(
           "<br/>",
-          "<span class='hovertext' data-hover='Click here to access the pdf version of the replaced Advice'>",
+          "<span class='hovertext' data-hover='Click here for the replaced Advice'>",
           "<a href='", replaced_advice_doi, "' target='_blank'>",
           "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
         )
