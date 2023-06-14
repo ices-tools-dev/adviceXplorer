@@ -229,15 +229,23 @@ output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <-
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
-##### button to download SAG data
 output$download_SAG_Data <- downloadHandler(
-    filename = function() {
-      paste("SAG_data-", Sys.Date(), ".csv", sep="")#### add species and year and data disclaimer
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_SAG_data.csv")
+      write.csv(SAG_data_reactive(), file = "adviceXplorer_SAG_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      print (fs)
+
+      zip(zipfile=fname, files=fs)
     },
-    content = function(file) {
-      write.csv(SAG_data_reactive(), file)
-    }
+    contentType = "application/zip"
   )
+
+
+
 
 ######################### Stock development over time plots
 

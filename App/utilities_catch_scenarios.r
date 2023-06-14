@@ -71,7 +71,12 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi) {
           "<a href='", replaced_advice_doi, "' target='_blank'>",
           "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
         )
-      }
+      },
+      paste0(
+        "<br/>",
+        "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
+        downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data </font><i class='fa-solid fa-cloud-arrow-down'></i></span>"))
+      )
     )
   )
   return(catch_scenario_advice_sentence)
