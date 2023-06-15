@@ -56,7 +56,7 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
-get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi) {
+get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, tabset_id) {
   catch_scenario_advice_sentence <- HTML(
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",
@@ -72,13 +72,23 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi) {
           "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
         )
       },
+      if (tabset_id == "Development over time"){
       paste0(
         "<br/>",
         "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
         downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data </font><i class='fa-solid fa-cloud-arrow-down'></i></span>"))
       )
+      } else if (tabset_id == "Quality of assessment"){
+        paste0(
+        "<br/>",
+        "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
+        downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data </font><i class='fa-solid fa-cloud-arrow-down'></i></span>"))
+      )
+
+      }
     )
   )
+
   return(catch_scenario_advice_sentence)
 }
 

@@ -199,7 +199,7 @@ additional_LandingData <- reactive({
 }) 
 
 ##### get link to library pdf advice
-advice_doi <- eventReactive((req(query$assessmentkey)),{  
+advice_doi <- eventReactive((req(query$assessmentkey)),{   
   get_advice_doi(query$assessmentkey)
 })
 
@@ -218,7 +218,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi())
+  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi(), input$tabset)
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
@@ -243,6 +243,7 @@ output$download_SAG_Data <- downloadHandler(
     },
     contentType = "application/zip"
   )
+
 
 
 
@@ -301,13 +302,19 @@ output$download_SAG_Data <- downloadHandler(
 
 
 ##### button to download SAG data for quality of assessemnt
-  output$download_SAG_Quality_Data <- downloadHandler(
-    filename = function() {
-      paste("SAG_data-", Sys.Date(), ".csv", sep = "")
+  output$download_QualAss_Data <- downloadHandler(
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_QualityofAssessment_data.csv")
+      write.csv(advice_action_quality(), file = "adviceXplorer_QualityofAssessment_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      print (fs)
+
+      zip(zipfile=fname, files=fs)
     },
-    content = function(file) {
-      write.csv(advice_action_quality(), file)
-    }
+    contentType = "application/zip"
   )
 
 #### link to pdf of advice (NOT ACTIVE)
