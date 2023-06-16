@@ -224,6 +224,7 @@ separate_ecoregions <- function(stock_list_all) {
     ExpertGroup = rep(mydf$ExpertGroup, sapply(s, length)),
     DataCategory = rep(mydf$DataCategory, sapply(s, length)),
     YearOfLastAssessment = rep(mydf$YearOfLastAssessment, sapply(s, length)),
+    AssessmentFrequency = rep(mydf$AssessmentFrequency, sapply(s, length)),
     AdviceCategory = rep(mydf$AdviceCategory, sapply(s, length)),
     AssessmentKey = rep(mydf$AssessmentKey, sapply(s, length))
   )

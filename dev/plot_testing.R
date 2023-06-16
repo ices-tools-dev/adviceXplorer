@@ -750,3 +750,175 @@ standardize_catch_scenario_table <- function(tmp) {
   
   return(list(table = tmp_unified, cols = col_names_for_display))
 }
+
+
+library(icesSAG)
+SAGsummary <- getSAG("cod.27.47d20", 2022,
+         purpose = "Replaced"
+    )
+codKeys <- findAssessmentKey("cod.27.47d20", year = 2022)
+
+
+out <- jsonlite::fromJSON(
+            URLencode(
+                sprintf("https://sag.ices.dk/SAG_API/api/StockList?year=%s", 2022))) %>% filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+                
+out <- out %>% filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+
+
+
+test <- getListStocks(2022) %>% filter(StockKeyLabel == "cod.27.47d20") %>% filter(Purpose == "Replaced") %>% pull(LinkToAdvice)
+test <- filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+
+
+out <- jsonlite::fromJSON(
+            URLencode(
+                sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", 17652)))
+
+
+
+https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=17652
+
+out2 <- icesSAG::getSAG(
+    stock = NULL, 2022, purpose = "Advice",
+    data = "refpts", combine = TRUE
+  )
+
+df1 <- data.frame(assessmentKey = c(1200,1250),
+                  stockkeylabel = c(120,125)
+                  )
+  
+
+
+df2 <- data.frame(AssessmentKey = c(1200,1250),
+                  StockKeyLabel= c(120,125),
+                  confidenceIntervalDefinition = c(0.1,0.2))
+print(df2)
+colnames(df2)[which(names(df2) == "AssessmentKey")] <- "assessmentKey"
+colnames(df2)[which(names(df2) == "StockKeyLabel")] <- "stockkeylabel"
+
+# Merging dataframes
+merged_df <- merge(df1, df2, by = c("assessmentKey", "stockkeylabel"))
+
+
+out <- data.frame()
+for (AssessmentKey in out2$AssessmentKey) {
+  out_temp <- jsonlite::fromJSON(
+    URLencode(
+      sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey)
+    )
+  )
+  out <- rbind(out, out_temp)
+}
+
+names(out)
+names(out2)
+
+# Convert elements to lowercase
+arr1_lower <- tolower(names(out))
+arr2_lower <- tolower(names(out2))
+
+# Find common elements
+common_elements <- intersect(arr1_lower, arr2_lower)
+
+
+colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+colnames(out)[which(names(out) == "stockKeyLabel")] <- "StockKeyLabel"
+colnames(out)[which(names(out) == "stockDatabaseID")] <- "StockDatabaseID"
+colnames(out)[which(names(out) == "stockKey")] <- "StockKey"
+colnames(out)[which(names(out) == "assessmentYear")] <- "AssessmentYear"
+colnames(out)[which(names(out) == "fLim")] <- "FLim"
+colnames(out)[which(names(out) == "fpa")] <- "Fpa"
+colnames(out)[which(names(out) == "fAge")] <- "FAge"
+colnames(out)[which(names(out) == "bpa")] <- "Bpa"
+colnames(out)[which(names(out) == "blim")] <- "Blim"
+colnames(out)[which(names(out) == "recruitmentAge")] <- "RecruitmentAge"
+colnames(out)[which(names(out) == "fmsy")] <- "FMSY"
+colnames(out)[which(names(out) == "msyBtrigger")] <- "MSYBtrigger"
+colnames(out)[which(names(out) == "fmanagement")] <- "Fmanagement"
+colnames(out)[which(names(out) == "bmanagement")] <- "Bmanagement"
+colnames(out)[which(names(out) == "recruitmentLength")] <- "RecruitmentLength"
+colnames(out)[which(names(out) == "fLength")] <- "FLength"
+colnames(out)[which(names(out) == "fCap")] <- "Fcap"
+
+merged_df <- merge(out, out2, by = c("AssessmentKey"
+, "StockKeyLabel",
+"StockDatabaseID","StockKey","AssessmentYear","FLim","Fpa","FAge","Bpa","Blim","RecruitmentAge","FMSY","MSYBtrigger",
+"Fmanagement","Bmanagement","RecruitmentLength","FLength","Fcap"))
+
+
+
+
+
+names(merged_df)
+
+final <- merged_df %>% select(c("AssessmentKey", 
+"StockKeyLabel",
+     "StockDatabaseID",   
+     "StockKey" ,        
+      "AssessmentYear",
+"Blim"   ,           "RecruitmentAge" ,   "FAge"  ,            "Bpa"   ,            "Fpa",
+"FMSY"    ,          "MSYBtrigger"    ,   "Fmanagement"  ,     "FLim"     ,         "Bmanagement",
+[16] "RecruitmentLength", "FLength"  ,         "Fcap",))
+
+library(dplyr)
+
+
+get_CI <- function(df) {
+  out <- data.frame()
+  for (AssessmentKey in df$AssessmentKey) {
+    out_temp <- jsonlite::fromJSON(
+      URLencode(
+        sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey) 
+      )
+    )
+    out_temp <- out_temp %>% select(assessmentKey,confidenceIntervalDefinition)
+    out <- rbind(out, out_temp)
+    
+  }
+
+  colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+  # colnames(out)[which(names(out) == "stockKeyLabel")] <- "StockKeyLabel"
+  # colnames(out)[which(names(out) == "stockDatabaseID")] <- "StockDatabaseID"
+  # colnames(out)[which(names(out) == "stockKey")] <- "StockKey"
+  # colnames(out)[which(names(out) == "assessmentYear")] <- "AssessmentYear"
+  # colnames(out)[which(names(out) == "fLim")] <- "FLim"
+  # colnames(out)[which(names(out) == "fpa")] <- "Fpa"
+  # colnames(out)[which(names(out) == "fAge")] <- "FAge"
+  # colnames(out)[which(names(out) == "bpa")] <- "Bpa"
+  # colnames(out)[which(names(out) == "blim")] <- "Blim"
+  # colnames(out)[which(names(out) == "recruitmentAge")] <- "RecruitmentAge"
+  # colnames(out)[which(names(out) == "fmsy")] <- "FMSY"
+  # colnames(out)[which(names(out) == "msyBtrigger")] <- "MSYBtrigger"
+  # colnames(out)[which(names(out) == "fmanagement")] <- "Fmanagement"
+  # colnames(out)[which(names(out) == "bmanagement")] <- "Bmanagement"
+  # colnames(out)[which(names(out) == "recruitmentLength")] <- "RecruitmentLength"
+  # colnames(out)[which(names(out) == "fLength")] <- "FLength"
+  # colnames(out)[which(names(out) == "fCap")] <- "Fcap"
+
+  # merged_df <- merge(out, df, by = c(
+  #   "AssessmentKey",
+  #   "StockKeyLabel",
+  #   "StockDatabaseID",
+  #   "StockKey",
+  #   "AssessmentYear",
+  #   "FLim",
+  #   "Fpa",
+  #   "FAge",
+  #   "Bpa",
+  #   "Blim",
+  #   "RecruitmentAge",
+  #   "FMSY",
+  #   "MSYBtrigger",
+  #   "Fmanagement",
+  #   "Bmanagement",
+  #   "RecruitmentLength",
+  #   "FLength",
+  #   "Fcap"
+  # ))
+  return(out)
+}
+
+xx <-get_CI(out2)
+
+

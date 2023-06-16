@@ -82,7 +82,7 @@ server <- function(input, output, session) {
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-    
+  
    res_mod() %>% select(
       "Select",
       "StockKeyLabel",
@@ -107,7 +107,7 @@ server <- function(input, output, session) {
     escape = FALSE,
     selection = "none",
     server = FALSE,
-    caption = HTML("<b><font size= 5>&emsp;To select a stock, click on the corresponding button in the 'Select' column. </font></b>"),
+    caption = HTML("<b><font size= 6> Stock selection</b></font></br><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font>"),
     options = list(
       order = list(2, "asc"),
       dom = "Bfrtip",
@@ -142,6 +142,7 @@ server <- function(input, output, session) {
     
   })
 
+  
   observe({
     # read url string
     query_string <- getQueryString()
@@ -153,7 +154,7 @@ server <- function(input, output, session) {
       info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
 
       query$stockkeylabel <- info$StockKeyLabel
-      query$year <- info$AssessmentYear ####
+      query$year <- info$AssessmentYear #### 
 
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year) #####
@@ -165,8 +166,6 @@ server <- function(input, output, session) {
       
     }
   })
-
-
 
   ######### SAG data
   SAG_data_reactive <- reactive({
@@ -204,6 +203,9 @@ advice_doi <- eventReactive((req(query$assessmentkey)),{
   get_advice_doi(query$assessmentkey)
 })
 
+replaced_advice_doi <- eventReactive(req(query$year, query$stockkeylabel), {
+  get_link_replaced_advice(query$year, query$stockkeylabel)
+})
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
@@ -216,7 +218,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info())
+  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
@@ -342,7 +344,9 @@ advice_view_info <- reactive({
 
 ##### Advice view info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year-1) 
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)
+
   if (!is_empty(asd_record_previous)){ 
     asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   } 
@@ -398,7 +402,7 @@ test_table <- eventReactive(catch_scenario_table(), {
   req(query$stockkeylabel, query$year)
   validate(
     need(!is_empty(catch_scenario_table()$table), ""),
-    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+    need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
   wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year, additional_LandingData())
@@ -457,8 +461,8 @@ output$catch_scenarios_radial <- renderUI({
 output$Radial_plot <- renderPlotly({
   
   validate(
-    need(!is_empty(advice_view_info()), "No Advice View entry in assessment year"),
-    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+    need(!is_empty(advice_view_info()), "No ASD entry in assessment year"),
+    need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
   )
   radial_plot(catch_scenario_table_percentages(), input$catch_choice_radial)
 })
@@ -489,8 +493,8 @@ output$catch_indicators_lollipop <- renderUI({
 ############ Lollipop plot panel (Lollipop plot) 
 output$Lollipop_plot <- renderPlotly({
   validate(
-    need(!is_empty(advice_view_info()), "No Advice View entry in assessment year"),
-    need(!is_empty(advice_view_info_previous_year()), "No Advice View entry in previous assessment year")
+    need(!is_empty(advice_view_info()), "No ASD entry in assessment year"),
+    need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
   )
   
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
@@ -541,11 +545,10 @@ output$table <- DT::renderDT(
  
   selection = "single",
   class = "display",
-  caption = HTML(paste0("Subset of catch scenario table (click ", 
-
-                        "<span class='hovertext' data-hover='Click here to access the Advice View entry for this stock'>",
+  caption = HTML(paste0("<font size= 4>Subset of catch scenario table (click ", 
+                        "<span class='hovertext' data-hover='Click here to access the ASD entry for this stock'>",
                         "<a href='","http://asd.ices.dk/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
-                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)")),
+                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)</font>")),
 
 rownames = FALSE,
   options = list(

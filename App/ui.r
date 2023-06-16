@@ -95,6 +95,7 @@ navbarPage(
     title = title_html,
     tabPanel(
         "Stock selection",
+        style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
         sidebarLayout(
             sidebarPanel = stock_selection_left_side(),
             mainPanel = stock_selection_right_side()
@@ -105,33 +106,36 @@ navbarPage(
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
+            style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos1"),
                 header_right_panel_headline("Advice_Headline1")
             ),
-            
-            sidebarLayout(
-                sidebarPanel = SAG_plots_left_panel(),
-                mainPanel = SAG_plots_right_panel()
-
+            sidebarPanel(
+             width = 12,
+            SAG_plots_1_2_fluid(),
+            br(),
+            SAG_plots_3_4_fluid()
             )
-         
-        ),
+            ),
+
     tabPanel(
             "Quality of assessment",
+            style = "overflow-y: auto; overflow-x: hidden;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos2"),
                 header_right_panel_headline("Advice_Headline2")
-            ),
-            quality_of_assessment()
+            ),            
+            quality_of_assessment_fluid()
         ),
 
 ######################################################################################################
 
     tabPanel(
         "Catch scenarios",
+        style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
         splitLayout(
             cellWidths = c("40%", "60%"),
             header_left_panel_stock_info("stock_infos3"),
