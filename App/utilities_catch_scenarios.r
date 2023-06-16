@@ -56,7 +56,7 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
-get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, tabset_id) {
+get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
   catch_scenario_advice_sentence <- HTML(
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",
@@ -78,13 +78,13 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
         "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
         downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
-      } else if (tabset_id == "Quality of assessment"){
+      } else if (tabset_id == "Quality of assessment" && all(!10 %in% drop_plots)){
         paste0(
         "<br/>",
         "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
         downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
-      } else if (tabset_id == "Catch scenarios"){
+      } else if (tabset_id == "Catch scenarios" && !is_empty(catch_scenario_table)){
         paste0(
         "<br/>",
         "<span class='hovertext' data-hover='Download table (.csv)'>",
