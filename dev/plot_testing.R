@@ -1048,3 +1048,8 @@ server <- function(input, output) {
     }
   )
 }
+
+library(icesASD)
+icesASD::adviceDownload(adviceKeys = 3427)
+icesASD::getCatchScenariosTable(adviceKey = 3427)
+icesASD::get_catch_scenario_table("cod.27.47d20",2022)

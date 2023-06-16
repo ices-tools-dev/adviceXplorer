@@ -61,7 +61,7 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",
       "<a href='", get_advice_doi(catch_scenario_list$assessmentKey), "' target='_blank'>",
-      "<b><i><font size=4> Headline advice </font></b></i><i class='fa-solid fa-up-right-from-square'></i></a></span>",
+      "<b><i><font size=4> Headline advice </b></i><i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
       "<br/>",
       "<font size=3>", catch_scenario_list$adviceSentence, "</font>",
       if (!is_empty(replaced_advice_doi)) {
@@ -69,28 +69,55 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
           "<br/>",
           "<span class='hovertext' data-hover='Click here for the replaced Advice'>",
           "<a href='", replaced_advice_doi, "' target='_blank'>",
-          "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
+          "<font size=3> Replaced advice <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
         )
       },
       if (tabset_id == "Development over time"){
       paste0(
         "<br/>",
         "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
-        downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data </font><i class='fa-solid fa-cloud-arrow-down'></i></span>"))
+        downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
       } else if (tabset_id == "Quality of assessment"){
         paste0(
         "<br/>",
         "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
-        downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data </font><i class='fa-solid fa-cloud-arrow-down'></i></span>"))
+        downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
-
+      } else if (tabset_id == "Catch scenarios"){
+        paste0(
+        "<br/>",
+        "<span class='hovertext' data-hover='Download table (.csv)'>",
+        downloadLink("download_catch_table", HTML("<font size= 3>Download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>")),
+        " or ",
+        "<span class='hovertext' data-hover='See ASD entry'>",
+        "<a href='", "http://asd.ices.dk/viewAdvice/", catch_scenario_list$adviceKey, "' target='_blank'>",
+        "<font size= 3>connect to ASD <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
+      )
       }
     )
   )
 
   return(catch_scenario_advice_sentence)
 }
+
+# table_caption <- function(adviceKey){
+# HTML(
+#     # paste0(
+#       "<b><font size= 6> Catch scenario table</b></font>",
+#       # paste0(
+#       #   "<br/>",
+#       #   "<span class='hovertext' data-hover='Download table in csv'>",
+#       #   downloadLink("download_catch_table", HTML("<font size= 5>Download table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+#       # ),
+#       # "<font size= 5> or </font>",
+#       # "<span class='hovertext' data-hover='Connect to ASD database'>",
+#       # "<a href='", "http://asd.ices.dk/viewAdvice/", adviceKey, "' target='_blank'>",
+#       # "<font size= 5>connect to ASD <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
+#       # # " to access the full version)</font>"
+#     # )
+#   )
+# }
 
 #' Returns an HTML string containing some basic info on the selected stock and year
 #'
