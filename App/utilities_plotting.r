@@ -1687,11 +1687,6 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     
     tmp$fmsy <- tail(df$FMSY,1)
     tmp$blim <- tail(df$Blim,1)
-    # print(tmp)
-    labels <- sprintf(
-            "Catch Scenario: %s", tmp$cat
-        ) %>% lapply(htmltools::HTML)
-
     
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
 
@@ -1701,6 +1696,9 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     }
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
+        labels <- sprintf(
+                "Catch Scenario: %s", tmp$cat
+            ) %>% lapply(htmltools::HTML)
         fig_catch <- plot_ly(tmp) %>%
         add_trace(
             x = ~ TotCatch,
@@ -1733,6 +1731,9 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 
     if (is_na_column(tmp, "F_wanted")){
         tmp <- arrange(tmp, HR)
+        labels <- sprintf(
+                "Catch Scenario: %s", tmp$cat
+            ) %>% lapply(htmltools::HTML)
         fig_catch <- plot_ly(tmp) %>%
         add_trace(
             x = ~ TotCatch,
@@ -1766,6 +1767,9 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     }
     } else {
         tmp <- arrange(tmp, F)
+        labels <- sprintf(
+                "Catch Scenario: %s", tmp$cat
+            ) %>% lapply(htmltools::HTML)
         fig_catch <- plot_ly(tmp) %>%
         add_trace(
             x = ~ TotCatch,
