@@ -106,13 +106,8 @@ map_panel_server <- function(input, output, session) {
       
       proxy_1 %>%
         showGroup(group = input$map1_shape_click$id) 
-    } #else {
-    #   selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
-    #   proxy_1 %>%
-    #     hideGroup(group = input$map1_shape_click$group) #%>%
-      
-      
-    # }
+    } 
+    
     updateSelectizeInput(session,
                          inputId = "selected_locations",
                          label = "ICES Ecoregions",
