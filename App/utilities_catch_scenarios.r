@@ -101,23 +101,7 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
   return(catch_scenario_advice_sentence)
 }
 
-# table_caption <- function(adviceKey){
-# HTML(
-#     # paste0(
-#       "<b><font size= 6> Catch scenario table</b></font>",
-#       # paste0(
-#       #   "<br/>",
-#       #   "<span class='hovertext' data-hover='Download table in csv'>",
-#       #   downloadLink("download_catch_table", HTML("<font size= 5>Download table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
-#       # ),
-#       # "<font size= 5> or </font>",
-#       # "<span class='hovertext' data-hover='Connect to ASD database'>",
-#       # "<a href='", "http://asd.ices.dk/viewAdvice/", adviceKey, "' target='_blank'>",
-#       # "<font size= 5>connect to ASD <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
-#       # # " to access the full version)</font>"
-#     # )
-#   )
-# }
+
 
 #' Returns an HTML string containing some basic info on the selected stock and year
 #'
