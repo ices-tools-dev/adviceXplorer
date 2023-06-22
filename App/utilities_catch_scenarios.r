@@ -56,26 +56,52 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
-get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi) {
+get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
   catch_scenario_advice_sentence <- HTML(
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",
       "<a href='", get_advice_doi(catch_scenario_list$assessmentKey), "' target='_blank'>",
-      "<b><i><font size=4> Headline advice </font></b></i><i class='fa-solid fa-up-right-from-square'></i></a></span>",
+      "<b><i><font size=4> Headline advice </b></i><i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
       "<br/>",
       "<font size=3>", catch_scenario_list$adviceSentence, "</font>",
       if (!is_empty(replaced_advice_doi)) {
         paste0(
           "<br/>",
-          "<span class='hovertext' data-hover='Click here for the replaced Advice'>",
+          "<span class='hovertext' data-hover='Link to the replaced Advice'>",
           "<a href='", replaced_advice_doi, "' target='_blank'>",
-          "<font size=3> Replaced advice </font><i class='fa-solid fa-up-right-from-square'></i></a></span>"
+          "<font size=3> Replaced advice <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
         )
+      },
+      if (tabset_id == "Development over time"){
+      paste0(
+        "<br/>",
+        "<span class='hovertext' data-hover='Standard graphs data download'>",
+        downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+      )
+      } else if (tabset_id == "Quality of assessment" && all(!10 %in% drop_plots)){
+        paste0(
+        "<br/>",
+        "<span class='hovertext' data-hover='Quality of assessment data download'>",
+        downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+      )
+      } else if (tabset_id == "Catch scenarios" && !is_empty(catch_scenario_table)){
+        paste0(
+        "<br/>",
+        "<span class='hovertext' data-hover='Download table (.csv)'>",
+        downloadLink("download_catch_table", HTML("<font size= 3>Download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>")),
+        " or ",
+        "<span class='hovertext' data-hover='Link to ASD entry'>",
+        "<a href='", "http://asd.ices.dk/viewAdvice/", catch_scenario_list$adviceKey, "' target='_blank'>",
+        "<font size= 3>view ASD entry <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
+      )
       }
     )
   )
+
   return(catch_scenario_advice_sentence)
 }
+
+
 
 #' Returns an HTML string containing some basic info on the selected stock and year
 #'

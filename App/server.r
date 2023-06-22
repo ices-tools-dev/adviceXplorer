@@ -199,7 +199,7 @@ additional_LandingData <- reactive({
 }) 
 
 ##### get link to library pdf advice
-advice_doi <- eventReactive((req(query$assessmentkey)),{  
+advice_doi <- eventReactive((req(query$assessmentkey)),{   
   get_advice_doi(query$assessmentkey)
 })
 
@@ -218,7 +218,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi())
+  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
@@ -229,15 +229,22 @@ output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <-
 onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
-##### button to download SAG data
 output$download_SAG_Data <- downloadHandler(
-    filename = function() {
-      paste("SAG_data-", Sys.Date(), ".csv", sep="")#### add species and year and data disclaimer
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_SAG_data.csv")
+      write.csv(SAG_data_reactive(), file = "adviceXplorer_SAG_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      zip(zipfile=fname, files=fs)
     },
-    content = function(file) {
-      write.csv(SAG_data_reactive(), file)
-    }
+    contentType = "application/zip"
   )
+
+
+
+
 
 ######################### Stock development over time plots
 
@@ -293,13 +300,17 @@ output$download_SAG_Data <- downloadHandler(
 
 
 ##### button to download SAG data for quality of assessemnt
-  output$download_SAG_Quality_Data <- downloadHandler(
-    filename = function() {
-      paste("SAG_data-", Sys.Date(), ".csv", sep = "")
+  output$download_QualAss_Data <- downloadHandler(
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_QualityofAssessment_data.csv")
+      write.csv(advice_action_quality(), file = "adviceXplorer_QualityofAssessment_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      zip(zipfile=fname, files=fs)
     },
-    content = function(file) {
-      write.csv(advice_action_quality(), file)
-    }
+    contentType = "application/zip"
   )
 
 #### link to pdf of advice (NOT ACTIVE)
@@ -542,15 +553,10 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
 
 output$table <- DT::renderDT(
   catch_scenario_table_collated(),
- 
   selection = "single",
   class = "display",
-  caption = HTML(paste0("<font size= 4>Subset of catch scenario table (click ", 
-                        "<span class='hovertext' data-hover='Click here to access the ASD entry for this stock'>",
-                        "<a href='","http://asd.ices.dk/viewAdvice/",advice_view_info()$adviceKey, "' target='_blank'>", 
-                        "<i class='fa-solid fa-up-right-from-square'></i></a></span>"," to access the full version)</font>")),
-
-rownames = FALSE,
+  caption = HTML("<b><font size= 6> Catch scenario table</b></font>"),
+  rownames = FALSE,
   options = list(
     dom = "Bfrtip",
     pageLength = 100,
@@ -565,6 +571,20 @@ rownames = FALSE,
     )
   )
 )
+
+output$download_catch_table <- downloadHandler(
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_catchScenario_data.csv","adviceXplorer_catchScenarioNotes_data.csv")
+      write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = "adviceXplorer_catchScenario_data.csv")
+      write.csv(icesASD::getCatchScenariosNotes(advice_view_info()$adviceKey), file = "adviceXplorer_catchScenarioNotes_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      zip(zipfile=fname, files=fs)
+    },
+    contentType = "application/zip"
+  )
 
 
 ##### footnotes of catch scenario table
