@@ -750,3 +750,306 @@ standardize_catch_scenario_table <- function(tmp) {
   
   return(list(table = tmp_unified, cols = col_names_for_display))
 }
+
+
+library(icesSAG)
+SAGsummary <- getSAG("cod.27.47d20", 2022,
+         purpose = "Replaced"
+    )
+codKeys <- findAssessmentKey("cod.27.47d20", year = 2022)
+
+
+out <- jsonlite::fromJSON(
+            URLencode(
+                sprintf("https://sag.ices.dk/SAG_API/api/StockList?year=%s", 2022))) %>% filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+                
+out <- out %>% filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+
+
+
+test <- getListStocks(2022) %>% filter(StockKeyLabel == "cod.27.47d20") %>% filter(Purpose == "Replaced") %>% pull(LinkToAdvice)
+test <- filter(stockKeyLabel == "cod.27.47d20") %>% filter(purpose == "Replaced") %>% pull(linkToAdvice)
+
+
+out <- jsonlite::fromJSON(
+            URLencode(
+                sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", 17652)))
+
+
+
+https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=17652
+
+out2 <- icesSAG::getSAG(
+    stock = NULL, 2022, purpose = "Advice",
+    data = "refpts", combine = TRUE
+  )
+
+df1 <- data.frame(assessmentKey = c(1200,1250),
+                  stockkeylabel = c(120,125)
+                  )
+  
+
+
+df2 <- data.frame(AssessmentKey = c(1200,1250),
+                  StockKeyLabel= c(120,125),
+                  confidenceIntervalDefinition = c(0.1,0.2))
+print(df2)
+colnames(df2)[which(names(df2) == "AssessmentKey")] <- "assessmentKey"
+colnames(df2)[which(names(df2) == "StockKeyLabel")] <- "stockkeylabel"
+
+# Merging dataframes
+merged_df <- merge(df1, df2, by = c("assessmentKey", "stockkeylabel"))
+
+
+out <- data.frame()
+for (AssessmentKey in out2$AssessmentKey) {
+  out_temp <- jsonlite::fromJSON(
+    URLencode(
+      sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey)
+    )
+  )
+  out <- rbind(out, out_temp)
+}
+
+names(out)
+names(out2)
+
+# Convert elements to lowercase
+arr1_lower <- tolower(names(out))
+arr2_lower <- tolower(names(out2))
+
+# Find common elements
+common_elements <- intersect(arr1_lower, arr2_lower)
+
+
+colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+colnames(out)[which(names(out) == "stockKeyLabel")] <- "StockKeyLabel"
+colnames(out)[which(names(out) == "stockDatabaseID")] <- "StockDatabaseID"
+colnames(out)[which(names(out) == "stockKey")] <- "StockKey"
+colnames(out)[which(names(out) == "assessmentYear")] <- "AssessmentYear"
+colnames(out)[which(names(out) == "fLim")] <- "FLim"
+colnames(out)[which(names(out) == "fpa")] <- "Fpa"
+colnames(out)[which(names(out) == "fAge")] <- "FAge"
+colnames(out)[which(names(out) == "bpa")] <- "Bpa"
+colnames(out)[which(names(out) == "blim")] <- "Blim"
+colnames(out)[which(names(out) == "recruitmentAge")] <- "RecruitmentAge"
+colnames(out)[which(names(out) == "fmsy")] <- "FMSY"
+colnames(out)[which(names(out) == "msyBtrigger")] <- "MSYBtrigger"
+colnames(out)[which(names(out) == "fmanagement")] <- "Fmanagement"
+colnames(out)[which(names(out) == "bmanagement")] <- "Bmanagement"
+colnames(out)[which(names(out) == "recruitmentLength")] <- "RecruitmentLength"
+colnames(out)[which(names(out) == "fLength")] <- "FLength"
+colnames(out)[which(names(out) == "fCap")] <- "Fcap"
+
+merged_df <- merge(out, out2, by = c("AssessmentKey"
+, "StockKeyLabel",
+"StockDatabaseID","StockKey","AssessmentYear","FLim","Fpa","FAge","Bpa","Blim","RecruitmentAge","FMSY","MSYBtrigger",
+"Fmanagement","Bmanagement","RecruitmentLength","FLength","Fcap"))
+
+
+
+
+
+names(merged_df)
+
+final <- merged_df %>% select(c("AssessmentKey", 
+"StockKeyLabel",
+     "StockDatabaseID",   
+     "StockKey" ,        
+      "AssessmentYear",
+"Blim"   ,           "RecruitmentAge" ,   "FAge"  ,            "Bpa"   ,            "Fpa",
+"FMSY"    ,          "MSYBtrigger"    ,   "Fmanagement"  ,     "FLim"     ,         "Bmanagement",
+[16] "RecruitmentLength", "FLength"  ,         "Fcap",))
+
+library(dplyr)
+
+
+get_CI <- function(df) {
+  out <- data.frame()
+  for (AssessmentKey in df$AssessmentKey) {
+    out_temp <- jsonlite::fromJSON(
+      URLencode(
+        sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey) 
+      )
+    )
+    out_temp <- out_temp %>% select(assessmentKey,confidenceIntervalDefinition)
+    out <- rbind(out, out_temp)
+    
+  }
+
+  colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+  # colnames(out)[which(names(out) == "stockKeyLabel")] <- "StockKeyLabel"
+  # colnames(out)[which(names(out) == "stockDatabaseID")] <- "StockDatabaseID"
+  # colnames(out)[which(names(out) == "stockKey")] <- "StockKey"
+  # colnames(out)[which(names(out) == "assessmentYear")] <- "AssessmentYear"
+  # colnames(out)[which(names(out) == "fLim")] <- "FLim"
+  # colnames(out)[which(names(out) == "fpa")] <- "Fpa"
+  # colnames(out)[which(names(out) == "fAge")] <- "FAge"
+  # colnames(out)[which(names(out) == "bpa")] <- "Bpa"
+  # colnames(out)[which(names(out) == "blim")] <- "Blim"
+  # colnames(out)[which(names(out) == "recruitmentAge")] <- "RecruitmentAge"
+  # colnames(out)[which(names(out) == "fmsy")] <- "FMSY"
+  # colnames(out)[which(names(out) == "msyBtrigger")] <- "MSYBtrigger"
+  # colnames(out)[which(names(out) == "fmanagement")] <- "Fmanagement"
+  # colnames(out)[which(names(out) == "bmanagement")] <- "Bmanagement"
+  # colnames(out)[which(names(out) == "recruitmentLength")] <- "RecruitmentLength"
+  # colnames(out)[which(names(out) == "fLength")] <- "FLength"
+  # colnames(out)[which(names(out) == "fCap")] <- "Fcap"
+
+  # merged_df <- merge(out, df, by = c(
+  #   "AssessmentKey",
+  #   "StockKeyLabel",
+  #   "StockDatabaseID",
+  #   "StockKey",
+  #   "AssessmentYear",
+  #   "FLim",
+  #   "Fpa",
+  #   "FAge",
+  #   "Bpa",
+  #   "Blim",
+  #   "RecruitmentAge",
+  #   "FMSY",
+  #   "MSYBtrigger",
+  #   "Fmanagement",
+  #   "Bmanagement",
+  #   "RecruitmentLength",
+  #   "FLength",
+  #   "Fcap"
+  # ))
+  return(out)
+}
+
+xx <-get_CI(out2)
+
+
+
+
+
+ SAGsummary <- getSAG("spr.27.3a4", 2023,
+        data = "summary", combine = TRUE, purpose = "Advice"
+    )
+
+
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Download Example"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      actionButton("downloadBtn", "Download")
+    ),
+    
+    mainPanel(
+      h4("Download Link"),
+      verbatimTextOutput("downloadLink")
+    )
+  )
+)
+
+library(shiny)
+library(dplyr)
+library(zip)
+
+server<-function(input, output) {
+  # Create a sample dataframe
+  df <- data.frame(
+    Name = c("John", "Jane", "Mike"),
+    Age = c(25, 30, 35),
+    StringsAsFactors = FALSE
+  )
+  
+  # Function to create the zip file
+  createZipFile <- function() {
+    # Convert dataframe to CSV
+    df_csv <- df %>% write_csv(path = "data.csv")
+    
+    # Create the disclaimer text file
+    disclaimer <- "This is a disclaimer."
+    writeLines(disclaimer, "disclaimer.txt")
+    
+    # Create the zip file
+    zip_file <- "data.zip"
+    zip(zip_file, files = c("data.csv", "disclaimer.txt"))
+    
+    # Remove the temporary files
+    file.remove(c("data.csv", "disclaimer.txt"))
+    
+    # Return the zip file name
+    return(zip_file)
+  }
+  
+  # Event handler for the download button
+  observeEvent(input$downloadBtn, {
+    output$downloadLink <- renderText({
+      zip_file <- createZipFile()
+      downloadLink <- sprintf('<a href="%s" download>Download</a>', zip_file)
+      return(downloadLink)
+    })
+  })
+}
+shinyApp(ui, server)
+server <- function(input, output) {
+
+  datasetInput <- reactive({
+    return(list(rock=rock, pressure=pressure, cars=cars))
+  })
+
+  output$downloadData <- downloadHandler(
+    filename = 'pdfs.zip',
+    content = function(fname) {
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      print(tempdir())
+
+      fs <- c("rock.csv", "pressure.csv", "cars.csv")
+      write.csv(datasetInput()$rock, file = "rock.csv", sep =",")
+      write.csv(datasetInput()$pressure, file = "pressure.csv", sep =",")
+      write.csv(datasetInput()$cars, file = "cars.csv", sep =",")
+      print (fs)
+
+      zip(zipfile=fname, files=fs)
+    },
+    contentType = "application/zip"
+  )
+
+}
+
+# ui.R
+ui <- shinyUI(fluidPage(
+  titlePanel('Downloading Data'),
+  sidebarLayout(
+    sidebarPanel(
+      downloadButton('downloadData', 'Download')
+    ),
+    mainPanel()
+    )
+  )
+  )
+
+shinyApp(ui = ui, server = server)
+
+
+###### this one works 
+ui <- fluidPage(
+  downloadLink("downloadData", HTML("<font size= 15>HERE</font>"))
+)
+
+server <- function(input, output) {
+  # Our dataset
+  data <- mtcars
+
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(data, file)
+    }
+  )
+}
+
+library(icesASD)
+icesASD::adviceDownload(adviceKeys = 3427)
+icesASD::getCatchScenariosTable(adviceKey = 3427)
+icesASD::get_catch_scenario_table("cod.27.47d20",2022)

@@ -88,7 +88,7 @@ navbarPage(
     position = "static-top",
     collapsible = TRUE,
     # tab title
-    windowTitle = "Online Advice",
+    windowTitle = "adviceXplorer",
     id = "tabset",
     fluid = TRUE,
     # navbar title
@@ -106,19 +106,23 @@ navbarPage(
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
-            style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+            style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos1"),
                 header_right_panel_headline("Advice_Headline1")
             ),
+            sidebarPanel(
+             width = 12,
             SAG_plots_1_2_fluid(),
+            br(),
             SAG_plots_3_4_fluid()
+            )
             ),
 
     tabPanel(
             "Quality of assessment",
-            style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+            style = "overflow-y: auto; overflow-x: hidden;", 
             splitLayout(
                 cellWidths = c("40%", "60%"),
                 header_left_panel_stock_info("stock_infos2"),
