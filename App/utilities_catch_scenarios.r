@@ -67,7 +67,7 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
       if (!is_empty(replaced_advice_doi)) {
         paste0(
           "<br/>",
-          "<span class='hovertext' data-hover='Click here for the replaced Advice'>",
+          "<span class='hovertext' data-hover='Link to the replaced Advice'>",
           "<a href='", replaced_advice_doi, "' target='_blank'>",
           "<font size=3> Replaced advice <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
         )
@@ -75,13 +75,13 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
       if (tabset_id == "Development over time"){
       paste0(
         "<br/>",
-        "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
+        "<span class='hovertext' data-hover='Standard graphs data download'>",
         downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
       } else if (tabset_id == "Quality of assessment" && all(!10 %in% drop_plots)){
         paste0(
         "<br/>",
-        "<span class='hovertext' data-hover='Click here dowload all the plots' data'>",
+        "<span class='hovertext' data-hover='Quality of assessment data download'>",
         downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
       } else if (tabset_id == "Catch scenarios" && !is_empty(catch_scenario_table)){
@@ -90,9 +90,9 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
         "<span class='hovertext' data-hover='Download table (.csv)'>",
         downloadLink("download_catch_table", HTML("<font size= 3>Download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>")),
         " or ",
-        "<span class='hovertext' data-hover='See ASD entry'>",
+        "<span class='hovertext' data-hover='Link to ASD entry'>",
         "<a href='", "http://asd.ices.dk/viewAdvice/", catch_scenario_list$adviceKey, "' target='_blank'>",
-        "<font size= 3>connect to ASD <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
+        "<font size= 3>view ASD entry <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
       )
       }
     )
