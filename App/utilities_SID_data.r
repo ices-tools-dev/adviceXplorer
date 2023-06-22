@@ -166,6 +166,13 @@ advice_view_stocks_for_lunch <- c(
 "wit.27.3a47d"
 )
 
+adviceXplorer_stocks_to_exclude_for_lunch <- c("cod.27.1-2", 
+                                                "ghl.27.1-2", 
+                                                "had.27.1-2", 
+                                                "reb.27.1-2",  
+                                                "cap.27.1-2"
+)
+
 #' Downloads the list of stocks from SID for a particular year using a web service
 #'
 #' @param Year
@@ -192,7 +199,7 @@ download_SID <- function(Year) {
       sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published, AssessmentKey", Year)
     )
   )$value
-  stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks_for_lunch)
+  stock_list_all <- stock_list_all %>% filter(!StockKeyLabel %in% adviceXplorer_stocks_to_exclude_for_lunch)
   return(stock_list_all)
 }
 
