@@ -84,15 +84,19 @@ get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, t
         "<span class='hovertext' data-hover='Quality of assessment data download'>",
         downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
       )
-      } else if (tabset_id == "Catch scenarios" && !is_empty(catch_scenario_table)){
+      } else if (tabset_id == "Catch scenarios" ){
         paste0(
         "<br/>",
-        "<span class='hovertext' data-hover='Download table (.csv)'>",
-        downloadLink("download_catch_table", HTML("<font size= 3>Download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>")),
-        " or ",
         "<span class='hovertext' data-hover='Link to ASD entry'>",
         "<a href='", "http://asd.ices.dk/viewAdvice/", catch_scenario_list$adviceKey, "' target='_blank'>",
-        "<font size= 3>view ASD entry <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
+        "<font size= 3>View ASD entry <i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
+        if (!is_empty(catch_scenario_table)) {
+          paste0(
+            " or ",
+            "<span class='hovertext' data-hover='Download table (.csv)'>",
+            downloadLink("download_catch_table", HTML("<font size= 3>download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+          )
+        }
       )
       }
     )
