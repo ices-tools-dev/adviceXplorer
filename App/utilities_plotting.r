@@ -1452,7 +1452,9 @@ ICES_plot_7 <- function(df, sagSettings) {
                         "<br>",
                         "<b>Assessment year: </b>", AssessmentYear,
                         "<br>",
-                        "<b>Recruitment: </b>", recruitment
+                        "<b>Recruitment: </b>", recruitment,
+                        "<br>",
+                        "<b>Recruitment age: </b>", RecruitmentAge
                     ), HTML
                 )
             )
