@@ -88,7 +88,7 @@ navbarPage(
     position = "static-top",
     collapsible = TRUE,
     # tab title
-    windowTitle = "Online Advice",
+    windowTitle = "adviceXplorer",
     id = "tabset",
     fluid = TRUE,
     # navbar title

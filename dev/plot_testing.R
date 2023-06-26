@@ -922,3 +922,134 @@ get_CI <- function(df) {
 xx <-get_CI(out2)
 
 
+
+
+
+ SAGsummary <- getSAG("spr.27.3a4", 2023,
+        data = "summary", combine = TRUE, purpose = "Advice"
+    )
+
+
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Download Example"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      actionButton("downloadBtn", "Download")
+    ),
+    
+    mainPanel(
+      h4("Download Link"),
+      verbatimTextOutput("downloadLink")
+    )
+  )
+)
+
+library(shiny)
+library(dplyr)
+library(zip)
+
+server<-function(input, output) {
+  # Create a sample dataframe
+  df <- data.frame(
+    Name = c("John", "Jane", "Mike"),
+    Age = c(25, 30, 35),
+    StringsAsFactors = FALSE
+  )
+  
+  # Function to create the zip file
+  createZipFile <- function() {
+    # Convert dataframe to CSV
+    df_csv <- df %>% write_csv(path = "data.csv")
+    
+    # Create the disclaimer text file
+    disclaimer <- "This is a disclaimer."
+    writeLines(disclaimer, "disclaimer.txt")
+    
+    # Create the zip file
+    zip_file <- "data.zip"
+    zip(zip_file, files = c("data.csv", "disclaimer.txt"))
+    
+    # Remove the temporary files
+    file.remove(c("data.csv", "disclaimer.txt"))
+    
+    # Return the zip file name
+    return(zip_file)
+  }
+  
+  # Event handler for the download button
+  observeEvent(input$downloadBtn, {
+    output$downloadLink <- renderText({
+      zip_file <- createZipFile()
+      downloadLink <- sprintf('<a href="%s" download>Download</a>', zip_file)
+      return(downloadLink)
+    })
+  })
+}
+shinyApp(ui, server)
+server <- function(input, output) {
+
+  datasetInput <- reactive({
+    return(list(rock=rock, pressure=pressure, cars=cars))
+  })
+
+  output$downloadData <- downloadHandler(
+    filename = 'pdfs.zip',
+    content = function(fname) {
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      print(tempdir())
+
+      fs <- c("rock.csv", "pressure.csv", "cars.csv")
+      write.csv(datasetInput()$rock, file = "rock.csv", sep =",")
+      write.csv(datasetInput()$pressure, file = "pressure.csv", sep =",")
+      write.csv(datasetInput()$cars, file = "cars.csv", sep =",")
+      print (fs)
+
+      zip(zipfile=fname, files=fs)
+    },
+    contentType = "application/zip"
+  )
+
+}
+
+# ui.R
+ui <- shinyUI(fluidPage(
+  titlePanel('Downloading Data'),
+  sidebarLayout(
+    sidebarPanel(
+      downloadButton('downloadData', 'Download')
+    ),
+    mainPanel()
+    )
+  )
+  )
+
+shinyApp(ui = ui, server = server)
+
+
+###### this one works 
+ui <- fluidPage(
+  downloadLink("downloadData", HTML("<font size= 15>HERE</font>"))
+)
+
+server <- function(input, output) {
+  # Our dataset
+  data <- mtcars
+
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(data, file)
+    }
+  )
+}
+
+library(icesASD)
+icesASD::adviceDownload(adviceKeys = 3427)
+icesASD::getCatchScenariosTable(adviceKey = 3427)
+icesASD::get_catch_scenario_table("cod.27.47d20",2022)
