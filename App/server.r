@@ -36,7 +36,7 @@ server <- function(input, output, session) {
     inputId = "selected_years",
     label = "Assessment Year",
     choices = Years$Year,
-    selected = 2022
+    selected = 2023
   )
 
 
