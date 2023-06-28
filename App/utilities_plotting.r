@@ -1694,7 +1694,11 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 
     
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
-
+    tmp <- tmp[tmp$cS_Purpose == "Other Scenarios",] %>% 
+      dplyr::filter(TotCatch != Basis$TotCatch) %>% 
+      dplyr::bind_rows(Basis)
+    
+    
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
@@ -1960,7 +1964,10 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     
     tmp$cat <- shorten_labels(tmp$cat)
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice", ]
-
+    tmp <- tmp[tmp$cS_Purpose == "Other Scenarios",] %>% 
+      dplyr::filter(TotCatch != Basis$TotCatch) %>% 
+      dplyr::bind_rows(Basis)
+    
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
