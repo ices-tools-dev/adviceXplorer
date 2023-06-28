@@ -18,8 +18,8 @@
 #'
 #' @export
 deployApp(
-  appName = "IAtest",
-  appTitle = "IAtest",
+  appName = "adviceXplorer_v2",
+  appTitle = "adviceXplorer_v2",
   forceUpdate = getOption("rsconnect.force.update.apps", TRUE),
   launch.browser = FALSE
 )
