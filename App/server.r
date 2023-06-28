@@ -237,7 +237,7 @@ output$download_SAG_Data <- downloadHandler(
       write.csv(SAG_data_reactive(), file = "adviceXplorer_SAG_data.csv")
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
-      zip(zipfile=fname, files=fs)
+      zip::zip(zipfile=fname, files=fs)
     },
     contentType = "application/zip"
   )
@@ -308,7 +308,7 @@ output$download_SAG_Data <- downloadHandler(
       write.csv(advice_action_quality(), file = "adviceXplorer_QualityofAssessment_data.csv")
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
-      zip(zipfile=fname, files=fs)
+      zip::zip(zipfile=fname, files=fs)
     },
     contentType = "application/zip"
   )
@@ -581,7 +581,7 @@ output$download_catch_table <- downloadHandler(
       write.csv(icesASD::getCatchScenariosNotes(advice_view_info()$adviceKey), file = "adviceXplorer_catchScenarioNotes_data.csv")
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
-      zip(zipfile=fname, files=fs)
+      zip::zip(zipfile=fname, files=fs)
     },
     contentType = "application/zip"
   )
