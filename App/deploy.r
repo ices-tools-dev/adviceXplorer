@@ -18,8 +18,8 @@
 #'
 #' @export
 deployApp(
-  appName = "adviceXplorer",
-  appTitle = "adviceXplorer",
+  appName = "advicexplorer",
+  appTitle = "advicexplorer",
   forceUpdate = getOption("rsconnect.force.update.apps", TRUE),
   launch.browser = FALSE
 )
