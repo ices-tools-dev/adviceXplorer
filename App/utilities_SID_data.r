@@ -171,7 +171,8 @@ adviceXplorer_stocks_to_exclude_for_lunch <- c("cod.27.1-2",
                                                 "had.27.1-2", 
                                                 "reb.27.1-2",  
                                                 "cap.27.1-2",
-                                                "nep.fu.10"
+                                                "nep.fu.10",
+                                                "pra.27.1-2"
 )
 
 #' Downloads the list of stocks from SID for a particular year using a web service
