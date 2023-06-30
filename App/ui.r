@@ -36,7 +36,7 @@ library(tidyverse)
 library(tm)
 library(widgetframe)
 library(icesASD)
-
+library(zip)
 
 
 
@@ -55,7 +55,7 @@ source("utilities_resources.r")
 
 
 title_html <- tags$a(
-    href = "https://ices-taf.shinyapps.io/online-single-stock-advice/",
+    href = "https://ices-taf.shinyapps.io/advicexplorer/",
         tags$img(
             src = "https://www.ices.dk/SiteCollectionImages/ICES%20logos/NEGATIVE%20ICES-logo.png",
             style = "margin-top: -10px; padding-right:10px;padding-bottom:10px",

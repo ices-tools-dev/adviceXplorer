@@ -42,6 +42,7 @@ theme_ICES_plots <-
                 colour = "black"
             ),
             axis.title.x = element_blank(),
+            
             panel.grid.major.y = element_line(
                 colour = "grey",
                 size = 1,
@@ -64,6 +65,8 @@ theme_ICES_plots <-
                     color <- "#047c6c"
                 }
             ),
+            axis.line = element_line(size = 1, colour = "black"),
+            axis.ticks = element_line(size = 1, color="black"),
             panel.grid.minor = element_blank(),
             panel.grid.major.x = element_blank(),
             panel.border = element_rect(
