@@ -45,7 +45,7 @@ stock_selection_left_side <- function() {
       inputId = "selected_years",
       label = "Assessment Year",
       choices = Years$Year,
-      selected = 2022,
+      selected = 2023,
       multiple = FALSE,
       width = "100%",
       options = list(
