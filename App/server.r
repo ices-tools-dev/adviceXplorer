@@ -190,7 +190,7 @@ server <- function(input, output, session) {
   
   drop_plots <- reactive({
       filter(sagSettings(), settingKey == 22 & settingValue == "yes" | settingValue == "y") %>%
-      pull(sagChartKey) %>%
+      pull(SAGChartKey) %>%
       as.numeric})
   
 ######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)

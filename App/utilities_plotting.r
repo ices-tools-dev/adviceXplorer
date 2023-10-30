@@ -479,7 +479,7 @@ data_download_button <- function(disclaimer_text) {
 #'
 ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
     
-    sagSettings1 <- sagSettings %>% filter(sagChartKey == 1)
+    sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
     df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
@@ -609,7 +609,7 @@ ICES_plot_2 <- function(df, sagSettings) {
         filter(Purpose == "Advice") %>%
         select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp)
 
-    sagSettings2 <- sagSettings %>% filter(sagChartKey == 2)
+    sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     xmax <- sagSettings2 %>%
         filter(settingKey == 5) %>%
@@ -741,12 +741,12 @@ ICES_plot_2 <- function(df, sagSettings) {
 #'
 ICES_plot_3 <- function(df, sagSettings) {
   
-    sagSettings3 <- sagSettings %>% filter(sagChartKey == 3)
+    sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
   
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp, confidenceIntervalDefinition) %>%
+        select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
         drop_na(F) # %>%
     
     p3 <- df3 %>%
@@ -757,7 +757,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             geom_ribbon(aes(
                 ymin = low_F,
                 ymax = high_F,
-                fill = confidenceIntervalDefinition,
+                fill = ConfidenceIntervalDefinition,
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
@@ -905,11 +905,11 @@ fig3
 #'
 ICES_plot_4 <- function(df, sagSettings) {
 
-  sagSettings4 <- sagSettings %>% filter(sagChartKey == 4)
+  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp, confidenceIntervalDefinition) #%>%
+  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) #%>%
 
 p4 <- df4 %>%
     ggplot(., aes(x = Year, y = SSB))
@@ -919,7 +919,7 @@ if (any(!is.na(df4$low_SSB))) {
     geom_ribbon(data =  df4 %>% filter(!is.na(high_SSB)), aes(
       ymin = low_SSB,
       ymax = high_SSB,
-      fill = confidenceIntervalDefinition,
+      fill = ConfidenceIntervalDefinition,
       text = map(
         paste0(
           "<b>Year: </b>", Year,
@@ -1150,7 +1150,7 @@ fig4
 #'
 ICES_plot_5 <- function(df, sagSettings) {
 
-    sagSettings4 <- sagSettings %>% filter(sagChartKey == 4)
+    sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
@@ -1293,7 +1293,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_6 <- function(df, sagSettings) {
-    sagSettings3 <- sagSettings %>% filter(sagChartKey == 3)
+    sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
@@ -1436,7 +1436,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_7 <- function(df, sagSettings) {
-    sagSettings2 <- sagSettings %>% filter(sagChartKey == 2)
+    sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
@@ -1673,13 +1673,13 @@ radial_plot <- function(tmp, catch_scenarios) {
 catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     nullifempty <- function(x) if (length(x) == 0) NULL else x
     
-    F_yaxis_label <- sagSettings %>% filter(sagChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+    F_yaxis_label <- sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(F_yaxis_label)) {
           F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
         }
     
     
-    SSB_yaxis_label <- sagSettings %>% filter(sagChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+    SSB_yaxis_label <- sagSettings %>% filter(SAGChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(SSB_yaxis_label)) {
     SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
         }
@@ -1934,7 +1934,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     F_yaxis_label <- sagSettings %>%
-        filter(sagChartKey == 3) %>%
+        filter(SAGChartKey == 3) %>%
         filter(settingKey == 20) %>%
         pull(settingValue) %>%
         as.character() %>%
@@ -1945,7 +1945,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 
 
     SSB_yaxis_label <- sagSettings %>%
-        filter(sagChartKey == 4) %>%
+        filter(SAGChartKey == 4) %>%
         filter(settingKey == 20) %>%
         pull(settingValue) %>%
         as.character() %>%
