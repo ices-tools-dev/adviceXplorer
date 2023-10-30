@@ -338,10 +338,10 @@ myDownloadButton <- function(outputId){
 get_additional_landing_data <- function(assessmentKey) {
   out <- jsonlite::fromJSON(
         URLencode(
-            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", assessmentKey)
+            sprintf("https://sag.ices.dk/SAG_API/api/SummaryTable?assessmentKey=%s", assessmentKey)            
         )
     )  
-  df <- data.frame(Year = out$lines$year, ibc = out$lines$ibc, unallocated_Removals = out$lines$unallocated_Removals)
+  df <- data.frame(Year = out$Lines$Year, ibc = out$Lines$IBC, unallocated_Removals = out$Lines$Unallocated_Removals)
   return(df)
 }
 

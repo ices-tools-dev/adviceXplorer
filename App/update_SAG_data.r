@@ -166,12 +166,12 @@ get_CI <- function(df) {
         sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey) 
       )
     )
-    out_temp <- out_temp %>% select(assessmentKey,confidenceIntervalDefinition)
+    out_temp <- out_temp %>% select(AssessmentKey,ConfidenceIntervalDefinition)
     out <- rbind(out, out_temp)
     
   }
 
-  colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+  # colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
   
   return(out)
 }
