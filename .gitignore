@@ -40,3 +40,5 @@ vignettes/*.pdf
 
 # csv files
 .csv
+# data directory
+/Data/
