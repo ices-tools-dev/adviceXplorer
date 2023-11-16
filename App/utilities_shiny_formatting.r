@@ -30,33 +30,29 @@ stock_selection_left_side <- function() {
       withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
     ),
     HTML("</br>"),
-    selectizeInput(
+    virtualSelectInput(
       inputId = "selected_locations",
-      label = "ICES Ecoregions",
+      label = "ICES Ecoregions:",
       choices = sort(shape_eco$Ecoregion),
       selected = "Greater North Sea",
       multiple = FALSE,
       width = "100%",
-      options = list(
-        placeholder = "Select Ecoregion(s)"
-      )
+      search = TRUE
     ),
-    selectizeInput(
+    virtualSelectInput(
       inputId = "selected_years",
-      label = "Assessment Year",
+      label = "Assessment Year:",
       choices = Years$Year,
       selected = 2023,
       multiple = FALSE,
       width = "100%",
-      options = list(
-        placeholder = "Select assessment year"
-      )
+      search = TRUE
     ),
-    selectizeGroupUI(
+    select_group_ui(
       id = "my-filters",
       params = list(
-        StockKeyLabel = list(inputId = "StockKeyLabel", title = "Stock code:"),
-        SpeciesCommonName = list(inputId = "SpeciesCommonName", title = "Common name:")
+        StockKeyLabel = list(inputId = "StockKeyLabel", label = "Stock code:"),
+        SpeciesCommonName = list(inputId = "SpeciesCommonName", label = "Common name:")
       ),
       inline = FALSE
     ),

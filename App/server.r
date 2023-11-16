@@ -32,16 +32,9 @@ server <- function(input, output, session) {
 
   # Update the year of selection
 
-  updateSelectizeInput(session,
-    inputId = "selected_years",
-    label = "Assessment Year",
-    choices = Years$Year,
-    selected = 2023
-  )
-
-
   eco_filter <- reactive({
     req(input$selected_locations, input$selected_years)
+    
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
     stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
@@ -65,24 +58,19 @@ server <- function(input, output, session) {
     bindEvent(input$selected_locations, input$selected_years)
 
 
-  res_mod <- callModule(
-    
-    module = selectizeGroupServer,
+  res_mod <- select_group_server(
     id = "my-filters",
     data = eco_filter,
-    vars = c(
-      "StockKeyLabel", "SpeciesCommonName"
-    ),
-    inline = FALSE
+    vars = reactive(c("StockKeyLabel", "SpeciesCommonName"))
   )
   
-  ###########################################################  Render table in stock selection tab
+  ###########################################################  Render stock selection table
 
   res_modo <- reactive({ 
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-  
+   
    res_mod() %>% select(
       "Select",
       "StockKeyLabel",
