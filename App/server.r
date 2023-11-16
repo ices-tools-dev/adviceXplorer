@@ -418,13 +418,22 @@ Basis <- eventReactive(catch_scenario_table(),{
 output$catch_scenarios <- renderUI({  
   
   if (!is_empty(test_table())) {
-  selectizeInput(
-    inputId = "catch_choice",
-    label = "Select one or more catch scenarios",
-    choices = unique(test_table()$cat),
-    selected = c("Historical Catches", Basis()$cat),
-    multiple = TRUE
-  )
+    virtualSelectInput(
+      inputId = "catch_choice",
+      label = "Select one or more catch scenarios:",
+      choices = unique(test_table()$cat),
+      selected = c("Historical Catches", Basis()$cat),
+      multiple = TRUE,
+      width = "100%",
+      search = TRUE
+    )
+  # selectizeInput(
+  #   inputId = "catch_choice",
+  #   label = "Select one or more catch scenarios",
+  #   choices = unique(test_table()$cat),
+  #   selected = c("Historical Catches", Basis()$cat),
+  #   multiple = TRUE
+  # )
   } else {
     HTML("No data available")
   }
@@ -444,13 +453,23 @@ output$catch_scenarios_radial <- renderUI({
  
   if (!is_empty(catch_scenario_table_previous_year()$table)) {
 
-    selectizeInput(
+    virtualSelectInput(
       inputId = "catch_choice_radial",
-      label = "Select one or more catch scenarios",
+      label = "Select one or more catch scenarios:",
       choices = unique(catch_scenario_table_percentages()$cat),
       selected = c(Basis()$cat),
-      multiple = TRUE
+      multiple = TRUE,
+      width = "100%",
+      search = TRUE
     )
+
+    # selectizeInput(
+    #   inputId = "catch_choice_radial",
+    #   label = "Select one or more catch scenarios:",
+    #   choices = unique(catch_scenario_table_percentages()$cat),
+    #   selected = c(Basis()$cat),
+    #   multiple = TRUE
+    # )
   } else {
     HTML("")
   }
@@ -473,17 +492,31 @@ output$Radial_plot_disclaimer <- renderUI(
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
 
-  if (!is_empty(catch_scenario_table_previous_year()$table)) {    
-    selectizeInput(
+  if (!is_empty(catch_scenario_table_previous_year()$table)) { 
+
+    virtualSelectInput(
       inputId = "indicator_choice_lollipop",
-      label = "Select one ore more indicators",
+      label = "Select one ore more indicators:",
       choices = catch_scenario_table_percentages() %>% 
         select(where(~ !any(is.na(.)))) %>%
         names() %>%
         str_subset(pattern = c("Year|cat|cS_Purpose"), negate = TRUE),
+        
       selected = c("SSB change"),
-      multiple = TRUE
-    )
+      multiple = TRUE,
+      width = "100%",
+      search = TRUE
+    )   
+    # selectizeInput(
+    #   inputId = "indicator_choice_lollipop",
+    #   label = "Select one ore more indicators",
+    #   choices = catch_scenario_table_percentages() %>% 
+    #     select(where(~ !any(is.na(.)))) %>%
+    #     names() %>%
+    #     str_subset(pattern = c("Year|cat|cS_Purpose"), negate = TRUE),
+    #   selected = c("SSB change"),
+    #   multiple = TRUE
+    # )
   } else {
     HTML("")
   }
