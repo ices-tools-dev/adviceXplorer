@@ -178,8 +178,9 @@ server <- function(input, output, session) {
 
     year <- query$year #####
     msg("downloading:", year)
+    
     #   # Dowload the data
-    access_sag_data_local(stock_name, year)
+    access_sag_data_local(stock_name, year, query$assessmentkey)
   }) 
   
   sagSettings <- reactive({
@@ -346,7 +347,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 
 ##### Advice view info
 advice_view_info <- reactive({
-  asd_record <- getAdviceViewRecord(query$stockkeylabel, query$year)
+  asd_record <- getAdviceViewRecord(assessmentkey = query$assessmentkey)
   if (!is_empty(asd_record)){ 
     asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   }  
