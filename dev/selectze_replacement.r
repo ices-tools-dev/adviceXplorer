@@ -187,3 +187,159 @@ if (interactive())
       width = "100%",
       search = TRUE
     )
+
+
+
+
+library(shiny)
+library(shinyWidgets)
+
+shinyApp(
+
+    ui = fluidPage(
+
+
+        shinyjs::useShinyjs(),
+
+        navbarPage(title = "Example", id = "NavBarPage", collapsible = TRUE,
+
+            tabPanel("tabPanel 1", value = "tabPanel_1",
+
+                # uiOutput("ui_for_tabpanel_1"),
+                
+                fluidPage(
+
+                    fluidRow(
+
+                        column(2,
+
+                           virtualSelectInput(
+                               inputId = "selection_A",
+                               label = "Select A: ",
+                               choices = rownames(mtcars),
+                               search = TRUE,
+                               multiple = TRUE,
+                               showSelectedOptionsFirst = TRUE,
+                               maxValues = 1000 
+                           ),
+
+                              ),
+
+                        column(2,
+
+                           selectInput(inputId = "watchlists", "Select B: ", 
+                                       choices = c("A", "B", "C", "D", "E", "F", "G", "H", "I"))
+
+                              ),
+
+                        column(2,
+
+                            virtualSelectInput(
+                                inputId = "symbols_selected_watchlist",
+                                label = "Select C: ",
+                                choices = rownames(mtcars),
+                                search = TRUE,
+                                multiple = TRUE,
+                                showSelectedOptionsFirst = TRUE,
+                                maxValues = 1000
+                            ),
+
+                            ),
+
+                    ),
+
+                    tags$br(), tags$br(), tags$br(), tags$br(),
+
+                    reactableOutput("table_A"),
+
+                    )
+
+            ),
+
+            )
+
+    ),
+
+  server = function(input, output, session) {
+    
+      output$table_A <- renderReactable({
+
+          reactable(mtcars,
+                    fullWidth = TRUE, compact = TRUE, highlight = TRUE,
+                    striped = TRUE, filterable = TRUE,
+                    pagination = TRUE, showPageSizeOptions = TRUE, defaultPageSize = 100,
+                    height = 800,
+                    selection = "single", onClick = "select",
+                    theme = reactableTheme(
+
+                        rowSelectedStyle = list(backgroundColor = "#808080", boxShadow = "inset 2px 0 0 0 #ffa62d")
+
+                    )
+          )
+
+      })
+
+    }
+)
+library(shiny)
+library(shinyWidgets)
+library(reactable)
+
+shinyApp(
+  ui = fluidPage(
+    shinyjs::useShinyjs(),
+    navbarPage(title = "Example", id = "NavBarPage", collapsible = TRUE,
+               tabPanel("tabPanel 1", value = "tabPanel_1",
+                        tags$style(HTML(".vscomp-dropbox-container  {z-index:99999 !important;}")),
+                        fluidPage(
+                          fluidRow(
+                            column(2,
+                                   virtualSelectInput(
+                                     inputId = "selection_A",
+                                     label = "Select A: ",
+                                     choices = rownames(mtcars),
+                                     search = TRUE,
+                                     multiple = TRUE,
+                                     showSelectedOptionsFirst = TRUE,
+                                     maxValues = 1000 
+                                   )
+                            ),
+                            column(2,
+                                   selectInput(inputId = "watchlists", "Select B: ", 
+                                               choices = c("A", "B", "C", "D", "E", "F", "G", "H", "I"))),
+                            column(2,
+                                   virtualSelectInput(
+                                     inputId = "symbols_selected_watchlist",
+                                     label = "Select C: ",
+                                     choices = rownames(mtcars),
+                                     search = TRUE,
+                                     multiple = TRUE,
+                                     showSelectedOptionsFirst = TRUE,
+                                     maxValues = 1000))
+                            ),
+                          tags$br(), tags$br(), tags$br(), tags$br(),
+                          reactableOutput("table_A"),
+                        )
+               )
+    )
+  ),
+  
+  server = function(input, output, session) {
+    
+    output$table_A <- renderReactable({
+      
+      reactable(mtcars,
+                fullWidth = TRUE, compact = TRUE, highlight = TRUE,
+                striped = TRUE, filterable = TRUE,
+                pagination = TRUE, showPageSizeOptions = TRUE, defaultPageSize = 100,
+                height = 800,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "#808080", boxShadow = "inset 2px 0 0 0 #ffa62d")
+                  
+                )
+      )
+      
+    })
+  }
+)
