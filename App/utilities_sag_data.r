@@ -63,14 +63,16 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @export
 #'
-access_sag_data_local <- function(stock_code, year, assessmentkey) {
+access_sag_data_local <- function( year, assessmentkey) {
 #   
     # Dowload the data
     df_summary <- fread(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
-    SAGsummary <- df_summary %>% filter(FishStock == stock_code)
+    # SAGsummary <- df_summary %>% filter(FishStock == stock_code)
+    SAGsummary <- df_summary %>% filter(AssessmentKey == assessmentkey)
 
     df_refpts <- fread(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
-    SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
+    # SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
+    SAGrefpts <- df_refpts %>% filter(AssessmentKey == assessmentkey)
 
     data_sag <- merge(SAGsummary, SAGrefpts)
 
