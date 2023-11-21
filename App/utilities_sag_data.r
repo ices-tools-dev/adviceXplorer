@@ -67,7 +67,7 @@ access_sag_data_local <- function(stock_code, year, assessmentkey) {
 #   
     # Dowload the data
     df_summary <- fread(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
-    SAGsummary <- df_summary %>% filter(fishstock == stock_code)
+    SAGsummary <- df_summary %>% filter(FishStock == stock_code)
 
     df_refpts <- fread(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
     SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
@@ -76,7 +76,7 @@ access_sag_data_local <- function(stock_code, year, assessmentkey) {
 
     # data_sag <- data_sag %>% filter(AssessmentKey == AssessmentKey)
 
-    data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
+    data_sag <- data_sag %>% select(-FishStock) %>% filter(StockPublishNote == "Stock published")
     # print(data_sag) %>% 
     return(data_sag)
     
@@ -108,13 +108,13 @@ access_sag_data_local <- function(stock_code, year, assessmentkey) {
 #' @export
 #'
 
-quality_assessment_data_local <- function(stock_code, year) {
+quality_assessment_data_local <- function(stock_code, year, assessmentkey) {
     years <- c(2023, 2022, 2021, 2020, 2019)
     years <- years[years <= year]
     datalist <- list()
 
     for (year in years) {
-        data_temp <- try(access_sag_data_local(stock_code, year))
+        data_temp <- try(access_sag_data_local(stock_code, year, assessmentkey))
 
         if (isTRUE(class(data_temp) == "try-error")) {
             next
@@ -122,17 +122,17 @@ quality_assessment_data_local <- function(stock_code, year) {
             data_temp <- filter(data_temp, between(Year, 2005, 2023))
             data_temp <- data_temp %>% select(
                 Year,
-                recruitment, RecruitmentAge,
-                SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
-                F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
+                Recruitment, RecruitmentAge,
+                SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
+                F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
                 AssessmentYear, StockPublishNote, Purpose, SAGStamp
             )
 
             data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
-            data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
-            data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
-            data_temp$Fage <- as.character(data_temp$Fage)
-            data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
+            data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
+            data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
+            data_temp$FAge <- as.character(data_temp$FAge)
+            data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
 
             datalist[[year]] <- data_temp
         }
@@ -372,7 +372,7 @@ get_additional_landing_data <- function(assessmentKey) {
 #' @export
 #'
 get_link_replaced_advice <- function(year, stock_code) {
-  link <- getListStocks(year) %>%
+  link <- StockList(year) %>%
     filter(StockKeyLabel == stock_code) %>%
     filter(Purpose == "Replaced") %>%
     pull(LinkToAdvice)

@@ -56,7 +56,7 @@ server <- function(input, output, session) {
       dplyr::mutate(
         EcoRegion = removeWords(EcoRegion, "Ecoregion"),
         Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.)),
-        stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
+        stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years, AssessmentKey)$StockDescription[1]),
         stock_location = parse_location_from_stock_description(stock_description)
       )
   }
@@ -151,7 +151,8 @@ server <- function(input, output, session) {
     query$assessmentkey <- query_string$assessmentkey
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+      # info <- FishStockReferencePoints(query$assessmentkey)[[1]]
+      info <- FishStockReferencePoints(query$assessmentkey)
 
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear #### 
@@ -169,7 +170,8 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    # info <- FishStockReferencePoints(query$assessmentkey)[[1]]
+    info <- FishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
 
@@ -251,16 +253,16 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot1 <- renderPlotly({
      validate(
-      need(c(SAG_data_reactive()$landings,SAG_data_reactive()$catches) != "", "Landings not available for this stock")#,
+      need(c(SAG_data_reactive()$Landings,SAG_data_reactive()$Catches) != "", "Landings not available for this stock")#,
       # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), additional_LandingData()))
+    suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
 
 })
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$recruitment != "", "Recruitment not available for this stock")#,
+      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock")#,
       # need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
@@ -287,7 +289,8 @@ output$download_SAG_Data <- downloadHandler(
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
-    info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    # info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    info <- FishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear 
 
@@ -295,7 +298,7 @@ output$download_SAG_Data <- downloadHandler(
 
     year <- query$year 
     
-    quality_assessment_data_local(stock_name, year)
+    quality_assessment_data_local(stock_name, year, query$assessmentkey)
   }) 
   
 
@@ -338,7 +341,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   output$plot7 <- renderPlotly({
     validate(
-      need(advice_action_quality()$recruitment != "", "Recruitment not available for this stock"),
+      need(advice_action_quality()$Recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
@@ -417,7 +420,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year, additional_LandingData())
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year, query$assessmentkey), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)

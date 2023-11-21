@@ -34,3 +34,4 @@ update_SID <- function(year){
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year))
 
 }
+# update_SID(2023)
