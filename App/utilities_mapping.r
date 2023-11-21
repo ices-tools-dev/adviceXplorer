@@ -114,7 +114,8 @@ map_panel_server <- function(input, output, session) {
                          label = "ICES Ecoregions:",
                          choices = shape_eco$Ecoregion,
                          selected = input$map1_shape_click$id,
-                         session = session)
+                         session = session
+                         )
         
   })
   

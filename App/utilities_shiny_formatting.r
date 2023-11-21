@@ -37,7 +37,12 @@ stock_selection_left_side <- function() {
       selected = "Greater North Sea",
       multiple = FALSE,
       width = "100%",
-      search = TRUE
+      search = TRUE,
+      optionsCount = 5
+      
+      
+
+            
     ),
     virtualSelectInput(
       inputId = "selected_years",
@@ -46,7 +51,8 @@ stock_selection_left_side <- function() {
       selected = 2023,
       multiple = FALSE,
       width = "100%",
-      search = TRUE
+      search = TRUE,
+      optionsCount = 5
     ),
     select_group_ui(
       id = "my-filters",
@@ -54,10 +60,12 @@ stock_selection_left_side <- function() {
         StockKeyLabel = list(inputId = "StockKeyLabel", label = "Stock code:"),
         SpeciesCommonName = list(inputId = "SpeciesCommonName", label = "Common name:")
       ),
-      inline = FALSE
+      inline = FALSE,
+      vs_args = list(search = TRUE,
+                    optionsCount = 5)
     ),
     htmlOutput("app_last_update")
-  )
+  ) 
 }
 
 #' Creates the UI element for the right side of the stock selection tab, which includes
