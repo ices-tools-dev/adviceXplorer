@@ -39,11 +39,7 @@ stock_selection_left_side <- function() {
       width = "100%",
       search = TRUE,
       optionsCount = 5
-      
-      
-
-            
-    ),
+      ),
     virtualSelectInput(
       inputId = "selected_years",
       label = "Assessment Year:",
