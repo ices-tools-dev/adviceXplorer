@@ -56,7 +56,7 @@ server <- function(input, output, session) {
       dplyr::mutate(
         EcoRegion = removeWords(EcoRegion, "Ecoregion"),
         Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.)),
-        stock_description = purrr::map_chr(AssessmentKey, .f = ~ access_sag_data_local( input$selected_years, .x)$StockDescription[1]),
+        stock_description = purrr::map_chr(AssessmentKey, .f = ~ access_sag_data_local(input$selected_years, .x)$StockDescription[1]),
         stock_location = parse_location_from_stock_description(stock_description)
       )
   }
@@ -535,12 +535,12 @@ observeEvent(input$preview, {
   })
 
 ############### Catch scenario plot
-catch_table_names <- eventReactive(catch_scenario_table(),{
-  req(query$stockkeylabel, query$year)
-  catch_scenario_table()$cols
+# catch_table_names <- eventReactive(catch_scenario_table(),{
+#   req(query$stockkeylabel, query$year)
+#   catch_scenario_table()$cols
   
 
-})
+# })
 
 catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
   validate(
@@ -549,7 +549,7 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
     
     catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
-    rename_all(funs(catch_table_names())) %>%
+    rename_all(~ catch_scenario_table()$cols) %>% 
     rename("Basis" = cS_Label, " " = cS_Purpose) %>% 
     select_if(~!(all(is.na(.)) | all(. == "")))
 })
