@@ -69,7 +69,7 @@ access_sag_data_local <- function(stock_code, year) {
     lapply(
       year,
       function(i) {        
-          fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))           
+          fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
       }
     )
     SAGsummary <- do.call(rbind, out1)
@@ -78,12 +78,12 @@ access_sag_data_local <- function(stock_code, year) {
     lapply(
       year,
       function(j) {        
-          fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))           
+          fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
       }
     )
     SAGrefpts <- do.call(rbind, out2)
 
-    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)    
+    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
 
     data_sag <- data_sag %>% select(-FishStock) %>% filter(StockPublishNote == "Stock published")
     
@@ -138,9 +138,7 @@ quality_assessment_data_local <- function(stock_code, year) {
             data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
             data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
             data_temp$FAge <- as.character(data_temp$FAge)
-            data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
-
-            
+            data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)            
         }
 
     # take out non published data from before 2021 in big data
