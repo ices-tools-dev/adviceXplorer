@@ -63,27 +63,33 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @export
 #'
-access_sag_data_local <- function( year, assessmentkey) {
-#   
-    # Dowload the data
-    df_summary <- fread(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
-    # SAGsummary <- df_summary %>% filter(FishStock == stock_code)
-    SAGsummary <- df_summary %>% filter(AssessmentKey == assessmentkey)
+access_sag_data_local <- function(stock_code, year) {
+  
+    out1 <-
+    lapply(
+      year,
+      function(i) {        
+          fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))           
+      }
+    )
+    SAGsummary <- do.call(rbind, out1)
+    
+    out2 <-
+    lapply(
+      year,
+      function(j) {        
+          fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))           
+      }
+    )
+    SAGrefpts <- do.call(rbind, out2)
 
-    df_refpts <- fread(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
-    # SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
-    SAGrefpts <- df_refpts %>% filter(AssessmentKey == assessmentkey)
-
-    data_sag <- merge(SAGsummary, SAGrefpts)
-
-    # data_sag <- data_sag %>% filter(AssessmentKey == AssessmentKey)
+    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)    
 
     data_sag <- data_sag %>% select(-FishStock) %>% filter(StockPublishNote == "Stock published")
-    # print(data_sag) %>% 
+    
     return(data_sag)
     
 }
-
 
 
 #' Reads SAG data stored locally for multiple years prior to the year provided (ex year = 2019, years of data returned = c(2017,2018,2019))
@@ -110,15 +116,13 @@ access_sag_data_local <- function( year, assessmentkey) {
 #' @export
 #'
 
-quality_assessment_data_local <- function(stock_code, year, assessmentkey) {
+quality_assessment_data_local <- function(stock_code, year) {
     years <- c(2023, 2022, 2021, 2020, 2019)
     years <- years[years <= year]
     datalist <- list()
 
-    for (year in years) {
-        data_temp <- try(access_sag_data_local(stock_code, year, assessmentkey))
-
-        if (isTRUE(class(data_temp) == "try-error")) {
+    data_temp <- try(access_sag_data_local(stock_code, years))
+    if (isTRUE(class(data_temp) == "try-error")) {
             next
         } else {
             data_temp <- filter(data_temp, between(Year, 2005, 2023))
@@ -129,32 +133,23 @@ quality_assessment_data_local <- function(stock_code, year, assessmentkey) {
                 F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
                 AssessmentYear, StockPublishNote, Purpose, SAGStamp
             )
-
+            
             data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
             data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
             data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
             data_temp$FAge <- as.character(data_temp$FAge)
             data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
 
-            datalist[[year]] <- data_temp
+            
         }
-    }
-
-
-    ### bind data in unique df
-    big_data <- dplyr::bind_rows(datalist) #################### probem is with this function
-
 
     # take out non published data from before 2021 in big data
-    big_data <- filter(big_data, StockPublishNote == "Stock published")
-    big_data <- filter(big_data, Purpose == "Advice")
-
-    big_data <- big_data %>% distinct()
-
+    SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice") %>% distinct()
+    
     # make assessmentYear as factor
-    big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+    SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 
-    return(big_data)
+    return(SAG_data)
 }
 
 

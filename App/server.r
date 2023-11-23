@@ -56,7 +56,7 @@ server <- function(input, output, session) {
       dplyr::mutate(
         EcoRegion = removeWords(EcoRegion, "Ecoregion"),
         Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.)),
-        stock_description = purrr::map_chr(AssessmentKey, .f = ~ access_sag_data_local(input$selected_years, .x)$StockDescription[1]),
+        stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
         stock_location = parse_location_from_stock_description(stock_description)
       )
   }
@@ -182,7 +182,7 @@ server <- function(input, output, session) {
     msg("downloading:", year)
     
     #   # Dowload the data
-    access_sag_data_local( year, query$assessmentkey)
+    access_sag_data_local(stock_name, year) %>% filter(AssessmentKey == query$assessmentkey)
   }) 
   
   sagSettings <- reactive({
@@ -298,7 +298,7 @@ output$download_SAG_Data <- downloadHandler(
 
     year <- query$year 
     
-    quality_assessment_data_local(stock_name, year, query$assessmentkey)
+    quality_assessment_data_local(stock_name, year)
   }) 
   
 
@@ -420,7 +420,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local( query$year, query$assessmentkey), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
