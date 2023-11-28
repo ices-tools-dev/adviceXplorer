@@ -39,6 +39,4 @@ vignettes/*.pdf
 .Renviron
 
 # csv files
-.csv
-# data directory
-/App/Data/
+*.csv
