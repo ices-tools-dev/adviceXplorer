@@ -151,14 +151,14 @@ server <- function(input, output, session) {
     query$assessmentkey <- query_string$assessmentkey
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      # info <- FishStockReferencePoints(query$assessmentkey)[[1]]
+      
       info <- FishStockReferencePoints(query$assessmentkey)
 
       query$stockkeylabel <- info$StockKeyLabel
-      query$year <- info$AssessmentYear #### 
+      query$year <- info$AssessmentYear 
 
       msg("stock selected from url:", query$stockkeylabel)
-      msg("year of SAG/SID selected from url:", query$year) #####
+      msg("year of SAG/SID selected from url:", query$year)
 
       updateNavbarPage(session, "tabset", selected = "Development over time")
       shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
@@ -170,7 +170,7 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    # info <- FishStockReferencePoints(query$assessmentkey)[[1]]
+    
     info <- FishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
@@ -289,7 +289,7 @@ output$download_SAG_Data <- downloadHandler(
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
-    # info <- getFishStockReferencePoints(query$assessmentkey)[[1]]
+    
     info <- FishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear 
@@ -534,13 +534,6 @@ observeEvent(input$preview, {
             )
   })
 
-############### Catch scenario plot
-# catch_table_names <- eventReactive(catch_scenario_table(),{
-#   req(query$stockkeylabel, query$year)
-#   catch_scenario_table()$cols
-  
-
-# })
 
 catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
   validate(
