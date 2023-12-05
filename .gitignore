@@ -39,4 +39,22 @@ vignettes/*.pdf
 .Renviron
 
 # csv files
-.csv
+#*.csv
+
+# SAG csv files
+/App/Data/SAG_2017/
+/App/Data/SAG_2018/
+/App/Data/SAG_2019/
+/App/Data/SAG_2020/
+/App/Data/SAG_2021/
+/App/Data/SAG_2022/
+/App/Data/SAG_2023/
+
+# SID csv files
+/App/Data/SID_2017/
+/App/Data/SID_2018/
+/App/Data/SID_2019/
+/App/Data/SID_2020/
+/App/Data/SID_2021/
+/App/Data/SID_2022/
+/App/Data/SID_2023/

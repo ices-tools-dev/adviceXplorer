@@ -27,27 +27,27 @@
 #'
 #' @export
 #'
-options(icesSAG.use_token = FALSE)
+# options(icesSAG.use_token = FALSE)
 update_SAG <- function(year){
     mkdir(paste0("Data/SAG_", year))
 
     # lookup for assessment key for summary
     sag <-
-      getListStocks(year = year) %>%
+      StockList(year = year) %>%
       select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
-      rename(fishstock = StockKeyLabel)
+      rename(FishStock = StockKeyLabel)
 
-    summary <- load_sag_summary(year) %>%
-      left_join(sag, by = c("fishstock", "AssessmentYear", "Purpose"))
+    summary <- SummaryTable(sag$AssessmentKey) %>%
+      left_join(sag, by = c("FishStock","AssessmentKey", "AssessmentYear", "Purpose"))
 
     write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
-    refpts <- load_sag_refpts(year)
+    refpts <- FishStockReferencePoints(sag$AssessmentKey)
     ###
-    CI <- get_CI(refpts)
-    refpts <- left_join(refpts,CI)
+    # CI <- get_CI(refpts)
+    # refpts <- left_join(refpts,CI)
 
-    write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year))
+    write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote=TRUE)
 }
 
 #' Returns the data summary from the ICES Stock Assessment database.

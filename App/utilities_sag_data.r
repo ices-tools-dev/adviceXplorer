@@ -64,20 +64,32 @@ access_sag_data <- function(stock_code, year) {
 #' @export
 #'
 access_sag_data_local <- function(stock_code, year) {
-#   
-    # Dowload the data
-    df_summary <- fread(sprintf("Data/SAG_%s/SAG_summary.csv", year)) ####there is a space after SAG_ fix this below
-    SAGsummary <- df_summary %>% filter(fishstock == stock_code)
+  
+    out1 <-
+    lapply(
+      year,
+      function(i) {        
+          fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+      }
+    )
+    SAGsummary <- do.call(rbind, out1)
+    
+    out2 <-
+    lapply(
+      year,
+      function(j) {        
+          fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
+      }
+    )
+    SAGrefpts <- do.call(rbind, out2)
 
-    df_refpts <- fread(sprintf("Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
-    SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
+    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
 
-    data_sag <- merge(SAGsummary, SAGrefpts)
-    data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
+    data_sag <- data_sag %>% select(-FishStock) %>% filter(StockPublishNote == "Stock published")
     
     return(data_sag)
+    
 }
-
 
 
 #' Reads SAG data stored locally for multiple years prior to the year provided (ex year = 2019, years of data returned = c(2017,2018,2019))
@@ -109,46 +121,33 @@ quality_assessment_data_local <- function(stock_code, year) {
     years <- years[years <= year]
     datalist <- list()
 
-    for (year in years) {
-        data_temp <- try(access_sag_data_local(stock_code, year))
-
-        if (isTRUE(class(data_temp) == "try-error")) {
+    data_temp <- try(access_sag_data_local(stock_code, years))
+    if (isTRUE(class(data_temp) == "try-error")) {
             next
         } else {
             data_temp <- filter(data_temp, between(Year, 2005, 2023))
             data_temp <- data_temp %>% select(
                 Year,
-                recruitment, RecruitmentAge,
-                SSB, Bpa, Blim, MSYBtrigger, stockSizeDescription, stockSizeUnits,
-                F, FLim, Fpa, FMSY, Fage, fishingPressureDescription,
+                Recruitment, RecruitmentAge,
+                SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
+                F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
                 AssessmentYear, StockPublishNote, Purpose, SAGStamp
             )
-
+            
             data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
-            data_temp$stockSizeDescription <- as.character(data_temp$stockSizeDescription)
-            data_temp$ stockSizeUnits <- as.character(data_temp$ stockSizeUnits)
-            data_temp$Fage <- as.character(data_temp$Fage)
-            data_temp$fishingPressureDescription <- as.character(data_temp$fishingPressureDescription)
-
-            datalist[[year]] <- data_temp
+            data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
+            data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
+            data_temp$FAge <- as.character(data_temp$FAge)
+            data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)            
         }
-    }
-
-
-    ### bind data in unique df
-    big_data <- dplyr::bind_rows(datalist) #################### probem is with this function
-
 
     # take out non published data from before 2021 in big data
-    big_data <- filter(big_data, StockPublishNote == "Stock published")
-    big_data <- filter(big_data, Purpose == "Advice")
-
-    big_data <- big_data %>% distinct()
-
+    SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice") %>% distinct()
+    
     # make assessmentYear as factor
-    big_data$AssessmentYear <- as.factor(big_data$AssessmentYear)
+    SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 
-    return(big_data)
+    return(SAG_data)
 }
 
 
@@ -368,7 +367,7 @@ get_additional_landing_data <- function(assessmentKey) {
 #' @export
 #'
 get_link_replaced_advice <- function(year, stock_code) {
-  link <- getListStocks(year) %>%
+  link <- StockList(year) %>%
     filter(StockKeyLabel == stock_code) %>%
     filter(Purpose == "Replaced") %>%
     pull(LinkToAdvice)

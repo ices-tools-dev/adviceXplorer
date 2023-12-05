@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' theme_ICES_plots(type = "catches", df)
+#' theme_ICES_plots(type = "Catches", df)
 #' }
 #'
 #' @references
@@ -24,7 +24,7 @@
 #'
 theme_ICES_plots <-
   function(
-    type = c("catches", "recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
+    type = c("Catches", "Recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
     title = NULL, ylegend = NULL, ymax = NULL) {
     font <- "Calibri, sans-serif" # assign font family up front
     tmp <- theme_minimal() %+replace% # replace elements we want to change
@@ -55,9 +55,9 @@ theme_ICES_plots <-
                 hjust = 0, # left align
                 vjust = 1,
                 margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
-                if (type == "catches") {
+                if (type == "Catches") {
                     color <- "#002b5f"
-                } else if (type == "recruitment" | type == "quality_R") {
+                } else if (type == "Recruitment" | type == "quality_R") {
                     color <- "#28b3e8"
                 } else if (type == "F" | type == "quality_F") {
                     color <- "#ed5f26"
@@ -84,13 +84,13 @@ theme_ICES_plots <-
 
         )
 
-    if (type == "catches") {
+    if (type == "Catches") {
 
         if (is.null(title)) {
           title <- "Catches"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$units))
+          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$Units))
         }
 
         if (is.null(ymax)) {
@@ -106,12 +106,12 @@ theme_ICES_plots <-
                 y = ylegend
             ),
             scale_fill_manual(values = c(
-                "landings" = "#002b5f",
-                "discards" = "#fda500",
-                "catches" = "#002b5f",
-                "industrial bycatch" = "#00b29d",
-                "unallocated_Removals" = "#6eb200",
-                "Down-weighted catches" = "#6eb5d2"
+                "Landings" = "#002b5f",
+                "Discards" = "#fda500",
+                "Catches" = "#002b5f",
+                "Industrial Bycatch" = "#00b29d",
+                "Unallocated_Removals" = "#6eb200",
+                "Down-weighted Catches" = "#6eb5d2"
             )),
             limits,
             scale_y_continuous(
@@ -121,10 +121,10 @@ theme_ICES_plots <-
                 }
             )
         )
-    } else if (type == "recruitment") {
+    } else if (type == "Recruitment") {
 
         if (is.null(title)) {
-          title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age))
+          title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
         }
         if (is.null(ylegend)) {
           ylegend <- "Recruitment in billions"
@@ -136,7 +136,7 @@ theme_ICES_plots <-
                 title = title,
                 y = ylegend
             ),
-            scale_fill_manual(values = c("recruitment" = "#28b3e8")),
+            scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) {
@@ -149,14 +149,14 @@ theme_ICES_plots <-
           title <- "Fishing pressure"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+          ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
         }
 
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = title, #"Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$recruitment_age)),
-                y = ylegend, #sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage)), # sprintf("Catches in 1000 %s", dplyr::last(df$units))
+                title = title, #"Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge)),
+                y = ylegend, #sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge)), # sprintf("Catches in 1000 %s", dplyr::last(df$Units))
                 x = "Year"
             ),
             scale_color_manual(values = c(
@@ -188,7 +188,7 @@ theme_ICES_plots <-
           title <- "Spawning Stock Biomass"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("%s in 1000 %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+          ylegend <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
           ylabels_func <- function(l) {
             trans <- l / 1000 #1000000
           }
@@ -243,7 +243,7 @@ theme_ICES_plots <-
     } else if (type == "quality_SSB") {
 
         if (is.null(title)) {
-          title <- sprintf("%s in 1000 %s", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+          title <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
         }
 
         rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
@@ -308,7 +308,7 @@ theme_ICES_plots <-
         line_size <- append(line_size, line_size_rfpt)
 
         if (is.null(title)) {
-          title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+          title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
         }
 
         theme_ICES_plots <- list(
@@ -455,7 +455,7 @@ data_download_button <- function(disclaimer_text) {
     return(dl_button)
 }
 
-#' Function to plot landings ans discards
+#' Function to plot Landings ans Discards
 #'
 #' @param df (SAG data)
 #'
@@ -477,17 +477,17 @@ data_download_button <- function(disclaimer_text) {
 #'
 #' @export
 #'
-ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
-    
+ICES_plot_1 <- function(df, sagSettings) {
+                # function(df, sagSettings, additional_LandingData) {
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
-    df <- df %>% left_join(y = additional_LandingData, by = "Year")
+    # df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, landings, catches, discards, units, SAGStamp, ibc, unallocated_Removals) %>%
-        relocate(c(ibc, unallocated_Removals), .after = discards) %>%
-        rename("industrial bycatch" = ibc) 
+        select(Year, Landings, Catches, Discards, Units, SAGStamp, IBC, Unallocated_Removals) %>%
+        relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
+        rename("Industrial Bycatch" = IBC) 
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
@@ -500,14 +500,14 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
         return(all(is.na(dataframe[, ..col_name])))
     }
 
-    if (is_na_column(df,"landings")){
-        # df1$landings <- df1$catches
+    if (is_na_column(df,"Landings")){
+        # df1$Landings <- df1$Catches
         df1 <- df1 %>%
-        gather(type, count, catches:unallocated_Removals)
+        gather(type, count, Catches:Unallocated_Removals)
     } else {
         df1 <- df1 %>%
-        select(-catches) %>% 
-        gather(type, count, landings:unallocated_Removals)
+        select(-Catches) %>% 
+        gather(type, count, Landings:Unallocated_Removals)
     }
     
 
@@ -531,12 +531,12 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
                             data = df1 %>% filter(Year %in% shadeYears), 
                             aes(x = Year, 
                             y = count, 
-                            fill = "Down-weighted catches",
+                            fill = "Down-weighted Catches",
                             text = map(
                                     paste0(
                                         "<b>Year: </b>", Year,
                                         "<br>",
-                                        "<b>Down-weighted or preliminary catches: </b>", count
+                                        "<b>Down-weighted or preliminary Catches: </b>", count
                                     ), HTML
                                 )),
                             alpha = 0.5, 
@@ -551,7 +551,7 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
     p1 <-
         p1 +
         theme_ICES_plots(
-            type = "catches", df,
+            type = "Catches", df,
             title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
         
@@ -582,7 +582,7 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
 }
 
 
-#' Function to plot recruitment
+#' Function to plot Recruitment
 #'
 #' @param df (SAG data)
 #'
@@ -607,7 +607,7 @@ ICES_plot_1 <- function(df, sagSettings, additional_LandingData) {
 ICES_plot_2 <- function(df, sagSettings) {
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, recruitment, low_recruitment, high_recruitment, recruitment_age, SAGStamp)
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, RecruitmentAge, SAGStamp)
 
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
@@ -631,13 +631,13 @@ ICES_plot_2 <- function(df, sagSettings) {
 
     p2 <- df2 %>%
         ggplot(., aes(
-            x = Year, y = recruitment,
-            fill = "recruitment",
+            x = Year, y = Recruitment,
+            fill = "Recruitment",
             text = map(
                 paste0(
                     "<b>Year: </b>", Year,
                     "<br>",
-                    "<b>Recruitment: </b>", recruitment
+                    "<b>Recruitment: </b>", Recruitment
                 ), HTML
             )
         )
@@ -645,20 +645,20 @@ ICES_plot_2 <- function(df, sagSettings) {
         geom_bar(stat = "identity", data = df2 %>% filter(!Year %in% shadeYears))
 
 
-    if (any(!is.na(df2$high_recruitment))) {
+    if (any(!is.na(df2$High_Recruitment))) {
         p2 <- p2 +
             geom_errorbar(
-                data = df2 %>% filter(!is.na(high_recruitment)),
+                data = df2 %>% filter(!is.na(High_Recruitment)),
                 aes(
-                    ymin = low_recruitment,
-                    ymax = high_recruitment,
+                    ymin = Low_Recruitment,
+                    ymax = High_Recruitment,
                     text = map(
                         paste0(
                             "<b>Year: </b>", Year,
                             "<br>",
-                            "<b>High recruitment: </b>", high_recruitment,
+                            "<b>High Recruitment: </b>", High_Recruitment,
                             "<br>",
-                            "<b>Low recruitment: </b>", low_recruitment
+                            "<b>Low Recruitment: </b>", Low_Recruitment
                         ), HTML
                     )
                 ),
@@ -670,13 +670,13 @@ ICES_plot_2 <- function(df, sagSettings) {
         p2 <- p2 + geom_bar(stat = "identity", 
                             data = df2 %>% filter(Year %in% shadeYears), 
                             aes(x = Year, 
-                            y = recruitment, 
-                            fill = "recruitment",
+                            y = Recruitment, 
+                            fill = "Recruitment",
                             text = map(
                                     paste0(
                                         "<b>Year: </b>", Year,
                                         "<br>",
-                                        "<b>Assumed recruitment: </b>", recruitment
+                                        "<b>Assumed Recruitment: </b>", Recruitment
                                     ), HTML
                                 )),
                             alpha = 0.5, 
@@ -688,7 +688,7 @@ ICES_plot_2 <- function(df, sagSettings) {
     p2 <-
         p2 +
         theme_ICES_plots(
-            type = "recruitment", df,
+            type = "Recruitment", df,
             title = sagSettings2 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings2 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty()
         )
@@ -746,17 +746,17 @@ ICES_plot_3 <- function(df, sagSettings) {
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, low_F, high_F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
+        select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
         drop_na(F) # %>%
     
     p3 <- df3 %>%
         ggplot(., aes(x = Year, y = F))
 
-    if (any(!is.na(df3$low_F))) {
+    if (any(!is.na(df3$Low_F))) {
         p3 <- p3 +
             geom_ribbon(aes(
-                ymin = low_F,
-                ymax = high_F,
+                ymin = Low_F,
+                ymax = High_F,
                 fill = ConfidenceIntervalDefinition,
                 text = map(
                     paste0(
@@ -764,9 +764,9 @@ ICES_plot_3 <- function(df, sagSettings) {
                         "<br>",
                         "<b>F: </b>", F,
                         "<br>",
-                        "<b>High F: </b>", high_F,
+                        "<b>High F: </b>", High_F,
                         "<br>",
-                        "<b>Low F: </b>", low_F
+                        "<b>Low F: </b>", Low_F
                     ), HTML
                 )
             ),
@@ -909,16 +909,16 @@ ICES_plot_4 <- function(df, sagSettings) {
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, low_SSB, SSB, high_SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) #%>%
+  select(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) #%>%
 
 p4 <- df4 %>%
     ggplot(., aes(x = Year, y = SSB))
 
-if (any(!is.na(df4$low_SSB))) {
+if (any(!is.na(df4$Low_SSB))) {
   p4 <- p4 +
-    geom_ribbon(data =  df4 %>% filter(!is.na(high_SSB)), aes(
-      ymin = low_SSB,
-      ymax = high_SSB,
+    geom_ribbon(data =  df4 %>% filter(!is.na(High_SSB)), aes(
+      ymin = Low_SSB,
+      ymax = High_SSB,
       fill = ConfidenceIntervalDefinition,
       text = map(
         paste0(
@@ -926,9 +926,9 @@ if (any(!is.na(df4$low_SSB))) {
           "<br>",
           "<b>SSB: </b>", SSB,
           "<br>",
-          "<b>High SSB: </b>", high_SSB,
+          "<b>High SSB: </b>", High_SSB,
           "<br>",
-          "<b>Low SSB: </b>", low_SSB
+          "<b>Low SSB: </b>", Low_SSB
         ), HTML
       )
     ),
@@ -1154,7 +1154,7 @@ ICES_plot_5 <- function(df, sagSettings) {
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, stockSizeDescription, stockSizeUnits, SAGStamp) #%>%
+        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) #%>%
      
     p5 <- df5 %>%
         ggplot(., aes(x = Year, y = SSB, color = AssessmentYear))
@@ -1173,7 +1173,7 @@ ICES_plot_5 <- function(df, sagSettings) {
                         "<br>",
                         "<b>Assessment year: </b>", AssessmentYear,
                         "<br>",
-                        "<b>", stockSizeDescription, ": </b>", SSB, " ", stockSizeUnits
+                        "<b>", StockSizeDescription, ": </b>", SSB, " ", StockSizeUnits
                     ), HTML
                 )
             ) 
@@ -1297,7 +1297,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, FLim, Fpa, FMSY, Fage, fishingPressureDescription, AssessmentYear, SAGStamp) # %>%
+        select(Year, F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear, SAGStamp) # %>%
        
     p6 <- df6 %>%
         ggplot(., aes(x = Year, y = F, color = AssessmentYear)) 
@@ -1316,7 +1316,7 @@ ICES_plot_6 <- function(df, sagSettings) {
                         "<br>",
                         "<b>Assessment year: </b>", AssessmentYear,
                         "<br>",
-                        "<b>", fishingPressureDescription, ": </b>", F
+                        "<b>", FishingPressureDescription, ": </b>", F
                     ), HTML
                 )
             ) 
@@ -1413,7 +1413,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 }
 
 
-#' Function to plot recruitment (R) for the last 5 years (quality of assessement section)
+#' Function to plot Recruitment (R) for the last 5 years (quality of assessement section)
 #'
 #' @param df (quality of assessement SAG data)
 #'
@@ -1439,23 +1439,23 @@ ICES_plot_7 <- function(df, sagSettings) {
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
-        drop_na(recruitment) %>%
-        ggplot(., aes(x = Year, y = recruitment, color = AssessmentYear)) +
+        select(Year, Recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
+        drop_na(Recruitment) %>%
+        ggplot(., aes(x = Year, y = Recruitment, color = AssessmentYear)) +
         geom_line(
             aes(
                 x = Year,
-                y = recruitment,
+                y = Recruitment,
                 color = AssessmentYear,
-                size = "recruitment",
-                linetype = "recruitment",
+                size = "Recruitment",
+                linetype = "Recruitment",
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
                         "<br>",
                         "<b>Assessment year: </b>", AssessmentYear,
                         "<br>",
-                        "<b>Recruitment: </b>", recruitment,
+                        "<b>Recruitment: </b>", Recruitment,
                         "<br>",
                         "<b>Recruitment age: </b>", RecruitmentAge
                     ), HTML
@@ -1646,7 +1646,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 
 
 
-#' Plot to visualise the effect of the different catch scenarios on F, SSB and the resulting total catches
+#' Plot to visualise the effect of the different catch scenarios on F, SSB and the resulting total Catches
 #'
 #' @param tmp (catch scenario table)
 #' @param df (SAG data)
@@ -1675,17 +1675,17 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     
     F_yaxis_label <- sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(F_yaxis_label)) {
-          F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+          F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
         }
     
     
     SSB_yaxis_label <- sagSettings %>% filter(SAGChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(SSB_yaxis_label)) {
-    SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+    SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
         }
-    discards_yaxis_label <- "Discards (tonnes)"
+    Discards_yaxis_label <- "Discards (tonnes)"
        
-    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
     
     tmp <- data.frame(tmp$table)
     
@@ -1877,7 +1877,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         autosize = T,
         margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
         xaxis = list(
-            title = catches_yaxis_label,
+            title = Catches_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -1906,7 +1906,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 }
 
 
-#' Plot to visualise the effect of the different catch scenarios on F, discards and the resulting total catches
+#' Plot to visualise the effect of the different catch scenarios on F, Discards and the resulting total Catches
 #'
 #' @param tmp (catch scenario table)
 #' @param df (SAG data)
@@ -1930,7 +1930,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 #' @export
 #'
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
-    discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
+    Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     F_yaxis_label <- sagSettings %>%
@@ -1940,7 +1940,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
         as.character() %>%
         nullifempty()
     if (is.null(F_yaxis_label)) {
-        F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$fishingPressureDescription), dplyr::last(df$Fage))
+        F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
     }
 
 
@@ -1951,11 +1951,11 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
         as.character() %>%
         nullifempty()
     if (is.null(SSB_yaxis_label)) {
-        SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$stockSizeDescription), dplyr::last(df$stockSizeUnits))
+        SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
     }
 
 
-    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
 
     tmp <- data.frame(tmp$table)
 
@@ -2088,7 +2088,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
         hovermode = "x",
         autosize = T,
         xaxis = list(
-            title = catches_yaxis_label,
+            title = Catches_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -2118,12 +2118,12 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
         x = ~cat,
         y = ~CatchUnwantedSurviving,
         type = "bar",
-        name = "Proj. surviving discards",
+        name = "Proj. surviving Discards",
         marker = list(color = "#00c7b0")
     )
     fig2 <- fig2 %>% add_trace(
         y = ~CatchUnwanted,
-        name = "Proj. dead discards",
+        name = "Proj. dead Discards",
         marker = list(color = "#00c7b091")
     )
     fig2 <- fig2 %>% layout(
@@ -2144,7 +2144,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             showticklabels = TRUE
         ),
         yaxis = list(
-            title = discards_yaxis_label,
+            title = Discards_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -2162,10 +2162,10 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     fig_final <- subplot(fig_catch, fig2, nrows = 1, margin = 0.1) %>%
         layout(
             autosize = T,
-            xaxis = list(title = catches_yaxis_label),
+            xaxis = list(title = Catches_yaxis_label),
             xaxis2 = list(title = "Catch scenarios", categoryorder = "total ascending"),
             yaxis = list(title = F_yaxis_label),
-            yaxis2 = list(title = discards_yaxis_label),
+            yaxis2 = list(title = Discards_yaxis_label),
             legend = list(
                 orientation = "h",
                 y = 1.05,
@@ -2184,7 +2184,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 #'
 #' Downloads ...
 #'
-#' @param final_df (a df created with wrangle_catches_with_scenarios())
+#' @param final_df (a df created with wrangle_Catches_with_scenarios())
 #' @param catch_scenarios (one or more catch scenarios chosen by the user using selectizeInput)
 #' @param df (SAG data)
 #'
@@ -2208,7 +2208,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 #'
 TAC_timeline <- function(final_df, catch_scenarios, df) {
    
-    catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
 
     catch_time <- plot_ly(final_df,
         x = ~Year,
@@ -2249,7 +2249,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
         ),
     # )
         yaxis = list(
-            title = catches_yaxis_label, # "SSB",
+            title = Catches_yaxis_label, # "SSB",
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
