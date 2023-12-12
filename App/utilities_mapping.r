@@ -102,19 +102,21 @@ map_panel_server <- function(input, output, session) {
     idx_1 <- match(input$map1_shape_click$id, shape_eco$Ecoregion)
     
     if (input$map1_shape_click$group == "Eco_regions") {
-      selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id)
+      selected_1$groups <- c(selected_1$groups, input$map1_shape_click$id) #
+      # print(selected_1$groups)
       
       proxy_1 %>%
-        showGroup(group = input$map1_shape_click$id) 
+        showGroup(group = input$map1_shape_click$id) %>% 
+        hideGroup(group = setdiff(selected_1$groups, input$map1_shape_click$id))
     } 
-    
-    updateSelectizeInput(session,
-                         inputId = "selected_locations",
-                         label = "ICES Ecoregions",
+
+    updateVirtualSelect(inputId = "selected_locations",
+                         label = "ICES Ecoregions:",
                          choices = shape_eco$Ecoregion,
-                         selected = selected_1$groups
-    )
-    
+                         selected = input$map1_shape_click$id,
+                         session = session
+                         )
+        
   })
   
   observeEvent(input$selected_locations,

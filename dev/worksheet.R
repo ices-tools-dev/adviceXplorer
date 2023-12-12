@@ -70,7 +70,7 @@ getSAGSettings <- function(assessmentkey) {
         )
     )
 }
-assessmentkey <- 17630
+assessmentkey <- 17615
 settings <- getSAGSettings(assessmentkey)
 df<- settings[!(settings$settingValue == ""), ]
 
@@ -1053,3 +1053,245 @@ library(icesASD)
 icesASD::adviceDownload(adviceKeys = 3427)
 icesASD::getCatchScenariosTable(adviceKey = 3427)
 icesASD::get_catch_scenario_table("cod.27.47d20",2022)
+icesASD::getAdviceViewRecord(stockcode = "cod.27.46a7d20", 2023)
+
+
+sag <-
+      getListStocks(year = 2023) %>%
+      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
+      rename(fishstock = StockKeyLabel)
+
+summary <- load_sag_summary(2023) 
+
+%>%
+      left_join(sag, by = c("fishstock", "AssessmentKey","AssessmentYear", "Purpose"))
+
+
+stock_list_long <- fread(sprintf("App/Data/SID_%s/SID.csv", 2023))
+
+
+data <- stock_list_long
+# Row to duplicate (e.g., row 2)
+row_to_duplicate <- data %>% filter(StockKeyLabel == "cod.27.46a7d20")
+# row_to_duplicate <- data[2, ]
+
+# List of values to change
+new_values <- c(18282,18283,18284)
+
+# Number of times to duplicate the row
+# Sample dataframe
+# Sample dataframe
+# Sample dataframe
+df <- data.frame(
+  Name = c("Alice", "Bob", "Charlie", "David"),
+  Age = c(25, 30, 22, 27),
+  Score = c(90, 85, 88, 92)
+)
+
+# Rows to duplicate (e.g., rows 2 and 3)
+# rows_to_duplicate <- df[c(2, 3), ]
+row_to_duplicate <- data %>% filter(StockKeyLabel == "cod.27.46a7d20")
+# List of new values for the specified column (e.g., "Score")
+
+new_values <- c(18282,18283,18284)
+
+# Number of times to duplicate each row
+n_duplications <- 2
+
+# Create an empty dataframe for the result
+result_df <- data.frame()
+
+# Loop through the rows to duplicate
+for (i in 1:nrow(rows_to_duplicate)) {
+  row <- rows_to_duplicate[i, ]
+  
+  # Duplicate the row and modify the specified column
+  duplicated_rows <- data.frame(
+    # AssessmentKey = rep(row$AssessmentKey, n_duplications)
+    # Age = rep(row$Age, n_duplications),
+    AssessmentKey = rep(new_values[i], n_duplications)
+  )
+  
+  # Add the duplicated rows to the result dataframe
+  result_df <- rbind(result_df, duplicated_rows)
+}
+
+# Combine the result with the original dataframe
+result_df <- rbind(df, result_df)
+
+# Reset row names and row indices
+rownames(result_df) <- NULL
+
+# Print the result
+print(result_df)
+
+##############################################################################################################################
+# Sample dataframe
+# data <- data.frame(
+#   AssessmentKey = c(18396, 18396),
+#   icon = c("<img src='cod-7e-k_pic.png' height=40>", "<img src='cod-7e-k_pic.png' height=40>"),
+#   doi = c("<a href='not_available' target='_blank'><img src='pdf-file.png' height='30px'/></a>", "<a href='not_available' target='_blank'><img src='pdf-file.png' height='30px'/></a>"),
+#   FO_doi = c("<a href='' target='_blank'><img src='seafood.png' height='30px'/></a>", "<a href='' target='_blank'><img src='seafood.png' height='30px'/></a>"),
+#   group_url = c("<a href='https://www.ices.dk/community/groups/Pages/WGNSSK.aspx' target='_blank'>WGNSSK</a>", "<a href='https://www.ices.dk/community/groups/Pages/WGNSSK.aspx' target='_blank'>WGNSSK</a>"),
+#   SAG_url = c("<a href='https://standardgraphs.ices.dk/ViewCharts.aspx?key=18396' target='_blank'><img src='database.png' height='30px'/></a>", "<a href='https://standardgraphs.ices.dk/ViewCharts.aspx?key=18396' target='_blank'><img src='database.png' height='30px'/></a>"),
+#   visa_url = c("<a href='https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=18396' target='_blank'><img src='map.png' height='30px'/></a>", "<a href='https://gis.ices.dk/sf/index.html?widget=visa&assessmentKey=18396' target='_blank'><img src='map.png' height='30px'/></a>")
+# )
+data <- stock_list_long
+# Rows to duplicate
+# rows_to_duplicate <- data[c(1, 2), ]
+rows_to_duplicate <- data %>% filter(StockKeyLabel == "cod.27.46a7d20")
+
+# List of new values for specific columns
+new_values <- list(
+  AssessmentKey = c(18282,18283,18284)
+)
+
+# Number of times to duplicate each row
+n_duplications <- 1
+
+# Create an empty dataframe for the result
+result_df <- data.frame()
+
+# Loop through the rows to duplicate
+for (i in 1:nrow(rows_to_duplicate)) {
+  for(j in 1:3) {
+  row <- rows_to_duplicate[i, ]
+  
+  # Duplicate the row n_duplications times
+  duplicated_rows <- data.frame(
+    StockKeyLabel = rep(row$StockKeyLabel, n_duplications),
+    EcoRegion = rep(row$EcoRegion, n_duplications),
+    SpeciesCommonName = rep(row$SpeciesCommonName, n_duplications),
+    ExpertGroup = rep(row$ExpertGroup, n_duplications),
+    DataCategory = rep(row$DataCategory, n_duplications),
+    YearOfLastAssessment = rep(row$YearOfLastAssessment, n_duplications),
+    AssessmentFrequency = rep(row$AssessmentFrequency, n_duplications),
+    AdviceCategory = rep(row$AdviceCategory, n_duplications),
+    AssessmentKey = new_values$AssessmentKey[j],
+    icon = rep(row$icon, n_duplications),
+    doi = rep(row$icon, n_duplications),
+    FO_doi = rep(row$doi, n_duplications),
+    group_url = rep(row$group_url, n_duplications),
+    SAG_url = rep(row$SAG_url, n_duplications),
+    visa_url = rep(row$visa_url, n_duplications)
+  )
+  
+  # Add the duplicated rows to the result dataframe
+  result_df <- rbind(result_df, duplicated_rows)
+}
+}
+
+# Combine the result with the original dataframe
+result_df <- rbind(data, result_df)
+
+# Reset row names and row indices
+rownames(result_df) <- NULL
+
+# Print the result
+print(result_df)
+write.csv(result_df, "SID.csv")
+
+test <- result_df %>% filter(StockKeyLabel == "cod.27.46a7d20")
+
+test
+
+stock_code <- "cod.27.46a7d20"
+year <- 2023
+assessmentkey <- 18282
+access_sag_data_local <- function(stock_code, year, assessmentkey) {
+#   
+    # Dowload the data
+    df_summary <- fread(sprintf("App/Data/SAG_%s/SAG_summary.csv", 2023)) ####there is a space after SAG_ fix this below
+    SAGsummary <- df_summary %>% filter(fishstock == stock_code & AssessmentKey == assessmentkey)
+
+    names(SAGsummary)
+    unique(SAGsummary$AssessmentKey)
+    unique(SAGsummary$Purpose)
+    SAGsummary$Year
+
+    df_refpts <- fread(sprintf("App/Data/SAG_%s/SAG_refpts.csv", year)) ####there is a space after SAG_ fix this below
+    SAGrefpts <- df_refpts %>% filter(StockKeyLabel == stock_code)
+
+    data_sag <- merge(SAGsummary, SAGrefpts)
+
+    # data_sag <- data_sag %>% filter(AssessmentKey == AssessmentKey)
+
+    data_sag <- data_sag %>% select(-fishstock) %>% filter(StockPublishNote == "Stock published")
+    # print(data_sag) %>% 
+    return(data_sag)
+    
+}
+names(SAGsummary)
+SAGsummary <- getSAG("cod.27.46a7d20", 2023,
+        data = "summary", combine = TRUE, purpose = "Advice"
+    )
+
+write.csv(SAGsummary, "test_2023.csv")
+SAGsummary <- SAGsummary %>% filter()
+
+
+out_temp <- jsonlite::fromJSON(
+      URLencode(
+        sprintf("https://sag.ices.dk/SAG_API/api/StockDownload?assessmentKey=%s", 18282) 
+      )
+    )
+https://sag.ices.dk/SAG_API/api/StockDownload?assessmentKey=18282
+
+
+getAdviceViewRecord(assessmentkey = 18396)
+
+
+df <- data.frame(
+  ID = c(1, 2, 3),
+  Name = c("John", "Alice", "Bob"),
+  Age = c(25, 30, 22)
+)
+
+# Choose the row you want to duplicate (let's say the first row, index 1)
+row_to_duplicate <- df[1, ]
+
+# Duplicate the chosen row
+duplicated_row <- rbind(df, row_to_duplicate)
+
+# Change one value in the duplicated row (let's say change the ID to 4)
+duplicated_row[nrow(duplicated_row), "ID"] <- 4
+
+year <- 2023
+update_SID <- function(year){
+    mkdir(paste0("App/Data/SID_", year))
+    
+    ### download SID
+    stock_list_all <- download_SID(year)
+    ### modifify SID table, 1 row == 1 Ecoregion
+    stock_list_long <- separate_ecoregions(stock_list_all)
+    names(stock_list_long)
+    ### add hyperlinks to table
+    # stock_list_long <- sid_table_links(stock_list_long)
+
+    
+    if (stock_list_long$YearOfLastAssessment == 2023){
+      row_to_duplicate <- stock_list_long %>% filter(StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion %in% c("Greater North Sea Ecoregion", "Celtic Seas Ecoregion"))
+      # row_to_duplicate <- stock_list_long[stock_list_long$StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion == "Greater North Sea Ecoregion" , ] 
+      duplicated_df <- row_to_duplicate[rep(row.names(row_to_duplicate), each = 3), ]
+      row.names(duplicated_df) <- NULL  # Reset row names
+      
+      Cod_Keys <- c(18282,18283,18284,18282,18283,18284)
+      for (i in 1:nrow(duplicated_df)) {
+        duplicated_df$AssessmentKey[i] <- Cod_Keys[i]
+      }
+    }
+
+    stock_list_long <- rbind(stock_list_long, duplicated_df)
+    row.names(stock_list_long) <- NULL  # Reset row names
+  
+    write.taf(stock_list_long, file = "SID.csv", dir = paste0("App/Data/SID_", year))
+
+}
+
+year <- 2023
+update_SID(2022)
+
+library(icesSAG)
+
+testSAG <- icesSAG::StockList(2023)
+names(testSAG)

@@ -358,12 +358,12 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #' 
-wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year, additional_LandingData) {
+wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
   
   catches_data <- catches_data %>%
     filter(Purpose == "Advice") %>%
-    select(Year, catches, landings, discards) %>% 
-    left_join(y = additional_LandingData, by = "Year")
+    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals ) #%>% 
+    # left_join(y = additional_LandingData, by = "Year")
 
 
   #  Function to check if a column is made up of all NA values
@@ -371,11 +371,11 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, c
         return(all(is.na(dataframe[, ..col_name])))
     }
 
-    if (is_na_column(catches_data,"catches")){
-      catches_data$catches <- rowSums(catches_data[,c("landings", "discards","ibc","unallocated_Removals")], na.rm=TRUE)
-      catches_data <- catches_data %>% select(c("Year", "catches"))
+    if (is_na_column(catches_data,"Catches")){
+      catches_data$Catches <- rowSums(catches_data[,c("Landings", "Discards","IBC","Unallocated_Removals")], na.rm=TRUE)
+      catches_data <- catches_data %>% select(c("Year", "Catches"))
     } else{
-      catches_data <- catches_data %>% select(c("Year", "catches"))
+      catches_data <- catches_data %>% select(c("Year", "Catches"))
     }
 
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
@@ -384,13 +384,13 @@ wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, c
 
   # catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year - 1)
 
-  catches_data <- catches_data %>% mutate(catches = ifelse(Year == year,  as.numeric(catch_scenario_list_previous_year$adviceValue), catches)) %>% na.omit()
+  catches_data <- catches_data %>% mutate(Catches = ifelse(Year == year,  as.numeric(catch_scenario_list_previous_year$adviceValue), Catches)) %>% na.omit()
   
   catches_data_year_before <- catch_scenario_table
   catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
 
-  catches_data_year_before$TotCatch <- tail(catches_data$catches, 1)
-
+  catches_data_year_before$TotCatch <- tail(catches_data$Catches, 1)
+  
   catches_data <- setNames(catches_data, names(catch_scenario_table))
   final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
 
