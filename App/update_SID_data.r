@@ -53,3 +53,41 @@ update_SID <- function(year) {
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year))
 }
 # update_SID(2023)
+
+
+
+#' Updates the data used to run the app
+#'
+#' @param mode the mode used to update the data
+#'
+#' @return downloads and save the data to the respective folders
+#'
+#' @note
+#' Can add some helpful information here
+#'
+#' @seealso
+#'
+#' @examples
+#' \dontrun{
+#'UpdateDataApp(mode = "LatestYear")
+#' }
+#'
+#' @references
+#'
+#' https://sid.ices.dk/Default.aspx
+#'
+#' @export
+#'
+UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
+    if (mode == "AllYears") {
+        years <- c(2023, 2022, 2021, 2020, 2019, 2018, 2017)
+    } else if (mode == "LatestYear") {
+        years <- as.integer(format(Sys.Date(), "%Y"))
+    }
+
+    for (year in years) {
+        update_SAG(year)
+        update_SID(year)
+    }
+}
+
