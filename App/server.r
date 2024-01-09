@@ -338,7 +338,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 
 ##### Advice view info
 advice_view_info <- reactive({
-  asd_record <- getAdviceViewRecord(assessmentkey = query$assessmentkey)
+  asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
   if (!is_empty(asd_record)){ 
     asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
   }  
