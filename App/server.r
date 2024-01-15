@@ -445,6 +445,12 @@ output$catch_scenarios <- renderUI({
 
 ########## Historical catches panel (Plot)
 output$TAC_timeline <- renderPlotly({
+  print(test_table())
+  print("=========")
+  print(input$catch_choice)
+  print("=========")
+  print(SAG_data_reactive())
+  
   validate(
     need(!is_empty(catch_scenario_table()$table), "Catch scenarios not available for this stock")
   )

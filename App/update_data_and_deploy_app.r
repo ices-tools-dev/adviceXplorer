@@ -29,5 +29,5 @@ for (year in years) {
     update_SID(year)
 }
 
-# source("deploy.r")
+source("deploy.r")
 

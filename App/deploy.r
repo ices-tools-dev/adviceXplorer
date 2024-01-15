@@ -18,8 +18,8 @@
 #'
 #' @export
 deployApp(
-  appName = "online-single-stock-advice",
-  appTitle = "Online single-stock advice",
+  appName = "XTest",
+  appTitle = "XTest",
   forceUpdate = getOption("rsconnect.force.update.apps", TRUE),
   launch.browser = FALSE
 )

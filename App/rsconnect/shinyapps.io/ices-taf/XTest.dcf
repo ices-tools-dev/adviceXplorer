@@ -1,0 +1,10 @@
+name: XTest
+title: XTest
+username: ices-taf
+account: ices-taf
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10915891
+bundleId: 8138195
+url: https://ices-taf.shinyapps.io/XTest/
+version: 1

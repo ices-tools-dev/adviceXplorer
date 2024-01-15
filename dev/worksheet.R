@@ -1295,3 +1295,20 @@ library(icesSAG)
 
 testSAG <- icesSAG::StockList(2023)
 names(testSAG)
+
+
+
+library(ggplot2)
+
+# Sample data (replace this with your actual data)
+data <- data.frame(Year = c(2018, 2019, 2020, 2021, 2022, 2023),
+                   NumStocks = c(181, 202, 187, 186, 190, 176))
+
+# Create a ggplot with smoothed lines
+ggplot(data, aes(x = Year, y = NumStocks)) +
+  geom_line(color = "blue") +  # Add a line plot
+  geom_smooth(method = "loess", se = FALSE, color = "red") +  # Add smoothed line without confidence interval
+  labs(title = "Number of Stocks Over Years",
+       x = "Year",
+       y = "Number of Stocks") +
+  theme_minimal()  # You can customize the theme as needed
