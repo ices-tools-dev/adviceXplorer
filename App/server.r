@@ -223,9 +223,11 @@ onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '
 output$download_SAG_Data <- downloadHandler(
     filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
-      
-      fs <- c("Disclaimer.txt", "adviceXplorer_SAG_data.csv")
-      write.csv(SAG_data_reactive(), file = "adviceXplorer_SAG_data.csv")
+
+      nameCSV <- paste0("adviceXplorer_SAG_data_", SAG_data_reactive()$SAGStamp[1], ".csv")
+
+      fs <- c("Disclaimer.txt", nameCSV)
+      write.csv(SAG_data_reactive() %>% select_if(~!all(is.na(.))), file = nameCSV)
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
@@ -295,9 +297,11 @@ output$download_SAG_Data <- downloadHandler(
   output$download_QualAss_Data <- downloadHandler(
     filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
-      
-      fs <- c("Disclaimer.txt", "adviceXplorer_QualityofAssessment_data.csv")
-      write.csv(advice_action_quality(), file = "adviceXplorer_QualityofAssessment_data.csv")
+
+      nameCSV <- paste0("adviceXplorer_QualofAssessment_data_", SAG_data_reactive()$SAGStamp[1], ".csv")
+
+      fs <- c("Disclaimer.txt", nameCSV)
+      write.csv(advice_action_quality(), file = nameCSV)
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
@@ -593,10 +597,13 @@ output$table <- DT::renderDT(
 output$download_catch_table <- downloadHandler(
     filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
+
+      nameCSV_table <- paste0("adviceXplorer_catchScenario_data_", advice_view_info()$stockCode,"_", advice_view_info()$assessmentYear,".csv")
+      nameCSV_notes <- paste0("adviceXplorer_catchScenarioNotes_data_", advice_view_info()$stockCode,"_", advice_view_info()$assessmentYear, ".csv")
       
-      fs <- c("Disclaimer.txt", "adviceXplorer_catchScenario_data.csv","adviceXplorer_catchScenarioNotes_data.csv")
-      write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = "adviceXplorer_catchScenario_data.csv")
-      write.csv(icesASD::getCatchScenariosNotes(advice_view_info()$adviceKey), file = "adviceXplorer_catchScenarioNotes_data.csv")
+      fs <- c("Disclaimer.txt", nameCSV_table, nameCSV_notes)
+      write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = nameCSV_table)
+      write.csv(icesASD::getCatchScenariosNotes(advice_view_info()$adviceKey), file = nameCSV_notes)
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
