@@ -8,7 +8,8 @@ msg <- function(...) {
 # required if using most recent version of sf
 sf::sf_use_s2(FALSE)
 
-options(icesSAG.use_token = FALSE)
+options(spinner.type = 5, 
+        spinner.color = "#f15d22")
 
 
 

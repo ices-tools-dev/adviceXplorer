@@ -27,7 +27,7 @@ stock_selection_left_side <- function() {
       tags$style(type = "text/css", "#logo {height: 60px !important; margin-top: 10px;  padding-bottom: 20px; }"),
       tags$img(id = "logo", src = "adviceXplorer logo_color.png"),
       tags$style(type = "text/css", "#map1 {height: calc(72vh - 220px) !important;} overflow-y: hidden;"),      
-      withSpinner(leafletOutput("map1", height = "100%", width = "100%"))
+      withSpinner(leafletOutput("map1", height = "100%", width = "100%"), size = 0.7)
     ),
     HTML("</br>"),
     virtualSelectInput(
@@ -89,7 +89,7 @@ stock_selection_right_side <- function(){
   mainPanel(
     width = 7,
     style = "overflow-x: auto;",
-    withSpinner(DTOutput("tbl"))
+    withSpinner(DTOutput("tbl"), size = 0.7)
   )
 }
 
@@ -178,9 +178,9 @@ SAG_plots_right_panel <- function() {
 #' 
 SAG_plots_1_2_fluid <- function() {
   fluidRow(
-    column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),
+    column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"), size = 0.7)),
     
-    column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
+    column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%"), size = 0.7))
   )
 }
 
@@ -207,9 +207,9 @@ SAG_plots_1_2_fluid <- function() {
 #' 
 SAG_plots_3_4_fluid <- function() {
   fluidRow(
-    column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
+    column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"), size = 0.7)),
     
-    column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+    column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"), size = 0.7))
   )
 }
 ##############################################Quality of assessment tab
@@ -286,11 +286,11 @@ quality_of_assessment_fluid <- function() {
   sidebarPanel(
     width = 12,
   fluidRow(
-    column(4, withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))),
+    column(4, withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"), size = 0.7)),
     
-    column(4, withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))),
+    column(4, withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"), size = 0.7)),
     
-    column(4, withSpinner(plotlyOutput("plot7", height = "100%", width = "100%")))
+    column(4, withSpinner(plotlyOutput("plot7", height = "100%", width = "100%"), size = 0.7))
   )
   )
 }
@@ -321,24 +321,24 @@ quality_of_assessment_fluid <- function() {
 catch_scenarios_left_panel <- function() {
   sidebarPanel(
     width = 6,
-    withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%")),
+    withSpinner(plotlyOutput("catch_scenario_plot_F_SSB_Catch", height = "30%", width = "100%"), size = 0.7),
     br(),
     tabsetPanel(
       tabPanel(
         "Catch time series",
         uiOutput("catch_scenarios"),
-        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"), size = 0.7)
       ),
       tabPanel(
         "Relative change: radial plot",
         uiOutput("catch_scenarios_radial"),
-        withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%")),
+        withSpinner(plotlyOutput("Radial_plot", height = "100%", width = "100%"), size = 0.7),
         htmlOutput("Radial_plot_disclaimer")
       ),
       tabPanel(
         "% of change: lollipop plot",
         uiOutput("catch_indicators_lollipop"),
-        withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%")),
+        withSpinner(plotlyOutput("Lollipop_plot", height = "100%", width = "100%"), size = 0.7),
         htmlOutput("lollipop_plot_disclaimer")
         # )
       )
@@ -372,7 +372,7 @@ catch_scenarios_right_panel <- function() {
   sidebarPanel(
     width = 6,
     style = "overflow-x: auto;",
-    withSpinner(DTOutput("table", height = "100%", width = "100%")),
+    withSpinner(DTOutput("table", height = "100%", width = "100%"), size = 0.7),
     htmlOutput("footnotes", height = "100%", width = "100%")
   )
 }
@@ -402,7 +402,7 @@ catch_scenarios_right_panel <- function() {
 header_left_panel_stock_info <- function(id) {
   wellPanel(
     style = "height: fit-content; overflow-y: hidden; white-space: normal;",
-    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
+    withSpinner(htmlOutput(id, height = "100%", width = "100%"), size = 0.7)
   )
 }
 
@@ -432,7 +432,7 @@ header_left_panel_stock_info <- function(id) {
 header_right_panel_headline <- function(id) {
   wellPanel(
     style = "height: fit-content; overflow-y: hidden; white-space: normal;",
-    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
+    withSpinner(htmlOutput(id, height = "100%", width = "100%"), size = 0.7)
   )
 }
 
