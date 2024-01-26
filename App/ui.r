@@ -63,6 +63,9 @@ title_html <- tags$a(
             height = "50px"
         )
 )
+
+options(spinner.type = 5, 
+        spinner.color = "#f15d22")
 tagList(
     useShinyjs(),
     introjsUI(),
