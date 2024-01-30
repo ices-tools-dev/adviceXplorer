@@ -431,13 +431,7 @@ output$catch_scenarios <- renderUI({
       width = "100%",
       search = TRUE
     )
-  # selectizeInput(
-  #   inputId = "catch_choice",
-  #   label = "Select one or more catch scenarios",
-  #   choices = unique(test_table()$cat),
-  #   selected = c("Historical Catches", Basis()$cat),
-  #   multiple = TRUE
-  # )
+  
   } else {
     HTML("No data available")
   }
@@ -451,7 +445,29 @@ output$TAC_timeline <- renderPlotly({
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
+output$download_TAC_Data <- downloadHandler(
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_HistCatches_data.csv")
+      write.csv(test_table(), file = "adviceXplorer_HistCatches_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      zip::zip(zipfile=fname, files=fs)
+    },
+    contentType = "application/zip"
+  )
 
+output$TAC_download <- renderUI({
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "")
+  )
+  HTML(paste0(
+    "<br/>",
+    "<span class='hovertext' data-hover='Catch time series data download'>",
+    downloadLink("download_TAC_Data", HTML("<font size= 3>Download catch time series data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+  ))
+})
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
  

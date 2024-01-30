@@ -327,7 +327,8 @@ catch_scenarios_left_panel <- function() {
       tabPanel(
         "Catch time series",
         uiOutput("catch_scenarios"),
-        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%"))
+        withSpinner(plotlyOutput("TAC_timeline", height = "100%", width = "100%")),
+        uiOutput("TAC_download")       
       ),
       tabPanel(
         "Relative change: radial plot",
