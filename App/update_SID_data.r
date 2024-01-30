@@ -43,15 +43,16 @@ update_SID <- function(year) {
         stock_list_long <- rbind(stock_list_long, duplicated_df)
         row.names(stock_list_long) <- NULL # Reset row names
     }
+
+
+    # some tidying up and adding description
     stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
     stock_list_long <- stock_list_long %>% 
-    # dplyr::arrange(StockKeyLabel) %>%
-      dplyr::mutate(
+        dplyr::mutate(
         EcoRegion = removeWords(EcoRegion, "Ecoregion"),
-        stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, year)$StockDescription[1]),
-        stock_location = parse_location_from_stock_description(stock_description)
+        stock_location = parse_location_from_stock_description(StockKeyDescription)
       )
 
 
@@ -95,7 +96,6 @@ UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
     for (year in years) {
         update_SAG(year)
         update_SID(year)
-        print(year)
     }
 }
 
