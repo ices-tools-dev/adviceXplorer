@@ -364,10 +364,10 @@ createLink_visa_tool <- function(assessmentKey) {
 sid_table_links <- function(df){
   
   df$icon <- paste0('<img src=', "'", match_stockcode_to_illustration(df$StockKeyLabel, df), "'", ' height=40>') 
-  df <- createLink_advice_pdf(df)
-  df$group_url <- createLink_expert_group(df$ExpertGroup)
-  df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
-  df$visa_url <- createLink_visa_tool(df$AssessmentKey)
+  # df <- createLink_advice_pdf(df)
+  # df$group_url <- createLink_expert_group(df$ExpertGroup)
+  # df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
+  # df$visa_url <- createLink_visa_tool(df$AssessmentKey)
   
   return(df)
 }

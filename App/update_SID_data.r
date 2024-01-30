@@ -30,9 +30,9 @@ update_SID <- function(year) {
     ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
 
+    #### NS cod exeption
     if (year == 2023) {
         row_to_duplicate <- stock_list_long %>% filter(StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion %in% c("Greater North Sea Ecoregion", "Celtic Seas Ecoregion"))
-        # row_to_duplicate <- stock_list_long[stock_list_long$StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion == "Greater North Sea Ecoregion" , ]
         duplicated_df <- row_to_duplicate[rep(row.names(row_to_duplicate), each = 3), ]
         row.names(duplicated_df) <- NULL # Reset row names
 
@@ -43,19 +43,26 @@ update_SID <- function(year) {
         stock_list_long <- rbind(stock_list_long, duplicated_df)
         row.names(stock_list_long) <- NULL # Reset row names
     }
+    stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
+    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
+
+    stock_list_long <- stock_list_long %>% 
+    # dplyr::arrange(StockKeyLabel) %>%
+      dplyr::mutate(
+        EcoRegion = removeWords(EcoRegion, "Ecoregion"),
+        stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, year)$StockDescription[1]),
+        stock_location = parse_location_from_stock_description(stock_description)
+      )
 
 
 
 
-
-
-
-    write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year))
+    write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year),quote=TRUE)
 }
 # update_SID(2023)
 
-
-
+# year <- 2023
+# head(stock_list_long)
 #' Updates the data used to run the app
 #'
 #' @param mode the mode used to update the data
@@ -88,6 +95,7 @@ UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
     for (year in years) {
         update_SAG(year)
         update_SID(year)
+        print(year)
     }
 }
 
