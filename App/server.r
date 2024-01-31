@@ -190,12 +190,12 @@ additional_LandingData <- reactive({
 }) 
 
 ##### get link to library pdf advice
-advice_doi <- eventReactive((req(query$assessmentkey)),{   
-  get_advice_doi(query$assessmentkey)
+advice_doi <- eventReactive((req(SAG_data_reactive())),{  
+  SAG_data_reactive()$LinkToAdvice[1]
 })
 
-replaced_advice_doi <- eventReactive(req(query$year, query$stockkeylabel), {
-  get_link_replaced_advice(query$year, query$stockkeylabel)
+replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
+  get_link_replaced_advice(query$stockkeylabel,query$year)
 })
 ###### info about the stock selected for top of page
 stock_info <- reactive({
@@ -209,7 +209,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
+  get_Advice_View_Headline(advice_view_info(), advice_doi(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
