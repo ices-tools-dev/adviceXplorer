@@ -169,7 +169,7 @@ advice_view_stocks_for_lunch <- c(
 download_SID <- function(Year) {
   stock_list_all <- jsonlite::fromJSON(
     URLencode(
-      sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published, AssessmentKey", Year)
+      sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  StockKeyDescription, SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published, AssessmentKey", Year)
     )
   )$value
   # stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks_for_lunch)
@@ -201,6 +201,7 @@ separate_ecoregions <- function(stock_list_all) {
     StockKeyLabel = rep(mydf$StockKeyLabel, sapply(s, length)),
     EcoRegion = unlist(s),
     SpeciesCommonName = rep(mydf$SpeciesCommonName, sapply(s, length)),
+    StockKeyDescription = rep(mydf$StockKeyDescription, sapply(s, length)),
     ExpertGroup = rep(mydf$ExpertGroup, sapply(s, length)),
     DataCategory = rep(mydf$DataCategory, sapply(s, length)),
     YearOfLastAssessment = rep(mydf$YearOfLastAssessment, sapply(s, length)),
@@ -364,10 +365,10 @@ createLink_visa_tool <- function(assessmentKey) {
 sid_table_links <- function(df){
   
   df$icon <- paste0('<img src=', "'", match_stockcode_to_illustration(df$StockKeyLabel, df), "'", ' height=40>') 
-  df <- createLink_advice_pdf(df)
-  df$group_url <- createLink_expert_group(df$ExpertGroup)
-  df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
-  df$visa_url <- createLink_visa_tool(df$AssessmentKey)
+  # df <- createLink_advice_pdf(df)
+  # df$group_url <- createLink_expert_group(df$ExpertGroup)
+  # df$SAG_url <- createLink_SAG_db(df$AssessmentKey)
+  # df$visa_url <- createLink_visa_tool(df$AssessmentKey)
   
   return(df)
 }

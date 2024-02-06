@@ -1295,3 +1295,31 @@ library(icesSAG)
 
 testSAG <- icesSAG::StockList(2023)
 names(testSAG)
+
+
+Sys.setenv("LOADTEST_JMETER_PATH"="[D:/apache-jmeter-5.6.3/bin]")
+remotes::install_github("tmobile/loadtest")
+
+library(loadtest)
+results <- loadtest(url = "https://ices-taf.shinyapps.io/advicexplorer",
+                    method = "GET",
+                    # headers = c("version"="v1.0"),
+                    # body = list(sentences = list("I love this band")),
+                    # encode="json",
+                    threads = 10,
+                    loops = 20,
+                    delay_per_request=100)
+loadtest_report(results,"D:/report.html")
+plot_elapsed_times(results)
+plot_elapsed_times_histogram(results)
+plot_requests_by_thread(results)
+plot_requests_per_second(results)
+
+
+SAGsummary <- getSAG("whb.27.1-91214", 2023,
+        data = "summary", combine = TRUE, purpose = "Advice"
+    )
+head(SAGsummary)
+names(SAGsummary)
+test <- icesSAG::SummaryTable(13429)
+names(test)

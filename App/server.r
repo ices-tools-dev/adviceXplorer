@@ -36,8 +36,6 @@ server <- function(input, output, session) {
     req(input$selected_locations, input$selected_years)
     
     stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
-    stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
-    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
     stock_list_long <- purrr::map_dfr(
       .x = input$selected_locations,
       .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))
@@ -47,10 +45,7 @@ server <- function(input, output, session) {
     stock_list_long %>% 
       dplyr::arrange(StockKeyLabel) %>%
       dplyr::mutate(
-        EcoRegion = removeWords(EcoRegion, "Ecoregion"),
-        Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.)),
-        stock_description = purrr::map_chr(StockKeyLabel, .f = ~ access_sag_data_local(.x, input$selected_years)$StockDescription[1]),
-        stock_location = parse_location_from_stock_description(stock_description)
+        Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
       )
   }
   }) %>%
@@ -190,12 +185,12 @@ additional_LandingData <- reactive({
 }) 
 
 ##### get link to library pdf advice
-advice_doi <- eventReactive((req(query$assessmentkey)),{   
-  get_advice_doi(query$assessmentkey)
+advice_doi <- eventReactive((req(SAG_data_reactive())),{  
+  SAG_data_reactive()$LinkToAdvice[1]
 })
 
-replaced_advice_doi <- eventReactive(req(query$year, query$stockkeylabel), {
-  get_link_replaced_advice(query$year, query$stockkeylabel)
+replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
+  get_link_replaced_advice(query$stockkeylabel,query$year)
 })
 ###### info about the stock selected for top of page
 stock_info <- reactive({
@@ -209,7 +204,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(),  replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
+  get_Advice_View_Headline(advice_view_info(), advice_doi(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
@@ -431,13 +426,7 @@ output$catch_scenarios <- renderUI({
       width = "100%",
       search = TRUE
     )
-  # selectizeInput(
-  #   inputId = "catch_choice",
-  #   label = "Select one or more catch scenarios",
-  #   choices = unique(test_table()$cat),
-  #   selected = c("Historical Catches", Basis()$cat),
-  #   multiple = TRUE
-  # )
+  
   } else {
     HTML("No data available")
   }
@@ -451,7 +440,29 @@ output$TAC_timeline <- renderPlotly({
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
 
+output$download_TAC_Data <- downloadHandler(
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    content = function(fname) {
+      
+      fs <- c("Disclaimer.txt", "adviceXplorer_HistCatches_data.csv")
+      write.csv(test_table(), file = "adviceXplorer_HistCatches_data.csv")
+      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+      
+      zip::zip(zipfile=fname, files=fs)
+    },
+    contentType = "application/zip"
+  )
 
+output$TAC_download <- renderUI({
+  validate(
+    need(!is_empty(catch_scenario_table()$table), "")
+  )
+  HTML(paste0(
+    "<br/>",
+    "<span class='hovertext' data-hover='Catch time series data download'>",
+    downloadLink("download_TAC_Data", HTML("<font size= 3>Download catch time series data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+  ))
+})
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
  

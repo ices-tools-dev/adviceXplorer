@@ -9,11 +9,14 @@ library(icesSAG)
 library(icesFO)
 library(data.table)
 library(rsconnect)
+library(tm)
+
 
 
 setwd("./App")
 
 source("utilities_SID_data.r")
+source("utilities_sag_data.r")
 source("update_SAG_data.r")
 source("update_SID_data.r")
 

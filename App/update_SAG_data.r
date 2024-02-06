@@ -43,9 +43,7 @@ update_SAG <- function(year){
     write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
     refpts <- FishStockReferencePoints(sag$AssessmentKey)
-    ###
-    # CI <- get_CI(refpts)
-    # refpts <- left_join(refpts,CI)
+    
 
     write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote=TRUE)
 }
@@ -74,35 +72,42 @@ update_SAG <- function(year){
 #' @export
 #'
 
-load_sag_summary <- function(year) {
-  out <- icesSAG::getSAG(
-    stock = NULL, year, data = "summary",
-    purpose = "Advice", combine = TRUE
-  )
-  sid <- load_sid(year)
-  sid <- dplyr::filter(sid, !is.na(YearOfLastAssessment))
-  sid <- dplyr::select(
-    sid, StockKeyLabel, YearOfLastAssessment,
-    PreviousStockKeyLabel
-  )
-  colnames(sid) <- c("fishstock", "AssessmentYear", "PreviousStockKeyLabel")
-  old <- dplyr::filter(sid, AssessmentYear < 2017)
-  out1 <- merge(out, sid,
-    by = c("fishstock", "AssessmentYear"),
-    all = FALSE
-  )
-  out2 <- merge(out, old,
-    by.x = c("fishstock", "AssessmentYear"),
-    by.y = c("PreviousStockKeyLabel", "AssessmentYear"),
-    all = FALSE
-  )
-  out2$fishstock <- out2$fishstock.y
-  out2 <- subset(out2, select = -fishstock.y)
-  out <- merge(out1, out2, all = TRUE)
-  out <- subset(out, select = -PreviousStockKeyLabel)
-  unique(out)
-}
+# load_sag_summary <- function(year) {
+#   out <- icesSAG::getSAG(
+#     stock = NULL, year, data = "summary",
+#     purpose = "Advice", combine = TRUE
+#   )
+#   sid <- load_sid(year)
+#   sid <- dplyr::filter(sid, !is.na(YearOfLastAssessment))
+#   sid <- dplyr::select(
+#     sid, StockKeyLabel, YearOfLastAssessment,
+#     PreviousStockKeyLabel
+#   )
+#   colnames(sid) <- c("FishStock", "AssessmentYear", "PreviousStockKeyLabel")
+#   old <- dplyr::filter(sid, AssessmentYear < 2017)
 
+#   out1 <- merge(out, sid,
+#     by = c("FishStock", "AssessmentYear"),
+#     all = FALSE
+#   )
+
+#   out2 <- merge(out, old,
+#     by.x = c("FishStock", "AssessmentYear"),
+#     by.y = c("PreviousStockKeyLabel", "AssessmentYear"),
+#     all = FALSE
+#   )
+#   out2$FishStock <- out2$FishStock.y
+#   out2 <- subset(out2, select = -FishStock.y)
+#   out <- merge(out1, out2, all = TRUE)
+#   out <- subset(out, select = -PreviousStockKeyLabel)
+
+#   out_replaced <- StockList(year) %>% filter(Purpose == "Replaced") %>% select(c(StockKeyLabel,LinkToAdvice)) %>% rename("ReplacedLinkToAdvice" = "LinkToAdvice")
+  
+
+
+#   unique(out)
+# }
+# year <- 2022
 #' Returns the reference points from the ICES Stock Assessment database.
 #' This is an internal version of icesFO functions, to run on one year only.
 #'
@@ -126,34 +131,34 @@ load_sag_summary <- function(year) {
 #'
 #' @export
 #'
-load_sag_refpts <- function(year) {
-  out <- icesSAG::getSAG(
-    stock = NULL, year, purpose = "Advice",
-    data = "refpts", combine = TRUE
-  )
-  sid <- load_sid(year)
-  sid <- dplyr::filter(sid, !is.na(YearOfLastAssessment))
-  sid <- dplyr::select(
-    sid, StockKeyLabel, YearOfLastAssessment,
-    PreviousStockKeyLabel
-  )
-  colnames(sid) <- c("StockKeyLabel", "AssessmentYear", "PreviousStockKeyLabel")
-  old <- dplyr::filter(sid, AssessmentYear < 2017)
-  out1 <- merge(out, sid,
-    by = c("StockKeyLabel", "AssessmentYear"),
-    all = FALSE
-  )
-  out2 <- merge(out, old,
-    by.x = c("StockKeyLabel", "AssessmentYear"),
-    by.y = c("PreviousStockKeyLabel", "AssessmentYear"),
-    all = FALSE
-  )
-  out2$StockKeyLabel <- out2$StockKeyLabel.y
-  out2 <- subset(out2, select = -StockKeyLabel.y)
-  out <- merge(out1, out2, all = TRUE)
-  out <- subset(out, select = -PreviousStockKeyLabel)
-  unique(out)
-}
+# load_sag_refpts <- function(year) {
+#   out <- icesSAG::getSAG(
+#     stock = NULL, year, purpose = "Advice",
+#     data = "refpts", combine = TRUE
+#   )
+#   sid <- load_sid(year)
+#   sid <- dplyr::filter(sid, !is.na(YearOfLastAssessment))
+#   sid <- dplyr::select(
+#     sid, StockKeyLabel, YearOfLastAssessment,
+#     PreviousStockKeyLabel
+#   )
+#   colnames(sid) <- c("StockKeyLabel", "AssessmentYear", "PreviousStockKeyLabel")
+#   old <- dplyr::filter(sid, AssessmentYear < 2017)
+#   out1 <- merge(out, sid,
+#     by = c("StockKeyLabel", "AssessmentYear"),
+#     all = FALSE
+#   )
+#   out2 <- merge(out, old,
+#     by.x = c("StockKeyLabel", "AssessmentYear"),
+#     by.y = c("PreviousStockKeyLabel", "AssessmentYear"),
+#     all = FALSE
+#   )
+#   out2$StockKeyLabel <- out2$StockKeyLabel.y
+#   out2 <- subset(out2, select = -StockKeyLabel.y)
+#   out <- merge(out1, out2, all = TRUE)
+#   out <- subset(out, select = -PreviousStockKeyLabel)
+#   unique(out)
+# }
 
 
 
