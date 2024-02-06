@@ -366,10 +366,10 @@ get_additional_landing_data <- function(assessmentKey) {
 #'
 #' @export
 #'
-get_link_replaced_advice <- function(year, stock_code) {
-  link <- StockList(year) %>%
-    filter(StockKeyLabel == stock_code) %>%
-    filter(Purpose == "Replaced") %>%
-    pull(LinkToAdvice)
+get_link_replaced_advice <- function(StockKeyLabel,year) {
+  link <- access_sag_data_local(StockKeyLabel, year) %>% filter(Purpose == "Replaced")
+  link <- link$LinkToAdvice[1]
   return(link)
 }
+
+

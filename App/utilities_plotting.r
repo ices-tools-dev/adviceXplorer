@@ -576,8 +576,8 @@ ICES_plot_1 <- function(df, sagSettings) {
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
     fig1
 }
 
@@ -710,8 +710,8 @@ ICES_plot_2 <- function(df, sagSettings) {
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        ) %>%
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        ) #%>%
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
     fig2
 }
 
@@ -870,8 +870,8 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-    ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 
 for (i in 1:length(fig3$x$data)) {
     if (!is.null(fig3$x$data[[i]]$name)) {
@@ -1113,8 +1113,8 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-    )  %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    )  #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 
 for (i in 1:length(fig4$x$data)){
     if (!is.null(fig4$x$data[[i]]$name)){
@@ -1259,8 +1259,8 @@ ICES_plot_5 <- function(df, sagSettings) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer))) 
+        ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer))) 
 
     for (i in 1:length(fig5$x$data)) {
         if (!is.null(fig5$x$data[[i]]$name)) {
@@ -1401,8 +1401,8 @@ ICES_plot_6 <- function(df, sagSettings) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
     
     for (i in 1:length(fig6$x$data)) {
         if (!is.null(fig6$x$data[[i]]$name)) {
@@ -1494,8 +1494,8 @@ ICES_plot_7 <- function(df, sagSettings) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 
     for (i in 1:length(fig7$x$data)) {
         if (!is.null(fig7$x$data[[i]]$name)) {
@@ -1899,8 +1899,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
-    ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 
 
 }
@@ -2176,8 +2176,8 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                 traceorder = "reversed"
             )
         )
-    fig_final %>%
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    fig_final #%>%
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 }
 
 #' Returns ....
@@ -2260,8 +2260,8 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
-    ) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    ) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 }
 
 
@@ -2313,6 +2313,6 @@ lollipop_plot <- function(df, indicator_choice_lollipop) {
         facet_wrap(~indicator)
         
         
-    fig8 <- ggplotly(pvar) %>% layout(showlegend = FALSE) %>% 
-        config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    fig8 <- ggplotly(pvar) %>% layout(showlegend = FALSE) #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 }
