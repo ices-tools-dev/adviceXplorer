@@ -35,7 +35,7 @@ stock_selection_left_side <- function() {
       label = "ICES Ecoregions:",
       choices = sort(shape_eco$Ecoregion),
       selected = "Greater North Sea",
-      multiple = FALSE,
+      multiple = TRUE,
       width = "100%",
       search = TRUE,
       optionsCount = 5
@@ -88,8 +88,10 @@ stock_selection_left_side <- function() {
 stock_selection_right_side <- function(){
   mainPanel(
     width = 7,
-    style = "overflow-x: auto;",
-    withSpinner(DTOutput("tbl"))
+    style = "overflow-x: auto; background-color:#e6e7e8;",
+    # withSpinner(DTOutput("tbl"))
+    HTML("<br/><b><font size= 5> Stock selection</b></font></br><font size= 4> To select a stock, click on the corresponding button on the left side of the table. </font><br/><br/>"),
+    withSpinner(reactableOutput("tbl"))
   )
 }
 

@@ -43,10 +43,10 @@ server <- function(input, output, session) {
     
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
-      dplyr::arrange(StockKeyLabel) %>%
-      dplyr::mutate(
-        Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
-      )
+      dplyr::arrange(StockKeyLabel) #%>%
+      # dplyr::mutate(
+      #   Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
+      # )
   }
   }) %>%
     bindCache(input$selected_locations, input$selected_years) %>%
@@ -61,58 +61,84 @@ server <- function(input, output, session) {
   
   ###########################################################  Render stock selection table
 
-  res_modo <- reactive({ 
+  res_modo <- reactive({
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-   
-   res_mod() %>% select(
-      "Select",
-      "StockKeyLabel",
-      "EcoRegion",
-      "icon",
-      "SpeciesCommonName",
-      "stock_location"
-    ) %>%
-      rename(
-        "Select" = Select,
-        "Stock code" = StockKeyLabel,
-        "Ecoregion" = EcoRegion,
-        " " = icon,
-        "Common name" = SpeciesCommonName,
-        "Location" = stock_location
-      )
+
+    if (length(input$selected_locations) > 1) {
+      res_mod() %>%
+        select(
+          "StockKeyLabel",
+          "EcoRegion",
+          "icon",
+          "SpeciesCommonName",
+          "stock_location"
+        ) %>%
+        rename(
+          "Stock code" = StockKeyLabel,
+          "Ecoregion" = EcoRegion,
+          " " = icon,
+          "Common name" = SpeciesCommonName,
+          "Location" = stock_location
+        )
+    } else {
+      res_mod() %>%
+        select(
+          "StockKeyLabel",
+          "icon",
+          "SpeciesCommonName",
+          "stock_location"
+        ) %>%
+        rename(
+          "Stock code" = StockKeyLabel,
+          " " = icon,
+          "Common name" = SpeciesCommonName,
+          "Location" = stock_location
+        )
+    }
   })
   
-  output$tbl <- DT::renderDT(
-   
-    res_modo(),
-    escape = FALSE,
-    selection = "none",
-    server = FALSE,
-    caption = HTML("<b><font size= 6> Stock selection</b></font></br><font size= 5> To select a stock, click on the corresponding button in the 'Select' column. </font>"),
-    options = list(
-      order = list(2, "asc"),
-      dom = "Bfrtip",
-      pageLength = 300,
-      columnDefs = list(
-        list(visible = FALSE, targets = c(0, 3)),
-        list(className = "dt-center", targets = c(1, 4))
-      )
-    ),
-    callback = JS(callback)
-  )
-  
-  
 
-  ## process radio button selection
-  observeEvent(input$rdbtn, {
+  output$tbl <- renderReactable({
+    reactable(res_modo(),
+      selection = "single",
+      filterable = TRUE,
+      onClick = "select",
+      highlight = TRUE,
+      defaultPageSize = 100,
+      striped = TRUE,
+      defaultColDef = colDef(
+        headerStyle = list(background = "#99AABF")
+      ),
+      columns = list(
+        " " = reactable::colDef(
+          html = TRUE,
+          filterable = FALSE,
+          align = "center"
+        )
+      ),
+      theme = reactableTheme(
+        stripedColor = "#eff2f5",
+        highlightColor = "#f9b99f",
+        cellPadding = "8px 2px",
+        style = list(
+          fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"
+        )
+      )
+    )
+  })
+  
+  
+  
+  selected <- reactive(getReactableState("tbl", "selected"))
+
+  observeEvent(selected(), {
     shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
     shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
     shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
     
-    filtered_row <- res_mod()[str_detect(res_mod()$Select, regex(paste0("\\b", input$rdbtn,"\\b"))), ]
-        
+    filtered_row <- res_mod()[selected(), ]
     updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
 
     query$query_from_table <- TRUE
@@ -124,7 +150,7 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "tabset", selected = "Development over time")
     
   })
-
+  
   
   observe({
     # read url string

@@ -29,6 +29,7 @@ update_SID <- function(year) {
     stock_list_long <- separate_ecoregions(stock_list_all)
     ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
+    
 
     #### NS cod exeption
     if (year == 2023) {
