@@ -21,7 +21,7 @@
 #' 
 stock_selection_left_side <- function() {
   sidebarPanel(
-    width = 5,
+    width = 4,
     tabPanel(
       "ICES Ecoregions",
       tags$style(type = "text/css", "#logo {height: 60px !important; margin-top: 10px;  padding-bottom: 20px; }"),
@@ -87,9 +87,8 @@ stock_selection_left_side <- function() {
 #' 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7,
+    width = 8,
     style = "overflow-x: auto; background-color:#e6e7e8;",
-    # withSpinner(DTOutput("tbl"))
     HTML("<br/><b><font size= 5> Stock selection</b></font></br><font size= 4> To select a stock, click on the corresponding button on the left side of the table. </font><br/><br/>"),
     withSpinner(reactableOutput("tbl"))
   )

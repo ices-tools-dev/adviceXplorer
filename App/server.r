@@ -45,7 +45,7 @@ server <- function(input, output, session) {
     stock_list_long %>% 
       dplyr::arrange(StockKeyLabel) #%>%
       # dplyr::mutate(
-      #   Select = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
+      #   Sel = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
       # )
   }
   }) %>%
@@ -70,6 +70,7 @@ server <- function(input, output, session) {
       res_mod() %>%
         select(
           "StockKeyLabel",
+          "Component",
           "EcoRegion",
           "icon",
           "SpeciesCommonName",
@@ -81,11 +82,13 @@ server <- function(input, output, session) {
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
-        )
+        ) %>% 
+        { if (all(is.na(.$Component))) select(., -Component) else . }
     } else {
       res_mod() %>%
         select(
           "StockKeyLabel",
+          "Component",
           "icon",
           "SpeciesCommonName",
           "stock_location"
@@ -95,12 +98,14 @@ server <- function(input, output, session) {
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
-        )
+        ) %>% 
+        { if (all(is.na(.$Component))) select(., -Component) else . }
     }
   })
   
 
   output$tbl <- renderReactable({
+    
     reactable(res_modo(),
       selection = "single",
       filterable = TRUE,
@@ -108,24 +113,22 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultPageSize = 100,
       striped = TRUE,
-      # groupBy = "Stock code",
+
       defaultColDef = colDef(
         headerStyle = list(background = "#99AABF")
       ),
       columns = list(
-        " " = reactable::colDef(
+        " " = colDef(
           html = TRUE,
           filterable = FALSE,
-          align = "center"
+          align = "center",
+          aggregate = "unique"
         )
       ),
       theme = reactableTheme(
         stripedColor = "#eff2f5",
         highlightColor = "#f9b99f",
-        cellPadding = "8px 2px"
-        # style = list(
-        #   fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"
-        # )
+        cellPadding = "2px 2px"
       )
     )
   })

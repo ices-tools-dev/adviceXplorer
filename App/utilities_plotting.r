@@ -35,13 +35,13 @@ theme_ICES_plots <-
         theme(
             axis.title = element_text( # axis titles
                 family = font, # font family
-                size = 20,
+                size = 18,
                 colour = "darkgrey",
                 vjust = -2
             ),
             axis.text = element_text( # axis titles
                 family = font, # font family
-                size = 15,
+                size = 13,
                 colour = "black"
             ),
             axis.title.x = element_blank(),
@@ -53,11 +53,11 @@ theme_ICES_plots <-
             ),
             plot.title = element_text( # title
                 family = font, # set font family
-                size = 23, # set font size
+                size = 21, # set font size
                 face = "bold", # bold typeface
                 hjust = 0, # left align
                 vjust = 1,
-                margin = ggplot2::margin(t = 0, r = 50, b = 0, l = 10),
+                margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0),
                 if (type == "Catches") {
                     color <- "#002b5f"
                 } else if (type == "Recruitment" | type == "quality_R") {
