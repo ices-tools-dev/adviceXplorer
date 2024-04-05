@@ -74,7 +74,9 @@ tagList(
     useShinyjs(),
     introjsUI(),
     tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
-    tags$head(includeHTML(("google-analytics.html"))), 
+    tags$head(includeHTML(("google-analytics.html"))),
+    tags$link(rel = "stylesheet", type = "text/css", href = "css/gothic-a1.css"),
+    tags$style("body {font-family: 'Gothic A1', sans-serif;}"),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
     '

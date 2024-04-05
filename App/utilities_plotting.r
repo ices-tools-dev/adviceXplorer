@@ -1,3 +1,6 @@
+library(showtext)
+font_add_google("Gothic A1")
+showtext_auto()
 #' This function is used to produce a standardised ICES theme for all SAG and quality of assessement plots.
 #' The idea is to have a common base that then can be modified based on the plot formatting options specified in SAG.
 #'
@@ -26,7 +29,7 @@ theme_ICES_plots <-
   function(
     type = c("Catches", "Recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
     title = NULL, ylegend = NULL, ymax = NULL) {
-    font <- "Calibri, sans-serif" # assign font family up front
+    font <- "Gothic A1, sans-serif"#"Calibri, sans-serif" # assign font family up front
     tmp <- theme_minimal() %+replace% # replace elements we want to change
 
         theme(
@@ -54,7 +57,7 @@ theme_ICES_plots <-
                 face = "bold", # bold typeface
                 hjust = 0, # left align
                 vjust = 1,
-                margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
+                margin = ggplot2::margin(t = 0, r = 50, b = 0, l = 10),
                 if (type == "Catches") {
                     color <- "#002b5f"
                 } else if (type == "Recruitment" | type == "quality_R") {

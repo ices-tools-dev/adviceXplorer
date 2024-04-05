@@ -5,9 +5,15 @@ p {
 li {
     font-size: 20px;
 }
+
   /*
+* {
+  font-family: "Soho Gothic W04 Ultra";
+}
+
 body {
-    padding-top: 70px;
+    
+    font-family: "Soho Gothic W04 Ultra";
   }
 */
 #table tr:hover {

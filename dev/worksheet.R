@@ -1323,3 +1323,387 @@ head(SAGsummary)
 names(SAGsummary)
 test <- icesSAG::SummaryTable(13429)
 names(test)
+
+
+getSAGSettings <- function(assessmentkey) {
+    sagSettings <- jsonlite::fromJSON(
+        URLencode(
+            sprintf("https://sag.ices.dk/SAG_API/api/StockSettings?assessmentKey=%s", assessmentkey)
+        )
+    )
+}
+assessmentkey <- 17615
+
+settings <- icesSAG::StockSettings(18515)
+
+sag <- icesSAG::SummaryTable(18515)
+refP <- icesSAG::FishStockReferencePoints(18515)
+head(sag)
+settings <- getSAGSettings(assessmentkey)
+df<- settings[!(settings$settingValue == ""), ]
+
+
+library(reactablefmtr)
+table <- reactable(iris[10:29, ])
+
+table %>%
+  add_title("This is a title")
+
+## Use options to adjust the style and position of the title
+table %>%
+  add_title("This is a title", align = "center", font_color = "red")
+}
+
+library(reactable)
+library(shiny)
+ui <- fluidPage(
+  h2("Top CRAN Packages of 2019"),
+  reactableOutput("table_1")
+)
+ 
+server <- function(input, output) {
+  output$table_1 <- renderReactable({
+    
+    example<- reactable(data.frame(country=c("argentina","brazil"),value=c(1,2)))
+
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
+
+reactable(
+  iris[1:5, ],
+  defaultColDef = colDef(
+    header = function(value) gsub(".", " ", value, fixed = TRUE),
+    # cell = function(value) format(value, nsmall = 1),
+    align = "center",
+    minWidth = 70,
+    headerStyle = list(background = "#99AABF")
+  ),
+  columns = list(
+    Species = colDef(minWidth = 140)  # overrides the default
+  ),
+  bordered = TRUE,
+  highlight = TRUE
+)
+
+
+
+
+
+reactable(
+  iris[1:30, ],
+  searchable = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  bordered = TRUE,
+  theme = reactableTheme(
+    # borderColor = "#dfe2e5",
+    stripedColor = "#eff2f5",
+    highlightColor = "#f9b99f",
+    cellPadding = "18px 22px",
+    style = list(
+      fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"
+    ),
+    searchInputStyle = list(width = "100%")
+  )
+)
+
+
+
+library(MASS)
+library(dplyr)
+library(reactable)
+
+test <- read.csv("D:/GitHub_2023/online-advice/App/Data/SID_2023/SID.csv")
+test$Component[test$AssessmentKey == 18396] <- "All"
+test <- test %>%
+  dplyr::select("StockKeyLabel", "EcoRegion", "SpeciesCommonName", "icon", "Component", "stock_location") %>%
+  dplyr::filter(., EcoRegion == "Greater North Sea ")
+  
+
+# Mock data, 3 levels of grouping, 2 numerical non-grouping Variables per row
+group_vars <- c("StockKeyLabel")
+# data <- test[, c(group_vars,"EcoRegion", "SpeciesCommonName", "icon", "Component", "stock_location")]
+data <- test
+# custom `rowClass` function -
+# Rows without subrows get class `block-expandable` which we later use to
+# hide the expander-button (the little triangle) and disable the event listener
+# Expandable rows get the class `allow-expandable` instead. We usi it for
+# styling.
+row_class_fun <- JS("function(rowInfo) { return( rowInfo.subRows.length <= 1 ? 'block-expandable' : 'allow-expandable') }")
+
+# Custom `aggregate` funtion for group columns -
+# For groups with only one row, show that row's value in the parent row
+aggregate_group_col <- JS("function(x) { return(x.length == 1 ? x : '') }")
+
+# Optional: Custom `grouped` function for group columns -
+# Suppress the `(n)` after the group name.
+# Without it, it will not be uniform across the expandable and not-expandable
+# rows and across group cols, i.e. some will have `(n)` and  others wont,
+# so you probbly want some version of this.
+grouped_group_col <- JS("function(cellInfo) { return cellInfo.value }")
+
+# Completely optional: Trigger group expansion regardless of which column the
+# user clicks (...or filter "click-to-expand"-columns via`column`)
+on_click_fun <- JS("function(rowInfo, column) { if (rowInfo.subRows.length > 1) rowInfo.toggleRowExpanded() }")
+
+# ColDef for the 3 group cols -
+# use custom group and aggregate functions, add class for styling.
+group_col_def <- colDef(
+  grouped   = grouped_group_col,
+  aggregate = aggregate_group_col,
+  class     = "group-col"
+)
+
+# The table
+rt <- reactable(
+  data,
+  highlight = TRUE,
+  groupBy   = group_vars,
+  rowClass  = row_class_fun,
+  onClick   = on_click_fun,
+  columns   = list(
+    StockKeyLabel = group_col_def,
+    # Type         = group_col_def,
+    # DriveTrain   = group_col_def,
+    # per-row variables.
+    # Don't forget to define aggregate functions for value when grouped
+    # Price        = colDef("Max. Price", aggregate = "max"),
+    # MPG.city     = colDef("Avg. MPG", aggregate = "mean", format = colFormat(digits = 1))
+    
+    EcoRegion = colDef("EcoRegion", aggregate = "unique"),
+    SpeciesCommonName = colDef("SpeciesCommonName", aggregate = "unique"),
+    icon = colDef("icon", aggregate = "unique"),
+    Component = colDef("Component", aggregate = "unique"),
+    stock_location = colDef("stock_location", aggregate = "unique" )
+  ),
+)
+
+# Custom CSS:
+# A lot of this is pure styling.
+# - hide the expand button in non-expandable rows (this is the only non-optional change)
+# - change the cursor on non-expandable rows from pointer to 'regular'
+# - color the expandable rows blue and make text bold
+# - color the expander Button red
+# - add some left padding to the table header and group cols to align all text,
+#   regardless of whether there is an expander-button
+custom_css <- "
+  .rt-tr.block-expandable button.rt-expander-button {
+    display: none;
+    pointer-events: none;
+  }
+
+  .rt-tr.block-expandable .rt-td-expandable {
+    cursor: auto;
+  }
+
+  .rt-tr.allow-expandable .rt-td-inner {
+      color: steelblue;
+      font-weight: bold;
+  }
+
+  .rt-td-expandable .rt-expander::after {
+      border-top-color: tomato;
+  }
+
+  .rt-th-inner .rt-text-content {
+    padding-left: 20px;
+  }
+
+  .rt-tr.block-expandable .group-col {
+      padding-left: 20px
+  }
+"
+# Custom JS:
+# click events on the table are first registered by the `rt-td-inner` elements
+# We add an event listener that intercepts these events and checks if any
+# ancestor element (this would be the row it is in) has the class 'block-expandable'.
+# (<https://developer.mozilla.org/en-US/docs/Web/API/Element/closest>)
+# If so, we stop propagation of the click event.
+# One could also check just the parent and grandparent element, as this should
+# cover all "candidates", i.e.
+# ```
+# e.target.parentElement.classList.contains('block-expandable')  ||
+# e.target.parentElement.parentElement.classList.contains('block-expandable')
+# ````
+# (also note the ID `my-table` that is used to select the wrapping DOM element.)
+custom_js <- "
+  document.addEventListener('DOMContentLoaded', function() {
+    let table = document.getElementById('my-table');
+
+    table.addEventListener('click', function(e) {
+        if ( e.target.closest('div.rt-tr.block-expandable') !== null) {
+          e.stopImmediatePropagation()
+        }
+    },
+    useCapture = true  // ensures that listener fires before the regular reactable listeners
+  )
+  });
+"
+
+# Put it all together in a "browsable()"
+# In a Shiny app the custom CSS and JS code would be added to the head
+# somewhere else.
+htmltools::tagList(
+  htmltools::tags$head(
+    htmltools::tags$style(custom_css),
+    htmltools::tags$script(custom_js)
+  ),
+  htmltools::tags$div(id = "my-table", rt)
+) |>
+htmltools::browsable()
+
+
+
+
+
+##################
+library(MASS)
+library(dplyr)
+library(reactable)
+
+# Mock data, 3 levels of grouping, 2 numerical non-grouping Variables per row
+group_vars <- c("Manufacturer", "Type", "DriveTrain")
+data <- MASS::Cars93[, c(group_vars, "Price", "MPG.city")]
+
+# custom `rowClass` function -
+# Rows without subrows get class `block-expandable` which we later use to
+# hide the expander-button (the little triangle) and disable the event listener
+# Expandable rows get the class `allow-expandable` instead. We usi it for
+# styling.
+row_class_fun <- JS("function(rowInfo) { return( rowInfo.subRows.length <= 1 ? 'block-expandable' : 'allow-expandable') }")
+
+# Custom `aggregate` funtion for group columns -
+# For groups with only one row, show that row's value in the parent row
+aggregate_group_col <- JS("function(x) { return(x.length == 1 ? x : '') }")
+
+# Optional: Custom `grouped` function for group columns -
+# Suppress the `(n)` after the group name.
+# Without it, it will not be uniform across the expandable and not-expandable
+# rows and across group cols, i.e. some will have `(n)` and  others wont,
+# so you probbly want some version of this.
+grouped_group_col <- JS("function(cellInfo) { return cellInfo.value }")
+
+# Completely optional: Trigger group expansion regardless of which column the
+# user clicks (...or filter "click-to-expand"-columns via`column`)
+on_click_fun <- JS("function(rowInfo, column) { if (rowInfo.subRows.length > 1) rowInfo.toggleRowExpanded() }")
+
+# ColDef for the 3 group cols -
+# use custom group and aggregate functions, add class for styling.
+group_col_def <- colDef(
+  grouped   = grouped_group_col,
+  aggregate = aggregate_group_col,
+  class     = "group-col"
+)
+
+# The table
+rt <- reactable(
+  data,
+  highlight = TRUE,
+  groupBy   = group_vars,
+  rowClass  = row_class_fun,
+  onClick   = on_click_fun,
+  columns   = list(
+    Manufacturer = group_col_def,
+    Type         = group_col_def,
+    DriveTrain   = group_col_def,
+    # per-row variables.
+    # Don't forget to define aggregate functions for value when grouped
+    Price        = colDef("Max. Price", aggregate = "max"),
+    MPG.city     = colDef("Avg. MPG", aggregate = "mean", format = colFormat(digits = 1))
+  ),
+)
+
+# Custom CSS:
+# A lot of this is pure styling.
+# - hide the expand button in non-expandable rows (this is the only non-optional change)
+# - change the cursor on non-expandable rows from pointer to 'regular'
+# - color the expandable rows blue and make text bold
+# - color the expander Button red
+# - add some left padding to the table header and group cols to align all text,
+#   regardless of whether there is an expander-button
+custom_css <- "
+  .rt-tr.block-expandable button.rt-expander-button {
+    display: none;
+    pointer-events: none;
+  }
+
+  .rt-tr.block-expandable .rt-td-expandable {
+    cursor: auto;
+  }
+
+  .rt-tr.allow-expandable .rt-td-inner {
+      color: steelblue;
+      font-weight: bold;
+  }
+
+  .rt-td-expandable .rt-expander::after {
+      border-top-color: tomato;
+  }
+
+  .rt-th-inner .rt-text-content {
+    padding-left: 20px;
+  }
+
+  .rt-tr.block-expandable .group-col {
+      padding-left: 20px
+  }
+"
+# Custom JS:
+# click events on the table are first registered by the `rt-td-inner` elements
+# We add an event listener that intercepts these events and checks if any
+# ancestor element (this would be the row it is in) has the class 'block-expandable'.
+# (<https://developer.mozilla.org/en-US/docs/Web/API/Element/closest>)
+# If so, we stop propagation of the click event.
+# One could also check just the parent and grandparent element, as this should
+# cover all "candidates", i.e.
+# ```
+# e.target.parentElement.classList.contains('block-expandable')  ||
+# e.target.parentElement.parentElement.classList.contains('block-expandable')
+# ````
+# (also note the ID `my-table` that is used to select the wrapping DOM element.)
+custom_js <- "
+  document.addEventListener('DOMContentLoaded', function() {
+    let table = document.getElementById('my-table');
+
+    table.addEventListener('click', function(e) {
+        if ( e.target.closest('div.rt-tr.block-expandable') !== null) {
+          e.stopImmediatePropagation()
+        }
+    },
+    useCapture = true  // ensures that listener fires before the regular reactable listeners
+  )
+  });
+"
+
+# Put it all together in a "browsable()"
+# In a Shiny app the custom CSS and JS code would be added to the head
+# somewhere else.
+htmltools::tagList(
+  htmltools::tags$head(
+    htmltools::tags$style(custom_css),
+    htmltools::tags$script(custom_js)
+  ),
+  htmltools::tags$div(id = "my-table", rt)
+) |>
+htmltools::browsable()
+
+
+
+install.packages("gfonts")
+library(gfonts)
+setwd("D:/GitHub_2023/online-advice/App")
+setup_font(
+  id = "gothic-a1",
+  output_dir = "www",
+  variants = "500"
+)
+ all_fonts <- get_all_fonts()
+ all_fonts %>% filter(id == "gothic-a1")
+names(all_fonts)
+unique(all_fonts$id)
+
+library(showtext)
+font_add_google("Gothic A1")

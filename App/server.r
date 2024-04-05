@@ -108,6 +108,7 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultPageSize = 100,
       striped = TRUE,
+      # groupBy = "Stock code",
       defaultColDef = colDef(
         headerStyle = list(background = "#99AABF")
       ),
@@ -121,10 +122,10 @@ server <- function(input, output, session) {
       theme = reactableTheme(
         stripedColor = "#eff2f5",
         highlightColor = "#f9b99f",
-        cellPadding = "8px 2px",
-        style = list(
-          fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"
-        )
+        cellPadding = "8px 2px"
+        # style = list(
+        #   fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"
+        # )
       )
     )
   })
