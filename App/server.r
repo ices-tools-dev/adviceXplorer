@@ -605,31 +605,39 @@ catch_scenario_table_collated <- eventReactive(catch_scenario_table(),{
     catch_scenario_table()$table %>%
     arrange(cS_Purpose) %>%
     rename_all(~ catch_scenario_table()$cols) %>% 
-    rename("Basis" = cS_Label, " " = cS_Purpose) %>% 
+    rename("Basis" = cS_Label) %>% #, " " = cS_Purpose
     select_if(~!(all(is.na(.)) | all(. == "")))
 })
 
 
-output$table <- DT::renderDT(
-  catch_scenario_table_collated(),
-  selection = "single",
-  class = "display",
-  caption = HTML("<b><font size= 6> Catch scenario table</b></font>"),
-  rownames = FALSE,
-  options = list(
-    dom = "Bfrtip",
-    pageLength = 100,
-    buttons =
-      list("copy", "print", list(
-        extend = "collection",
-        buttons = c("csv", "excel"),
-        text = "Download"
-      )),
-    columnDefs = list(
-      list(visible = FALSE, targets = c(0))
+
+
+output$table <- renderReactable({
+  
+  reactable(catch_scenario_table_collated() %>% select(!(Year)),
+  rowStyle = function(index) {
+    if (catch_scenario_table_collated()[index, "cS_Purpose"] == "Basis Of Advice") list(fontWeight = "bold")
+  },
+    filterable = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 100,
+    striped = TRUE,
+    defaultColDef = colDef(
+      headerStyle = list(background = "#99AABF", borderRight = "1px solid #eee")
+
+    ),
+    columns = list(
+      "cS_Purpose" = colDef(
+        show = FALSE
+      )
+    ),
+    theme = reactableTheme(
+      stripedColor = "#eff2f5",
+      highlightColor = "#f9b99f",
+      cellPadding = "2px 2px"
     )
   )
-)
+})
 
 output$download_catch_table <- downloadHandler(
     filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),

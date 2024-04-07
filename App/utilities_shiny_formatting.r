@@ -374,7 +374,9 @@ catch_scenarios_right_panel <- function() {
   sidebarPanel(
     width = 6,
     style = "overflow-x: auto;",
-    withSpinner(DTOutput("table", height = "100%", width = "100%")),
+    # withSpinner(DTOutput("table", height = "100%", width = "100%")),
+    HTML("<b><font size= 6> Catch scenario table</b></font></br><font size= 4> The basis of the advice is indicated in bold. </font><br/><br/>"),
+    withSpinner(reactableOutput("table")),
     htmlOutput("footnotes", height = "100%", width = "100%")
   )
 }
