@@ -118,11 +118,15 @@ navbarPage(
     tabPanel(
             "Development over time",
             style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
-            splitLayout(
-                cellWidths = c("40%", "60%"),
-                header_left_panel_stock_info("stock_infos1"),
-                header_right_panel_headline("Advice_Headline1")
-            ),
+            mainPanel(width = 12,
+            fluidRow(
+              column(5,
+                wellPanel(withSpinner(htmlOutput("stock_infos1", height = "100%", width = "100%")), fill = F, style = "margin-right:0px")
+                     ),
+              column(7, 
+                wellPanel(withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%")), fill = F, style = "margin-left:0px") 
+                     )
+            )),
             sidebarPanel(
              width = 12,
             SAG_plots_1_2_fluid(),
