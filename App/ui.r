@@ -118,15 +118,7 @@ navbarPage(
     tabPanel(
             "Development over time",
             style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
-            mainPanel(width = 12,
-            fluidRow(
-              column(5,
-                wellPanel(withSpinner(htmlOutput("stock_infos1", height = "100%", width = "100%")), fill = F, style = "margin-right:0px")
-                     ),
-              column(7, 
-                wellPanel(withSpinner(htmlOutput("Advice_Headline1", height = "100%", width = "100%")), fill = F, style = "margin-left:0px") 
-                     )
-            )),
+            header_info_and_headline("stock_infos1", "Advice_Headline1"),
             sidebarPanel(
              width = 12,
             SAG_plots_1_2_fluid(),
@@ -138,11 +130,7 @@ navbarPage(
     tabPanel(
             "Quality of assessment",
             style = "overflow-y: auto; overflow-x: hidden;", 
-            splitLayout(
-                cellWidths = c("40%", "60%"),
-                header_left_panel_stock_info("stock_infos2"),
-                header_right_panel_headline("Advice_Headline2")
-            ),            
+            header_info_and_headline("stock_infos2", "Advice_Headline2"),            
             quality_of_assessment_fluid()
         ),
 
@@ -151,14 +139,12 @@ navbarPage(
     tabPanel(
         "Catch scenarios",
         style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
-        splitLayout(
-            cellWidths = c("40%", "60%"),
-            header_left_panel_stock_info("stock_infos3"),
-            header_right_panel_headline("Advice_Headline3")
-        ),
-        sidebarLayout(
+        header_info_and_headline("stock_infos3", "Advice_Headline3"),
+        mainPanel(width = 12,  
+          sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel(),
             mainPanel = catch_scenarios_right_panel()
+        )
         )
         
     ),

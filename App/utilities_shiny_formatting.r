@@ -382,64 +382,28 @@ catch_scenarios_right_panel <- function() {
 }
 
 
-#' Creates the UI element of left panel of the header, providing
-#' the stock info.
-#' 
-#' @return UI element
+#' Creates the UI element of the header, showing 
+#' stock info and the headline of the advice.
 #'
-#' @note
-#' 
+#' @param info_id 
+#' @param headline_id 
 #'
-#' @seealso
+#' @return
+#' @export
 #'
 #' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-header_left_panel_stock_info <- function(id) {
-  wellPanel(
-    style = "height: fit-content; overflow-y: hidden; white-space: normal;",
-    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
+header_info_and_headline <- function(info_id, headline_id) {
+  mainPanel(width = 12,
+            fluidRow(
+              column(5,
+                     wellPanel(withSpinner(htmlOutput(info_id, height = "100%", width = "100%")))
+              ),
+              column(7, 
+                     wellPanel(withSpinner(htmlOutput(headline_id, height = "100%", width = "100%"))) 
+              )
+            )
   )
 }
-
-
-
-#' Creates the UI element right panel of the header, showing 
-#' the headline of the advice.
-#' 
-#' @return UI element
-#'
-#' @note
-#' 
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-header_right_panel_headline <- function(id) {
-  wellPanel(
-    style = "height: fit-content; overflow-y: hidden; white-space: normal;",
-    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
-  )
-}
-
 
 
 
