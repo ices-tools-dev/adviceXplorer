@@ -31,11 +31,11 @@ update_SID <- function(year) {
     stock_list_long <- sid_table_links(stock_list_long)
     stock_list_long[ , 'Component'] = NA
     
-
+    
     #### NS cod exeption
     if (year == 2023) {
         stock_list_long$Component[stock_list_long$AssessmentKey == 18396] <- "All"
-        row_to_duplicate <- stock_list_long %>% filter(StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion %in% c("Greater North Sea Ecoregion", "Celtic Seas Ecoregion"))
+        row_to_duplicate <- stock_list_long %>% filter(StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion %in% c("Greater North Sea", "Celtic Seas"))
         duplicated_df <- row_to_duplicate[rep(row.names(row_to_duplicate), each = 3), ]
         row.names(duplicated_df) <- NULL # Reset row names
 
@@ -51,12 +51,10 @@ update_SID <- function(year) {
 
 
     # some tidying up and adding description
-    stock_list_long[stock_list_long$EcoRegion == "Iceland Sea Ecoregion", "EcoRegion"] <- "Icelandic Waters Ecoregion"
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
     stock_list_long <- stock_list_long %>% 
         dplyr::mutate(
-        EcoRegion = removeWords(EcoRegion, "Ecoregion"),
         stock_location = parse_location_from_stock_description(StockKeyDescription)
       )
 
@@ -93,7 +91,7 @@ update_SID <- function(year) {
 #'
 UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
     if (mode == "AllYears") {
-        years <- c(2023, 2022, 2021, 2020, 2019, 2018, 2017)
+        years <- c(2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017)
     } else if (mode == "LatestYear") {
         years <- as.integer(format(Sys.Date(), "%Y"))
     }
