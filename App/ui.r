@@ -39,7 +39,7 @@ library(icesASD)
 library(zip)
 library(datamods)
 library(reactable)
-library(reactablefmtr)
+
 
 
 
