@@ -38,6 +38,7 @@ library(widgetframe)
 library(icesASD)
 library(zip)
 library(datamods)
+library(reactable)
 
 
 
@@ -73,7 +74,9 @@ tagList(
     useShinyjs(),
     introjsUI(),
     tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
-    tags$head(includeHTML(("google-analytics.html"))), 
+    tags$head(includeHTML(("google-analytics.html"))),
+    tags$link(rel = "stylesheet", type = "text/css", href = "css/gothic-a1.css"),
+    tags$style("body {font-family: 'Gothic A1', sans-serif;}"),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     tags$script(                                                                        #####we can modify this to have the tabs inactive until a stock is chosen
     '
@@ -86,6 +89,7 @@ tagList(
     });
     '
   ),
+  
     
 
 
@@ -114,11 +118,7 @@ navbarPage(
     tabPanel(
             "Development over time",
             style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
-            splitLayout(
-                cellWidths = c("40%", "60%"),
-                header_left_panel_stock_info("stock_infos1"),
-                header_right_panel_headline("Advice_Headline1")
-            ),
+            header_info_and_headline("stock_infos1", "Advice_Headline1"),
             sidebarPanel(
              width = 12,
             SAG_plots_1_2_fluid(),
@@ -130,11 +130,7 @@ navbarPage(
     tabPanel(
             "Quality of assessment",
             style = "overflow-y: auto; overflow-x: hidden;", 
-            splitLayout(
-                cellWidths = c("40%", "60%"),
-                header_left_panel_stock_info("stock_infos2"),
-                header_right_panel_headline("Advice_Headline2")
-            ),            
+            header_info_and_headline("stock_infos2", "Advice_Headline2"),            
             quality_of_assessment_fluid()
         ),
 
@@ -143,14 +139,12 @@ navbarPage(
     tabPanel(
         "Catch scenarios",
         style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
-        splitLayout(
-            cellWidths = c("40%", "60%"),
-            header_left_panel_stock_info("stock_infos3"),
-            header_right_panel_headline("Advice_Headline3")
-        ),
-        sidebarLayout(
+        header_info_and_headline("stock_infos3", "Advice_Headline3"),
+        mainPanel(width = 12,  
+          sidebarLayout(
             sidebarPanel = catch_scenarios_left_panel(),
             mainPanel = catch_scenarios_right_panel()
+        )
         )
         
     ),
