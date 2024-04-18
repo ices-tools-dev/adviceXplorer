@@ -106,14 +106,20 @@ map_panel_server <- function(input, output, session) {
       # print(selected_1$groups)
       
       proxy_1 %>%
-        showGroup(group = input$map1_shape_click$id) %>% 
-        hideGroup(group = setdiff(selected_1$groups, input$map1_shape_click$id))
-    } 
+        showGroup(group = input$map1_shape_click$id) #%>% 
+        #hideGroup(group = setdiff(selected_1$groups, input$map1_shape_click$id))
+    } else {
+      selected_1$groups <- setdiff(selected_1$groups, input$map1_shape_click$group)
+      proxy_1 %>%
+        hideGroup(group = input$map1_shape_click$group) #%>%
+            
+    }
 
     updateVirtualSelect(inputId = "selected_locations",
                          label = "ICES Ecoregions:",
                          choices = shape_eco$Ecoregion,
-                         selected = input$map1_shape_click$id,
+                        #  selected = input$map1_shape_click$id,
+                         selected = selected_1$groups,
                          session = session
                          )
         

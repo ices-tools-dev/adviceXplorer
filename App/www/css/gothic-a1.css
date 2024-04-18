@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Gothic A1';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../fonts/gothic-a1-v13-latin-500.eot'); /* IE9 Compat Modes */
+  src: local(''), local(''),
+       url('../fonts/gothic-a1-v13-latin-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/gothic-a1-v13-latin-500.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/gothic-a1-v13-latin-500.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/gothic-a1-v13-latin-500.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/gothic-a1-v13-latin-500.svg#\1') format('svg'); /* Legacy iOS */
+}

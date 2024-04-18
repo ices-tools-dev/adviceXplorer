@@ -21,7 +21,7 @@
 #' 
 stock_selection_left_side <- function() {
   sidebarPanel(
-    width = 5,
+    width = 4,
     tabPanel(
       "ICES Ecoregions",
       tags$style(type = "text/css", "#logo {height: 60px !important; margin-top: 10px;  padding-bottom: 20px; }"),
@@ -35,7 +35,7 @@ stock_selection_left_side <- function() {
       label = "ICES Ecoregions:",
       choices = sort(shape_eco$Ecoregion),
       selected = "Greater North Sea",
-      multiple = FALSE,
+      multiple = TRUE,
       width = "100%",
       search = TRUE,
       optionsCount = 5
@@ -87,9 +87,10 @@ stock_selection_left_side <- function() {
 #' 
 stock_selection_right_side <- function(){
   mainPanel(
-    width = 7,
-    style = "overflow-x: auto;",
-    withSpinner(DTOutput("tbl"))
+    width = 8,
+    style = "overflow-x: auto; background-color:#e6e7e8;",
+    HTML("<br/><b><font size= 5> Stock selection</b></font></br><font size= 4> To select a stock, click on the corresponding button on the left side of the table. </font><br/><br/>"),
+    withSpinner(reactableOutput("tbl"))
   )
 }
 
@@ -373,70 +374,36 @@ catch_scenarios_right_panel <- function() {
   sidebarPanel(
     width = 6,
     style = "overflow-x: auto;",
-    withSpinner(DTOutput("table", height = "100%", width = "100%")),
+    # withSpinner(DTOutput("table", height = "100%", width = "100%")),
+    HTML("<b><font size= 6> Catch scenario table</b></font></br><font size= 4> The basis of the advice is indicated in bold. </font><br/><br/>"),
+    withSpinner(reactableOutput("table")),
     htmlOutput("footnotes", height = "100%", width = "100%")
   )
 }
 
 
-#' Creates the UI element of left panel of the header, providing
-#' the stock info.
-#' 
-#' @return UI element
+#' Creates the UI element of the header, showing 
+#' stock info and the headline of the advice.
 #'
-#' @note
-#' 
+#' @param info_id 
+#' @param headline_id 
 #'
-#' @seealso
+#' @return
+#' @export
 #'
 #' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-header_left_panel_stock_info <- function(id) {
-  wellPanel(
-    style = "height: fit-content; overflow-y: hidden; white-space: normal;",
-    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
+header_info_and_headline <- function(info_id, headline_id) {
+  mainPanel(width = 12,
+            fluidRow(
+              column(5,
+                     wellPanel(withSpinner(htmlOutput(info_id, height = "100%", width = "100%")))
+              ),
+              column(7, 
+                     wellPanel(withSpinner(htmlOutput(headline_id, height = "100%", width = "100%"))) 
+              )
+            )
   )
 }
-
-
-
-#' Creates the UI element right panel of the header, showing 
-#' the headline of the advice.
-#' 
-#' @return UI element
-#'
-#' @note
-#' 
-#'
-#' @seealso
-#'
-#' @examples
-#' \dontrun{
-#' 
-#' }
-#'
-#' @references
-#'
-#' 
-#'
-#' @export
-#' 
-header_right_panel_headline <- function(id) {
-  wellPanel(
-    style = "height: fit-content; overflow-y: hidden; white-space: normal;",
-    withSpinner(htmlOutput(id, height = "100%", width = "100%"))
-  )
-}
-
 
 
 
