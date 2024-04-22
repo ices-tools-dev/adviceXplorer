@@ -1,6 +1,3 @@
-library(showtext)
-font_add_google("Gothic A1")
-showtext_auto()
 #' This function is used to produce a standardised ICES theme for all SAG and quality of assessement plots.
 #' The idea is to have a common base that then can be modified based on the plot formatting options specified in SAG.
 #'
