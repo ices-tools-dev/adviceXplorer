@@ -49,7 +49,7 @@ vignettes/*.pdf
 /App/Data/SAG_2021/
 /App/Data/SAG_2022/
 /App/Data/SAG_2023/
-
+/App/Data/SAG_2024/
 # SID csv files
 /App/Data/SID_2017/
 /App/Data/SID_2018/
@@ -58,3 +58,7 @@ vignettes/*.pdf
 /App/Data/SID_2021/
 /App/Data/SID_2022/
 /App/Data/SID_2023/
+/App/Data/SID_2024/
+
+# worksheet file
+/dev/worksheet.R
