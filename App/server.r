@@ -196,8 +196,7 @@ server <- function(input, output, session) {
     
     #   # Dowload the data
     access_sag_data_local(stock_name, year) %>% 
-    filter(AssessmentKey == query$assessmentkey) %>% 
-    mutate(across(everything(), ~ if (class(.) == "integer64") as.integer(.) else .))
+    filter(AssessmentKey == query$assessmentkey)    
   }) 
   
   sagSettings <- reactive({
