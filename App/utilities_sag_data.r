@@ -85,7 +85,9 @@ access_sag_data_local <- function(stock_code, year) {
 
     data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
 
-    data_sag <- data_sag %>% select(-FishStock) %>% filter(StockPublishNote == "Stock published")
+    data_sag <- data_sag %>% select(-FishStock) %>% 
+    filter(StockPublishNote == "Stock published") %>% 
+    mutate(across(everything(), ~ if (class(.) == "integer64") as.integer(.) else .))
     
     return(data_sag)
     

@@ -1707,3 +1707,36 @@ unique(all_fonts$id)
 
 library(showtext)
 font_add_google("Gothic A1")
+
+
+
+access_sag_data_local <- function(stock_code, year) {
+  
+    out1 <-
+    lapply(
+      year,
+      function(i) {        
+          fread(sprintf("App/Data/SAG_%s/SAG_summary.csv", i))
+      }
+    )
+    SAGsummary <- do.call(rbind, out1)
+    
+    out2 <-
+    lapply(
+      year,
+      function(j) {        
+          fread(sprintf("App/Data/SAG_%s/SAG_refpts.csv", j))
+      }
+    )
+    SAGrefpts <- do.call(rbind, out2)
+
+    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
+
+    data_sag <- data_sag %>% select(-FishStock) %>% filter(StockPublishNote == "Stock published")
+    
+    return(data_sag)
+    
+}
+test <- access_sag_data_local("spr.27.3a4", 2024)
+names(test)
+str(test$High_Recruitment)
