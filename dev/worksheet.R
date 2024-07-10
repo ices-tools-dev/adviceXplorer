@@ -2010,3 +2010,7 @@ p <- ggplot() +
   geom_line(data = df_segments, aes(x = time, y = (high_value + low_value) / 2, group = segment))
 
 ggplotly(p)
+
+
+
+

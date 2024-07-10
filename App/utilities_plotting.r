@@ -909,17 +909,27 @@ ICES_plot_4 <- function(df, sagSettings) {
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) #%>%
+  select(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) %>%
+    mutate(segment = cumsum(is.na(High_SSB)))
 
-p4 <- df4 %>%
+
+# Filter out rows with NAs and create a segment identifier
+df_segments <- df4 %>%
+  filter(!is.na(SSB)) %>%
+  group_by(segment) %>%
+  mutate(start = first(Year), end = last(Year))
+
+
+p4 <- df_segments %>%
     ggplot(., aes(x = Year, y = SSB))
 
-if (any(!is.na(df4$Low_SSB))) {
+if (any(!is.na(df_segments$Low_SSB))) {
   p4 <- p4 +
-    geom_ribbon(data =  df4 %>% filter(!is.na(High_SSB)), aes(
+    geom_ribbon(data =  df_segments, aes(
       ymin = Low_SSB,
       ymax = High_SSB,
       fill = ConfidenceIntervalDefinition,
+      group = segment,
       text = map(
         paste0(
           "<b>Year: </b>", Year,
@@ -938,10 +948,11 @@ if (any(!is.na(df4$Low_SSB))) {
 }
 
 p4 <- p4 +
-    geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
+    geom_line(data = df_segments, aes(
         x = Year,
         y = SSB,
         color = "SSB",
+        group = segment,
         text = map(
             paste0(
                 "<b>Year: </b>", Year,
@@ -951,7 +962,8 @@ p4 <- p4 +
         )
     ))
 
-if (any(!is.na(df4$MSYBtrigger))) {
+browser()
+if (any(!is.na(df_segments$MSYBtrigger))) {
     p4 <- p4 +
         geom_line(aes(
             x = Year,
@@ -967,7 +979,7 @@ if (any(!is.na(df4$MSYBtrigger))) {
         ))
 }
 
-if (any(!is.na(df4$Blim))) {
+if (any(!is.na(df_segments$Blim))) {
     p4 <- p4 +
         geom_line(aes(
             x = Year,
@@ -983,7 +995,7 @@ if (any(!is.na(df4$Blim))) {
         ))
 }
 
-if (any(!is.na(df4$Bpa))) {
+if (any(!is.na(df_segments$Bpa))) {
     p4 <- p4 +
         geom_line(aes(
             x = Year,
@@ -1008,7 +1020,7 @@ diamondYears <-
 
 if (any(!is.na(diamondYears))) {
         p4 <- p4 + geom_point( 
-                            data = df4 %>% filter(Year %in% diamondYears), 
+                            data = df_segments %>% filter(Year %in% diamondYears), 
                             aes(x = Year, 
                             y = SSB,
                             text = map(
@@ -1036,15 +1048,15 @@ averageYears <-
     as.numeric()
 
 if (length(averageYears)) {
-    id1 <- nrow(df4) - 1:averageYears[1] + 1
-    id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+    id1 <- nrow(df_segments) - 1:averageYears[1] + 1
+    id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
     avedf1 <- data.frame(
-        Year = range(df4$Year[id1]) + c(-0.5, 0.5),
-        SSB = mean(df4$SSB[id1], na.rm = TRUE)
+        Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
+        SSB = mean(df_segments$SSB[id1], na.rm = TRUE)
     )
     avedf2 <- data.frame(
-        Year = range(df4$Year[id2]) + c(-0.5, 0.5),
-        SSB = mean(df4$SSB[id2], na.rm = TRUE)
+        Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
+        SSB = mean(df_segments$SSB[id2], na.rm = TRUE)
     )
 
     p4 <-
@@ -1072,7 +1084,7 @@ if (length(averageYears)) {
             )))
 }
 
-min_year <- min(df4$Year[which(!is.na(df4$SSB))])
+min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
 
