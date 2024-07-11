@@ -870,7 +870,8 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
             itemsizing= "trace",
             y = -.3, yanchor = "bottom",
             x = 0.5, xanchor = "center",
-            title = list(text = "")
+            title = list(text = ""),
+            yref='container', xref='container' #x=0.5, y=1.1, xanchor='center', yanchor='top'
         ),
         xaxis = list(zeroline = TRUE),
         annotations = list(
@@ -1119,10 +1120,9 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
         legend = list(
             itemsizing = "trace",
             orientation = "h",
-            y = -.3,
-            yanchor = "bottom",
-            x = 0.5,
-            xanchor = "center",
+            y = -.3, yanchor = "bottom",
+            x = 0.5, xanchor = "center",
+            yref='container', xref='container',
             itemwidth = 20,
             itemsizing= "trace",
             title = list(text = "")
