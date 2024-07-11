@@ -962,7 +962,7 @@ p4 <- p4 +
         )
     ))
 
-browser()
+
 if (any(!is.na(df_segments$MSYBtrigger))) {
     p4 <- p4 +
         geom_line(aes(
@@ -1135,6 +1135,7 @@ for (i in 1:length(fig4$x$data)){
 }
 
 fig4
+
 }
 
 
