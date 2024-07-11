@@ -747,17 +747,25 @@ ICES_plot_3 <- function(df, sagSettings) {
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
-        drop_na(F) # %>%
+        #drop_na(F) 
+        mutate(segment = cumsum(is.na(High_F)))
+
+    # Filter out rows with NAs and create a segment identifier
+    df_segments <- df3 %>%
+        filter(!is.na(F)) %>%
+        group_by(segment) %>%
+        mutate(start = first(Year), end = last(Year))
     
-    p3 <- df3 %>%
+    p3 <- df_segments %>%
         ggplot(., aes(x = Year, y = F))
 
-    if (any(!is.na(df3$Low_F))) {
+    if (any(!is.na(df_segments$Low_F))) {
         p3 <- p3 +
             geom_ribbon(aes(
                 ymin = Low_F,
                 ymax = High_F,
                 fill = ConfidenceIntervalDefinition,
+                group = segment,
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
@@ -780,6 +788,7 @@ ICES_plot_3 <- function(df, sagSettings) {
         x = Year,
         y = F,
         color = "F",
+        group = segment,
         text = map(
             paste0(
                 "<b>Year: </b>", Year,
@@ -791,7 +800,7 @@ ICES_plot_3 <- function(df, sagSettings) {
    
     )
     
-    if (any(!is.na(df3$FMSY))) {
+    if (any(!is.na(df_segments$FMSY))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -807,7 +816,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df3$FLim))) {
+    if (any(!is.na(df_segments$FLim))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -823,7 +832,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
-    if (any(!is.na(df3$Fpa))) {
+    if (any(!is.na(df_segments$Fpa))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
