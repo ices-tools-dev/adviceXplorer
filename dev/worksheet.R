@@ -1740,3 +1740,34 @@ access_sag_data_local <- function(stock_code, year) {
 test <- access_sag_data_local("spr.27.3a4", 2024)
 names(test)
 str(test$High_Recruitment)
+
+
+
+df <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2023/SAG_refpts.csv", header = TRUE, sep = ",")
+
+names(df)
+uniqueCustom1 <- unique(df$CustomRefPointName1)
+uniqueCustom2 <- unique(df$CustomRefPointName2)
+uniqueCustom3 <- unique(df$CustomRefPointName3)
+uniqueCustom4 <- unique(df$CustomRefPointName4)
+uniqueCustom5 <- unique(df$CustomRefPointName5)
+
+customRefPoints <- c(uniqueCustom1, uniqueCustom2, uniqueCustom3, uniqueCustom4, uniqueCustom5)
+standardRefPoints <- names(df)[!names(df) %in% c("CustomRefPointName1", 
+"CustomRefPointName2", 
+"CustomRefPointName3", 
+"CustomRefPointName4", 
+"CustomRefPointName5",
+"CustomRefPointValue1",
+"CustomRefPointValue2",
+"CustomRefPointValue3",
+"CustomRefPointValue4",
+"CustomRefPointValue5",
+"AssessmentKey",
+"StockKeyLabel",
+"StockDatabaseID",
+"StockKey",
+"AssessmentYear")]
+
+totrefpoints <- c(standardRefPoints, customRefPoints)
+write.csv(totrefpoints, "D:/GitHub_2023/online-advice/App/Data/SAG_2023/RefPoints.csv")
