@@ -163,19 +163,22 @@ theme_ICES_plots <-
                 "F" = "#ed5f26",
                 "F<sub>MSY</sub>" = "#00AC67",
                 "F<sub>Lim</sub>" = "#000000",
-                "F<sub>pa</sub>" = "#000000"
+                "F<sub>pa</sub>" = "#000000",
+                "HR MSY<sub>proxy</sub>" = "#00AC67"
             )),
             scale_linetype_manual(values = c(
                 "F" = "solid",
                 "F<sub>Lim</sub>" = "dashed",
                 "F<sub>pa</sub>" = "dotted",
-                "F<sub>MSY</sub>" = "solid"
+                "F<sub>MSY</sub>" = "solid",
+                "HR MSY<sub>proxy</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "F" = 1.5,
                 "F<sub>Lim</sub>" = .8,
                 "F<sub>pa</sub>" = 1,
-                "F<sub>MSY</sub>" = .5
+                "F<sub>MSY</sub>" = .5,
+                "HR MSY<sub>proxy</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -218,7 +221,7 @@ theme_ICES_plots <-
                 "B<sub>Lim</sub>" = "#000000",
                 "B<sub>pa</sub>" = "#000000",
                 "Average" = "#ed5f26",
-                "Itrigger" = "#69d371"
+                "I<sub>trigger</sub>" = "#689dff"
             )),
             scale_linetype_manual(values = c(
                 "SSB" = "solid",
@@ -226,7 +229,7 @@ theme_ICES_plots <-
                 "B<sub>pa</sub>" = "dotted",
                 "MSY B<sub>trigger</sub>" = "solid",
                 "Average" = "solid",
-                "Itrigger" = "dotdash"
+                "I<sub>trigger</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "SSB" = 1.5,
@@ -234,7 +237,7 @@ theme_ICES_plots <-
                 "B<sub>pa</sub>" = 1,
                 "MSY B<sub>trigger</sub>" = .5,
                 "Average" = .8,
-                "Itrigger" = .8
+                "I<sub>trigger</sub>" = .8
             )),
             scale_fill_manual(values = c("#94b0a9")),
             limits,
@@ -746,11 +749,24 @@ ICES_plot_3 <- function(df, sagSettings) {
   
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
   
+    customRefPoint <-
+        sagSettings3 %>%
+        filter(settingKey == 51) %>%
+        pull(settingValue) %>%
+        as.numeric()
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
-        drop_na(F) # %>%
+        select(
+            c(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition),
+            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+        ) %>%
+        drop_na(F)
+
+    # df3 <- df %>%
+    #     filter(Purpose == "Advice") %>%
+    #     select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
+    #     drop_na(F) # %>%
     
     p3 <- df3 %>%
         ggplot(., aes(x = Year, y = F))
@@ -842,6 +858,25 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
+    #### custom reference points
+    if (any(!is.na(df3[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = df3[[paste0("CustomRefPointValue", customRefPoint)]],
+                # linetype = as.factor("dotdash"),
+                # colour = as.factor(df3[[paste0("CustomRefPointName", customRefPoint)]][1]),
+                # size = as.factor(.8),
+                linetype = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                colour = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                size = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                text = map(
+                    paste0(
+                        "<b>", df3[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df3[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                    ), HTML
+                )
+            ))
+    }
     
     
     nullifempty <- function(x) if (length(x) == 0) NULL else x
@@ -914,6 +949,7 @@ ICES_plot_4 <- function(df, sagSettings) {
         filter(settingKey == 51) %>%
         pull(settingValue) %>%
         as.numeric()
+
     df4 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
@@ -1016,6 +1052,9 @@ ICES_plot_4 <- function(df, sagSettings) {
             geom_line(aes(
                 x = Year,
                 y = df4[[paste0("CustomRefPointValue", customRefPoint)]],
+                # linetype = as.factor("dotdash"),
+                # colour = as.factor(df4[[paste0("CustomRefPointName", customRefPoint)]][1]),#"#69d371",
+                # size = as.factor(.8),
                 linetype = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
                 colour = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
                 size = df4[[paste0("CustomRefPointName", customRefPoint)]][1],

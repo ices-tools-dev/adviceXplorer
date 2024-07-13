@@ -28,24 +28,31 @@
 #' @export
 #'
 # options(icesSAG.use_token = FALSE)
-update_SAG <- function(year){
-    mkdir(paste0("Data/SAG_", year))
+update_SAG <- function(year) {
+  mkdir(paste0("Data/SAG_", year))
 
-    # lookup for assessment key for summary
-    sag <-
-      StockList(year = year) %>%
-      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
-      rename(FishStock = StockKeyLabel)
+  # lookup for assessment key for summary
+  sag <-
+    StockList(year = year) %>%
+    select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
+    rename(FishStock = StockKeyLabel)
 
-    summary <- SummaryTable(sag$AssessmentKey) %>%
-      left_join(sag, by = c("FishStock","AssessmentKey", "AssessmentYear", "Purpose"))
+  summary <- SummaryTable(sag$AssessmentKey) %>%
+    left_join(sag, by = c("FishStock", "AssessmentKey", "AssessmentYear", "Purpose"))
 
-    write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
+  write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
-    refpts <- FishStockReferencePoints(sag$AssessmentKey)
-    
+  refpts <- FishStockReferencePoints(sag$AssessmentKey)
+  refpts <- refpts %>% mutate(across(c(
+    CustomRefPointName1,
+    CustomRefPointName2,
+    CustomRefPointName3,
+    CustomRefPointName4,
+    CustomRefPointName5
+  ), standardiseRefPoints))
 
-    write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote=TRUE)
+
+  write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 }
 
 #' Returns the data summary from the ICES Stock Assessment database.
@@ -179,4 +186,180 @@ get_CI <- function(df) {
   # colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
   
   return(out)
+}
+
+standardiseRefPoints <- function(totrefpoints) {
+  if (any(totrefpoints %in% c(
+    "FCap",
+    "F_{cap}",
+    "Fcap"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "FCap",
+      "F_{cap}",
+      "Fcap"
+    )] <- "FCap"
+  }
+  if (any(totrefpoints %in% c(
+    "F_(MSY proxy)",
+    "FMSY proxy",
+    "Fmsy proxy",
+    "F_{MSY proxy}",
+    "F_{MSYproxy}",
+    "F_(MSY proxy)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_(MSY proxy)",
+      "FMSY proxy",
+      "Fmsy proxy",
+      "F_{MSY proxy}",
+      "F_{MSYproxy}",
+      "F_(MSY proxy)"
+    )] <- "FMSY<sub>proxy</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "I_{trigger}",
+    "I (trigger)",
+    "I_{trigger}",
+    "Itrigger"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "I_{trigger}",
+      "I (trigger)",
+      "I_{trigger}",
+      "Itrigger"
+    )] <- "I<sub>trigger</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{eco}",
+    "Feco"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{eco}",
+      "Feco"
+    )] <- "FEco"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{lim}",
+    "FLim"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{lim}",
+      "FLim"
+    )] <- "F<sub>Lim</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "I_{loss}",
+    "Iloss"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "I_{loss}",
+      "Iloss"
+    )] <- "I<sub>loss</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{msy}",
+    "FMSY",
+    "Fmsy"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{msy}",
+      "FMSY",
+      "Fmsy"
+    )] <- "FMSY"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{pa}",
+    "Fpa",
+    "FPa"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{pa}",
+      "Fpa",
+      "FPa"
+    )] <- "Fpa"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{mgt}",
+    "HR_{mgt}",
+    "HR (mgt)",
+    "HRMGT"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{mgt}",
+      "HR_{mgt}",
+      "HR (mgt)",
+      "HRMGT"
+    )] <- "HR<sub>MGT</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{msy}",
+    "HR_{MSY}",
+    "HR_{MSY}"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{msy}",
+      "HR_{MSY}",
+      "HR_{MSY}"
+    )] <- "HR<sub>MSY</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HRmsy proxy",
+    "HRMSY proxy",
+    "HR_{MSY proxy}",
+    "HR_{MSY proxy} (W)",
+    "HR_{MSY proxy} (S)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HRmsy proxy",
+      "HRMSY proxy",
+      "HR_{MSY proxy}",
+      "HR_{MSY proxy} (W)",
+      "HR_{MSY proxy} (S)"
+    )] <- "HR MSY<sub>proxy</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "MSY Btrigger",
+    "MSYBtrigger"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "MSY Btrigger",
+      "MSYBtrigger"
+    )] <- "MSYB<sub>trigger</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "MGT B_{trigger}",
+    "MGT B {trigger}",
+    "MGT B (trigger)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+    "MGT B_{trigger}",
+    "MGT B {trigger}",
+    "MGT B (trigger)"
+    )] <- "MGTB<sub>trigger</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{pa}",
+    "HRpa",
+    "HR {pa}"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+     "HR_{pa}",
+    "HRpa",
+    "HR {pa}"
+    )] <- "HR<sub>pa</sub>"
+  }
+  return(totrefpoints)
 }
