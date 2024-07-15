@@ -198,7 +198,7 @@ standardiseRefPoints <- function(totrefpoints) {
       "FCap",
       "F_{cap}",
       "Fcap"
-    )] <- "FCap"
+    )] <- "F<sub>Cap</sub>"
   }
   if (any(totrefpoints %in% c(
     "F_(MSY proxy)",
@@ -239,7 +239,7 @@ standardiseRefPoints <- function(totrefpoints) {
     totrefpoints[totrefpoints %in% c(
       "F_{eco}",
       "Feco"
-    )] <- "FEco"
+    )] <- "F<sub>Eco</sub>"
   }
 
   if (any(totrefpoints %in% c(
@@ -271,7 +271,7 @@ standardiseRefPoints <- function(totrefpoints) {
       "F_{msy}",
       "FMSY",
       "Fmsy"
-    )] <- "FMSY"
+    )] <- "F<sub>MSY</sub>"
   }
 
   if (any(totrefpoints %in% c(
@@ -283,7 +283,7 @@ standardiseRefPoints <- function(totrefpoints) {
       "F_{pa}",
       "Fpa",
       "FPa"
-    )] <- "Fpa"
+    )] <- "F<sub>pa</sub>"
   }
 
   if (any(totrefpoints %in% c(

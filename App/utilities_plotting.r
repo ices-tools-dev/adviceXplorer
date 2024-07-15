@@ -164,21 +164,24 @@ theme_ICES_plots <-
                 "F<sub>MSY</sub>" = "#00AC67",
                 "F<sub>Lim</sub>" = "#000000",
                 "F<sub>pa</sub>" = "#000000",
-                "HR MSY<sub>proxy</sub>" = "#00AC67"
+                "HR MSY<sub>proxy</sub>" = "#00AC67",
+                "FMSY<sub>proxy</sub>" = "#00AC67"
             )),
             scale_linetype_manual(values = c(
                 "F" = "solid",
                 "F<sub>Lim</sub>" = "dashed",
                 "F<sub>pa</sub>" = "dotted",
                 "F<sub>MSY</sub>" = "solid",
-                "HR MSY<sub>proxy</sub>" = "dotdash"
+                "HR MSY<sub>proxy</sub>" = "dotdash",
+                "FMSY<sub>proxy</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "F" = 1.5,
                 "F<sub>Lim</sub>" = .8,
                 "F<sub>pa</sub>" = 1,
                 "F<sub>MSY</sub>" = .5,
-                "HR MSY<sub>proxy</sub>" = .8
+                "HR MSY<sub>proxy</sub>" = .8,
+                "FMSY<sub>proxy</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -878,11 +881,13 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
+    min_year <- min(df3$Year[which(!is.na(df3$F))])
     
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p3 <-
         p3 +
+        xlim(min_year, max(df3$Year+1)) +
         theme_ICES_plots(
         type = "F", df,
         title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
@@ -943,7 +948,7 @@ fig3
 #'
 ICES_plot_4 <- function(df, sagSettings) {
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
-
+    
     customRefPoint <-
         sagSettings4 %>%
         filter(settingKey == 51) %>%
@@ -1159,7 +1164,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 
     p4 <-
         p4 +
-        # xlim(min_year, max(df4$Year+1)) +
+        xlim(min_year, max(df4$Year+1)) +
         theme_ICES_plots(
             type = "SSB", df,
             title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
