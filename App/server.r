@@ -70,7 +70,7 @@ server <- function(input, output, session) {
       res_mod() %>%
         select(
           "StockKeyLabel",
-          "Component",
+          "AssessmentComponent",
           "EcoRegion",
           "icon",
           "SpeciesCommonName",
@@ -78,28 +78,30 @@ server <- function(input, output, session) {
         ) %>%
         rename(
           "Stock code" = StockKeyLabel,
+          "Component" = AssessmentComponent,
           "Ecoregion" = EcoRegion,
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
         ) %>% 
-        { if (all(is.na(.$Component))) select(., -Component) else . }
+        { if (all(is_empty(.$Component))) select(., -Component) else . }
     } else {
       res_mod() %>%
         select(
           "StockKeyLabel",
-          "Component",
+          "AssessmentComponent",
           "icon",
           "SpeciesCommonName",
           "stock_location"
         ) %>%
         rename(
           "Stock code" = StockKeyLabel,
+          "Component" = AssessmentComponent,
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
         ) %>% 
-        { if (all(is.na(.$Component))) select(., -Component) else . }
+        { if (all(is_empty(.$Component))) select(., -Component) else . }
     }
   })
   

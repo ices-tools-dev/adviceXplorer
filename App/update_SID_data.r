@@ -29,39 +29,23 @@ update_SID <- function(year) {
     stock_list_long <- separate_ecoregions(stock_list_all)
     ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
-    stock_list_long[ , 'Component'] = NA
-    
-    
-    #### NS cod exeption
-    if (year == 2023) {
-        stock_list_long$Component[stock_list_long$AssessmentKey == 18396] <- "All"
-        row_to_duplicate <- stock_list_long %>% filter(StockKeyLabel == "cod.27.46a7d20" & stock_list_long$EcoRegion %in% c("Greater North Sea", "Celtic Seas"))
-        duplicated_df <- row_to_duplicate[rep(row.names(row_to_duplicate), each = 3), ]
-        row.names(duplicated_df) <- NULL # Reset row names
-
-        Cod_Keys <- c(18282, 18283, 18284, 18282, 18283, 18284)
-        Cod_Comp <- c("Viking", "Northwestern","Southern","Viking", "Northwestern","Southern")
-        for (i in 1:nrow(duplicated_df)) {
-            duplicated_df$AssessmentKey[i] <- Cod_Keys[i]
-            duplicated_df$Component[i] <- Cod_Comp[i]
-        }
-        stock_list_long <- rbind(stock_list_long, duplicated_df)
-        row.names(stock_list_long) <- NULL # Reset row names
-    }
-
-
+    ### add component column
+    SAGList <- icesSAG::StockList(year = year)
+    stock_list_long <- merge(SAGList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>%
+        select(!AssessmentKey.y) %>%
+        rename(AssessmentKey = AssessmentKey.x)
     # some tidying up and adding description
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
-    stock_list_long <- stock_list_long %>% 
+    stock_list_long <- stock_list_long %>%
         dplyr::mutate(
-        stock_location = parse_location_from_stock_description(StockKeyDescription)
-      )
+            stock_location = parse_location_from_stock_description(StockKeyDescription)
+        )
 
 
 
 
-    write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year),quote=TRUE)
+    write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year), quote = TRUE)
 }
 # update_SID(2023)
 

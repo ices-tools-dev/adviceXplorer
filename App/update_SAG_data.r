@@ -34,7 +34,7 @@ update_SAG <- function(year){
     # lookup for assessment key for summary
     sag <-
       StockList(year = year) %>%
-      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
+      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) %>%
       rename(FishStock = StockKeyLabel)
 
     summary <- SummaryTable(sag$AssessmentKey) %>%

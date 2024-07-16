@@ -1737,6 +1737,25 @@ access_sag_data_local <- function(stock_code, year) {
     return(data_sag)
     
 }
-test <- access_sag_data_local("spr.27.3a4", 2024)
+test <- access_sag_data_local("ane.27.9a", 2024)
 names(test)
 str(test$High_Recruitment)
+list <- icesSAG::StockList(2024)
+
+
+year <-2024
+### download SID
+    stock_list_all <- download_SID(year)
+    ### modifify SID table, 1 row == 1 Ecoregion
+    stock_list_long <- separate_ecoregions(stock_list_all)
+    ### add hyperlinks to table
+    stock_list_long <- sid_table_links(stock_list_long)
+    ### add component column
+    SAGList <- icesSAG::StockList(year = year)
+    stock_list_longTest <- merge(SAGList %>% select(AssessmentKey,StockKeyLabel,AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>% select(!AssessmentKey.y) %>% rename(AssessmentKey = AssessmentKey.x)
+    stock_list_longTest2 <- left_join( SAGList %>% select(AssessmentKey,AssessmentComponent), stock_list_long, by = "AssessmentKey",copy = TRUE)
+    SAGList[SAGList$StockKeyLabel == "ane.27.9a",]
+    stock_list_long[stock_list_long$StockKeyLabel == "ane.27.9a",]
+
+    stock_list_longTest[stock_list_longTest$StockKeyLabel == "ane.27.9a",]
+head(sort(stock_list_long), 20)
