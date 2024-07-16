@@ -43,10 +43,7 @@ server <- function(input, output, session) {
     
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
-      dplyr::arrange(StockKeyLabel) #%>%
-      # dplyr::mutate(
-      #   Sel = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
-      # )
+      dplyr::arrange(StockKeyLabel)
   }
   }) %>%
     bindCache(input$selected_locations, input$selected_years) %>%
