@@ -322,9 +322,7 @@ standardiseRefPoints <- function(totrefpoints) {
     totrefpoints[totrefpoints %in% c(
       "HRmsy proxy",
       "HRMSY proxy",
-      "HR_{MSY proxy}",
-      "HR_{MSY proxy} (W)",
-      "HR_{MSY proxy} (S)"
+      "HR_{MSY proxy}"      
     )] <- "HR MSY<sub>proxy</sub>"
   }
 
