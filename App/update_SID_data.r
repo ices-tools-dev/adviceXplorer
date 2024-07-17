@@ -41,10 +41,6 @@ update_SID <- function(year) {
         dplyr::mutate(
             stock_location = parse_location_from_stock_description(StockKeyDescription)
         )
-
-
-
-
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year), quote = TRUE)
 }
 # update_SID(2023)

@@ -132,13 +132,27 @@ get_Advice_View_Headline <- function(catch_scenario_list, advice_doi, replaced_a
 #' 
 #'
 #' @export
-get_Stock_info <- function(CommonName, stockcode,  assessmentYear, description) { #StockDescription,
-  stock_info_sentence <- HTML(paste0("<b><i><font size=", 4, ">", "Stock information:","</font></b></i><br/>",
-                                              "<font size=", 3, ">","Common name: ", "<b>", CommonName,"</b><br/>",
-                                              "<font size=", 3, ">","Stock code: ", "<b>", stockcode,"</b><br/>",
-                                              "<font size=", 3, ">","Assessment year: ", "<b>", assessmentYear,"</b><br/>"),
-                                              "<font size=", 3, ">","Location: ", "<b>", parse_location_from_stock_description(description),"</b>")
-return(stock_info_sentence)
+get_Stock_info <- function(CommonName, stockcode, assessmentYear, AssessmentComponent, description) { # StockDescription,
+  stock_info_sentence <- HTML(
+    paste0(
+      "<b><i><font size=", 4, ">", "Stock information:", "</font></b></i><br/>",
+      "<font size=", 3, ">", "Common name: ", "<b>", CommonName, "</b><br/>",
+      "<font size=", 3, ">", "Stock code: ", "<b>", stockcode, "</b><br/>",
+      "<font size=", 3, ">", "Assessment year: ", "<b>", assessmentYear, "</b><br/>",
+      if (nchar(AssessmentComponent) == 0) {
+        paste0(          
+          "<font size=", 3, ">", "Location: ", "<b>", parse_location_from_stock_description(description), "</b>"
+        )
+      } else {
+        paste0(
+          "<font size=", 3, ">", "Component: ", "<b>", AssessmentComponent, "</b><br/>",
+          "<font size=", 3, ">", "Location: ", "<b>", parse_location_from_stock_description(description), "</b>"
+        )
+      }
+    )
+  )
+  
+  return(stock_info_sentence)
 }
 
 #' Returns an HTML string containing the catch scenario table's footnotes.

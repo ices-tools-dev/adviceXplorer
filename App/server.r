@@ -83,8 +83,10 @@ server <- function(input, output, session) {
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
-        ) %>% 
-        { if (all(is_empty(.$Component))) select(., -Component) else . }
+        ) %>%
+        {
+          if (all(nchar(.$Component) == 0)) select(., -Component) else .
+        }
     } else {
       res_mod() %>%
         select(
@@ -100,14 +102,15 @@ server <- function(input, output, session) {
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
-        ) %>% 
-        { if (all(is_empty(.$Component))) select(., -Component) else . }
+        ) %>%
+        {
+          if (all(nchar(.$Component) == 0)) select(., -Component) else .
+        }
     }
   })
   
 
   output$tbl <- renderReactable({
-    
     reactable(res_modo(),
       selection = "single",
       filterable = TRUE,
@@ -115,7 +118,6 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultPageSize = 100,
       striped = TRUE,
-
       defaultColDef = colDef(
         headerStyle = list(background = "#99AABF")
       ),
@@ -228,7 +230,8 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
+  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], filtered_row$AssessmentComponent[1], SAG_data_reactive()$StockDescription[1])
+  
 }) 
 
 output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
