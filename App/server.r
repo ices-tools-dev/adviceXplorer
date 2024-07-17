@@ -43,10 +43,9 @@ server <- function(input, output, session) {
     
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
-      dplyr::arrange(StockKeyLabel) #%>%
-      # dplyr::mutate(
-      #   Sel = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
-      # )
+      dplyr::arrange(StockKeyLabel)  %>% 
+      mutate(AssessmentComponent = as.character(AssessmentComponent))
+      
   }
   }) %>%
     bindCache(input$selected_locations, input$selected_years) %>%
@@ -227,10 +226,18 @@ advice_doi <- eventReactive((req(SAG_data_reactive())),{
 replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
   get_link_replaced_advice(query$stockkeylabel,query$year)
 })
+
+
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], filtered_row$AssessmentComponent[1], SAG_data_reactive()$StockDescription[1])
+  browser()
+  if (nchar(filtered_row$AssessmentComponent) != 0 | !is.na(filtered_row$AssessmentComponent)) {
+    filtered_row <- filtered_row %>% filter(AssessmentComponent == res_mod()[selected(), AssessmentComponent])
+  }
+  
+  
+  get_Stock_info(filtered_row$SpeciesCommonName[1], filtered_row$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], filtered_row$AssessmentComponent[1], filtered_row$StockKeyDescription[1])
   
 }) 
 
@@ -240,7 +247,8 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(), advice_doi(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
+  get_Advice_View_Headline(advice_view_info(), advice_doi(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots(), filtered_row$AssessmentComponent[1])
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({

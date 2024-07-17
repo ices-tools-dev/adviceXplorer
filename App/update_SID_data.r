@@ -43,10 +43,7 @@ update_SID <- function(year) {
         )
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year), quote = TRUE)
 }
-# update_SID(2023)
 
-# year <- 2023
-# head(stock_list_long)
 #' Updates the data used to run the app
 #'
 #' @param mode the mode used to update the data
