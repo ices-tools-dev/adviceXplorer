@@ -76,6 +76,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -96,6 +97,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>%
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -390,7 +392,9 @@ advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$ye
   asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)
 
   if (!is_empty(asd_record_previous)){ 
-    asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
+    asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, 
+                                                          adviceStatus == "Advice",
+                                                          adviceComponent == res_mod()[selected(), AssessmentComponent]) 
   } 
 })
 
@@ -447,7 +451,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)

@@ -375,14 +375,14 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #' 
-wrangle_catches_with_scenarios <- function(catches_data, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
+wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
   
   catches_data <- catches_data %>%
-    filter(Purpose == "Advice") %>%
+    filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
     select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals ) #%>% 
     # left_join(y = additional_LandingData, by = "Year")
 
-
+  
   #  Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, ..col_name])))
