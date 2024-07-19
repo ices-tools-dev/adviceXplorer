@@ -30,8 +30,8 @@ update_SID <- function(year) {
     ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
     ### add component column
-    SAGList <- icesSAG::StockList(year = year)
-    stock_list_long <- merge(SAGList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>%
+    ASDList <- icesASD::getAdviceViewRecord(year = year) %>% rename(StockKeyLabel = stockCode, AssessmentKey = assessmentKey, AssessmentComponent = adviceComponent)
+    stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>%
         select(!AssessmentKey.y) %>%
         rename(AssessmentKey = AssessmentKey.x)
     # some tidying up and adding description

@@ -56,11 +56,13 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
-get_Advice_View_Headline <- function(catch_scenario_list, advice_doi, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
+get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
+
   catch_scenario_advice_sentence <- HTML(
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",
-      "<a href='", advice_doi, "' target='_blank'>",
+      # "<a href='", advice_doi, "' target='_blank'>",
+      "<a href='", catch_scenario_list$adviceDOI, "' target='_blank'>",
       "<b><i><font size=4> Headline advice </b></i><i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
       "<br/>",
       "<font size=3>", catch_scenario_list$adviceSentence, "</font>",
@@ -72,32 +74,32 @@ get_Advice_View_Headline <- function(catch_scenario_list, advice_doi, replaced_a
           "<font size=3> Replaced advice <i class='fa-solid fa-up-right-from-square'></i></font></a></span>"
         )
       },
-      if (tabset_id == "Development over time"){
-      paste0(
-        "<br/>",
-        "<span class='hovertext' data-hover='Standard graphs data download'>",
-        downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
-      )
-      } else if (tabset_id == "Quality of assessment" && all(!10 %in% drop_plots)){
+      if (tabset_id == "Development over time") {
         paste0(
-        "<br/>",
-        "<span class='hovertext' data-hover='Quality of assessment data download'>",
-        downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
-      )
-      } else if (tabset_id == "Catch scenarios" ){
+          "<br/>",
+          "<span class='hovertext' data-hover='Standard graphs data download'>",
+          downloadLink("download_SAG_Data", HTML("<font size= 3>Download assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+        )
+      } else if (tabset_id == "Quality of assessment" && all(!10 %in% drop_plots)) {
         paste0(
-        "<br/>",
-        "<span class='hovertext' data-hover='Link to ASD entry'>",
-        "<a href='", "http://asd.ices.dk/viewAdvice/", catch_scenario_list$adviceKey, "' target='_blank'>",
-        "<font size= 3>View ASD entry <i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
-        if (!is_empty(catch_scenario_table)) {
-          paste0(
-            " or ",
-            "<span class='hovertext' data-hover='Download table (.csv)'>",
-            downloadLink("download_catch_table", HTML("<font size= 3>download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
-          )
-        }
-      )
+          "<br/>",
+          "<span class='hovertext' data-hover='Quality of assessment data download'>",
+          downloadLink("download_QualAss_Data", HTML("<font size= 3>Download quality of assessment data <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+        )
+      } else if (tabset_id == "Catch scenarios") {
+        paste0(
+          "<br/>",
+          "<span class='hovertext' data-hover='Link to ASD entry'>",
+          "<a href='", "http://asd.ices.dk/viewAdvice/", catch_scenario_list$adviceKey, "' target='_blank'>",
+          "<font size= 3>View ASD entry <i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
+          if (!is_empty(catch_scenario_table)) {
+            paste0(
+              " or ",
+              "<span class='hovertext' data-hover='Download table (.csv)'>",
+              downloadLink("download_catch_table", HTML("<font size= 3>download catch scenario table <i class='fa-solid fa-cloud-arrow-down'></i></font></span>"))
+            )
+          }
+        )
       }
     )
   )
@@ -133,25 +135,26 @@ get_Advice_View_Headline <- function(catch_scenario_list, advice_doi, replaced_a
 #'
 #' @export
 get_Stock_info <- function(CommonName, stockcode, assessmentYear, AssessmentComponent, description) { # StockDescription,
+  
   stock_info_sentence <- HTML(
     paste0(
       "<b><i><font size=", 4, ">", "Stock information:", "</font></b></i><br/>",
       "<font size=", 3, ">", "Common name: ", "<b>", CommonName, "</b><br/>",
       "<font size=", 3, ">", "Stock code: ", "<b>", stockcode, "</b><br/>",
       "<font size=", 3, ">", "Assessment year: ", "<b>", assessmentYear, "</b><br/>",
-      if (nchar(AssessmentComponent) == 0) {
-        paste0(          
+      if (all(AssessmentComponent != "N.A.") ) {
+        paste0(     
+          "<font size=", 3, ">", "Component: ", "<b>", AssessmentComponent, "</b><br/>",     
           "<font size=", 3, ">", "Location: ", "<b>", parse_location_from_stock_description(description), "</b>"
-        )
+         )
       } else {
-        paste0(
-          "<font size=", 3, ">", "Component: ", "<b>", AssessmentComponent, "</b><br/>",
+        paste0(          
           "<font size=", 3, ">", "Location: ", "<b>", parse_location_from_stock_description(description), "</b>"
         )
       }
     )
   )
-  
+
   return(stock_info_sentence)
 }
 

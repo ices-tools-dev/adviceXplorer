@@ -43,8 +43,9 @@ server <- function(input, output, session) {
     
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
-      dplyr::arrange(StockKeyLabel)  %>% 
-      mutate(AssessmentComponent = as.character(AssessmentComponent))
+      dplyr::arrange(StockKeyLabel)  #%>% 
+      # mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent))
+      # mutate(AssessmentComponent = as.character(AssessmentComponent))
       
   }
   }) %>%
@@ -231,11 +232,9 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  browser()
-  if (nchar(filtered_row$AssessmentComponent) != 0 | !is.na(filtered_row$AssessmentComponent)) {
+  if (all(filtered_row$AssessmentComponent != "N.A.")) {
     filtered_row <- filtered_row %>% filter(AssessmentComponent == res_mod()[selected(), AssessmentComponent])
   }
-  
   
   get_Stock_info(filtered_row$SpeciesCommonName[1], filtered_row$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], filtered_row$AssessmentComponent[1], filtered_row$StockKeyDescription[1])
   
@@ -247,8 +246,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
-  get_Advice_View_Headline(advice_view_info(), advice_doi(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots(), filtered_row$AssessmentComponent[1])
+  get_Advice_View_Headline(advice_view_info(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
@@ -378,9 +376,11 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
 ##### Advice view info
 advice_view_info <- reactive({
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
-  if (!is_empty(asd_record)){ 
-    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
-  }  
+  if (!is_empty(asd_record)){
+    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, 
+                                        adviceStatus == "Advice", 
+                                        adviceComponent == res_mod()[selected(), AssessmentComponent])
+  }
 }) 
 
 
