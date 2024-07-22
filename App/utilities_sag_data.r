@@ -118,8 +118,8 @@ access_sag_data_local <- function(stock_code, year) {
 #' @export
 #'
 
-quality_assessment_data_local <- function(stock_code, year) {
-    years <- c(2023, 2022, 2021, 2020, 2019)
+quality_assessment_data_local <- function(stock_code, year, assessmentComponent) {
+    years <- c(2024, 2023, 2022, 2021, 2020, 2019)
     years <- years[years <= year]
     datalist <- list()
 
@@ -127,13 +127,14 @@ quality_assessment_data_local <- function(stock_code, year) {
     if (isTRUE(class(data_temp) == "try-error")) {
             next
         } else {
-            data_temp <- filter(data_temp, between(Year, 2005, 2023))
+            data_temp <- filter(data_temp, between(Year, 2005, 2024))
+            
             data_temp <- data_temp %>% select(
                 Year,
                 Recruitment, RecruitmentAge,
                 SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
                 F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
-                AssessmentYear, StockPublishNote, Purpose, SAGStamp
+                AssessmentYear, StockPublishNote, Purpose, SAGStamp, AssessmentComponent
             )
             
             data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
@@ -144,11 +145,11 @@ quality_assessment_data_local <- function(stock_code, year) {
         }
 
     # take out non published data from before 2021 in big data
-    SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice") %>% distinct()
+    SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
     
     # make assessmentYear as factor
     SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
-
+    
     return(SAG_data)
 }
 

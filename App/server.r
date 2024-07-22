@@ -325,7 +325,8 @@ output$download_SAG_Data <- downloadHandler(
 
     year <- query$year 
     
-    quality_assessment_data_local(stock_name, year)
+    quality_assessment_data_local(stock_name, year, res_mod()[selected(), AssessmentComponent]) 
+    
   }) 
   
 
@@ -375,7 +376,7 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   
 
-##### Advice view info
+##### ASD info
 advice_view_info <- reactive({
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
   if (!is_empty(asd_record)){
@@ -386,11 +387,10 @@ advice_view_info <- reactive({
 }) 
 
 
-##### Advice view info previous year
+##### ASD info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)
-
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]   
+  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)  
   if (!is_empty(asd_record_previous)){ 
     asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, 
                                                           adviceStatus == "Advice",
