@@ -64,33 +64,32 @@ access_sag_data <- function(stock_code, year) {
 #' @export
 #'
 access_sag_data_local <- function(stock_code, year) {
-  
-    out1 <-
+  out1 <-
     lapply(
       year,
-      function(i) {        
-          fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+      function(i) {
+        fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
       }
     )
-    SAGsummary <- do.call(rbind, out1)
-    
-    out2 <-
+  SAGsummary <- do.call(rbind, out1)
+
+  out2 <-
     lapply(
       year,
-      function(j) {        
-          fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
+      function(j) {
+        fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
       }
     )
-    SAGrefpts <- do.call(rbind, out2)
+  SAGrefpts <- do.call(rbind, out2)
 
-    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
+  data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
 
-    data_sag <- data_sag %>% select(-FishStock) %>% 
-    filter(StockPublishNote == "Stock published") %>% 
+  data_sag <- data_sag %>%
+    select(-FishStock) %>%
+    filter(StockPublishNote == "Stock published") %>%
     mutate(across(everything(), ~ if (class(.) == "integer64") as.integer(.) else .))
-    
-    return(data_sag)
-    
+
+  return(data_sag)
 }
 
 
@@ -145,7 +144,6 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
   }
   # take out non published data from before 2021 in big data
   SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
-
   # make assessmentYear as factor
   SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 

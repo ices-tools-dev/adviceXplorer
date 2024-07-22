@@ -181,7 +181,6 @@ get_Stock_info <- function(CommonName, stockcode, assessmentYear, AssessmentComp
 #' @export
 #' 
 format_catch_scenario_notes <- function(ASDadviceKey) {
-
   catch_scenario_table_notes <- icesASD::getCatchScenariosNotes(ASDadviceKey)
 
   if (length(catch_scenario_table_notes) != 0) {
@@ -374,43 +373,37 @@ standardize_catch_scenario_table <- function(tmp) {
 #' 
 #'
 #' @export
-#' 
+#'
 wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
-  
   catches_data <- catches_data %>%
     filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
-    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals ) #%>% 
-    # left_join(y = additional_LandingData, by = "Year")
+    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals) # %>%
+  # left_join(y = additional_LandingData, by = "Year")
 
-  
+
   #  Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, ..col_name])))
-    }
+  is_na_column <- function(dataframe, col_name) {
+    return(all(is.na(dataframe[, ..col_name])))
+  }
 
-    if (is_na_column(catches_data,"Catches")){
-      catches_data$Catches <- rowSums(catches_data[,c("Landings", "Discards","IBC","Unallocated_Removals")], na.rm=TRUE)
-      catches_data <- catches_data %>% select(c("Year", "Catches"))
-    } else{
-      catches_data <- catches_data %>% select(c("Year", "Catches"))
-    }
+  if (is_na_column(catches_data, "Catches")) {
+    catches_data$Catches <- rowSums(catches_data[, c("Landings", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)
+    catches_data <- catches_data %>% select(c("Year", "Catches"))
+  } else {
+    catches_data <- catches_data %>% select(c("Year", "Catches"))
+  }
 
   catches_data <- catches_data %>% add_column(cat = "Historical Catches")
   catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
 
-
-  # catch_scenario_list_previous_year <- get_Advice_View_info(stock_name, year - 1)
-
-  catches_data <- catches_data %>% mutate(Catches = ifelse(Year == year,  as.numeric(catch_scenario_list_previous_year$adviceValue), Catches)) %>% na.omit()
-  
+  catches_data <- catches_data %>%
+    mutate(Catches = ifelse(Year == year, as.numeric(catch_scenario_list_previous_year$adviceValue), Catches)) %>%
+    na.omit()
   catches_data_year_before <- catch_scenario_table
   catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
-
   catches_data_year_before$TotCatch <- tail(catches_data$Catches, 1)
-  
   catches_data <- setNames(catches_data, names(catch_scenario_table))
   final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
-
   final_df <- na.omit(final_df)
 
   return(final_df)
@@ -508,7 +501,6 @@ drop_cols_with_all_nas <- function(df){
 #'
 #' @export
 calculate_perc_change <- function(df_new, Basis, catch_scen_table_perc) {
-
   for (m in 4:ncol(df_new)) {
     for (i in seq_len(nrow(df_new))) {
       if (Basis[1, m] == 0) {

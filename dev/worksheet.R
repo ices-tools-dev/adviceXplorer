@@ -1759,3 +1759,11 @@ year <-2024
 
     stock_list_longTest[stock_list_longTest$StockKeyLabel == "ane.27.9a",]
 head(sort(stock_list_long), 20)
+
+library(icesASD)
+asdList <- icesASD::getAdviceViewRecord(year = 2024) %>% rename(StockKeyLabel = stockCode)
+ASDList <- icesASD::getAdviceViewRecord(year = year) %>% rename(stockCode = StockKeyLabel)
+
+
+
+icesASD::getAdviceViewRecord("aru.27.123a4", 2022)
