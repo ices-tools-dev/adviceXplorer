@@ -23,349 +23,333 @@
 #' @export
 #'
 theme_ICES_plots <-
-  function(
-    type = c("Catches", "Recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
-    title = NULL, ylegend = NULL, ymax = NULL) {
-    font <- "Gothic A1, sans-serif"#"Calibri, sans-serif" # assign font family up front
-    tmp <- theme_minimal() %+replace% # replace elements we want to change
+    function(
+        type = c("Catches", "Recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
+        title = NULL, ylegend = NULL, ymax = NULL) {
+        font <- "Gothic A1, sans-serif" # "Calibri, sans-serif" # assign font family up front
+        tmp <- theme_minimal() %+replace% # replace elements we want to change
 
-        theme(
-            axis.title = element_text( # axis titles
-                family = font, # font family
-                size = 18,
-                colour = "darkgrey",
-                vjust = -2
-            ),
-            axis.text = element_text( # axis titles
-                family = font, # font family
-                size = 13,
-                colour = "black"
-            ),
-            axis.title.x = element_blank(),
-            
-            panel.grid.major.y = element_line(
-                colour = "grey",
-                size = 1,
-                linetype = "solid",
-            ),
-            plot.title = element_text( # title
-                family = font, # set font family
-                size = 21, # set font size
-                face = "bold", # bold typeface
-                hjust = 0, # left align
-                vjust = 1,
-                margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0),
-                if (type == "Catches") {
-                    color <- "#002b5f"
-                } else if (type == "Recruitment" | type == "quality_R") {
-                    color <- "#28b3e8"
-                } else if (type == "F" | type == "quality_F") {
-                    color <- "#ed5f26"
-                } else if (type == "SSB" | type == "quality_SSB") {
-                    color <- "#047c6c"
-                }
-            ),
-            axis.line = element_line(size = 1, colour = "black"),
-            axis.ticks = element_line(size = 1, color="black"),
-            panel.grid.minor = element_blank(),
-            panel.grid.major.x = element_blank(),
-            panel.border = element_rect(
-                colour = "black",
-                fill = NA,
-                size = 0.5
-            ),
-            legend.text = element_text(
-                family = "sans-serif",
-                size = 15,
-                color = "black"
-            ),
-            legend.title = element_blank(),
-            legend.position = "bottom"
-
-        )
-
-    if (type == "Catches") {
-
-        if (is.null(title)) {
-          title <- "Catches"
-        }
-        if (is.null(ylegend)) {
-          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$Units))
-        }
-
-        if (is.null(ymax)) {
-          limits <- expand_limits(y = 0)
-        } else {
-          limits <- expand_limits(y = c(0, ymax))
-        }
-        
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title,
-                y = ylegend
-            ),
-            scale_fill_manual(values = c(
-                "Landings" = "#002b5f",
-                "Discards" = "#fda500",
-                "Catches" = "#002b5f",
-                "Industrial Bycatch" = "#00b29d",
-                "Unallocated_Removals" = "#6eb200",
-                "Down-weighted Catches" = "#6eb5d2"
-            )),
-            limits,
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+            theme(
+                axis.title = element_text( # axis titles
+                    family = font, # font family
+                    size = 18,
+                    colour = "darkgrey",
+                    vjust = -2
+                ),
+                axis.text = element_text( # axis titles
+                    family = font, # font family
+                    size = 13,
+                    colour = "black"
+                ),
+                axis.title.x = element_blank(),
+                panel.grid.major.y = element_line(
+                    colour = "grey",
+                    size = 1,
+                    linetype = "solid",
+                ),
+                plot.title = element_text( # title
+                    family = font, # set font family
+                    size = 21, # set font size
+                    face = "bold", # bold typeface
+                    hjust = 0, # left align
+                    vjust = 1,
+                    margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0),
+                    if (type == "Catches") {
+                        color <- "#002b5f"
+                    } else if (type == "Recruitment" | type == "quality_R") {
+                        color <- "#28b3e8"
+                    } else if (type == "F" | type == "quality_F") {
+                        color <- "#ed5f26"
+                    } else if (type == "SSB" | type == "quality_SSB") {
+                        color <- "#047c6c"
+                    }
+                ),
+                axis.line = element_line(size = 1, colour = "black"),
+                axis.ticks = element_line(size = 1, color = "black"),
+                panel.grid.minor = element_blank(),
+                panel.grid.major.x = element_blank(),
+                panel.border = element_rect(
+                    colour = "black",
+                    fill = NA,
+                    size = 0.5
+                ),
+                legend.text = element_text(
+                    family = "sans-serif",
+                    size = 15,
+                    color = "black"
+                ),
+                legend.title = element_blank(),
+                legend.position = "bottom"
             )
-        )
-    } else if (type == "Recruitment") {
 
-        if (is.null(title)) {
-          title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
-        }
-        if (is.null(ylegend)) {
-          ylegend <- "Recruitment in billions"
-        }
+        if (type == "Catches") {
+            if (is.null(title)) {
+                title <- "Catches"
+            }
+            if (is.null(ylegend)) {
+                ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$Units))
+            }
 
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title,
-                y = ylegend
-            ),
-            scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000
-                }
+            if (is.null(ymax)) {
+                limits <- expand_limits(y = 0)
+            } else {
+                limits <- expand_limits(y = c(0, ymax))
+            }
+
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title,
+                    y = ylegend
+                ),
+                scale_fill_manual(values = c(
+                    "Landings" = "#002b5f",
+                    "Discards" = "#fda500",
+                    "Catches" = "#002b5f",
+                    "Industrial Bycatch" = "#00b29d",
+                    "Unallocated_Removals" = "#6eb200",
+                    "Down-weighted Catches" = "#6eb5d2"
+                )),
+                limits,
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1)),
+                    labels = function(l) {
+                        trans <- l / 1000
+                    }
+                )
             )
-        )
-    } else if (type == "F") {
-        if (is.null(title)) {
-          title <- "Fishing pressure"
-        }
-        if (is.null(ylegend)) {
-          ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
-        }
+        } else if (type == "Recruitment") {
+            if (is.null(title)) {
+                title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
+            }
+            if (is.null(ylegend)) {
+                ylegend <- "Recruitment in billions"
+            }
 
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title, #"Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge)),
-                y = ylegend, #sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge)), # sprintf("Catches in 1000 %s", dplyr::last(df$Units))
-                x = "Year"
-            ),
-            scale_color_manual(values = c(
-                "F" = "#ed5f26",
-                "F<sub>MSY</sub>" = "#00AC67",
-                "F<sub>Lim</sub>" = "#000000",
-                "F<sub>pa</sub>" = "#000000"
-            )),
-            scale_linetype_manual(values = c(
-                "F" = "solid",
-                "F<sub>Lim</sub>" = "dashed",
-                "F<sub>pa</sub>" = "dotted",
-                "F<sub>MSY</sub>" = "solid"
-            )),
-            scale_size_manual(values = c(
-                "F" = 1.5,
-                "F<sub>Lim</sub>" = .8,
-                "F<sub>pa</sub>" = 1,
-                "F<sub>MSY</sub>" = .5
-            )),
-            scale_fill_manual(values = c("#f2a497")),
-            expand_limits(y = 0),
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)) # ,
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title,
+                    y = ylegend
+                ),
+                scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1)),
+                    labels = function(l) {
+                        trans <- l / 1000000
+                    }
+                )
             )
-        )
-    } else if (type == "SSB") {
-        if (is.null(title)) {
-          title <- "Spawning Stock Biomass"
-        }
-        if (is.null(ylegend)) {
-          ylegend <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
-          ylabels_func <- function(l) {
-            trans <- l / 1000 #1000000
-          }
-        } else {
-          if (is.na(ylegend)) ylegend <- ""
-          ylabels_func <- function(l) {
-            trans <- l
-          }
-        }
+        } else if (type == "F") {
+            if (is.null(title)) {
+                title <- "Fishing pressure"
+            }
+            if (is.null(ylegend)) {
+                ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
+            }
 
-        if (is.null(ymax)) {
-          limits <- expand_limits(y = 0)
-        } else {
-          limits <- expand_limits(y = c(0, ymax))
-        }
-
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title, 
-                y = ylegend,
-                x = "Year"
-            ),
-            scale_color_manual(values = c(
-                "SSB" = "#047c6c",
-                "MSY B<sub>trigger</sub>" = "#689dff",
-                "B<sub>Lim</sub>" = "#000000",
-                "B<sub>pa</sub>" = "#000000",
-                "Average" = "#ed5f26"
-            )),
-            scale_linetype_manual(values = c(
-                "SSB" = "solid",
-                "B<sub>Lim</sub>" = "dashed",
-                "B<sub>pa</sub>" = "dotted",
-                "MSY B<sub>trigger</sub>" = "solid",
-                "Average" = "solid"
-            )),
-            scale_size_manual(values = c(
-                "SSB" = 1.5,
-                "B<sub>Lim</sub>" = .8,
-                "B<sub>pa</sub>" = 1,
-                "MSY B<sub>trigger</sub>" = .5,
-                "Average" = .8
-            )),
-            scale_fill_manual(values = c("#94b0a9")),
-            limits,
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = ylabels_func
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title, # "Fishing pressure", # sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge)),
+                    y = ylegend, # sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge)), # sprintf("Catches in 1000 %s", dplyr::last(df$Units))
+                    x = "Year"
+                ),
+                scale_color_manual(values = c(
+                    "F" = "#ed5f26",
+                    "F<sub>MSY</sub>" = "#00AC67",
+                    "F<sub>Lim</sub>" = "#000000",
+                    "F<sub>pa</sub>" = "#000000"
+                )),
+                scale_linetype_manual(values = c(
+                    "F" = "solid",
+                    "F<sub>Lim</sub>" = "dashed",
+                    "F<sub>pa</sub>" = "dotted",
+                    "F<sub>MSY</sub>" = "solid"
+                )),
+                scale_size_manual(values = c(
+                    "F" = 1.5,
+                    "F<sub>Lim</sub>" = .8,
+                    "F<sub>pa</sub>" = 1,
+                    "F<sub>MSY</sub>" = .5
+                )),
+                scale_fill_manual(values = c("#f2a497")),
+                expand_limits(y = 0),
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1)) # ,
+                )
             )
-        )
-    } else if (type == "quality_SSB") {
-
-        if (is.null(title)) {
-          title <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
-        }
-
-        rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
-
-        line_color <- c("#969696","#737373","#525252","#252525","#047c6c") %>% tail(length(unique(df$AssessmentYear)))
-        names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-        line_color_rfpt <- c( "#000000","#000000", "#689dff")
-        names(line_color_rfpt) <- rfpt
-        line_color <- append(line_color, line_color_rfpt)
-
-        line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
-        line_type_rfpt <- c("dashed", "dotted","solid")
-        names(line_type_rfpt) <- rfpt
-        line_type <- append(line_type, line_type_rfpt)
-
-        line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_size_rfpt <- c( .8, 1, .5)
-        names(line_size_rfpt) <- rfpt
-        line_size <- append(line_size, line_size_rfpt)
-        
-
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title,
-                y = "",
-                x = ""
-            ),
-            scale_color_manual(values = line_color
-            ),
-            scale_linetype_manual(values = line_type
-            ),
-            scale_size_manual(values = line_size
-            ),
-            expand_limits(y = 0),
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
+        } else if (type == "SSB") {
+            if (is.null(title)) {
+                title <- "Spawning Stock Biomass"
+            }
+            if (is.null(ylegend)) {
+                ylegend <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
+                ylabels_func <- function(l) {
+                    trans <- l / 1000 # 1000000
                 }
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
-
-        )
-    } else if (type == "quality_F") {
-        rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
-
-        line_color <- c("#969696","#737373","#525252","#252525","#ed5f26") %>% tail(length(unique(df$AssessmentYear)))
-        names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-        line_color_rfpt <- c( "#000000","#000000", "#00AC67")
-        names(line_color_rfpt) <- rfpt
-        line_color <- append(line_color, line_color_rfpt)
-
-        line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
-        line_type_rfpt <- c("dashed", "dotted","solid")
-        names(line_type_rfpt) <- rfpt
-        line_type <- append(line_type, line_type_rfpt)
-
-        line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_size_rfpt <- c( .8, 1, .5)
-        names(line_size_rfpt) <- rfpt
-        line_size <- append(line_size, line_size_rfpt)
-
-        if (is.null(title)) {
-          title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
-        }
-
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title,
-                y = "",
-                x = "Year"
-            ),
-            scale_color_manual(values = line_color
-            ),
-            scale_linetype_manual(values = line_type
-            ),
-            scale_size_manual(values = line_size
-            ),
-            expand_limits(y = 0),
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1))
-
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
-        )
-    } else if (type == "quality_R") {
-        line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
-        line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
-        names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
-        
-        if (is.null(title)) {
-          title <- sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge))
-        }
-        theme_ICES_plots <- list(
-            tmp,
-            labs(
-                title = title,
-                y = "",
-                x = ""
-            ),
-            scale_color_manual(values = line_color
-            ),
-            scale_linetype_manual(values = line_type
-            ),
-            scale_size_manual(values = line_size
-            ),
-            expand_limits(y = 0),
-            scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000
+            } else {
+                if (is.na(ylegend)) ylegend <- ""
+                ylabels_func <- function(l) {
+                    trans <- l
                 }
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
-        )
+            }
+
+            if (is.null(ymax)) {
+                limits <- expand_limits(y = 0)
+            } else {
+                limits <- expand_limits(y = c(0, ymax))
+            }
+
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title,
+                    y = ylegend,
+                    x = "Year"
+                ),
+                scale_color_manual(values = c(
+                    "SSB" = "#047c6c",
+                    "MSY B<sub>trigger</sub>" = "#689dff",
+                    "B<sub>Lim</sub>" = "#000000",
+                    "B<sub>pa</sub>" = "#000000",
+                    "Average" = "#ed5f26"
+                )),
+                scale_linetype_manual(values = c(
+                    "SSB" = "solid",
+                    "B<sub>Lim</sub>" = "dashed",
+                    "B<sub>pa</sub>" = "dotted",
+                    "MSY B<sub>trigger</sub>" = "solid",
+                    "Average" = "solid"
+                )),
+                scale_size_manual(values = c(
+                    "SSB" = 1.5,
+                    "B<sub>Lim</sub>" = .8,
+                    "B<sub>pa</sub>" = 1,
+                    "MSY B<sub>trigger</sub>" = .5,
+                    "Average" = .8
+                )),
+                scale_fill_manual(values = c("#94b0a9")),
+                limits,
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1)),
+                    labels = ylabels_func
+                )
+            )
+        } else if (type == "quality_SSB") {
+            if (is.null(title)) {
+                title <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
+            }
+
+            rfpt <- c("B<sub>Lim</sub>", "B<sub>pa</sub>", "MSY B<sub>trigger</sub>")
+
+            line_color <- c("#969696", "#737373", "#525252", "#252525", "#047c6c") %>% tail(length(unique(df$AssessmentYear)))
+            names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
+            line_color_rfpt <- c("#000000", "#000000", "#689dff")
+            names(line_color_rfpt) <- rfpt
+            line_color <- append(line_color, line_color_rfpt)
+
+            line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
+            line_type_rfpt <- c("dashed", "dotted", "solid")
+            names(line_type_rfpt) <- rfpt
+            line_type <- append(line_type, line_type_rfpt)
+
+            line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
+            line_size_rfpt <- c(.8, 1, .5)
+            names(line_size_rfpt) <- rfpt
+            line_size <- append(line_size, line_size_rfpt)
+
+
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title,
+                    y = "",
+                    x = ""
+                ),
+                scale_color_manual(values = line_color),
+                scale_linetype_manual(values = line_type),
+                scale_size_manual(values = line_size),
+                expand_limits(y = 0),
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1)),
+                    labels = function(l) {
+                        trans <- l / 1000
+                    }
+                ),
+                scale_x_continuous(breaks = pretty_breaks())
+            )
+        } else if (type == "quality_F") {
+            rfpt <- c("F<sub>Lim</sub>", "F<sub>pa</sub>", "F<sub>MSY</sub>")
+
+            line_color <- c("#969696", "#737373", "#525252", "#252525", "#ed5f26") %>% tail(length(unique(df$AssessmentYear)))
+            names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
+            line_color_rfpt <- c("#000000", "#000000", "#00AC67")
+            names(line_color_rfpt) <- rfpt
+            line_color <- append(line_color, line_color_rfpt)
+
+            line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
+            line_type_rfpt <- c("dashed", "dotted", "solid")
+            names(line_type_rfpt) <- rfpt
+            line_type <- append(line_type, line_type_rfpt)
+
+            line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
+            line_size_rfpt <- c(.8, 1, .5)
+            names(line_size_rfpt) <- rfpt
+            line_size <- append(line_size, line_size_rfpt)
+
+            if (is.null(title)) {
+                title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
+            }
+
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title,
+                    y = "",
+                    x = "Year"
+                ),
+                scale_color_manual(values = line_color),
+                scale_linetype_manual(values = line_type),
+                scale_size_manual(values = line_size),
+                expand_limits(y = 0),
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1))
+                ),
+                scale_x_continuous(breaks = pretty_breaks())
+            )
+        } else if (type == "quality_R") {
+            line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
+            line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
+            line_color <- c("#969696", "#737373", "#525252", "#252525", "#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
+            names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
+
+            if (is.null(title)) {
+                title <- sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge))
+            }
+            theme_ICES_plots <- list(
+                tmp,
+                labs(
+                    title = title,
+                    y = "",
+                    x = ""
+                ),
+                scale_color_manual(values = line_color),
+                scale_linetype_manual(values = line_type),
+                scale_size_manual(values = line_size),
+                expand_limits(y = 0),
+                scale_y_continuous(
+                    expand = expansion(mult = c(0, 0.1)),
+                    labels = function(l) {
+                        trans <- l / 1000000
+                    }
+                ),
+                scale_x_continuous(breaks = pretty_breaks())
+            )
+        }
+
+        return(theme_ICES_plots)
     }
-
-    return(theme_ICES_plots)
-}
 
 #' Function to create a data download button for the plotly options' bar
 #'
@@ -388,36 +372,7 @@ theme_ICES_plots <-
 #' 
 #' 
 disclaimer <- " Find disclaimer at https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"
-# data_download_button <- function(){
 
-#     icon_svg_path = "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z"
-
-#     dl_button <- list(
-#         name = "Download data",
-#         icon = list(
-#             path = icon_svg_path,
-#             transform = "scale(0.84) translate(-1, -1)"
-#             ),
-#         click = htmlwidgets::JS("
-#             function(gd) {
-#                 var text = '';
-#                 for(var i = 0; i < gd.data.length; i++){
-#                 text += gd.layout.xaxis.title.text + gd.data[i].name + ',' + gd.data[i].x + '\\n';
-#                 text += gd.layout.yaxis.title.text + gd.data[i].name + ',' + gd.data[i].y + '\\n';
-#                 };
-#                 var blob = new Blob([text], {type: 'text/plain'});
-#                 var a = document.createElement('a');
-#                 const object_URL = URL.createObjectURL(blob);
-#                 a.href = object_URL;
-#                 a.download = 'data.csv';
-#                 document.body.appendChild(a);
-#                 a.click();
-#                 URL.revokeObjectURL(object_URL);
-#             }
-#     ")
-#     )
-# return(dl_button)
-# }
 data_download_button <- function(disclaimer_text) {
 
     icon_svg_path = "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z"
@@ -478,38 +433,35 @@ data_download_button <- function(disclaimer_text) {
 #' @export
 #'
 ICES_plot_1 <- function(df, sagSettings) {
-                # function(df, sagSettings, additional_LandingData) {
+    
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
-
-    # df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, Landings, Catches, Discards, Units, SAGStamp, IBC, Unallocated_Removals) %>%
         relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
-        rename("Industrial Bycatch" = IBC) 
+        rename("Industrial Bycatch" = IBC)
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
         pull(settingValue) %>%
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
-    
+
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, ..col_name])))
     }
 
-    if (is_na_column(df,"Landings")){
+    if (is_na_column(df, "Landings")) {
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
-        gather(type, count, Catches:Unallocated_Removals)
+            gather(type, count, Catches:Unallocated_Removals)
     } else {
         df1 <- df1 %>%
-        select(-Catches) %>% 
-        gather(type, count, Landings:Unallocated_Removals)
+            select(-Catches) %>%
+            gather(type, count, Landings:Unallocated_Removals)
     }
-    
 
     p1 <- df1 %>%
         ggplot(., aes(
@@ -525,36 +477,37 @@ ICES_plot_1 <- function(df, sagSettings) {
             )
         )) +
         geom_bar(position = "stack", stat = "identity", data = df1 %>% filter(!Year %in% shadeYears))
-    
+
     if (any(!is.na(shadeYears))) {
-        p1 <- p1 + geom_bar(stat = "identity", 
-                            data = df1 %>% filter(Year %in% shadeYears), 
-                            aes(x = Year, 
-                            y = count, 
-                            fill = "Down-weighted Catches",
-                            text = map(
-                                    paste0(
-                                        "<b>Year: </b>", Year,
-                                        "<br>",
-                                        "<b>Down-weighted or preliminary Catches: </b>", count
-                                    ), HTML
-                                )),
-                            alpha = 0.5, 
-                            show.legend = FALSE, 
-                            inherit.aes = FALSE)
+        p1 <- p1 + geom_bar(
+            stat = "identity",
+            data = df1 %>% filter(Year %in% shadeYears),
+            aes(
+                x = Year,
+                y = count,
+                fill = "Down-weighted Catches",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Down-weighted or preliminary Catches: </b>", count
+                    ), HTML
+                )
+            ),
+            alpha = 0.5,
+            show.legend = FALSE,
+            inherit.aes = FALSE
+        )
     }
 
-
-
     nullifempty <- function(x) if (length(x) == 0) NULL else x
-    
+
     p1 <-
         p1 +
         theme_ICES_plots(
             type = "Catches", df,
             title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
-        
         )
 
 
@@ -576,8 +529,8 @@ ICES_plot_1 <- function(df, sagSettings) {
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        )
+
     fig1
 }
 
@@ -740,57 +693,54 @@ ICES_plot_2 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_3 <- function(df, sagSettings) {
-  
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
-  
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
         drop_na(F) # %>%
-    
+
     p3 <- df3 %>%
         ggplot(., aes(x = Year, y = F))
 
     if (any(!is.na(df3$Low_F))) {
         p3 <- p3 +
-            geom_ribbon(aes(
-                ymin = Low_F,
-                ymax = High_F,
-                fill = ConfidenceIntervalDefinition,
-                text = map(
-                    paste0(
-                        "<b>Year: </b>", Year,
-                        "<br>",
-                        "<b>F: </b>", F,
-                        "<br>",
-                        "<b>High F: </b>", High_F,
-                        "<br>",
-                        "<b>Low F: </b>", Low_F
-                    ), HTML
-                )
-            ),
-            linetype = "blank",
-            size = 0
+            geom_ribbon(
+                aes(
+                    ymin = Low_F,
+                    ymax = High_F,
+                    fill = ConfidenceIntervalDefinition,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>F: </b>", F,
+                            "<br>",
+                            "<b>High F: </b>", High_F,
+                            "<br>",
+                            "<b>Low F: </b>", Low_F
+                        ), HTML
+                    )
+                ),
+                linetype = "blank",
+                size = 0
             )
     }
-    
+
     p3 <- p3 +
-    geom_line(aes(
-        x = Year,
-        y = F,
-        color = "F",
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>F: </b>", F
-            ), HTML
-        )
-    )
-   
-    )
-    
+        geom_line(aes(
+            x = Year,
+            y = F,
+            color = "F",
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>F: </b>", F
+                ), HTML
+            )
+        ))
+
     if (any(!is.na(df3$FMSY))) {
         p3 <- p3 +
             geom_line(aes(
@@ -822,7 +772,7 @@ ICES_plot_3 <- function(df, sagSettings) {
                 )
             ))
     }
-    
+
     if (any(!is.na(df3$Fpa))) {
         p3 <- p3 +
             geom_line(aes(
@@ -838,47 +788,48 @@ ICES_plot_3 <- function(df, sagSettings) {
                 )
             ))
     }
-    
-    
-    
+
+
+
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p3 <-
         p3 +
         theme_ICES_plots(
-        type = "F", df,
-        title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-        ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty() 
+            type = "F", df,
+            title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+            ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty()
         )
 
 
 
-fig3 <- ggplotly(p3, tooltip = "text") %>%
-    layout(
-        legend = list(
-            orientation = "h",
-            itemwidth = 20,
-            itemsizing= "trace",
-            y = -.3, yanchor = "bottom",
-            x = 0.5, xanchor = "center",
-            title = list(text = "")
-        ),
-        xaxis = list(zeroline = TRUE),
-        annotations = list(
-            showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+    fig3 <- ggplotly(p3, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                itemwidth = 20,
+                itemsizing = "trace",
+                y = -.3, yanchor = "bottom",
+                x = 0.5, xanchor = "center",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(
+                showarrow = FALSE,
+                text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right")
-    ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+                yanchor = "right", xanchor = "right"
+            )
+        ) 
+    
 
-for (i in 1:length(fig3$x$data)) {
-    if (!is.null(fig3$x$data[[i]]$name)) {
-        fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
+    for (i in 1:length(fig3$x$data)) {
+        if (!is.null(fig3$x$data[[i]]$name)) {
+            fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
+        }
     }
-}
-fig3
+    fig3
 }
 
 #' Function to plot spawning stock biomass (SSB)
@@ -1113,8 +1064,8 @@ fig4 <- ggplotly(p4, tooltip = "text") %>%
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-    )  #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+    ) 
+        
 
 for (i in 1:length(fig4$x$data)){
     if (!is.null(fig4$x$data[[i]]$name)){
@@ -1259,8 +1210,8 @@ ICES_plot_5 <- function(df, sagSettings) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer))) 
+        ) 
+        
 
     for (i in 1:length(fig5$x$data)) {
         if (!is.null(fig5$x$data[[i]]$name)) {
@@ -1401,8 +1352,8 @@ ICES_plot_6 <- function(df, sagSettings) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        ) 
+        
     
     for (i in 1:length(fig6$x$data)) {
         if (!is.null(fig6$x$data[[i]]$name)) {
@@ -1494,8 +1445,8 @@ ICES_plot_7 <- function(df, sagSettings) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        )
+        
 
     for (i in 1:length(fig7$x$data)) {
         if (!is.null(fig7$x$data[[i]]$name)) {
