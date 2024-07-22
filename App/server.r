@@ -388,14 +388,23 @@ advice_view_info <- reactive({
 
 
 ##### ASD info previous year
-advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]   
-  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)  
-  if (!is_empty(asd_record_previous)){ 
-    asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, 
-                                                          adviceStatus == "Advice",
-                                                          adviceComponent == res_mod()[selected(), AssessmentComponent]) 
-  } 
+advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$year), {
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey, ]
+
+  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency[1])
+
+  # this is a fix to cover an exeption (like aru.27.123a4) when the assessment frequency is 2 but there is an advice in the previous year.
+  if (is_empty(asd_record_previous)) {
+    asd_record_previous <- try(getAdviceViewRecord(query$stockkeylabel, query$year))
+  }
+
+  if (!is_empty(asd_record_previous)) {
+    asd_record_previous <- asd_record_previous %>% filter(
+      adviceViewPublished == TRUE,
+      adviceStatus == "Advice",
+      adviceComponent == res_mod()[selected(), AssessmentComponent]
+    )
+  }
 })
 
 
