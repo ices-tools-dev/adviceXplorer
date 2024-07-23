@@ -181,7 +181,9 @@ SAG_plots_1_2_fluid <- function() {
   fluidRow(
     column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),
     
-    column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
+    column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%"))),
+
+    column(6, uiOutput("conditionalCustomPlot1"))
   )
 }
 

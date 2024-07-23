@@ -1125,7 +1125,10 @@ for (i in 1:length(fig4$x$data)){
 fig4
 }
 
-
+ICES_custom_plot_1  <- function(df, sagSettings) {
+    sagSettings15 <- sagSettings %>% filter(SAGChartKey == 15)
+    browser()
+}
 #' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)
 #'
 #' @param df (quality of assessement SAG data)
