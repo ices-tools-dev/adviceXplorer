@@ -24,7 +24,7 @@
 #'
 theme_ICES_plots <-
   function(
-    type = c("Catches", "Recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
+    type = c("Catches", "Recruitment", "F", "SSB","quality_SSB", "quality_F", "quality_R"), df,
     title = NULL, ylegend = NULL, ymax = NULL) {
     font <- "Gothic A1, sans-serif"#"Calibri, sans-serif" # assign font family up front
     tmp <- theme_minimal() %+replace% # replace elements we want to change
@@ -1125,51 +1125,98 @@ for (i in 1:length(fig4$x$data)){
 fig4
 }
 
-ICES_custom_plot_1  <- function(df, sagSettings) {
+ICES_custom_plot_1 <- function(df, sagSettings) {
     sagSettings15 <- sagSettings %>% filter(SAGChartKey == 15)
 
     customData <-
         sagSettings15 %>%
         filter(settingKey == 44) %>%
         pull(settingValue) %>%
-        str_split(",", simplify = TRUE) %>% 
+        str_split(",", simplify = TRUE) %>%
         as.numeric()
 
-    
+
     pCustom1 <- df %>%
         ggplot(., aes(x = Year)) +
 
         # pCustom1 <- pCustom1 +
-            geom_line(data = df , aes( #%>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
-                # x = Year,
-                y = df[[paste0("Custom", customData[2])]],
-                color = "custom1"
-        #         text = map(
-        #     paste0(
-        #         "<b>Year: </b>", Year,
-        #         "<br>",
-        #         "<b>SSB: </b>", df[[paste0("Custom", customData[2])]]
-        #     ), HTML
-        # )
-    )
-    )
+        geom_line(data = df, aes( # %>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
+            # x = Year,
+            y = df[[paste0("Custom", customData[2])]],
+            color = df[[paste0("CustomName", customData[2])]],
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", df[[paste0("CustomName", customData[2])]], ": </b>", df[[paste0("Custom", customData[2])]]
+                ), HTML
+            )
+        ))
 
     pCustom1 <- pCustom1 +
-            geom_line(data = df , aes( #%>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
-                # x = Year,
-                y = df[[paste0("Custom", customData[1])]],
-                color = "custom2"
-        #         text = map(
-        #     paste0(
-        #         "<b>Year: </b>", Year,
-        #         "<br>",
-        #         "<b>SSB: </b>", df[[paste0("Custom", customData[2])]]
-        #     ), HTML
-        # )
-    )
-    )
+        geom_line(data = df, aes( # %>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
+            # x = Year,
+            y = df[[paste0("Custom", customData[1])]],
+            color = df[[paste0("CustomName", customData[1])]],
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", df[[paste0("CustomName", customData[1])]], ": </b>", df[[paste0("Custom", customData[1])]]
+                ), HTML
+            )
+        ))
+
+
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+    pCustom1 <-
+        pCustom1 +
+        # xlim(min_year, max(df4$Year+1)) +
+        theme_ICES_plots(
+            type = "Recruitment", df,
+            title = sagSettings15 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+            ylegend = sagSettings15 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
+            ymax = sagSettings15 %>%
+                filter(settingKey == 6) %>%
+                pull(settingValue) %>%
+                as.numeric() %>%
+                nullifempty()
+        )
+
+    # converting
+    figC1 <- ggplotly(pCustom1, tooltip = "text") %>%
+        layout(
+            autosize = T,
+            legend = list(
+                itemsizing = "trace",
+                orientation = "h",
+                y = -.3,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                itemwidth = 20,
+                itemsizing = "trace",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(
+                showarrow = FALSE,
+                text = tail(df$SAGStamp, 1),
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right"
+            )
+        ) # %>%
+    # config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+
+    for (i in 1:length(figC1$x$data)) {
+        if (!is.null(figC1$x$data[[i]]$name)) {
+            figC1$x$data[[i]]$name <- gsub("\\(", "", str_split(figC1$x$data[[i]]$name, ",")[[1]][1])
+        }
+    }
     browser()
-    ggplotly(pCustom1)
+    figC1
 }
 #' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)
 #'

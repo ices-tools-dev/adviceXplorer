@@ -303,12 +303,13 @@ output$download_SAG_Data <- downloadHandler(
 
 
   output$conditionalCustomPlot1 <- renderUI({
-    if (!is_empty(sagSettings() %>% filter(SAGChartKey == 15))) {
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) != 0) {
+      browser()
       # Render the plot output only if data is available
-      plotOutput("customPlot1")
+      plotlyOutput("customPlot1")
     } else {
       # Otherwise, display a message or leave it blank
-      h4("No custom data available for plotting")
+      # h4("No custom data available for plotting")
     }
   })
     output$customPlot1 <- renderPlotly({
