@@ -1127,6 +1127,18 @@ fig4
 
 ICES_custom_plot_1  <- function(df, sagSettings) {
     sagSettings15 <- sagSettings %>% filter(SAGChartKey == 15)
+
+    customData <-
+        sagSettings15 %>%
+        filter(settingKey == 44) %>%
+        pull(settingValue) %>%
+        str_split(",", simplify = TRUE) %>% 
+        as.numeric()
+
+    
+    pCustom1 <- df %>%
+    ggplot(., aes(x = paste0("df$Custom",), y = SSB))
+    
     browser()
 }
 #' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)
