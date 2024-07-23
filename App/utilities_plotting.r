@@ -1137,9 +1137,39 @@ ICES_custom_plot_1  <- function(df, sagSettings) {
 
     
     pCustom1 <- df %>%
-    ggplot(., aes(x = paste0("df$Custom",), y = SSB))
-    
+        ggplot(., aes(x = Year)) +
+
+        # pCustom1 <- pCustom1 +
+            geom_line(data = df , aes( #%>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
+                # x = Year,
+                y = df[[paste0("Custom", customData[2])]],
+                color = "custom1"
+        #         text = map(
+        #     paste0(
+        #         "<b>Year: </b>", Year,
+        #         "<br>",
+        #         "<b>SSB: </b>", df[[paste0("Custom", customData[2])]]
+        #     ), HTML
+        # )
+    )
+    )
+
+    pCustom1 <- pCustom1 +
+            geom_line(data = df , aes( #%>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
+                # x = Year,
+                y = df[[paste0("Custom", customData[1])]],
+                color = "custom2"
+        #         text = map(
+        #     paste0(
+        #         "<b>Year: </b>", Year,
+        #         "<br>",
+        #         "<b>SSB: </b>", df[[paste0("Custom", customData[2])]]
+        #     ), HTML
+        # )
+    )
+    )
     browser()
+    ggplotly(pCustom1)
 }
 #' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)
 #'
