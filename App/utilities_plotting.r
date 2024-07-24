@@ -480,7 +480,7 @@ data_download_button <- function(disclaimer_text) {
 ICES_plot_1 <- function(df, sagSettings) {
                 # function(df, sagSettings, additional_LandingData) {
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
-
+    browser()
     # df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
     df1 <- df %>%
@@ -1215,7 +1215,7 @@ ICES_custom_plot_1 <- function(df, sagSettings) {
             figC1$x$data[[i]]$name <- gsub("\\(", "", str_split(figC1$x$data[[i]]$name, ",")[[1]][1])
         }
     }
-    browser()
+    
     figC1
 }
 #' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)

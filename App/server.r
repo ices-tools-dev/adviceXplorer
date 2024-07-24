@@ -270,6 +270,7 @@ output$download_SAG_Data <- downloadHandler(
       need(c(SAG_data_reactive()$Landings,SAG_data_reactive()$Catches) != "", "Landings not available for this stock")#,
       # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
+    
     suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
 
 })
@@ -304,7 +305,7 @@ output$download_SAG_Data <- downloadHandler(
 
   output$conditionalCustomPlot1 <- renderUI({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) != 0) {
-      browser()
+      
       # Render the plot output only if data is available
       plotlyOutput("customPlot1")
     } else {
