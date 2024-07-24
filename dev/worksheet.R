@@ -1740,3 +1740,70 @@ access_sag_data_local <- function(stock_code, year) {
 test <- access_sag_data_local("spr.27.3a4", 2024)
 names(test)
 str(test$High_Recruitment)
+
+
+temp_setting <- getSAGSettings(query$assessmentkey)
+    temp_setting[!(temp_setting$settingValue == ""), ]
+
+settings <- icesSAG::StockSettings(18459) #18459
+18515
+write.table(settings, "settings.csv", sep = ",", row.names = FALSE)
+
+
+library(shiny)
+
+# Define UI
+ui <- fluidPage(
+  titlePanel("Conditional Plot Example"),
+  sidebarLayout(
+    sidebarPanel(
+      # Input to trigger the condition
+      checkboxInput("showPlot", "Show Plot", value = FALSE)
+    ),
+    mainPanel(
+      # Output placeholder for the plot
+      uiOutput("conditionalPlot")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output) {
+  # Reactive expression to check if data is available
+  dataAvailable <- reactive({
+    # For demonstration purposes, we use the input checkbox to simulate data availability
+    input$showPlot
+  })
+  
+  # Conditional UI output
+  output$conditionalPlot <- renderUI({
+    if (dataAvailable()) {
+      # Render the plot output only if data is available
+      plotOutput("plot")
+    } else {
+      # Otherwise, display a message or leave it blank
+      h4("No data available for plotting")
+    }
+  })
+  
+  # Plot rendering
+  output$plot <- renderPlot({
+    if (dataAvailable()) {
+      # Example plot
+      plot(cars)
+    }
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+test <- access_sag_data_local("spr.27.3a4", 2024)
+names(test)
+names(test2)
+test2 <- icesSAG::StockDownload(18543)
+setdiff(names(test), names(test2))
+setdiff(names(test2), names(test))
+head(test2)
+dim(test)
+dim(test2)
