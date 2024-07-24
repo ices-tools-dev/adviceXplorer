@@ -478,17 +478,31 @@ data_download_button <- function(disclaimer_text) {
 #' @export
 #'
 ICES_plot_1 <- function(df, sagSettings) {
-                # function(df, sagSettings, additional_LandingData) {
+                
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
-    browser()
-    # df <- df %>% left_join(y = additional_LandingData, by = "Year")
+
+    additionalCustomeSeries <-
+        sagSettings1 %>%
+        filter(settingKey == 43) %>%
+        pull(settingValue) %>%
+        as.numeric()
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Landings, Catches, Discards, Units, SAGStamp, IBC, Unallocated_Removals) %>%
+        select(
+            c(Year, Landings, Catches, Discards, Units, SAGStamp, IBC, Unallocated_Removals),
+            if (length(additionalCustomeSeries) != 0) c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+        ) %>%
         relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
-        rename("Industrial Bycatch" = IBC) 
-
+        relocate(c(Units,SAGStamp), .after = Year) %>% 
+        rename("Industrial Bycatch" = IBC)
+    
+    if (length(additionalCustomeSeries) != 0) {
+        names(df1)[names(df1) == paste0("Custom", additionalCustomeSeries)] <- df1[[paste0("CustomName", additionalCustomeSeries)]][1]
+        df1[[paste0("CustomName", additionalCustomeSeries)]] <- NULL
+        
+    }
+    
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
         pull(settingValue) %>%
@@ -500,16 +514,15 @@ ICES_plot_1 <- function(df, sagSettings) {
         return(all(is.na(dataframe[, ..col_name])))
     }
 
+
     if (is_na_column(df,"Landings")){
-        # df1$Landings <- df1$Catches
         df1 <- df1 %>%
-        gather(type, count, Catches:Unallocated_Removals)
+        gather(type, count, Catches:last_col())
     } else {
         df1 <- df1 %>%
         select(-Catches) %>% 
-        gather(type, count, Landings:Unallocated_Removals)
+        gather(type, count, Landings:last_col())
     }
-    
 
     p1 <- df1 %>%
         ggplot(., aes(
@@ -527,24 +540,26 @@ ICES_plot_1 <- function(df, sagSettings) {
         geom_bar(position = "stack", stat = "identity", data = df1 %>% filter(!Year %in% shadeYears))
     
     if (any(!is.na(shadeYears))) {
-        p1 <- p1 + geom_bar(stat = "identity", 
-                            data = df1 %>% filter(Year %in% shadeYears), 
-                            aes(x = Year, 
-                            y = count, 
-                            fill = "Down-weighted Catches",
-                            text = map(
-                                    paste0(
-                                        "<b>Year: </b>", Year,
-                                        "<br>",
-                                        "<b>Down-weighted or preliminary Catches: </b>", count
-                                    ), HTML
-                                )),
-                            alpha = 0.5, 
-                            show.legend = FALSE, 
-                            inherit.aes = FALSE)
+        p1 <- p1 + geom_bar(
+            stat = "identity",
+            data = df1 %>% filter(Year %in% shadeYears),
+            aes(
+                x = Year,
+                y = count,
+                fill = "Down-weighted Catches",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Down-weighted or preliminary Catches: </b>", count
+                    ), HTML
+                )
+            ),
+            alpha = 0.5,
+            show.legend = FALSE,
+            inherit.aes = FALSE
+        )
     }
-
-
 
     nullifempty <- function(x) if (length(x) == 0) NULL else x
     
