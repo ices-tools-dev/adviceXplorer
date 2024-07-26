@@ -1142,31 +1142,53 @@ fig4
 
 ICES_custom_plot_1 <- function(df, sagSettings) {
     sagSettings15 <- sagSettings %>% filter(SAGChartKey == 15)
-
+    browser()
     customData <-
         sagSettings15 %>%
         filter(settingKey == 44) %>%
         pull(settingValue) %>%
+        # as.numeric(strsplit(., ",")[[1]])
         str_split(",", simplify = TRUE) %>%
         as.numeric()
 
+    graphType <-
+        sagSettings15 %>%
+        filter(settingKey == 50) %>%
+        pull(settingValue) %>%
+        str_split(",", simplify = TRUE) %>%
+        as.numeric()
 
-    pCustom1 <- df %>%
+    
+    
+    # Create a regular expression to match column names
+    pattern <- paste0("Custom(", paste(customData, collapse = "|"), ")$")
+
+# Select columns based on the pattern
+        selected_data <- df %>%
+            select(c(Year,matches(pattern)))
+        selected_data <- selected_data %>%        
+        gather(type, count, -Year)
+    
+    if (graphType == 2) {
+    pCustom1 <- selected_data %>%
         ggplot(., aes(x = Year)) +
 
         # pCustom1 <- pCustom1 +
-        geom_line(data = df, aes( # %>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
+        geom_line(data = selected_data, aes( # %>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
             # x = Year,
-            y = df[[paste0("Custom", customData[2])]],
-            color = df[[paste0("CustomName", customData[2])]],
-            text = map(
-                paste0(
-                    "<b>Year: </b>", Year,
-                    "<br>",
-                    "<b>", df[[paste0("CustomName", customData[2])]], ": </b>", df[[paste0("Custom", customData[2])]]
-                ), HTML
-            )
-        ))
+            y = count,
+            color = type
+            # y = df[[paste0("Custom", customData[2])]],
+            # color = df[[paste0("CustomName", customData[2])]],
+            # text = map(
+            #     paste0(
+            #         "<b>Year: </b>", Year,
+            #         "<br>",
+            #         "<b>", df[[paste0("CustomName", customData[2])]], ": </b>", df[[paste0("Custom", customData[2])]]
+            #     ), HTML
+            # )
+        )
+        )
 
     pCustom1 <- pCustom1 +
         geom_line(data = df, aes( # %>% filter(!is.na(df[[paste0("Custom", customData[2])]]))
@@ -1181,6 +1203,33 @@ ICES_custom_plot_1 <- function(df, sagSettings) {
                 ), HTML
             )
         ))
+
+    } else if (graphType == 3) {
+        pattern <- paste0("Custom(", paste(customData, collapse = "|"), ")$")
+
+# Select columns based on the pattern
+        # selected_data <- df %>%
+        #     select(c(Year,matches(pattern)))
+        # selected_data <- selected_data %>%        
+        # gather(type, count, -Year)
+
+
+        pCustom1 <- selected_data %>%
+        ggplot(., aes(
+            x = Year,
+            y = count,
+            fill = type,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", type, ": </b>", count
+                ), HTML
+            )
+        )) +
+        geom_bar(position = "stack", stat = "identity", data = selected_data)
+    
+    }
 
 
     nullifempty <- function(x) if (length(x) == 0) NULL else x
