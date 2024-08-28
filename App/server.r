@@ -268,7 +268,7 @@ output$download_SAG_Data <- downloadHandler(
   output$plot1 <- renderPlotly({
      validate(
       need(c(SAG_data_reactive()$Landings,SAG_data_reactive()$Catches) != "", "Landings not available for this stock")#,
-      # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      # need(all(!1 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     
     suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))

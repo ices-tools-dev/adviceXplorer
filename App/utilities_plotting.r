@@ -480,7 +480,7 @@ data_download_button <- function(disclaimer_text) {
 ICES_plot_1 <- function(df, sagSettings) {
                 
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
-
+    
     additionalCustomeSeries <-
         sagSettings1 %>%
         filter(settingKey == 43) %>%
@@ -1180,7 +1180,7 @@ ICES_custom_plot_1 <- function(df, sagSettings) {
     selected_data <- selected_data %>% select(-custom_name_cols) %>%
         gather(type, count, -Year)
     
-    if (graphType == 2) {
+    if (graphType == 2 || graphType == 1) {
         pCustom1 <- selected_data %>%
             ggplot(., aes(x = Year)) +
             geom_line(
@@ -1213,14 +1213,14 @@ ICES_custom_plot_1 <- function(df, sagSettings) {
             )) +
             geom_bar(position = "stack", stat = "identity", data = selected_data)
     }
-
+    
     nullifempty <- function(x) if (length(x) == 0) NULL else x
-
+    
     pCustom1 <-
         pCustom1 +
         # xlim(min_year, max(df4$Year+1)) +
         theme_ICES_plots(
-            type = "Recruitment", df,
+            type = "Catches", df,
             title = sagSettings15 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings15 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
             ymax = sagSettings15 %>%
@@ -1229,7 +1229,7 @@ ICES_custom_plot_1 <- function(df, sagSettings) {
                 as.numeric() %>%
                 nullifempty()
         )
-
+    
     # converting
     figC1 <- ggplotly(pCustom1, tooltip = "text") %>%
         layout(
