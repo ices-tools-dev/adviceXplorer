@@ -749,9 +749,8 @@ ICES_plot_2 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_3 <- function(df, sagSettings) {
-  
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
-  
+
     customRefPoint <-
         sagSettings3 %>%
         filter(settingKey == 51) %>%
@@ -760,11 +759,10 @@ ICES_plot_3 <- function(df, sagSettings) {
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
-
         select(
             c(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition),
             if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
-        ) %>% 
+        ) %>%
         mutate(segment = cumsum(is.na(High_F)))
 
     # Filter out rows with NAs and create a segment identifier
@@ -773,51 +771,50 @@ ICES_plot_3 <- function(df, sagSettings) {
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
 
-    
+
     p3 <- df_segments %>%
         ggplot(., aes(x = Year, y = F))
-
+    
     if (any(!is.na(df_segments$Low_F))) {
         p3 <- p3 +
-            geom_ribbon(aes(
-                ymin = Low_F,
-                ymax = High_F,
-                fill = ConfidenceIntervalDefinition,
-                group = segment,
-                text = map(
-                    paste0(
-                        "<b>Year: </b>", Year,
-                        "<br>",
-                        "<b>F: </b>", F,
-                        "<br>",
-                        "<b>High F: </b>", High_F,
-                        "<br>",
-                        "<b>Low F: </b>", Low_F
-                    ), HTML
-                )
-            ),
-            linetype = "blank",
-            size = 0
+            geom_ribbon(
+                aes(
+                    ymin = Low_F,
+                    ymax = High_F,
+                    fill = ConfidenceIntervalDefinition,
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>F: </b>", F,
+                            "<br>",
+                            "<b>High F: </b>", High_F,
+                            "<br>",
+                            "<b>Low F: </b>", Low_F
+                        ), HTML
+                    )
+                ),
+                linetype = "blank",
+                size = 0
             )
     }
-    
+
     p3 <- p3 +
-    geom_line(aes(
-        x = Year,
-        y = F,
-        color = "F",
-        group = segment,
-        text = map(
-            paste0(
-                "<b>Year: </b>", Year,
-                "<br>",
-                "<b>F: </b>", F
-            ), HTML
-        )
-    )
-   
-    )
-    
+        geom_line(aes(
+            x = Year,
+            y = F,
+            color = "F",
+            group = segment,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>F: </b>", F
+                ), HTML
+            )
+        ))
+
     if (any(!is.na(df_segments$FMSY))) {
         p3 <- p3 +
             geom_line(aes(
@@ -849,7 +846,7 @@ ICES_plot_3 <- function(df, sagSettings) {
                 )
             ))
     }
-    
+
     if (any(!is.na(df_segments$Fpa))) {
         p3 <- p3 +
             geom_line(aes(
@@ -865,69 +862,66 @@ ICES_plot_3 <- function(df, sagSettings) {
                 )
             ))
     }
-    
+
     #### custom reference points
-    if (any(!is.na(df3[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint)]]))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
-                y = df3[[paste0("CustomRefPointValue", customRefPoint)]],
-                # linetype = as.factor("dotdash"),
-                # colour = as.factor(df3[[paste0("CustomRefPointName", customRefPoint)]][1]),
-                # size = as.factor(.8),
-                linetype = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
-                colour = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
-                size = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                y = df_segments[[paste0("CustomRefPointValue", customRefPoint)]],
+                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                colour = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                size = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
                 text = map(
                     paste0(
-                        "<b>", df3[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df3[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                        "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint)]], 1)
                     ), HTML
                 )
             ))
     }
-    
+
     min_year <- min(df3$Year[which(!is.na(df3$F))])
-    
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p3 <-
         p3 +
-        xlim(min_year, max(df3$Year+1)) +
+        xlim(min_year, max(df3$Year + 1)) +
         theme_ICES_plots(
-        type = "F", df,
-        title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-        ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty() 
+            type = "F", df,
+            title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+            ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty()
         )
 
 
 
-fig3 <- ggplotly(p3, tooltip = "text") %>%
-    layout(
-        legend = list(
-            orientation = "h",
-            itemwidth = 20,
-            itemsizing= "trace",
-            y = -.3, yanchor = "bottom",
-            x = 0.5, xanchor = "center",
-            title = list(text = ""),
-            yref='container', xref='container' #x=0.5, y=1.1, xanchor='center', yanchor='top'
-        ),
-        xaxis = list(zeroline = TRUE),
-        annotations = list(
-            showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+    fig3 <- ggplotly(p3, tooltip = "text") %>%
+        layout(
+            legend = list(
+                orientation = "h",
+                itemwidth = 20,
+                itemsizing = "trace",
+                y = -.3, yanchor = "bottom",
+                x = 0.5, xanchor = "center",
+                title = list(text = ""),
+                yref = "container", xref = "container" # x=0.5, y=1.1, xanchor='center', yanchor='top'
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(
+                showarrow = FALSE,
+                text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right")
-    ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+                yanchor = "right", xanchor = "right"
+            )
+        )
 
-for (i in 1:length(fig3$x$data)) {
-    if (!is.null(fig3$x$data[[i]]$name)) {
-        fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
+
+    for (i in 1:length(fig3$x$data)) {
+        if (!is.null(fig3$x$data[[i]]$name)) {
+            fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
+        }
     }
-}
-fig3
+    fig3
 }
 
 #' Function to plot spawning stock biomass (SSB)
@@ -962,13 +956,14 @@ ICES_plot_4 <- function(df, sagSettings) {
         as.numeric()
 
 
-  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+  
 
 df4 <- df %>%
-  filter(Purpose == "Advice") %>%
-  select(
-            c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition),
-            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint)) %>%
+    filter(Purpose == "Advice") %>%
+    select(
+        c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition),
+        if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+    ) %>%
     mutate(segment = cumsum(is.na(High_SSB)))
 
 
@@ -1018,8 +1013,8 @@ p4 <- p4 +
                 "<br>",
                 "<b>SSB: </b>", SSB
             ), HTML
-
         )
+    ))
 
 
 if (any(!is.na(df_segments$MSYBtrigger))) {
@@ -1052,10 +1047,127 @@ if (any(!is.na(df_segments$Blim))) {
                 ), HTML
 
             )
+        ))
     }
 
 if (any(!is.na(df_segments$Bpa))) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = Bpa,
+                linetype = "B<sub>pa</sub>",
+                colour = "B<sub>pa</sub>",
+                size = "B<sub>pa</sub>",
+                text = map(
+                    paste0(
+                        "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                    ), HTML
+                )
+            ))
+    }
 
+
+    #### custom reference points
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = df_segments[[paste0("CustomRefPointValue", customRefPoint)]],
+                # linetype = as.factor("dotdash"),
+                # colour = as.factor(df4[[paste0("CustomRefPointName", customRefPoint)]][1]),#"#69d371",
+                # size = as.factor(.8),
+                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                colour = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                size = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                text = map(
+                    paste0(
+                        "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                    ), HTML
+                )
+            ))
+    }
+
+
+    diamondYears <-
+        sagSettings4 %>%
+        filter(settingKey == 14) %>%
+        pull(settingValue) %>%
+        str_split(pattern = ",", simplify = TRUE) %>%
+        as.numeric()
+
+if (any(!is.na(diamondYears))) {
+        p4 <- p4 + geom_point( 
+                            data = df_segments %>% filter(Year %in% diamondYears), 
+                            aes(x = Year, 
+                            y = SSB,
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+                                    ), HTML
+                                )), 
+                            shape = 23, 
+                            fill = "#cfcfcf", 
+                            color = "#3aa6ff", 
+                            size = 2.5,                            
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
+}
+
+
+# add average lines
+averageYears <-
+    sagSettings4 %>%
+    filter(settingKey == 46) %>%
+    pull(settingValue) %>%
+    str_split(",", simplify = TRUE) %>%
+    as.numeric()
+
+if (length(averageYears)) {
+    id1 <- nrow(df_segments) - 1:averageYears[1] + 1
+    id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
+    avedf1 <- data.frame(
+        Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
+        SSB = mean(df_segments$SSB[id1], na.rm = TRUE)
+    )
+    avedf2 <- data.frame(
+        Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
+        SSB = mean(df_segments$SSB[id2], na.rm = TRUE)
+    )
+
+       p4 <-
+            p4 + geom_line(
+                data = avedf1,
+                aes(
+                    x = Year,
+                    y = SSB,
+                    linetype = "Average",
+                    colour = "Average",
+                    size = "Average",
+                    text = map(
+                        paste0(
+                            "<b>Average: </b>", SSB
+                        ), HTML
+                    )
+                )
+            ) +
+            geom_line(
+                data = avedf2,
+                aes(
+                    x = Year,
+                    y = SSB,
+                    linetype = "Average",
+                    colour = "Average",
+                    size = "Average",
+                    text = map(
+                        paste0(
+                            "<b>Average: </b>", SSB
+                        ), HTML
+                    )
+                )
+            )
+}
 #     p4 <- p4 +
 #         geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
 #             x = Year,
@@ -1087,25 +1199,6 @@ if (any(!is.na(df_segments$Bpa))) {
 #     }
 
 
-if (any(!is.na(diamondYears))) {
-        p4 <- p4 + geom_point( 
-                            data = df_segments %>% filter(Year %in% diamondYears), 
-                            aes(x = Year, 
-                            y = SSB,
-                            text = map(
-                                    paste0(
-                                        "<b>Year: </b>", Year,
-                                        "<br>",
-                                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
-                                    ), HTML
-                                )), 
-                            shape = 23, 
-                            fill = "#cfcfcf", 
-                            color = "#3aa6ff", 
-                            size = 2.5,                            
-                            show.legend = FALSE, 
-                            inherit.aes = FALSE)
-
 #     if (any(!is.na(df4$Blim))) {
 #         p4 <- p4 +
 #             geom_line(aes(
@@ -1121,74 +1214,20 @@ if (any(!is.na(diamondYears))) {
 #                 )
 #             ))
 
-    }
+    # }
 
-    if (any(!is.na(df4$Bpa))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = Bpa,
-                linetype = "B<sub>pa</sub>",
-                colour = "B<sub>pa</sub>",
-                size = "B<sub>pa</sub>",
-                text = map(
-                    paste0(
-                        "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-                    ), HTML
-                )
-            ))
-    }
-
-# add average lines
-averageYears <-
-    sagSettings4 %>%
-    filter(settingKey == 46) %>%
-    pull(settingValue) %>%
-    str_split(",", simplify = TRUE) %>%
-    as.numeric()
-
-if (length(averageYears)) {
-    id1 <- nrow(df_segments) - 1:averageYears[1] + 1
-    id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
-    avedf1 <- data.frame(
-        Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
-        SSB = mean(df_segments$SSB[id1], na.rm = TRUE)
-    )
-    avedf2 <- data.frame(
-        Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
-        SSB = mean(df_segments$SSB[id2], na.rm = TRUE)
-    )
-
-    #### custom reference points
-    if (any(!is.na(df4[[paste0("CustomRefPointValue", customRefPoint)]]))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = df4[[paste0("CustomRefPointValue", customRefPoint)]],
-                # linetype = as.factor("dotdash"),
-                # colour = as.factor(df4[[paste0("CustomRefPointName", customRefPoint)]][1]),#"#69d371",
-                # size = as.factor(.8),
-                linetype = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
-                colour = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
-                size = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
-                text = map(
-                    paste0(
-                        "<b>", df4[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df4[[paste0("CustomRefPointValue", customRefPoint)]], 1)
-                    ), HTML
-                )
-            ))
-    }
+    
 
 
-    diamondYears <-
-        sagSettings4 %>%
-        filter(settingKey == 14) %>%
-        pull(settingValue) %>%
-        str_split(pattern = ",", simplify = TRUE) %>%
-        as.numeric()
 
 
-min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
+    
+
+
+    
+
+
+
 
 #     if (any(!is.na(diamondYears))) {
 #         p4 <- p4 + geom_point(
@@ -1255,51 +1294,17 @@ min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
 #             showarrow = FALSE,
 #                 text = tail(df$SAGStamp,1),
 
-        p4 <-
-            p4 + geom_line(
-                data = avedf1,
-                aes(
-                    x = Year,
-                    y = SSB,
-                    linetype = "Average",
-                    colour = "Average",
-                    size = "Average",
-                    text = map(
-                        paste0(
-                            "<b>Average: </b>", SSB
-                        ), HTML
-                    )
-                )
-            ) +
-            geom_line(
-                data = avedf2,
-                aes(
-                    x = Year,
-                    y = SSB,
-                    linetype = "Average",
-                    colour = "Average",
-                    size = "Average",
-                    text = map(
-                        paste0(
-                            "<b>Average: </b>", SSB
-                        ), HTML
-                    )
-                )
-            )
-    }
+     
+   
 
-    min_year <- min(df4$Year[which(!is.na(df4$SSB))])
-
-
-
-
+    min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p4 <-
         p4 +
-        xlim(min_year, max(df4$Year+1)) +
+        xlim(min_year, max(df_segments$Year+1)) +
         theme_ICES_plots(
-            type = "SSB", df,
+            type = "SSB", df_segments,
             title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
             ymax = sagSettings4 %>%
