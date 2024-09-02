@@ -760,26 +760,30 @@ ICES_plot_3 <- function(df, sagSettings) {
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
+
         select(
             c(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition),
             if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
-        ) %>%
-        drop_na(F)
+        ) %>% 
+        mutate(segment = cumsum(is.na(High_F)))
 
-    # df3 <- df %>%
-    #     filter(Purpose == "Advice") %>%
-    #     select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
-    #     drop_na(F) # %>%
+    # Filter out rows with NAs and create a segment identifier
+    df_segments <- df3 %>%
+        filter(!is.na(F)) %>%
+        group_by(segment) %>%
+        mutate(start = first(Year), end = last(Year))
+
     
-    p3 <- df3 %>%
+    p3 <- df_segments %>%
         ggplot(., aes(x = Year, y = F))
 
-    if (any(!is.na(df3$Low_F))) {
+    if (any(!is.na(df_segments$Low_F))) {
         p3 <- p3 +
             geom_ribbon(aes(
                 ymin = Low_F,
                 ymax = High_F,
                 fill = ConfidenceIntervalDefinition,
+                group = segment,
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
@@ -802,6 +806,7 @@ ICES_plot_3 <- function(df, sagSettings) {
         x = Year,
         y = F,
         color = "F",
+        group = segment,
         text = map(
             paste0(
                 "<b>Year: </b>", Year,
@@ -813,7 +818,7 @@ ICES_plot_3 <- function(df, sagSettings) {
    
     )
     
-    if (any(!is.na(df3$FMSY))) {
+    if (any(!is.na(df_segments$FMSY))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -829,7 +834,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df3$FLim))) {
+    if (any(!is.na(df_segments$FLim))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -845,7 +850,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
-    if (any(!is.na(df3$Fpa))) {
+    if (any(!is.na(df_segments$Fpa))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -904,7 +909,8 @@ fig3 <- ggplotly(p3, tooltip = "text") %>%
             itemsizing= "trace",
             y = -.3, yanchor = "bottom",
             x = 0.5, xanchor = "center",
-            title = list(text = "")
+            title = list(text = ""),
+            yref='container', xref='container' #x=0.5, y=1.1, xanchor='center', yanchor='top'
         ),
         xaxis = list(zeroline = TRUE),
         annotations = list(
@@ -955,84 +961,166 @@ ICES_plot_4 <- function(df, sagSettings) {
         pull(settingValue) %>%
         as.numeric()
 
-    df4 <- df %>%
-        filter(Purpose == "Advice") %>%
-        select(
+
+  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+
+df4 <- df %>%
+  filter(Purpose == "Advice") %>%
+  select(
             c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition),
-            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint)) %>%
+    mutate(segment = cumsum(is.na(High_SSB)))
+
+
+# Filter out rows with NAs and create a segment identifier
+df_segments <- df4 %>%
+  filter(!is.na(SSB)) %>%
+  group_by(segment) %>%
+  mutate(start = first(Year), end = last(Year))
+
+
+p4 <- df_segments %>%
+    ggplot(., aes(x = Year, y = SSB))
+
+if (any(!is.na(df_segments$Low_SSB))) {
+  p4 <- p4 +
+    geom_ribbon(data =  df_segments, aes(
+      ymin = Low_SSB,
+      ymax = High_SSB,
+      fill = ConfidenceIntervalDefinition,
+      group = segment,
+      text = map(
+        paste0(
+          "<b>Year: </b>", Year,
+          "<br>",
+          "<b>SSB: </b>", SSB,
+          "<br>",
+          "<b>High SSB: </b>", High_SSB,
+          "<br>",
+          "<b>Low SSB: </b>", Low_SSB
+        ), HTML
+      )
+    ),
+    linetype = "blank",
+    size = 0
+    )
+}
+
+p4 <- p4 +
+    geom_line(data = df_segments, aes(
+        x = Year,
+        y = SSB,
+        color = "SSB",
+        group = segment,
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>SSB: </b>", SSB
+            ), HTML
+
         )
 
-    p4 <- df4 %>%
-        ggplot(., aes(x = Year, y = SSB))
 
-    if (any(!is.na(df4$Low_SSB))) {
-        p4 <- p4 +
-            geom_ribbon(
-                data = df4 %>% filter(!is.na(High_SSB)), aes(
-                    ymin = Low_SSB,
-                    ymax = High_SSB,
-                    fill = ConfidenceIntervalDefinition,
-                    text = map(
-                        paste0(
-                            "<b>Year: </b>", Year,
-                            "<br>",
-                            "<b>SSB: </b>", SSB,
-                            "<br>",
-                            "<b>High SSB: </b>", High_SSB,
-                            "<br>",
-                            "<b>Low SSB: </b>", Low_SSB
-                        ), HTML
-                    )
-                ),
-                linetype = "blank",
-                size = 0
-            )
-    }
-
+if (any(!is.na(df_segments$MSYBtrigger))) {
     p4 <- p4 +
-        geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
+        geom_line(aes(
             x = Year,
-            y = SSB,
-            color = "SSB",
+            y = MSYBtrigger,
+            linetype = "MSY B<sub>trigger</sub>",
+            colour = "MSY B<sub>trigger</sub>",
+            size = "MSY B<sub>trigger</sub>",
             text = map(
                 paste0(
-                    "<b>Year: </b>", Year,
-                    "<br>",
-                    "<b>SSB: </b>", SSB
+                    "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
                 ), HTML
             )
         ))
+}
 
-    if (any(!is.na(df4$MSYBtrigger))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = MSYBtrigger,
-                linetype = "MSY B<sub>trigger</sub>",
-                colour = "MSY B<sub>trigger</sub>",
-                size = "MSY B<sub>trigger</sub>",
-                text = map(
-                    paste0(
-                        "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-                    ), HTML
-                )
-            ))
+if (any(!is.na(df_segments$Blim))) {
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Blim,
+            linetype = "B<sub>Lim</sub>",
+            colour = "B<sub>Lim</sub>",
+            size = "B<sub>Lim</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+                ), HTML
+
+            )
     }
 
-    if (any(!is.na(df4$Blim))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = Blim,
-                linetype = "B<sub>Lim</sub>",
-                colour = "B<sub>Lim</sub>",
-                size = "B<sub>Lim</sub>",
-                text = map(
-                    paste0(
-                        "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-                    ), HTML
-                )
-            ))
+if (any(!is.na(df_segments$Bpa))) {
+
+#     p4 <- p4 +
+#         geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
+#             x = Year,
+#             y = SSB,
+#             color = "SSB",
+#             text = map(
+#                 paste0(
+#                     "<b>Year: </b>", Year,
+#                     "<br>",
+#                     "<b>SSB: </b>", SSB
+#                 ), HTML
+#             )
+#         ))
+
+#     if (any(!is.na(df4$MSYBtrigger))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = MSYBtrigger,
+#                 linetype = "MSY B<sub>trigger</sub>",
+#                 colour = "MSY B<sub>trigger</sub>",
+#                 size = "MSY B<sub>trigger</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
+
+
+if (any(!is.na(diamondYears))) {
+        p4 <- p4 + geom_point( 
+                            data = df_segments %>% filter(Year %in% diamondYears), 
+                            aes(x = Year, 
+                            y = SSB,
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+                                    ), HTML
+                                )), 
+                            shape = 23, 
+                            fill = "#cfcfcf", 
+                            color = "#3aa6ff", 
+                            size = 2.5,                            
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
+
+#     if (any(!is.na(df4$Blim))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = Blim,
+#                 linetype = "B<sub>Lim</sub>",
+#                 colour = "B<sub>Lim</sub>",
+#                 size = "B<sub>Lim</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+#                     ), HTML
+#                 )
+#             ))
+
     }
 
     if (any(!is.na(df4$Bpa))) {
@@ -1050,6 +1138,26 @@ ICES_plot_4 <- function(df, sagSettings) {
                 )
             ))
     }
+
+# add average lines
+averageYears <-
+    sagSettings4 %>%
+    filter(settingKey == 46) %>%
+    pull(settingValue) %>%
+    str_split(",", simplify = TRUE) %>%
+    as.numeric()
+
+if (length(averageYears)) {
+    id1 <- nrow(df_segments) - 1:averageYears[1] + 1
+    id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
+    avedf1 <- data.frame(
+        Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
+        SSB = mean(df_segments$SSB[id1], na.rm = TRUE)
+    )
+    avedf2 <- data.frame(
+        Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
+        SSB = mean(df_segments$SSB[id2], na.rm = TRUE)
+    )
 
     #### custom reference points
     if (any(!is.na(df4[[paste0("CustomRefPointValue", customRefPoint)]]))) {
@@ -1071,6 +1179,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
+
     diamondYears <-
         sagSettings4 %>%
         filter(settingKey == 14) %>%
@@ -1078,49 +1187,73 @@ ICES_plot_4 <- function(df, sagSettings) {
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
 
-    if (any(!is.na(diamondYears))) {
-        p4 <- p4 + geom_point(
-            data = df4 %>% filter(Year %in% diamondYears),
-            aes(
-                x = Year,
-                y = SSB,
-                text = map(
-                    paste0(
-                        "<b>Year: </b>", Year,
-                        "<br>",
-                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
-                    ), HTML
-                )
-            ),
-            shape = 23,
-            fill = "#cfcfcf",
-            color = "#3aa6ff",
-            size = 2.5,
-            show.legend = FALSE,
-            inherit.aes = FALSE
-        )
-    }
+
+min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
+
+#     if (any(!is.na(diamondYears))) {
+#         p4 <- p4 + geom_point(
+#             data = df4 %>% filter(Year %in% diamondYears),
+#             aes(
+#                 x = Year,
+#                 y = SSB,
+#                 text = map(
+#                     paste0(
+#                         "<b>Year: </b>", Year,
+#                         "<br>",
+#                         "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+#                     ), HTML
+#                 )
+#             ),
+#             shape = 23,
+#             fill = "#cfcfcf",
+#             color = "#3aa6ff",
+#             size = 2.5,
+#             show.legend = FALSE,
+#             inherit.aes = FALSE
+#         )
+#     }
 
 
-    # add average lines
-    averageYears <-
-        sagSettings4 %>%
-        filter(settingKey == 46) %>%
-        pull(settingValue) %>%
-        str_split(",", simplify = TRUE) %>%
-        as.numeric()
 
-    if (length(averageYears)) {
-        id1 <- nrow(df4) - 1:averageYears[1] + 1
-        id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
-        avedf1 <- data.frame(
-            Year = range(df4$Year[id1]) + c(-0.5, 0.5),
-            SSB = mean(df4$SSB[id1], na.rm = TRUE)
-        )
-        avedf2 <- data.frame(
-            Year = range(df4$Year[id2]) + c(-0.5, 0.5),
-            SSB = mean(df4$SSB[id2], na.rm = TRUE)
-        )
+#     # add average lines
+#     averageYears <-
+#         sagSettings4 %>%
+#         filter(settingKey == 46) %>%
+#         pull(settingValue) %>%
+#         str_split(",", simplify = TRUE) %>%
+#         as.numeric()
+
+#     if (length(averageYears)) {
+#         id1 <- nrow(df4) - 1:averageYears[1] + 1
+#         id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+#         avedf1 <- data.frame(
+#             Year = range(df4$Year[id1]) + c(-0.5, 0.5),
+#             SSB = mean(df4$SSB[id1], na.rm = TRUE)
+#         )
+#         avedf2 <- data.frame(
+#             Year = range(df4$Year[id2]) + c(-0.5, 0.5),
+#             SSB = mean(df4$SSB[id2], na.rm = TRUE)
+#         )
+
+
+#converting
+# fig4 <- ggplotly(p4, tooltip = "text") %>%
+#     layout(
+#         autosize = T,
+#         legend = list(
+#             itemsizing = "trace",
+#             orientation = "h",
+#             y = -.3, yanchor = "bottom",
+#             x = 0.5, xanchor = "center",
+#             yref='container', xref='container',
+#             itemwidth = 20,
+#             itemsizing= "trace",
+#             title = list(text = "")
+#         ),
+#         xaxis = list(zeroline = TRUE),
+#         annotations = list(
+#             showarrow = FALSE,
+#                 text = tail(df$SAGStamp,1),
 
         p4 <-
             p4 + geom_line(
@@ -1209,7 +1342,10 @@ ICES_plot_4 <- function(df, sagSettings) {
         }
     }
 
-    fig4
+
+fig4
+
+
 }
 
 

@@ -279,3 +279,15 @@ caption {
   overflow: hidden;
   @include transition($transition-collapse);
 }*/
+
+#logo {
+  height: auto;
+  width: 80% !important;
+  margin-top: 10px;
+  margin-bottom: 10px
+}
+
+#map1 {
+  height: calc(72vh - 220px) !important;
+  overflow-y: hidden;
+}
