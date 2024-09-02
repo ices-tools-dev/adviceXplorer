@@ -224,7 +224,9 @@ theme_ICES_plots <-
                 "B<sub>Lim</sub>" = "#000000",
                 "B<sub>pa</sub>" = "#000000",
                 "Average" = "#ed5f26",
-                "I<sub>trigger</sub>" = "#689dff"
+                "I<sub>trigger</sub>" = "#689dff",
+                "BMGT<sub>lower</sub>" = "#000000",
+                "BMGT<sub>upper</sub>" = "#689dff"
             )),
             scale_linetype_manual(values = c(
                 "SSB" = "solid",
@@ -232,7 +234,9 @@ theme_ICES_plots <-
                 "B<sub>pa</sub>" = "dotted",
                 "MSY B<sub>trigger</sub>" = "solid",
                 "Average" = "solid",
-                "I<sub>trigger</sub>" = "dotdash"
+                "I<sub>trigger</sub>" = "dotdash",
+                "BMGT<sub>lower</sub>" = "dotted",
+                "BMGT<sub>upper</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "SSB" = 1.5,
@@ -240,7 +244,9 @@ theme_ICES_plots <-
                 "B<sub>pa</sub>" = 1,
                 "MSY B<sub>trigger</sub>" = .5,
                 "Average" = .8,
-                "I<sub>trigger</sub>" = .8
+                "I<sub>trigger</sub>" = .8,
+                "BMGT<sub>lower</sub>" = .8,
+                "BMGT<sub>upper</sub>" = .8                
             )),
             scale_fill_manual(values = c("#94b0a9")),
             limits,
@@ -754,16 +760,18 @@ ICES_plot_3 <- function(df, sagSettings) {
     customRefPoint <-
         sagSettings3 %>%
         filter(settingKey == 51) %>%
-        pull(settingValue) %>%
-        as.numeric()
-
+        pull(settingValue) #%>%
+        # as.numeric()
+    
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
             c(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition),
-            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+            if (length(customRefPoint) != 0 && !customRefPoint %in% colnames(.)) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
-        mutate(segment = cumsum(is.na(High_F)))
+        mutate(segment = cumsum(is.na(F)))
+
+    # browser()
 
     # Filter out rows with NAs and create a segment identifier
     df_segments <- df3 %>%
@@ -864,7 +872,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     }
 
     #### custom reference points
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint)]])) && !customRefPoint %in% colnames(df)) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -880,14 +888,14 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    min_year <- min(df3$Year[which(!is.na(df3$F))])
+    min_year <- min(df_segments$Year[which(!is.na(df_segments$F))])
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p3 <-
         p3 +
-        xlim(min_year, max(df3$Year + 1)) +
+        xlim(min_year, max(df_segments$Year + 1)) +
         theme_ICES_plots(
-            type = "F", df,
+            type = "F", df_segments,
             title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% nullifempty()
         )
@@ -953,18 +961,16 @@ ICES_plot_4 <- function(df, sagSettings) {
         sagSettings4 %>%
         filter(settingKey == 51) %>%
         pull(settingValue) %>%
-        as.numeric()
-
-
-  
-
+        str_split(pattern = ",", simplify = TRUE)
+        # as.numeric()  
+# browser()
 df4 <- df %>%
     filter(Purpose == "Advice") %>%
     select(
-        c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition),
-        if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+        c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
+        if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
     ) %>%
-    mutate(segment = cumsum(is.na(High_SSB)))
+    mutate(segment = cumsum(is.na(SSB)))
 
 
 # Filter out rows with NAs and create a segment identifier
@@ -1066,9 +1072,40 @@ if (any(!is.na(df_segments$Bpa))) {
             ))
     }
 
+if (any(!is.na(df_segments$BMGT_lower))) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = BMGT_lower,
+                linetype = "BMGT<sub>lower</sub>",
+                colour = "BMGT<sub>lower</sub>",
+                size = "BMGT<sub>lower</sub>",
+                text = map(
+                    paste0(
+                        "<b>BMGT<sub>lower</sub>: </b>", tail(BMGT_lower, 1)
+                    ), HTML
+                )
+            ))
+    }
 
+    if (any(!is.na(df_segments$BMGT_upper))) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = BMGT_upper,
+                linetype = "BMGT<sub>upper</sub>",
+                colour = "BMGT<sub>upper</sub>",
+                size = "BMGT<sub>upper</sub>",
+                text = map(
+                    paste0(
+                        "<b>BMGT<sub>upper</sub>: </b>", tail(BMGT_upper, 1)
+                    ), HTML
+                )
+            ))
+    }
+    
     #### custom reference points
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]])) && !all(customRefPoint %in% colnames(df))) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
