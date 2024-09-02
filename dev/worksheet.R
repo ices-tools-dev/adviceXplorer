@@ -1737,9 +1737,10 @@ access_sag_data_local <- function(stock_code, year) {
     return(data_sag)
     
 }
-test <- access_sag_data_local("spr.27.3a4", 2024)
+test <- access_sag_data_local("ane.27.9a", 2024)
 names(test)
 str(test$High_Recruitment)
+list <- icesSAG::StockList(2024)
 
 
 

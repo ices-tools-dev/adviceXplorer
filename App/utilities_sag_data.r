@@ -64,33 +64,32 @@ access_sag_data <- function(stock_code, year) {
 #' @export
 #'
 access_sag_data_local <- function(stock_code, year) {
-  
-    out1 <-
+  out1 <-
     lapply(
       year,
-      function(i) {        
-          fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+      function(i) {
+        fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
       }
     )
-    SAGsummary <- do.call(rbind, out1)
-    
-    out2 <-
+  SAGsummary <- do.call(rbind, out1)
+
+  out2 <-
     lapply(
       year,
-      function(j) {        
-          fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
+      function(j) {
+        fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
       }
     )
-    SAGrefpts <- do.call(rbind, out2)
+  SAGrefpts <- do.call(rbind, out2)
 
-    data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
+  data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
 
-    data_sag <- data_sag %>% select(-FishStock) %>% 
-    filter(StockPublishNote == "Stock published") %>% 
+  data_sag <- data_sag %>%
+    select(-FishStock) %>%
+    filter(StockPublishNote == "Stock published") %>%
     mutate(across(everything(), ~ if (class(.) == "integer64") as.integer(.) else .))
-    
-    return(data_sag)
-    
+
+  return(data_sag)
 }
 
 
@@ -118,38 +117,37 @@ access_sag_data_local <- function(stock_code, year) {
 #' @export
 #'
 
-quality_assessment_data_local <- function(stock_code, year) {
-    years <- c(2023, 2022, 2021, 2020, 2019)
-    years <- years[years <= year]
-    datalist <- list()
+quality_assessment_data_local <- function(stock_code, year, assessmentComponent) {
+  years <- c(2024, 2023, 2022, 2021, 2020)
+  years <- years[years <= year]
+  datalist <- list()
 
-    data_temp <- try(access_sag_data_local(stock_code, years))
-    if (isTRUE(class(data_temp) == "try-error")) {
-            next
-        } else {
-            data_temp <- filter(data_temp, between(Year, 2005, 2023))
-            data_temp <- data_temp %>% select(
-                Year,
-                Recruitment, RecruitmentAge,
-                SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
-                F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
-                AssessmentYear, StockPublishNote, Purpose, SAGStamp
-            )
-            
-            data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
-            data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
-            data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
-            data_temp$FAge <- as.character(data_temp$FAge)
-            data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)            
-        }
+  data_temp <- try(access_sag_data_local(stock_code, years))
+  if (isTRUE(class(data_temp) == "try-error")) {
+    next
+  } else {
+    data_temp <- filter(data_temp, between(Year, 2005, 2024))
 
-    # take out non published data from before 2021 in big data
-    SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice") %>% distinct()
-    
-    # make assessmentYear as factor
-    SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
+    data_temp <- data_temp %>% select(
+      Year,
+      Recruitment, RecruitmentAge,
+      SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
+      F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
+      AssessmentYear, StockPublishNote, Purpose, SAGStamp, AssessmentComponent
+    )
+    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent)] <- "N.A." # this probably needs to go when they update ASD from "N.A." to NA
+    data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+    data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
+    data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
+    data_temp$FAge <- as.character(data_temp$FAge)
+    data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
+  }
+  # take out non published data from before 2021 in big data
+  SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
+  # make assessmentYear as factor
+  SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 
-    return(SAG_data)
+  return(SAG_data)
 }
 
 

@@ -44,6 +44,8 @@ server <- function(input, output, session) {
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
       dplyr::arrange(StockKeyLabel)
+      
+      
   }
   }) %>%
     bindCache(input$selected_locations, input$selected_years) %>%
@@ -67,42 +69,49 @@ server <- function(input, output, session) {
       res_mod() %>%
         select(
           "StockKeyLabel",
-          "Component",
+          "AssessmentComponent",
           "EcoRegion",
           "icon",
           "SpeciesCommonName",
           "stock_location"
         ) %>%
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
+          "Component" = AssessmentComponent,
           "Ecoregion" = EcoRegion,
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
-        ) %>% 
-        { if (all(is.na(.$Component))) select(., -Component) else . }
+        ) %>%
+        {
+          if (all(nchar(.$Component) == 0)) select(., -Component) else .
+        }
     } else {
       res_mod() %>%
         select(
           "StockKeyLabel",
-          "Component",
+          "AssessmentComponent",
           "icon",
           "SpeciesCommonName",
           "stock_location"
         ) %>%
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>%
         rename(
           "Stock code" = StockKeyLabel,
+          "Component" = AssessmentComponent,
           " " = icon,
           "Common name" = SpeciesCommonName,
           "Location" = stock_location
-        ) %>% 
-        { if (all(is.na(.$Component))) select(., -Component) else . }
+        ) %>%
+        {
+          if (all(nchar(.$Component) == 0)) select(., -Component) else .
+        }
     }
   })
   
 
   output$tbl <- renderReactable({
-    
     reactable(res_modo(),
       selection = "single",
       filterable = TRUE,
@@ -110,7 +119,6 @@ server <- function(input, output, session) {
       highlight = TRUE,
       defaultPageSize = 100,
       striped = TRUE,
-
       defaultColDef = colDef(
         headerStyle = list(background = "#99AABF")
       ),
@@ -207,11 +215,6 @@ server <- function(input, output, session) {
       pull(SAGChartKey) %>%
       as.numeric})
   
-######## download IBC and unallocated_Removals (temporary solution until icesSAG is updated)
-additional_LandingData <- reactive({
-  get_additional_landing_data(query$assessmentkey)
-}) 
-
 ##### get link to library pdf advice
 advice_doi <- eventReactive((req(SAG_data_reactive())),{  
   SAG_data_reactive()$LinkToAdvice[1]
@@ -220,10 +223,16 @@ advice_doi <- eventReactive((req(SAG_data_reactive())),{
 replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
   get_link_replaced_advice(query$stockkeylabel,query$year)
 })
+
+
 ###### info about the stock selected for top of page
 stock_info <- reactive({
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
-  get_Stock_info(filtered_row$SpeciesCommonName[1], SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1])
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+  if (all(filtered_row$AssessmentComponent != "N.A.")) {
+    filtered_row <- filtered_row %>% filter(AssessmentComponent == res_mod()[selected(), AssessmentComponent])
+  }  
+  get_Stock_info(filtered_row$SpeciesCommonName[1], filtered_row$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], filtered_row$AssessmentComponent[1], filtered_row$StockKeyDescription[1])
+  
 }) 
 
 output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
@@ -232,15 +241,12 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(), advice_doi(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
+  get_Advice_View_Headline(advice_view_info(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
   advice_view_headline()  
 }) 
-
- ### link to pdf of advice (NOT ACTIVE)
-onclick("library_advice_link1", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
 
 output$download_SAG_Data <- downloadHandler(
@@ -248,17 +254,13 @@ output$download_SAG_Data <- downloadHandler(
     content = function(fname) {
       
       fs <- c("Disclaimer.txt", "adviceXplorer_SAG_data.csv")
-      write.csv(SAG_data_reactive(), file = "adviceXplorer_SAG_data.csv")
+      write.csv(SAG_data_reactive() %>% select(where(~ !all(is.na(.)))), file = "adviceXplorer_SAG_data.csv")
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
     },
     contentType = "application/zip"
   )
-
-
-
-
 
 ######################### Stock development over time plots
 
@@ -309,7 +311,8 @@ output$download_SAG_Data <- downloadHandler(
 
     year <- query$year 
     
-    quality_assessment_data_local(stock_name, year)
+    quality_assessment_data_local(stock_name, year, res_mod()[selected(), AssessmentComponent]) 
+    
   }) 
   
 
@@ -327,9 +330,6 @@ output$download_SAG_Data <- downloadHandler(
     },
     contentType = "application/zip"
   )
-
-#### link to pdf of advice (NOT ACTIVE)
-onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
 
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
@@ -359,23 +359,35 @@ onclick("library_advice_link2", runjs(paste0("window.open('", advice_doi(),"', '
   })
   
 
-##### Advice view info
+##### ASD info
 advice_view_info <- reactive({
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
-  if (!is_empty(asd_record)){ 
-    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
-  }  
+  if (!is_empty(asd_record)){
+    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, 
+                                        adviceStatus == "Advice", 
+                                        adviceComponent == res_mod()[selected(), AssessmentComponent])
+  }
 }) 
 
 
-##### Advice view info previous year
-advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel,query$year), {
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency)
+##### ASD info previous year
+advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$year), {
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey, ]
 
-  if (!is_empty(asd_record_previous)){ 
-    asd_record_previous <- asd_record_previous %>% filter(adviceViewPublished == TRUE, adviceStatus == "Advice") 
-  } 
+  asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency[1])
+
+  # this is a fix to cover an exeption (like aru.27.123a4) when the assessment frequency is 2 but there is an advice in the previous year.
+  if (is_empty(asd_record_previous)) {
+    asd_record_previous <- try(getAdviceViewRecord(query$stockkeylabel, query$year))
+  }
+
+  if (!is_empty(asd_record_previous)) {
+    asd_record_previous <- asd_record_previous %>% filter(
+      adviceViewPublished == TRUE,
+      adviceStatus == "Advice",
+      adviceComponent == res_mod()[selected(), AssessmentComponent]
+    )
+  }
 })
 
 
@@ -402,13 +414,6 @@ catch_scenario_table_percentages <- eventReactive(req(catch_scenario_table_previ
 })
 
 
-#### link for the advice view link button to the full stock record (NOT ACTIVE)
-onclick("advice_view_link", runjs(paste0("window.open('https://sg.ices.dk/adviceview/viewAdvice/", advice_view_info()$adviceKey,"', '_blank')")))
-
-#### link to pdf of advice (NOT ACTIVE)
-onclick("library_advice_link3", runjs(paste0("window.open('", advice_doi(),"', '_blank')")))
-
-
 ### F_SSB and chatches plot linked to table
 output$catch_scenario_plot_F_SSB_Catch <- renderPlotly({
   
@@ -431,7 +436,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year), catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
@@ -493,9 +498,7 @@ output$TAC_download <- renderUI({
 })
 ############ Radial plot panel (Selection panel)
 output$catch_scenarios_radial <- renderUI({
- 
   if (!is_empty(catch_scenario_table_previous_year()$table)) {
-
     virtualSelectInput(
       inputId = "catch_choice_radial",
       label = "Select one or more catch scenarios:",
@@ -505,14 +508,6 @@ output$catch_scenarios_radial <- renderUI({
       width = "100%",
       search = TRUE
     )
-
-    # selectizeInput(
-    #   inputId = "catch_choice_radial",
-    #   label = "Select one or more catch scenarios:",
-    #   choices = unique(catch_scenario_table_percentages()$cat),
-    #   selected = c(Basis()$cat),
-    #   multiple = TRUE
-    # )
   } else {
     HTML("")
   }
@@ -534,32 +529,19 @@ output$Radial_plot_disclaimer <- renderUI(
 )
 ############ Lollipop plot panel (Selection panel) 
 output$catch_indicators_lollipop <- renderUI({
-
-  if (!is_empty(catch_scenario_table_previous_year()$table)) { 
-
+  if (!is_empty(catch_scenario_table_previous_year()$table)) {
     virtualSelectInput(
       inputId = "indicator_choice_lollipop",
       label = "Select one ore more indicators:",
-      choices = catch_scenario_table_percentages() %>% 
+      choices = catch_scenario_table_percentages() %>%
         select(where(~ !any(is.na(.)))) %>%
         names() %>%
         str_subset(pattern = c("Year|cat|cS_Purpose"), negate = TRUE),
-        
       selected = c("SSB change"),
       multiple = TRUE,
       width = "100%",
       search = TRUE
-    )   
-    # selectizeInput(
-    #   inputId = "indicator_choice_lollipop",
-    #   label = "Select one ore more indicators",
-    #   choices = catch_scenario_table_percentages() %>% 
-    #     select(where(~ !any(is.na(.)))) %>%
-    #     names() %>%
-    #     str_subset(pattern = c("Year|cat|cS_Purpose"), negate = TRUE),
-    #   selected = c("SSB change"),
-    #   multiple = TRUE
-    # )
+    )
   } else {
     HTML("")
   }
@@ -570,8 +552,7 @@ output$Lollipop_plot <- renderPlotly({
   validate(
     need(!is_empty(advice_view_info()), "No ASD entry in assessment year"),
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
-  )
-  
+  )  
   lollipop_plot(catch_scenario_table_percentages(),input$indicator_choice_lollipop)
 })
 
@@ -638,18 +619,17 @@ output$table <- renderReactable({
 })
 
 output$download_catch_table <- downloadHandler(
-    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
-    content = function(fname) {
-      
-      fs <- c("Disclaimer.txt", "adviceXplorer_catchScenario_data.csv","adviceXplorer_catchScenarioNotes_data.csv")
-      write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = "adviceXplorer_catchScenario_data.csv")
-      write.csv(icesASD::getCatchScenariosNotes(advice_view_info()$adviceKey), file = "adviceXplorer_catchScenarioNotes_data.csv")
-      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
-      
-      zip::zip(zipfile=fname, files=fs)
-    },
-    contentType = "application/zip"
-  )
+  filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+  content = function(fname) {
+    fs <- c("Disclaimer.txt", "adviceXplorer_catchScenario_data.csv", "adviceXplorer_catchScenarioNotes_data.csv")
+    write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = "adviceXplorer_catchScenario_data.csv")
+    write.csv(icesASD::getCatchScenariosNotes(advice_view_info()$adviceKey), file = "adviceXplorer_catchScenarioNotes_data.csv")
+    write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"), file = "Disclaimer.txt", row.names = FALSE)
+
+    zip::zip(zipfile = fname, files = fs)
+  },
+  contentType = "application/zip"
+)
 
 
 ##### footnotes of catch scenario table

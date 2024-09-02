@@ -31,11 +31,11 @@
 update_SAG <- function(year) {
   mkdir(paste0("Data/SAG_", year))
 
-  # lookup for assessment key for summary
-  sag <-
-    StockList(year = year) %>%
-    select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice) %>%
-    rename(FishStock = StockKeyLabel)
+    # lookup for assessment key for summary
+    sag <-
+      StockList(year = year) %>%
+      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) %>%
+      rename(FishStock = StockKeyLabel)
 
   summary <- SummaryTable(sag$AssessmentKey) %>%
     left_join(sag, by = c("FishStock", "AssessmentKey", "AssessmentYear", "Purpose"))
