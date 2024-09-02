@@ -43,10 +43,7 @@ server <- function(input, output, session) {
     
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
-      dplyr::arrange(StockKeyLabel) #%>%
-      # dplyr::mutate(
-      #   Sel = sprintf('<input type="radio" name="rdbtn" value="rdbtn_%s"/>', 1:nrow(.))
-      # )
+      dplyr::arrange(StockKeyLabel)
   }
   }) %>%
     bindCache(input$selected_locations, input$selected_years) %>%
@@ -225,8 +222,8 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 })
 ###### info about the stock selected for top of page
 stock_info <- reactive({
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  get_Stock_info(filtered_row$SpeciesCommonName, SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1]) #,
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
+  get_Stock_info(filtered_row$SpeciesCommonName[1], SAG_data_reactive()$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], SAG_data_reactive()$StockDescription[1])
 }) 
 
 output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
