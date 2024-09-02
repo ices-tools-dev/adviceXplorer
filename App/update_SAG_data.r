@@ -329,7 +329,7 @@ standardiseRefPoints <- function(totrefpoints) {
   ))) {
     totrefpoints[totrefpoints %in% c(
       "HR_{MSY proxy} (W)"      
-    )] <- "HR MSY<sub>proxy</sub> (W)"
+    )] <- "HR MSY<sub>proxy</sub> W"
   }
 
   if (any(totrefpoints %in% c(
@@ -337,7 +337,7 @@ standardiseRefPoints <- function(totrefpoints) {
   ))) {
     totrefpoints[totrefpoints %in% c(
       "HR_{MSY proxy} (S)"      
-    )] <- "HR MSY<sub>proxy</sub> (S)"
+    )] <- "HR MSY<sub>proxy</sub> S"
   }
 
   if (any(totrefpoints %in% c(
