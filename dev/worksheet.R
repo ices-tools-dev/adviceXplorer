@@ -1743,6 +1743,7 @@ str(test$High_Recruitment)
 
 
 
+
 getwd()
 setwd("D:/GitHub_2023/online-advice/App")
 df <- access_sag_data_local("sbr.27.10", 2022)
@@ -2013,4 +2014,303 @@ ggplotly(p)
 
 
 
+
+=======
+df <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2023/SAG_refpts.csv", header = TRUE, sep = ",")
+
+names(df)
+uniqueCustom1 <- unique(df$CustomRefPointName1)
+uniqueCustom2 <- unique(df$CustomRefPointName2)
+uniqueCustom3 <- unique(df$CustomRefPointName3)
+uniqueCustom4 <- unique(df$CustomRefPointName4)
+uniqueCustom5 <- unique(df$CustomRefPointName5)
+
+customRefPoints <- c(uniqueCustom1, uniqueCustom2, uniqueCustom3, uniqueCustom4, uniqueCustom5)
+standardRefPoints <- names(df)[!names(df) %in% c("CustomRefPointName1", 
+"CustomRefPointName2", 
+"CustomRefPointName3", 
+"CustomRefPointName4", 
+"CustomRefPointName5",
+"CustomRefPointValue1",
+"CustomRefPointValue2",
+"CustomRefPointValue3",
+"CustomRefPointValue4",
+"CustomRefPointValue5",
+"AssessmentKey",
+"StockKeyLabel",
+"StockDatabaseID",
+"StockKey",
+"AssessmentYear")]
+
+totrefpoints <- c(standardRefPoints, customRefPoints)
+write.csv(totrefpoints, "D:/GitHub_2023/online-advice/App/Data/SAG_2023/RefPoints.csv")
+
+
+
+
+# Install and load necessary packages
+install.packages("stringdist")
+
+library(stringdist)
+library(dplyr)
+
+# Function to standardize similar strings to a target string
+standardize_similar_strings <- function(strings, target_string, threshold = 0.2) {
+  # Calculate string distances
+  distances <- stringdist::stringdistmatrix(strings, target_string, method = "jw")
+  
+  # Create a logical vector to find strings within the threshold
+  similar_strings <- distances <= threshold
+  
+  # Replace similar strings with the target string
+  strings[similar_strings] <- target_string
+  
+  return(strings)
+}
+
+# Example array of strings
+example_strings <- c("I_{trigger}", "I (trigger)", "Itrigger", "I _ trigger", "I_(_trigger_)", "anotherString")
+
+# Define the target string
+target_string <- "Itrigger"
+
+# Apply the function to standardize similar strings
+standardized_strings <- standardize_similar_strings(example_strings, target_string)
+
+print(standardized_strings)
+
+# Install and load necessary packages
+install.packages("stringdist")
+library(stringdist)
+
+# Function to standardize similar strings to a target string
+standardize_similar_strings <- function(strings, target_string, threshold = 0.1) {
+  # Calculate string distances
+  distances <- stringdist::stringdistmatrix(strings, target_string, method = "jw")
+  
+  # Create a logical vector to find strings within the threshold
+  similar_strings <- distances <= threshold
+  
+  # Replace similar strings with the target string
+  strings[similar_strings] <- target_string
+  
+  return(strings)
+}
+
+# Example array of strings
+example_strings <- c("I_{trigger}", "I (trigger)", "Itrigger", "I _ trigger", "I_(_trigger_)", "anotherString")
+
+# Define the target string
+target_string <- "Itrigger"
+
+# Apply the function to standardize similar strings
+example_strings <- standardize_similar_strings(example_strings, target_string)
+
+print(example_strings)
+
+sort(totrefpoints)
+target_string <- "FCap"
+totrefpoints <- standardize_similar_strings(totrefpoints, target_string)
+target_string <- "Itrigger"
+totrefpoints <- standardize_similar_strings(totrefpoints, target_string)
+target_string <- "FMSY proxy"
+totrefpoints <- standardize_similar_strings(totrefpoints, target_string)
+
+standardiseRefPoints <- function(totrefpoints) {
+  if (any(totrefpoints %in% c(
+    "FCap",
+    "F_{cap}",
+    "Fcap"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "FCap",
+      "F_{cap}",
+      "Fcap"
+    )] <- "FCap"
+  }
+  if (any(totrefpoints %in% c(
+    "F_(MSY proxy)",
+    "FMSY proxy",
+    "Fmsy proxy",
+    "F_{MSY proxy}",
+    "F_{MSYproxy}",
+    "F_(MSY proxy)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_(MSY proxy)",
+      "FMSY proxy",
+      "Fmsy proxy",
+      "F_{MSY proxy}",
+      "F_{MSYproxy}",
+      "F_(MSY proxy)"
+    )] <- "FMSY proxy"
+  }
+
+  if (any(totrefpoints %in% c(
+    "I_{trigger}",
+    "I (trigger)",
+    "I_{trigger}",
+    "Itrigger"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "I_{trigger}",
+      "I (trigger)",
+      "I_{trigger}",
+      "Itrigger"
+    )] <- "I<sub>trigger</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{eco}",
+    "Feco"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{eco}",
+      "Feco"
+    )] <- "FEco"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{lim}",
+    "FLim"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{lim}",
+      "FLim"
+    )] <- "FLim"
+  }
+
+  if (any(totrefpoints %in% c(
+    "I_{loss}",
+    "Iloss"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "I_{loss}",
+      "Iloss"
+    )] <- "Iloss"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{msy}",
+    "FMSY",
+    "Fmsy"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{msy}",
+      "FMSY",
+      "Fmsy"
+    )] <- "FMSY"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{pa}",
+    "Fpa",
+    "FPa"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{pa}",
+      "Fpa",
+      "FPa"
+    )] <- "Fpa"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{mgt}",
+    "HR_{mgt}",
+    "HR (mgt)",
+    "HRMGT"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{mgt}",
+      "HR_{mgt}",
+      "HR (mgt)",
+      "HRMGT"
+    )] <- "HR MGT"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{msy}",
+    "HR_{MSY}",
+    "HR_{MSY}"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{msy}",
+      "HR_{MSY}",
+      "HR_{MSY}"
+    )] <- "HR MSY"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HRmsy proxy",
+    "HRMSY proxy",
+    "HR_{MSY proxy}",
+    "HR_{MSY proxy} (W)",
+    "HR_{MSY proxy} (S)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HRmsy proxy",
+      "HRMSY proxy",
+      "HR_{MSY proxy}",
+      "HR_{MSY proxy} (W)",
+      "HR_{MSY proxy} (S)"
+    )] <- "HR MSY proxy"
+  }
+
+  if (any(totrefpoints %in% c(
+    "MSY Btrigger",
+    "MSYBtrigger"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "MSY Btrigger",
+      "MSYBtrigger"
+    )] <- "MSYBtrigger"
+  }
+
+  if (any(totrefpoints %in% c(
+    "MGT B_{trigger}",
+    "MGT B {trigger}",
+    "MGT B (trigger)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+    "MGT B_{trigger}",
+    "MGT B {trigger}",
+    "MGT B (trigger)"
+    )] <- "MGT Btrigger"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{pa}",
+    "HRpa",
+    "HR {pa}"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+     "HR_{pa}",
+    "HRpa",
+    "HR {pa}"
+    )] <- "HRpa"
+  }
+  return(totrefpoints)
+}
+
+
+df <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2023/SAG_refpts.csv", header = TRUE, sep = ",")
+
+
+
+
+
+
+df <- df %>% mutate(across(c(
+  CustomRefPointName1,
+  CustomRefPointName2,
+  CustomRefPointName3,
+  CustomRefPointName4,
+  CustomRefPointName5
+), standardiseRefPoints))
+
+uniqueCustom1 <- unique(df$CustomRefPointName1)
+uniqueCustom2 <- unique(df$CustomRefPointName2)
+uniqueCustom3 <- unique(df$CustomRefPointName3)
+uniqueCustom4 <- unique(df$CustomRefPointName4)
+uniqueCustom5 <- unique(df$CustomRefPointName5)
 

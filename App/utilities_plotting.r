@@ -163,19 +163,25 @@ theme_ICES_plots <-
                 "F" = "#ed5f26",
                 "F<sub>MSY</sub>" = "#00AC67",
                 "F<sub>Lim</sub>" = "#000000",
-                "F<sub>pa</sub>" = "#000000"
+                "F<sub>pa</sub>" = "#000000",
+                "HR MSY<sub>proxy</sub>" = "#00AC67",
+                "FMSY<sub>proxy</sub>" = "#00AC67"
             )),
             scale_linetype_manual(values = c(
                 "F" = "solid",
                 "F<sub>Lim</sub>" = "dashed",
                 "F<sub>pa</sub>" = "dotted",
-                "F<sub>MSY</sub>" = "solid"
+                "F<sub>MSY</sub>" = "solid",
+                "HR MSY<sub>proxy</sub>" = "dotdash",
+                "FMSY<sub>proxy</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "F" = 1.5,
                 "F<sub>Lim</sub>" = .8,
                 "F<sub>pa</sub>" = 1,
-                "F<sub>MSY</sub>" = .5
+                "F<sub>MSY</sub>" = .5,
+                "HR MSY<sub>proxy</sub>" = .8,
+                "FMSY<sub>proxy</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -217,21 +223,24 @@ theme_ICES_plots <-
                 "MSY B<sub>trigger</sub>" = "#689dff",
                 "B<sub>Lim</sub>" = "#000000",
                 "B<sub>pa</sub>" = "#000000",
-                "Average" = "#ed5f26"
+                "Average" = "#ed5f26",
+                "I<sub>trigger</sub>" = "#689dff"
             )),
             scale_linetype_manual(values = c(
                 "SSB" = "solid",
                 "B<sub>Lim</sub>" = "dashed",
                 "B<sub>pa</sub>" = "dotted",
                 "MSY B<sub>trigger</sub>" = "solid",
-                "Average" = "solid"
+                "Average" = "solid",
+                "I<sub>trigger</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "SSB" = 1.5,
                 "B<sub>Lim</sub>" = .8,
                 "B<sub>pa</sub>" = 1,
                 "MSY B<sub>trigger</sub>" = .5,
-                "Average" = .8
+                "Average" = .8,
+                "I<sub>trigger</sub>" = .8
             )),
             scale_fill_manual(values = c("#94b0a9")),
             limits,
@@ -743,11 +752,19 @@ ICES_plot_3 <- function(df, sagSettings) {
   
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
   
+    customRefPoint <-
+        sagSettings3 %>%
+        filter(settingKey == 51) %>%
+        pull(settingValue) %>%
+        as.numeric()
 
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition) %>%
-        #drop_na(F) 
+
+        select(
+            c(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition),
+            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+        ) %>% 
         mutate(segment = cumsum(is.na(High_F)))
 
     # Filter out rows with NAs and create a segment identifier
@@ -755,6 +772,7 @@ ICES_plot_3 <- function(df, sagSettings) {
         filter(!is.na(F)) %>%
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
+
     
     p3 <- df_segments %>%
         ggplot(., aes(x = Year, y = F))
@@ -848,12 +866,33 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
     
+    #### custom reference points
+    if (any(!is.na(df3[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = df3[[paste0("CustomRefPointValue", customRefPoint)]],
+                # linetype = as.factor("dotdash"),
+                # colour = as.factor(df3[[paste0("CustomRefPointName", customRefPoint)]][1]),
+                # size = as.factor(.8),
+                linetype = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                colour = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                size = df3[[paste0("CustomRefPointName", customRefPoint)]][1],
+                text = map(
+                    paste0(
+                        "<b>", df3[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df3[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                    ), HTML
+                )
+            ))
+    }
     
+    min_year <- min(df3$Year[which(!is.na(df3$F))])
     
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p3 <-
         p3 +
+        xlim(min_year, max(df3$Year+1)) +
         theme_ICES_plots(
         type = "F", df,
         title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
@@ -914,12 +953,22 @@ fig3
 #' @export
 #'
 ICES_plot_4 <- function(df, sagSettings) {
+    sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+    
+    customRefPoint <-
+        sagSettings4 %>%
+        filter(settingKey == 51) %>%
+        pull(settingValue) %>%
+        as.numeric()
+
 
   sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
 
 df4 <- df %>%
   filter(Purpose == "Advice") %>%
-  select(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) %>%
+  select(
+            c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition),
+            if (length(customRefPoint) != 0) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint)) %>%
     mutate(segment = cumsum(is.na(High_SSB)))
 
 
@@ -969,8 +1018,8 @@ p4 <- p4 +
                 "<br>",
                 "<b>SSB: </b>", SSB
             ), HTML
+
         )
-    ))
 
 
 if (any(!is.na(df_segments$MSYBtrigger))) {
@@ -1001,32 +1050,42 @@ if (any(!is.na(df_segments$Blim))) {
                 paste0(
                     "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
                 ), HTML
+
             )
-        ))
-}
+    }
 
 if (any(!is.na(df_segments$Bpa))) {
-    p4 <- p4 +
-        geom_line(aes(
-            x = Year,
-            y = Bpa,
-            linetype = "B<sub>pa</sub>",
-            colour = "B<sub>pa</sub>",
-            size = "B<sub>pa</sub>",
-            text = map(
-                paste0(
-                    "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-                ), HTML
-            )
-        ))
-}
 
-diamondYears <-
-    sagSettings4 %>%
-    filter(settingKey == 14) %>%
-    pull(settingValue) %>%
-    str_split(pattern = ",", simplify = TRUE) %>%
-    as.numeric()
+#     p4 <- p4 +
+#         geom_line(data = df4 %>% filter(!is.na(SSB)), aes(
+#             x = Year,
+#             y = SSB,
+#             color = "SSB",
+#             text = map(
+#                 paste0(
+#                     "<b>Year: </b>", Year,
+#                     "<br>",
+#                     "<b>SSB: </b>", SSB
+#                 ), HTML
+#             )
+#         ))
+
+#     if (any(!is.na(df4$MSYBtrigger))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = MSYBtrigger,
+#                 linetype = "MSY B<sub>trigger</sub>",
+#                 colour = "MSY B<sub>trigger</sub>",
+#                 size = "MSY B<sub>trigger</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
+
 
 if (any(!is.na(diamondYears))) {
         p4 <- p4 + geom_point( 
@@ -1046,8 +1105,39 @@ if (any(!is.na(diamondYears))) {
                             size = 2.5,                            
                             show.legend = FALSE, 
                             inherit.aes = FALSE)
+
+#     if (any(!is.na(df4$Blim))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = Blim,
+#                 linetype = "B<sub>Lim</sub>",
+#                 colour = "B<sub>Lim</sub>",
+#                 size = "B<sub>Lim</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+#                     ), HTML
+#                 )
+#             ))
+
     }
 
+    if (any(!is.na(df4$Bpa))) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = Bpa,
+                linetype = "B<sub>pa</sub>",
+                colour = "B<sub>pa</sub>",
+                size = "B<sub>pa</sub>",
+                text = map(
+                    paste0(
+                        "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                    ), HTML
+                )
+            ))
+    }
 
 # add average lines
 averageYears <-
@@ -1069,81 +1159,192 @@ if (length(averageYears)) {
         SSB = mean(df_segments$SSB[id2], na.rm = TRUE)
     )
 
-    p4 <-
-        p4 + geom_line(data = avedf1,
-                        aes(x = Year,
-                            y = SSB,
-                            linetype = "Average",
-                            colour = "Average",
-                            size = "Average",
-                            text = map(
-                                paste0(
-                                    "<b>Average: </b>", SSB
-                                ), HTML
-            ))) + 
-            geom_line(data = avedf2,
-                        aes(x = Year,
-                            y = SSB,
-                            linetype = "Average",
-                            colour = "Average",
-                            size = "Average",
-                            text = map(
-                                paste0(
-                                    "<b>Average: </b>", SSB
-                                ), HTML
-            )))
-}
+    #### custom reference points
+    if (any(!is.na(df4[[paste0("CustomRefPointValue", customRefPoint)]]))) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = df4[[paste0("CustomRefPointValue", customRefPoint)]],
+                # linetype = as.factor("dotdash"),
+                # colour = as.factor(df4[[paste0("CustomRefPointName", customRefPoint)]][1]),#"#69d371",
+                # size = as.factor(.8),
+                linetype = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
+                colour = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
+                size = df4[[paste0("CustomRefPointName", customRefPoint)]][1],
+                text = map(
+                    paste0(
+                        "<b>", df4[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df4[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                    ), HTML
+                )
+            ))
+    }
+
+
+    diamondYears <-
+        sagSettings4 %>%
+        filter(settingKey == 14) %>%
+        pull(settingValue) %>%
+        str_split(pattern = ",", simplify = TRUE) %>%
+        as.numeric()
+
 
 min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
 
-nullifempty <- function(x) if (length(x) == 0) NULL else x
+#     if (any(!is.na(diamondYears))) {
+#         p4 <- p4 + geom_point(
+#             data = df4 %>% filter(Year %in% diamondYears),
+#             aes(
+#                 x = Year,
+#                 y = SSB,
+#                 text = map(
+#                     paste0(
+#                         "<b>Year: </b>", Year,
+#                         "<br>",
+#                         "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+#                     ), HTML
+#                 )
+#             ),
+#             shape = 23,
+#             fill = "#cfcfcf",
+#             color = "#3aa6ff",
+#             size = 2.5,
+#             show.legend = FALSE,
+#             inherit.aes = FALSE
+#         )
+#     }
 
-  p4 <-
-    p4 + 
-    # xlim(min_year, max(df4$Year+1)) +
-    theme_ICES_plots(
-      type = "SSB", df,
-      title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-      ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
-      ymax = sagSettings4 %>%
-        filter(settingKey == 6) %>%
-        pull(settingValue) %>%
-        as.numeric() %>%
-        nullifempty()
-    )
+
+
+#     # add average lines
+#     averageYears <-
+#         sagSettings4 %>%
+#         filter(settingKey == 46) %>%
+#         pull(settingValue) %>%
+#         str_split(",", simplify = TRUE) %>%
+#         as.numeric()
+
+#     if (length(averageYears)) {
+#         id1 <- nrow(df4) - 1:averageYears[1] + 1
+#         id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+#         avedf1 <- data.frame(
+#             Year = range(df4$Year[id1]) + c(-0.5, 0.5),
+#             SSB = mean(df4$SSB[id1], na.rm = TRUE)
+#         )
+#         avedf2 <- data.frame(
+#             Year = range(df4$Year[id2]) + c(-0.5, 0.5),
+#             SSB = mean(df4$SSB[id2], na.rm = TRUE)
+#         )
 
 
 #converting
-fig4 <- ggplotly(p4, tooltip = "text") %>%
-    layout(
-        autosize = T,
-        legend = list(
-            itemsizing = "trace",
-            orientation = "h",
-            y = -.3, yanchor = "bottom",
-            x = 0.5, xanchor = "center",
-            yref='container', xref='container',
-            itemwidth = 20,
-            itemsizing= "trace",
-            title = list(text = "")
-        ),
-        xaxis = list(zeroline = TRUE),
-        annotations = list(
-            showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+# fig4 <- ggplotly(p4, tooltip = "text") %>%
+#     layout(
+#         autosize = T,
+#         legend = list(
+#             itemsizing = "trace",
+#             orientation = "h",
+#             y = -.3, yanchor = "bottom",
+#             x = 0.5, xanchor = "center",
+#             yref='container', xref='container',
+#             itemwidth = 20,
+#             itemsizing= "trace",
+#             title = list(text = "")
+#         ),
+#         xaxis = list(zeroline = TRUE),
+#         annotations = list(
+#             showarrow = FALSE,
+#                 text = tail(df$SAGStamp,1),
+
+        p4 <-
+            p4 + geom_line(
+                data = avedf1,
+                aes(
+                    x = Year,
+                    y = SSB,
+                    linetype = "Average",
+                    colour = "Average",
+                    size = "Average",
+                    text = map(
+                        paste0(
+                            "<b>Average: </b>", SSB
+                        ), HTML
+                    )
+                )
+            ) +
+            geom_line(
+                data = avedf2,
+                aes(
+                    x = Year,
+                    y = SSB,
+                    linetype = "Average",
+                    colour = "Average",
+                    size = "Average",
+                    text = map(
+                        paste0(
+                            "<b>Average: </b>", SSB
+                        ), HTML
+                    )
+                )
+            )
+    }
+
+    min_year <- min(df4$Year[which(!is.na(df4$SSB))])
+
+
+
+
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+    p4 <-
+        p4 +
+        xlim(min_year, max(df4$Year+1)) +
+        theme_ICES_plots(
+            type = "SSB", df,
+            title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+            ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
+            ymax = sagSettings4 %>%
+                filter(settingKey == 6) %>%
+                pull(settingValue) %>%
+                as.numeric() %>%
+                nullifempty()
+        )
+
+
+    # converting
+    fig4 <- ggplotly(p4, tooltip = "text") %>%
+        layout(
+            autosize = T,
+            legend = list(
+                itemsizing = "trace",
+                orientation = "h",
+                y = -.3,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                itemwidth = 20,
+                itemsizing = "trace",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            annotations = list(
+                showarrow = FALSE,
+                text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right")
-    )  #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+                yanchor = "right", xanchor = "right"
+            )
+        ) # %>%
+    # config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 
-for (i in 1:length(fig4$x$data)){
-    if (!is.null(fig4$x$data[[i]]$name)){
-        fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
+    for (i in 1:length(fig4$x$data)) {
+        if (!is.null(fig4$x$data[[i]]$name)) {
+            fig4$x$data[[i]]$name <- gsub("\\(", "", str_split(fig4$x$data[[i]]$name, ",")[[1]][1])
+        }
     }
-}
+
 
 fig4
+
 
 }
 
