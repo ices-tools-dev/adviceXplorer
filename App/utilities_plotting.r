@@ -999,7 +999,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 
     p4 <- df_segments %>%
         ggplot(., aes(x = Year, y = SSB))
-    browser()
+    
     if (any(!is.na(df_segments$Low_SSB))) {
         p4 <- p4 +
             geom_ribbon(
@@ -1302,7 +1302,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_5 <- function(df, sagSettings) {
-
+    
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
     df5 <- df %>%

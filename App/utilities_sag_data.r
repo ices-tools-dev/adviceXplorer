@@ -127,7 +127,7 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
     next
   } else {
     data_temp <- filter(data_temp, between(Year, 2005, 2024))
-
+    
     data_temp <- data_temp %>% select(
       Year,
       Recruitment, RecruitmentAge,
@@ -135,7 +135,7 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
       F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
       AssessmentYear, StockPublishNote, Purpose, SAGStamp, AssessmentComponent
     )
-    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent)] <- "N.A." # this probably needs to go when they update ASD from "N.A." to NA
+    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0] <- "N.A." # this probably needs to go when they update ASD from "N.A." to NA
     data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
     data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
     data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)

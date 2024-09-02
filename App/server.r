@@ -337,7 +337,7 @@ output$download_SAG_Data <- downloadHandler(
       need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-
+    
     suppressWarnings(ICES_plot_5(advice_action_quality(), sagSettings()))
 
   })
