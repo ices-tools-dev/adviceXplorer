@@ -2315,3 +2315,5 @@ uniqueCustom3 <- unique(df$CustomRefPointName3)
 uniqueCustom4 <- unique(df$CustomRefPointName4)
 uniqueCustom5 <- unique(df$CustomRefPointName5)
 
+x <- icesSAG::StockList(2024)
+t <-SummaryTable(18958)
