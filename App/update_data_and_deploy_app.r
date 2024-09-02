@@ -12,7 +12,6 @@ library(rsconnect)
 library(tm)
 
 
-
 setwd("./App")
 
 source("utilities_SID_data.r")
