@@ -37,8 +37,8 @@ update_SAG <- function(year) {
       select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) %>%
       rename(FishStock = StockKeyLabel)
 
-  summary <- SummaryTable(sag$AssessmentKey) %>%
-    left_join(sag, by = c("FishStock", "AssessmentKey", "AssessmentYear", "Purpose"))
+  summary <- SummaryTable(sag$AssessmentKey) %>% mutate(AssessmentComponent = as.character(AssessmentComponent)) %>%
+    left_join(sag, by = c("FishStock", "AssessmentKey", "AssessmentYear", "Purpose", "AssessmentComponent"))
 
   write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
