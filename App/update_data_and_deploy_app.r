@@ -23,7 +23,7 @@ source("update_SID_data.r")
 
 
 ## Ideally, this function would run every hour on the server to update sag
-UpdateDataApp(mode = "LatestYear")
+UpdateDataApp(mode = "AllYears")
 
 
 source("deploy.r")
