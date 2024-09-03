@@ -942,7 +942,7 @@ ICES_plot_3 <- function(df, sagSettings) {
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        )
+        ) %>% style(showlegend = FALSE, traces = 2)
 
 
     for (i in 1:length(fig3$x$data)) {
@@ -1269,8 +1269,7 @@ ICES_plot_4 <- function(df, sagSettings) {
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        ) # %>%
-    # config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        )  %>% style(showlegend = FALSE, traces = 2)
 
     for (i in 1:length(fig4$x$data)) {
         if (!is.null(fig4$x$data[[i]]$name)) {
