@@ -25,12 +25,18 @@ update_SID <- function(year) {
 
     ### download SID
     stock_list_all <- download_SID(year)
+    
+    # table(stock_list_long$StockKeyLabel)
     ### modifify SID table, 1 row == 1 Ecoregion
     stock_list_long <- separate_ecoregions(stock_list_all)
     ### add hyperlinks to table
     stock_list_long <- sid_table_links(stock_list_long)
     ### add component column
-    ASDList <- icesASD::getAdviceViewRecord(year = year) %>% rename(StockKeyLabel = stockCode, AssessmentKey = assessmentKey, AssessmentComponent = adviceComponent)
+    ASDList <- icesASD::getAdviceViewRecord(year = year) %>%
+        rename(StockKeyLabel = stockCode, AssessmentKey = assessmentKey, AssessmentComponent = adviceComponent) %>%
+        filter(adviceStatus == "Advice")
+
+    # stock_list_all  %>% filter(StockKeyLabel == "nep.fu.16")
     stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>%
         select(!AssessmentKey.y) %>%
         rename(AssessmentKey = AssessmentKey.x)
@@ -41,6 +47,9 @@ update_SID <- function(year) {
         dplyr::mutate(
             stock_location = parse_location_from_stock_description(StockKeyDescription)
         )
+
+
+    ### save SID table
     write.taf(stock_list_long, file = "SID.csv", dir = paste0("Data/SID_", year), quote = TRUE)
 }
 

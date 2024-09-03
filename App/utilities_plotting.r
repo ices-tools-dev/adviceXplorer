@@ -119,7 +119,8 @@ theme_ICES_plots <-
                 labels = function(l) {
                     trans <- l / 1000
                 }
-            )
+            ),
+             scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "Recruitment") {
 
@@ -142,7 +143,8 @@ theme_ICES_plots <-
                 labels = function(l) {
                     trans <- l / 1000000
                 }
-            )
+            ),
+             scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "F") {
         if (is.null(title)) {
@@ -187,7 +189,8 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)) # ,
-            )
+            ),
+            scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "SSB") {
         if (is.null(title)) {
@@ -253,7 +256,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = ylabels_func
-            )
+            ),
+             scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "quality_SSB") {
 
