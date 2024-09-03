@@ -839,7 +839,7 @@ ICES_plot_3 <- function(df, sagSettings) {
                 paste0(
                     "<b>Year: </b>", Year,
                     "<br>",
-                    "<b>F: </b>", F
+                    "<b>", FishingPressureDescription, ": </b>", F
                 ), HTML
             )
         ))
