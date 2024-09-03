@@ -772,7 +772,7 @@ ICES_plot_2 <- function(df, sagSettings) {
 #'
 ICES_plot_3 <- function(df, sagSettings) {
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
-
+    
     customRefPoint <-
         sagSettings3 %>%
         filter(settingKey == 51) %>%
@@ -789,7 +789,7 @@ ICES_plot_3 <- function(df, sagSettings) {
         mutate(segment = cumsum(is.na(F)))
 
     
-
+    
     # Filter out rows with NAs and create a segment identifier
     df_segments <- df3 %>%
         filter(!is.na(F)) %>%
@@ -812,11 +812,11 @@ ICES_plot_3 <- function(df, sagSettings) {
                         paste0(
                             "<b>Year: </b>", Year,
                             "<br>",
-                            "<b>F: </b>", F,
+                            "<b>", FishingPressureDescription, ": </b>", F,
                             "<br>",
-                            "<b>High F: </b>", High_F,
+                            "<b>High ", FishingPressureDescription," : </b>", High_F,
                             "<br>",
-                            "<b>Low F: </b>", Low_F
+                            "<b>Low ", FishingPressureDescription," : </b>", Low_F
                         ), HTML
                     )
                 ),
@@ -910,7 +910,7 @@ ICES_plot_3 <- function(df, sagSettings) {
 
     p3 <-
         p3 +
-        xlim(min_year, max(df_segments$Year + 1)) +
+        xlim(min_year, max(df_segments$Year)) +
         theme_ICES_plots(
             type = "F", df_segments,
             title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
@@ -1014,9 +1014,9 @@ ICES_plot_4 <- function(df, sagSettings) {
                             "<br>",
                             "<b>", StockSizeDescription,": </b>", SSB,
                             "<br>",
-                            "<b>High SSB: </b>", High_SSB,
+                            "<b>High ", StockSizeDescription,": </b>", High_SSB,
                             "<br>",
-                            "<b>Low SSB: </b>", Low_SSB
+                            "<b>Low", StockSizeDescription,": </b>", Low_SSB
                         ), HTML
                     )
                 ),
@@ -1233,7 +1233,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 
     p4 <-
         p4 +
-        xlim(min_year, max(df_segments$Year + 1)) +
+        xlim(min_year, max(df_segments$Year)) +
         theme_ICES_plots(
             type = "SSB", df_segments,
             title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
