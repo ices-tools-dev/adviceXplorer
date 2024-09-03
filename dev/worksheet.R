@@ -2315,3 +2315,16 @@ uniqueCustom3 <- unique(df$CustomRefPointName3)
 uniqueCustom4 <- unique(df$CustomRefPointName4)
 uniqueCustom5 <- unique(df$CustomRefPointName5)
 
+x <- icesSAG::StockList(2024)
+t <-SummaryTable(18958)
+
+
+summary<-read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2024/SAG_summary.csv", header = TRUE, sep = ",")
+library(stringr)
+filtered_summary <- summary %>% filter(str_starts(LinkToAdvice, "NA"))
+
+# Extract unique StockKeyLabel values
+unique_stock_key_labels <- unique(filtered_summary$FishStock)
+
+# Print the unique values
+print(unique_stock_key_labels)

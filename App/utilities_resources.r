@@ -64,7 +64,7 @@ make_data_sources <- function() {
     paste0(
       
       "<p align='left'><b><font size= 5>", "Data sources", "</font>", "</b>", "<br/>",
-      "The ICES Online Advice Shiny app diplays data collected from the following sources:",
+      "The ICES adviceXplorer diplays data collected from the following sources:",
       "<ul><li><a href='","https://gis.ices.dk/sf/index.html", "' target='_blank'>", "ICES Spatial Facility","</a></li>",
       "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-information-database.aspx", "' target='_blank'>", "Stock Information Database (SID)","</a></li>",
       "<li><a href='","https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx", "' target='_blank'>", "Stock Asssessment Graphs (SAG)","</a></li>",
@@ -104,8 +104,7 @@ make_data_disclaimer_and_policy <- function() {
     paste0(
       
       "<b>", "<font size=", 5, ">", "Data Disclaimer", "</font>", "</b>", "<br/>",
-      "<font size=", 3, ">", "The ICES Online Advice is ", "<b>", "in development",  "</b>", 
-      ". Please be aware that some of the figures, graphs and links displayed here may not be correct. Please refer to the pdf version for the official advice.", "<br/>",
+      "<font size=", 3, ">", "Please be aware that some of the figures, graphs and tables displayed here may not be entirely correct. Please refer to the pdf version for the official advice.", "<br/>",
       "The general ICES Data Disclaimer can be found ","<a href='","https://www.ices.dk/Pages/Disclaimer.aspx", "' target='_blank'>", "here","</a>", "</font>", "<br/>","<br/>",
 
       "<b>", "<font size=", 5, ">", "Data Policy", "</font>", "</b>", "<br/>",
@@ -152,7 +151,7 @@ make_citation <- function() {
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
 
-      <i><b>ICES Single-Stock Online Advice. ", Sys.Date(),". ICES, Copenhagen, Denmark.","<a href='https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "'target='_blank'> https://ices-taf.shinyapps.io/online-single-stock-advice/?assessmentkey=", getQueryString(), "</a>","</b></i></font><br/><br/>"
+      <i><b>ICES adviceXplorer. ", Sys.Date(),". ICES, Copenhagen, Denmark.","<a href='https://ices-taf.shinyapps.io/advicexplorer/?assessmentkey=", getQueryString(), "'target='_blank'> https://ices-taf.shinyapps.io/advicexplorer/?assessmentkey=", getQueryString(), "</a>","</b></i></font><br/><br/>"
  
     )
   )

@@ -31,20 +31,22 @@
 update_SAG <- function(year) {
   mkdir(paste0("Data/SAG_", year))
 
-    # lookup for assessment key for summary
-    sag <-
-      StockList(year = year) %>%
-      select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) %>%
-      rename(FishStock = StockKeyLabel)
+  # lookup for assessment key for summary
+  sag <-
+    StockList(year = year) %>%
+    select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) %>%
+    rename(FishStock = StockKeyLabel)
 
   summary <- SummaryTable(sag$AssessmentKey) %>%
-    left_join(sag, by = c("FishStock", "AssessmentKey", "AssessmentYear", "Purpose"))
+    select(-AssessmentComponent, -Purpose, -AssessmentYear) %>%
+    left_join(sag, by = c("FishStock", "AssessmentKey"))
 
   write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
   refpts <- FishStockReferencePoints(sag$AssessmentKey)
-  refpts <- refpts %>% mutate(across(c(
-    CustomRefPointName1,
+  
+  refpts <- refpts %>% mutate(across(
+    c(CustomRefPointName1,
     CustomRefPointName2,
     CustomRefPointName3,
     CustomRefPointName4,
@@ -315,15 +317,33 @@ standardiseRefPoints <- function(totrefpoints) {
   if (any(totrefpoints %in% c(
     "HRmsy proxy",
     "HRMSY proxy",
-    "HR_{MSY proxy}",
-    "HR_{MSY proxy} (W)",
-    "HR_{MSY proxy} (S)"
+    "HR_{MSY proxy}"    
   ))) {
     totrefpoints[totrefpoints %in% c(
       "HRmsy proxy",
       "HRMSY proxy",
       "HR_{MSY proxy}"      
     )] <- "HR MSY<sub>proxy</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{MSY proxy} (W)",
+    "HR_{MSY proxy} W" 
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{MSY proxy} (W)",
+      "HR_{MSY proxy} W"       
+    )] <- "HR MSY<sub>proxy</sub> W"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{MSY proxy} (S)",
+    "HR_{MSY proxy} S"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{MSY proxy} (S)",
+      "HR_{MSY proxy} S"
+      )] <- "HR MSY<sub>proxy</sub> S"
   }
 
   if (any(totrefpoints %in% c(
