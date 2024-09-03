@@ -1737,6 +1737,594 @@ access_sag_data_local <- function(stock_code, year) {
     return(data_sag)
     
 }
-test <- access_sag_data_local("spr.27.3a4", 2024)
+test <- access_sag_data_local("ane.27.9a", 2024)
 names(test)
 str(test$High_Recruitment)
+list <- icesSAG::StockList(2024)
+
+
+
+
+getwd()
+setwd("D:/GitHub_2023/online-advice/App")
+df <- access_sag_data_local("sbr.27.10", 2022)
+
+ICES_plot_4 <- function(df, sagSettings) {
+
+  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+
+df4 <- df %>%
+  filter(Purpose == "Advice") %>%
+  select(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition) %>%
+  mutate(segment = cumsum(is.na(SSB)))
+
+p4 <- df4 %>%
+    ggplot(., aes(x = Year, y = SSB))
+
+if (any(!is.na(df4$Low_SSB))) {
+  df_segments <- df4 %>%
+    filter(!is.na(High_SSB) & !is.na(Low_SSB)) %>%
+    group_by(segment) %>%
+    mutate(start = first(Year), end = last(Year))
+
+  p4 <- p4 +
+    geom_ribbon(data =  df_segments, aes(
+      ymin = Low_SSB,
+      ymax = High_SSB,
+      fill = ConfidenceIntervalDefinition,
+      group = segment,
+      text = map(
+        paste0(
+          "<b>Year: </b>", Year,
+          "<br>",
+          "<b>SSB: </b>", SSB,
+          "<br>",
+          "<b>High SSB: </b>", High_SSB,
+          "<br>",
+          "<b>Low SSB: </b>", Low_SSB
+        ), HTML
+      )
+    ),
+    linetype = "blank",
+    size = 0
+    )
+}
+
+p4 <- p4 +
+    geom_line(data = df_segments, aes(
+        x = Year,
+        y = SSB,
+        color = "SSB",
+        group = segment,
+        text = map(
+            paste0(
+                "<b>Year: </b>", Year,
+                "<br>",
+                "<b>SSB: </b>", SSB
+            ), HTML
+        )
+    ))
+
+if (any(!is.na(df4$MSYBtrigger))) {
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = MSYBtrigger,
+            linetype = "MSY B<sub>trigger</sub>",
+            colour = "MSY B<sub>trigger</sub>",
+            size = "MSY B<sub>trigger</sub>",
+            text = map(
+                paste0(
+                    "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+                ), HTML
+            )
+        ))
+}
+
+if (any(!is.na(df4$Blim))) {
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Blim,
+            linetype = "B<sub>Lim</sub>",
+            colour = "B<sub>Lim</sub>",
+            size = "B<sub>Lim</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+                ), HTML
+            )
+        ))
+}
+
+if (any(!is.na(df4$Bpa))) {
+    p4 <- p4 +
+        geom_line(aes(
+            x = Year,
+            y = Bpa,
+            linetype = "B<sub>pa</sub>",
+            colour = "B<sub>pa</sub>",
+            size = "B<sub>pa</sub>",
+            text = map(
+                paste0(
+                    "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+                ), HTML
+            )
+        ))
+}
+
+diamondYears <-
+    sagSettings4 %>%
+    filter(settingKey == 14) %>%
+    pull(settingValue) %>%
+    str_split(pattern = ",", simplify = TRUE) %>%
+    as.numeric()
+
+if (any(!is.na(diamondYears))) {
+        p4 <- p4 + geom_point( 
+                            data = df4 %>% filter(Year %in% diamondYears), 
+                            aes(x = Year, 
+                            y = SSB,
+                            text = map(
+                                    paste0(
+                                        "<b>Year: </b>", Year,
+                                        "<br>",
+                                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+                                    ), HTML
+                                )), 
+                            shape = 23, 
+                            fill = "#cfcfcf", 
+                            color = "#3aa6ff", 
+                            size = 2.5,                            
+                            show.legend = FALSE, 
+                            inherit.aes = FALSE)
+    }
+
+
+# add average lines
+averageYears <-
+    sagSettings4 %>%
+    filter(settingKey == 46) %>%
+    pull(settingValue) %>%
+    str_split(",", simplify = TRUE) %>%
+    as.numeric()
+
+if (length(averageYears)) {
+    id1 <- nrow(df4) - 1:averageYears[1] + 1
+    id2 <- nrow(df4) - 1:averageYears[2] - averageYears[1] + 1
+    avedf1 <- data.frame(
+        Year = range(df4$Year[id1]) + c(-0.5, 0.5),
+        SSB = mean(df4$SSB[id1], na.rm = TRUE)
+    )
+    avedf2 <- data.frame(
+        Year = range(df4$Year[id2]) + c(-0.5, 0.5),
+        SSB = mean(df4$SSB[id2], na.rm = TRUE)
+    )
+
+    p4 <-
+        p4 + geom_line(data = avedf1,
+                        aes(x = Year,
+                            y = SSB,
+                            linetype = "Average",
+                            colour = "Average",
+                            size = "Average",
+                            text = map(
+                                paste0(
+                                    "<b>Average: </b>", SSB
+                                ), HTML
+            ))) + 
+            geom_line(data = avedf2,
+                        aes(x = Year,
+                            y = SSB,
+                            linetype = "Average",
+                            colour = "Average",
+                            size = "Average",
+                            text = map(
+                                paste0(
+                                    "<b>Average: </b>", SSB
+                                ), HTML
+            )))
+}
+
+min_year <- min(df4$Year[which(!is.na(df4$SSB))])
+
+nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+  p4 <-
+    p4 + 
+    # xlim(min_year, max(df4$Year+1)) +
+    theme_ICES_plots(
+      type = "SSB", df,
+      title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+      ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
+      ymax = sagSettings4 %>%
+        filter(settingKey == 6) %>%
+        pull(settingValue) %>%
+        as.numeric() %>%
+        nullifempty()
+    )
+
+
+#converting
+fig4 <- ggplotly(p4, tooltip = "text") %>%
+    layout(
+        autosize = T,
+        legend = list(
+            itemsizing = "trace",
+            orientation = "h",
+            y = -.3,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            itemwidth = 20,
+            itemsizing= "trace",
+            title = list(text = "")
+        ),
+        xaxis = list(zeroline = TRUE),
+        annotations = list(
+            showarrow = FALSE,
+                text = tail(df$SAGStamp,1),
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right")
+    )  #%>% 
+        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+
+for (i in 1:length(fig4$x$data)){
+    if (!is.null(fig4$x$data[[i]]$name)){
+        fig4$x$data[[i]]$name =  gsub("\\(","",str_split(fig4$x$data[[i]]$name,",")[[1]][1])
+    }
+}
+
+fig4
+}
+
+
+
+
+library(ggplot2)
+library(plotly)
+library(dplyr)
+
+# Example data with NA values
+set.seed(123)
+df <- data.frame(
+  time = 1:100,
+  high_value = sin(1:100 / 10) + rnorm(100, 0, 0.1) + 0.2,
+  low_value = sin(1:100 / 10) + rnorm(100, 0, 0.1) - 0.2
+)
+df$high_value[c(20, 21, 22, 23, 50, 51, 52)] <- NA
+df$low_value[c(20, 21, 22, 23, 50, 51, 52)] <- NA
+
+# Identify segments by marking NAs and creating a cumulative sum
+df <- df %>%
+  mutate(segment = cumsum(is.na(high_value)))
+
+# Filter out rows with NAs and create a segment identifier
+df_segments <- df %>%
+  filter(!is.na(high_value) & !is.na(low_value)) %>%
+  group_by(segment) %>%
+  mutate(start = first(time), end = last(time))
+
+# Plot using ggplot2 and ggplotly
+p <- ggplot() +
+  geom_ribbon(data = df_segments, aes(x = time, ymin = low_value, ymax = high_value, group = segment), fill = "blue", alpha = 0.2) +
+  geom_line(data = df_segments, aes(x = time, y = (high_value + low_value) / 2, group = segment))
+
+ggplotly(p)
+
+
+
+
+=======
+df <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2023/SAG_refpts.csv", header = TRUE, sep = ",")
+
+names(df)
+uniqueCustom1 <- unique(df$CustomRefPointName1)
+uniqueCustom2 <- unique(df$CustomRefPointName2)
+uniqueCustom3 <- unique(df$CustomRefPointName3)
+uniqueCustom4 <- unique(df$CustomRefPointName4)
+uniqueCustom5 <- unique(df$CustomRefPointName5)
+
+customRefPoints <- c(uniqueCustom1, uniqueCustom2, uniqueCustom3, uniqueCustom4, uniqueCustom5)
+standardRefPoints <- names(df)[!names(df) %in% c("CustomRefPointName1", 
+"CustomRefPointName2", 
+"CustomRefPointName3", 
+"CustomRefPointName4", 
+"CustomRefPointName5",
+"CustomRefPointValue1",
+"CustomRefPointValue2",
+"CustomRefPointValue3",
+"CustomRefPointValue4",
+"CustomRefPointValue5",
+"AssessmentKey",
+"StockKeyLabel",
+"StockDatabaseID",
+"StockKey",
+"AssessmentYear")]
+
+totrefpoints <- c(standardRefPoints, customRefPoints)
+write.csv(totrefpoints, "D:/GitHub_2023/online-advice/App/Data/SAG_2023/RefPoints.csv")
+
+
+
+
+# Install and load necessary packages
+install.packages("stringdist")
+
+library(stringdist)
+library(dplyr)
+
+# Function to standardize similar strings to a target string
+standardize_similar_strings <- function(strings, target_string, threshold = 0.2) {
+  # Calculate string distances
+  distances <- stringdist::stringdistmatrix(strings, target_string, method = "jw")
+  
+  # Create a logical vector to find strings within the threshold
+  similar_strings <- distances <= threshold
+  
+  # Replace similar strings with the target string
+  strings[similar_strings] <- target_string
+  
+  return(strings)
+}
+
+# Example array of strings
+example_strings <- c("I_{trigger}", "I (trigger)", "Itrigger", "I _ trigger", "I_(_trigger_)", "anotherString")
+
+# Define the target string
+target_string <- "Itrigger"
+
+# Apply the function to standardize similar strings
+standardized_strings <- standardize_similar_strings(example_strings, target_string)
+
+print(standardized_strings)
+
+# Install and load necessary packages
+install.packages("stringdist")
+library(stringdist)
+
+# Function to standardize similar strings to a target string
+standardize_similar_strings <- function(strings, target_string, threshold = 0.1) {
+  # Calculate string distances
+  distances <- stringdist::stringdistmatrix(strings, target_string, method = "jw")
+  
+  # Create a logical vector to find strings within the threshold
+  similar_strings <- distances <= threshold
+  
+  # Replace similar strings with the target string
+  strings[similar_strings] <- target_string
+  
+  return(strings)
+}
+
+# Example array of strings
+example_strings <- c("I_{trigger}", "I (trigger)", "Itrigger", "I _ trigger", "I_(_trigger_)", "anotherString")
+
+# Define the target string
+target_string <- "Itrigger"
+
+# Apply the function to standardize similar strings
+example_strings <- standardize_similar_strings(example_strings, target_string)
+
+print(example_strings)
+
+sort(totrefpoints)
+target_string <- "FCap"
+totrefpoints <- standardize_similar_strings(totrefpoints, target_string)
+target_string <- "Itrigger"
+totrefpoints <- standardize_similar_strings(totrefpoints, target_string)
+target_string <- "FMSY proxy"
+totrefpoints <- standardize_similar_strings(totrefpoints, target_string)
+
+standardiseRefPoints <- function(totrefpoints) {
+  if (any(totrefpoints %in% c(
+    "FCap",
+    "F_{cap}",
+    "Fcap"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "FCap",
+      "F_{cap}",
+      "Fcap"
+    )] <- "FCap"
+  }
+  if (any(totrefpoints %in% c(
+    "F_(MSY proxy)",
+    "FMSY proxy",
+    "Fmsy proxy",
+    "F_{MSY proxy}",
+    "F_{MSYproxy}",
+    "F_(MSY proxy)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_(MSY proxy)",
+      "FMSY proxy",
+      "Fmsy proxy",
+      "F_{MSY proxy}",
+      "F_{MSYproxy}",
+      "F_(MSY proxy)"
+    )] <- "FMSY proxy"
+  }
+
+  if (any(totrefpoints %in% c(
+    "I_{trigger}",
+    "I (trigger)",
+    "I_{trigger}",
+    "Itrigger"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "I_{trigger}",
+      "I (trigger)",
+      "I_{trigger}",
+      "Itrigger"
+    )] <- "I<sub>trigger</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{eco}",
+    "Feco"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{eco}",
+      "Feco"
+    )] <- "FEco"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{lim}",
+    "FLim"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{lim}",
+      "FLim"
+    )] <- "FLim"
+  }
+
+  if (any(totrefpoints %in% c(
+    "I_{loss}",
+    "Iloss"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "I_{loss}",
+      "Iloss"
+    )] <- "Iloss"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{msy}",
+    "FMSY",
+    "Fmsy"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{msy}",
+      "FMSY",
+      "Fmsy"
+    )] <- "FMSY"
+  }
+
+  if (any(totrefpoints %in% c(
+    "F_{pa}",
+    "Fpa",
+    "FPa"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F_{pa}",
+      "Fpa",
+      "FPa"
+    )] <- "Fpa"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{mgt}",
+    "HR_{mgt}",
+    "HR (mgt)",
+    "HRMGT"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{mgt}",
+      "HR_{mgt}",
+      "HR (mgt)",
+      "HRMGT"
+    )] <- "HR MGT"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{msy}",
+    "HR_{MSY}",
+    "HR_{MSY}"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HR_{msy}",
+      "HR_{MSY}",
+      "HR_{MSY}"
+    )] <- "HR MSY"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HRmsy proxy",
+    "HRMSY proxy",
+    "HR_{MSY proxy}",
+    "HR_{MSY proxy} (W)",
+    "HR_{MSY proxy} (S)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "HRmsy proxy",
+      "HRMSY proxy",
+      "HR_{MSY proxy}",
+      "HR_{MSY proxy} (W)",
+      "HR_{MSY proxy} (S)"
+    )] <- "HR MSY proxy"
+  }
+
+  if (any(totrefpoints %in% c(
+    "MSY Btrigger",
+    "MSYBtrigger"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "MSY Btrigger",
+      "MSYBtrigger"
+    )] <- "MSYBtrigger"
+  }
+
+  if (any(totrefpoints %in% c(
+    "MGT B_{trigger}",
+    "MGT B {trigger}",
+    "MGT B (trigger)"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+    "MGT B_{trigger}",
+    "MGT B {trigger}",
+    "MGT B (trigger)"
+    )] <- "MGT Btrigger"
+  }
+
+  if (any(totrefpoints %in% c(
+    "HR_{pa}",
+    "HRpa",
+    "HR {pa}"
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+     "HR_{pa}",
+    "HRpa",
+    "HR {pa}"
+    )] <- "HRpa"
+  }
+  return(totrefpoints)
+}
+
+
+df <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2023/SAG_refpts.csv", header = TRUE, sep = ",")
+
+
+
+
+
+
+df <- df %>% mutate(across(c(
+  CustomRefPointName1,
+  CustomRefPointName2,
+  CustomRefPointName3,
+  CustomRefPointName4,
+  CustomRefPointName5
+), standardiseRefPoints))
+
+uniqueCustom1 <- unique(df$CustomRefPointName1)
+uniqueCustom2 <- unique(df$CustomRefPointName2)
+uniqueCustom3 <- unique(df$CustomRefPointName3)
+uniqueCustom4 <- unique(df$CustomRefPointName4)
+uniqueCustom5 <- unique(df$CustomRefPointName5)
+
+x <- icesSAG::StockList(2024)
+t <-SummaryTable(18958)
+
+
+summary<-read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2024/SAG_summary.csv", header = TRUE, sep = ",")
+library(stringr)
+filtered_summary <- summary %>% filter(str_starts(LinkToAdvice, "NA"))
+
+# Extract unique StockKeyLabel values
+unique_stock_key_labels <- unique(filtered_summary$FishStock)
+
+# Print the unique values
+print(unique_stock_key_labels)
