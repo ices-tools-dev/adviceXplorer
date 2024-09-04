@@ -11,7 +11,7 @@ library(ggradar)
 library(ggtext)
 library(glue)
 library(gsubfn)
-library(icesFO)
+
 library(icesSAG)
 library(icesTAF)
 library(icesVocab)

@@ -6,7 +6,7 @@ library(reshape2)
 library(icesTAF)
 library(dplyr)
 library(icesSAG)
-library(icesFO)
+
 library(data.table)
 library(rsconnect)
 library(tm)
