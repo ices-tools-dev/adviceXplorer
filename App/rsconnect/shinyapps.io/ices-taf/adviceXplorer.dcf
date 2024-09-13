@@ -1,0 +1,9 @@
+name: advicexplorer
+title: advicexplorer
+username:
+account: ices-taf
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9377865
+bundleId: 9058404
+url: https://ices-taf.shinyapps.io/advicexplorer/

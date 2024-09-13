@@ -103,6 +103,26 @@ advice_view_stocks_for_lunch <- c(
 "mac.27.nea",
 "meg.27.8c9a",
 "mon.27.8c9a",
+"nep.fu.10",
+"nep.fu.3-4",
+"nep.fu.32",
+"nep.fu.33",
+"nep.fu.34",
+"nep.fu.5",
+"nep.fu.6",
+"nep.fu.7",
+"nep.fu.8",
+"nep.fu.9",
+"nep.fu.11",
+"nep.fu.12",
+"nep.fu.13",
+"nep.fu.14",
+"nep.fu.15",
+"nep.fu.16",
+"nep.fu.17",
+"nep.fu.19",
+"nep.fu.2021",
+"nep.fu.22",
 "pil.27.7",
 # "ple.27.5a",
 # "ple.27.7a",
@@ -146,6 +166,15 @@ advice_view_stocks_for_lunch <- c(
 "wit.27.3a47d"
 )
 
+adviceXplorer_stocks_to_exclude_for_lunch <- c("cod.27.1-2", 
+                                                "ghl.27.1-2", 
+                                                "had.27.1-2", 
+                                                "reb.27.1-2",  
+                                                "cap.27.1-2",
+                                                "nep.fu.10",
+                                                "pra.27.1-2"
+)
+
 #' Downloads the list of stocks from SID for a particular year using a web service
 #'
 #' @param Year
@@ -172,7 +201,7 @@ download_SID <- function(Year) {
       sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockDatabaseID, StockKey, StockKeyLabel, SpeciesScientificName,  StockKeyDescription, SpeciesCommonName, EcoRegion, ExpertGroup, AdviceDraftingGroup, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AdviceReleaseDate, AdviceCategory, AdviceType, TrophicGuild, FisheriesGuild, SizeGuild, Published, AssessmentKey", Year)
     )
   )$value
-  # stock_list_all <- stock_list_all %>% filter(StockKeyLabel %in% advice_view_stocks_for_lunch)
+  stock_list_all <- stock_list_all %>% filter(!StockKeyLabel %in% adviceXplorer_stocks_to_exclude_for_lunch)
   return(stock_list_all)
 }
 
