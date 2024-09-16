@@ -942,14 +942,19 @@ ICES_plot_3 <- function(df, sagSettings) {
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        ) #%>% style(showlegend = FALSE, traces = 2)
+        ) #%>% 
+        #style(name = "test", name = list(name = "F")) 
 
 
     for (i in 1:length(fig3$x$data)) {
         if (!is.null(fig3$x$data[[i]]$name)) {
             fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
+            if (fig3$x$data[[i]]$name == "F") {
+                fig3$x$data[[i]]$name <- df_segments$FishingPressureDescription[1]
+            }
         }
     }
+    
     fig3
 }
 
@@ -1274,6 +1279,9 @@ ICES_plot_4 <- function(df, sagSettings) {
     for (i in 1:length(fig4$x$data)) {
         if (!is.null(fig4$x$data[[i]]$name)) {
             fig4$x$data[[i]]$name <- gsub("\\(", "", str_split(fig4$x$data[[i]]$name, ",")[[1]][1])
+            if (fig4$x$data[[i]]$name == "SSB") {
+                fig4$x$data[[i]]$name <- df_segments$StockSizeDescription[1]
+            }
         }
     }
 
