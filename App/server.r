@@ -148,7 +148,7 @@ server <- function(input, output, session) {
     shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
     
     filtered_row <- res_mod()[selected(), ]
-    updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey), mode = "push") ####
+    updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey, "&assessmentcomponent=",filtered_row$AssessmentComponent), mode = "push") ####
 
     query$query_from_table <- TRUE
 
@@ -165,8 +165,9 @@ server <- function(input, output, session) {
     # read url string
     query_string <- getQueryString()
     names(query_string) <- tolower(names(query_string))    
-
+    browser()
     query$assessmentkey <- query_string$assessmentkey
+    query$assessmentcomponent <- query_string$assessmentcomponent
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
       
