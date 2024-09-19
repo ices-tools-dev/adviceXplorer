@@ -150,8 +150,10 @@ make_citation <- function() {
       " for full conditions and guidance on citation.<br/>
       When publishing results from the app the minimum citation should include: <br/>
       <br/>
-
-      <i><b>ICES adviceXplorer. ", Sys.Date(),". ICES, Copenhagen, Denmark.","<a href='https://ices-taf.shinyapps.io/advicexplorer/?assessmentkey=", getQueryString(), "'target='_blank'> https://ices-taf.shinyapps.io/advicexplorer/?assessmentkey=", getQueryString(), "</a>","</b></i></font><br/><br/>"
+      
+      <i><b>ICES adviceXplorer. ", Sys.Date(),". ICES, Copenhagen, Denmark.",
+      "<a href='https://ices-taf.shinyapps.io/advicexplorer/?assessmentkey=", getQueryString()$assessmentkey, "&assessmentcomponent=", getQueryString()$assessmentcomponent, 
+      "'target='_blank'> https://ices-taf.shinyapps.io/advicexplorer/?assessmentkey=",  getQueryString()$assessmentkey, "&assessmentcomponent=", getQueryString()$assessmentcomponent, "</a>","</b></i></font><br/><br/>"
  
     )
   )
