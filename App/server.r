@@ -160,7 +160,7 @@ server <- function(input, output, session) {
     
   })
   
-  
+  ###### this runs only when the app loads from a URL
   observe({
     # read url string
     query_string <- getQueryString()
@@ -172,9 +172,11 @@ server <- function(input, output, session) {
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
       
       info <- FishStockReferencePoints(query$assessmentkey)
-
+      # info <- StockList(info$AssessmentYear ) %>% filter(AssessmentKey == query$assessmentkey)
+      # browser()
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear 
+      # query$speciesname <- info$SpeciesName
 
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year)
@@ -189,7 +191,6 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    
     info <- FishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
@@ -199,11 +200,11 @@ server <- function(input, output, session) {
 
     year <- query$year #####
     msg("downloading:", year)
-    
+
     #   # Dowload the data
-    access_sag_data_local(stock_name, year) %>% 
-    filter(AssessmentKey == query$assessmentkey)    
-  }) 
+    access_sag_data_local(stock_name, year) %>%
+      filter(AssessmentKey == query$assessmentkey)
+  })
   
   sagSettings <- reactive({
     temp_setting <- getSAGSettings(query$assessmentkey)
@@ -229,7 +230,7 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  get_Stock_info(filtered_row$SpeciesCommonName[1], filtered_row$StockKeyLabel[1],  SAG_data_reactive()$AssessmentYear[1], query$assessmentcomponent, filtered_row$StockKeyDescription[1])
+  get_Stock_info(filtered_row$SpeciesCommonName[1], query$stockkeylabel,  SAG_data_reactive()$AssessmentYear[1], query$assessmentcomponent, SAG_data_reactive()$StockDescription[1])
   
 }) 
 
@@ -301,15 +302,15 @@ output$download_SAG_Data <- downloadHandler(
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
     
-    info <- FishStockReferencePoints(query$assessmentkey)
-    query$stockkeylabel <- info$StockKeyLabel
-    query$year <- info$AssessmentYear 
+    # info <- FishStockReferencePoints(query$assessmentkey)
+    # query$stockkeylabel <- info$StockKeyLabel
+    # query$year <- info$AssessmentYear 
 
-    stock_name <- query$stockkeylabel
+    # stock_name <- query$stockkeylabel
 
-    year <- query$year 
+    # year <- query$year 
     
-    quality_assessment_data_local(stock_name, year, res_mod()[selected(), AssessmentComponent]) 
+    quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
     
   }) 
   
@@ -383,7 +384,7 @@ advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$y
     asd_record_previous <- asd_record_previous %>% filter(
       adviceViewPublished == TRUE,
       adviceStatus == "Advice",
-      adviceComponent == res_mod()[selected(), AssessmentComponent]
+      adviceComponent == query$assessmentcomponent
     )
   }
 })
