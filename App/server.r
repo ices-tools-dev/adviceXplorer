@@ -384,7 +384,7 @@ advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$y
     asd_record_previous <- asd_record_previous %>% filter(
       adviceViewPublished == TRUE,
       adviceStatus == "Advice",
-      adviceComponent == res_mod()[selected(), AssessmentComponent]
+      adviceComponent == query$assessmentcomponent
     )
   }
 })
