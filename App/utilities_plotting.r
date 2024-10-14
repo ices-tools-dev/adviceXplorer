@@ -255,7 +255,9 @@ theme_ICES_plots <-
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = ylabels_func
+                labels = function(l) {
+                    trans <- l / 1000
+                }
             ),
              scale_x_continuous(breaks = breaks_pretty())
         )
