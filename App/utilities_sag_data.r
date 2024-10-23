@@ -63,30 +63,42 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @export
 #'
+# stock_code <- "alf.27.nea"
+# year <- 2024
+# test <- access_sag_data_local(stock_code, year)
 access_sag_data_local <- function(stock_code, year) {
-  out1 <-
+  # out1 <-
+  #   lapply(
+  #     year,
+  #     function(i) {
+  #       fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+  #     }
+  #   )
+  # SAGsummary <- do.call(rbind, out1)
+
+  # out2 <-
+  #   lapply(
+  #     year,
+  #     function(j) {
+  #       fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
+  #     }
+  #   )
+  # SAGrefpts <- do.call(rbind, out2)
+
+  # data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
+  out3 <-
     lapply(
       year,
       function(i) {
-        fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+        fread(sprintf("Data/SAG_%s/SAG.csv", i))
       }
     )
-  SAGsummary <- do.call(rbind, out1)
+  SAGsummary <- do.call(rbind, out3)
 
-  out2 <-
-    lapply(
-      year,
-      function(j) {
-        fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
-      }
-    )
-  SAGrefpts <- do.call(rbind, out2)
-
-  data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
-
-  data_sag <- data_sag %>%
-    select(-FishStock) %>%
-    filter(StockPublishNote == "Stock published") %>%
+  data_sag <- SAGsummary %>%
+  filter(StockKeyLabel == stock_code) %>% 
+    # select(-FishStock) %>%
+    # filter(StockPublishNote == "Stock published") %>%
     mutate(across(everything(), ~ if (class(.) == "integer64") as.integer(.) else .))
 
   return(data_sag)

@@ -282,7 +282,7 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$F != "", "F not available for this stock")#,
+      need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")#,
       # need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
@@ -291,7 +291,7 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")#,
+      need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")#,
       # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
       
     )
@@ -342,7 +342,7 @@ output$download_SAG_Data <- downloadHandler(
   })
   output$plot6 <- renderPlotly({
     validate(
-      need(advice_action_quality()$F != "", "F not available for this stock"),
+      need(advice_action_quality()$FishingPressure != "", "FishingPressure not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
