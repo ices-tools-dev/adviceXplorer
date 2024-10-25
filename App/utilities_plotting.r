@@ -1851,7 +1851,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         }
     Discards_yaxis_label <- "Discards (tonnes)"
        
-    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
     
     tmp <- data.frame(tmp$table)
     
@@ -1872,7 +1872,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
     }
-    if (is_na_column(tmp, "FishingPressure")){
+    browser()
+    if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
 
         labels <- sprintf(
@@ -1948,7 +1949,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     
     }
     } else {
-        tmp <- arrange(tmp, FishingPressure)
+        tmp <- arrange(tmp, F)
 
         labels <- sprintf(
             "Catch Scenario: %s", tmp$cat
@@ -1957,13 +1958,13 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         fig_catch <- plot_ly(tmp) %>%
         add_trace(
             x = ~ TotCatch,
-            y = ~ FishingPressure,
+            y = ~ F,
             type = "scatter",
             mode = "lines+markers",
             text = labels,            
             marker = list(color = "#ed5f26", size = 10),
             line = list(color = "#ed5f26", width = 2, dash = 'solid'),
-            name = "FishingPressure"
+            name = "F"
         ) %>% 
         add_trace(
             x = ~ TotCatch,
@@ -1976,7 +1977,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         ) %>% 
         add_markers(
             x = Basis$TotCatch,
-            y = Basis$FishingPressure,
+            y = Basis$F,
             type = "scatter",
             mode = "markers",            
             marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
@@ -1996,13 +1997,13 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             fig_catch <- fig_catch %>%
                 add_trace(
                     x = ~TotCatch,
-                    y = ~ StockSize / 1000,
+                    y = ~ SSB / 1000,
                     type = "scatter",
                     mode = "lines+markers",
                     text = labels,
                     line = list(color = "#047c6c", width = 2, dash = "solid"),
                     marker = list(size = 10, color = "#047c6c"),
-                    name = "StockSize",
+                    name = "SSB",
                     yaxis = "y2"
                 ) %>%
                 add_trace(
@@ -2017,7 +2018,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
                 ) %>%
                 add_markers(
                     x = Basis$TotCatch,
-                    y = Basis$StockSize / 1000,
+                    y = Basis$SSB / 1000,
                     type = "scatter",
                     mode = "markers",
                     marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
@@ -2096,7 +2097,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 #' @export
 #'
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
-    Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     F_yaxis_label <- sagSettings %>%
@@ -2121,7 +2122,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     }
 
 
-    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     tmp <- data.frame(tmp$table)
 
@@ -2374,7 +2375,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 #'
 TAC_timeline <- function(final_df, catch_scenarios, df) {
    
-    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     catch_time <- plot_ly(final_df,
         x = ~Year,

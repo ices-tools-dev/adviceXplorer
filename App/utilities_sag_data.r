@@ -143,9 +143,9 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
     data_temp <- data_temp %>% select(
       Year,
       Recruitment, RecruitmentAge,
-      SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
-      F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
-      AssessmentYear, StockPublishNote, Purpose, SAGStamp, AssessmentComponent
+      StockSize, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
+      FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription,
+      AssessmentYear, Purpose, SAGStamp, AssessmentComponent
     )
     data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0] <- "N.A." # this probably needs to go when they update ASD from "N.A." to NA
     data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
@@ -155,7 +155,7 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
     data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
   }
   # take out non published data from before 2021 in big data
-  SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
+  SAG_data <- filter(data_temp, Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
   # make assessmentYear as factor
   SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 

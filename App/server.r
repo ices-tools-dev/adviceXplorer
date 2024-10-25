@@ -230,7 +230,7 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 ###### info about the stock selected for top of page
 stock_info <- reactive({
   filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
-  get_Stock_info(filtered_row$SpeciesCommonName[1], query$stockkeylabel,  SAG_data_reactive()$AssessmentYear[1], query$assessmentcomponent, SAG_data_reactive()$StockDescription[1])
+  get_Stock_info(filtered_row$SpeciesCommonName[1], query$stockkeylabel,  SAG_data_reactive()$Year[1], query$assessmentcomponent, SAG_data_reactive()$StockDescription[1])
   
 }) 
 
@@ -333,7 +333,7 @@ output$download_SAG_Data <- downloadHandler(
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
     validate(
-      need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
+      need(advice_action_quality()$StockSize != "", "SSB not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     
