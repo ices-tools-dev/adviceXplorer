@@ -1872,7 +1872,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
     }
-    browser()
+    
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
 
@@ -2142,7 +2142,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
     }
-    if (is_na_column(tmp, "FishingPressure")) {
+    if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(
             "Catch Scenario: %s", tmp$cat
@@ -2215,20 +2215,20 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                 )
         }
     } else {
-        tmp <- arrange(tmp, FishingPressure)
+        tmp <- arrange(tmp, F)
         labels <- sprintf(
           "Catch Scenario: %s", tmp$cat
         ) %>% lapply(htmltools::HTML)
         fig_catch <- plot_ly(tmp) %>%
             add_trace(
                 x = ~TotCatch,
-                y = ~FishingPressure,
+                y = ~F,
                 type = "scatter",
                 mode = "lines+markers",
                 text = labels,
                 marker = list(color = "#ed5f26", size = 10),
                 line = list(color = "#ed5f26", width = 2, dash = "solid"),
-                name = "FishingPressure"
+                name = "F"
             ) %>%
             add_trace(
                 x = ~TotCatch,
