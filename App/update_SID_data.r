@@ -33,8 +33,10 @@ update_SID <- function(year) {
     stock_list_long <- sid_table_links(stock_list_long)
     ### add component column
     ASDList <- icesASD::getAdviceViewRecord(year = year) %>%
+        mutate(adviceComponent = na_if(adviceComponent, "N.A.")) %>% 
         rename(StockKeyLabel = stockCode, AssessmentKey = assessmentKey, AssessmentComponent = adviceComponent) %>%
         filter(adviceStatus == "Advice")
+        
 
     # stock_list_all  %>% filter(StockKeyLabel == "nep.fu.16")
     stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>%

@@ -147,7 +147,7 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
       FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription,
       AssessmentYear, Purpose, SAGStamp, AssessmentComponent
     )
-    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0] <- "N.A." # this probably needs to go when they update ASD from "N.A." to NA
+    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0 | data_temp$AssessmentComponent == "N.A."] <- "NA" # this probably needs to go when they update ASD from "N.A." to NA
     data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
     data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
     data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)

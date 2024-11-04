@@ -75,7 +75,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "NA"), "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -96,7 +96,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>%
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "NA"), "", AssessmentComponent)) %>%
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -301,15 +301,6 @@ output$download_SAG_Data <- downloadHandler(
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
-    
-    # info <- FishStockReferencePoints(query$assessmentkey)
-    # query$stockkeylabel <- info$StockKeyLabel
-    # query$year <- info$AssessmentYear 
-
-    # stock_name <- query$stockkeylabel
-
-    # year <- query$year 
-    
     quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
     
   }) 
@@ -356,15 +347,23 @@ output$download_SAG_Data <- downloadHandler(
     )
     suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
   })
-  
 
+#### this function is used to replace N.A. with NA in the assessment component, it's just a placeholder
+# until I fix the ASD package 
+replace_na_with_na_string <- function(assessment_component) {
+  if (assessment_component == "NA") {
+    return("N.A.")
+  } else {
+    return(assessment_component)
+  }
+}
 ##### ASD info
 advice_view_info <- reactive({
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
   if (!is_empty(asd_record)){
     asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, 
                                         adviceStatus == "Advice", 
-                                        adviceComponent == query$assessmentcomponent)
+                                        adviceComponent == replace_na_with_na_string(query$assessmentcomponent))
   }
 }) 
 
