@@ -30,7 +30,7 @@
 # options(icesSAG.use_token = FALSE)
 update_SAG <- function(year) {
   mkdir(paste0("Data/SAG_", year))
-  # year <- 2024
+  year <- 2024
   # lookup for assessment key for summary
   sag <-
     StockList(year = year) %>%
@@ -67,10 +67,10 @@ update_SAG <- function(year) {
   ))
 
   # Perform the merge with suffixes to handle duplicate column names
-  sagMerged <- merge(summary, refpts, by = "AssessmentKey", suffixes = c("", ".refpts"))
+  sagMerged <- merge(summary, refpts, by = "AssessmentKey", suffixes = c(".summary", ""))
 
   # Select only the columns from summary
-  sagMerged <- sagMerged[, !grepl(".refpts$", names(sagMerged))]
+  sagMerged <- sagMerged[, !grepl(".summary$", names(sagMerged))]
   # write.taf(SAG, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
   write.taf(sagMerged, file = "SAG.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
@@ -306,6 +306,14 @@ standardiseRefPoints <- function(totrefpoints) {
       "Fpa",
       "FPa"
     )] <- "F<sub>pa</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "Fmgt"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "Fmgt"
+    )] <- "Fmanagement"
   }
 
   if (any(totrefpoints %in% c(

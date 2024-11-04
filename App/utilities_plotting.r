@@ -167,7 +167,9 @@ theme_ICES_plots <-
                 "F<sub>Lim</sub>" = "#000000",
                 "F<sub>pa</sub>" = "#000000",
                 "HR MSY<sub>proxy</sub>" = "#00AC67",
-                "FMSY<sub>proxy</sub>" = "#00AC67"
+                "FMSY<sub>proxy</sub>" = "#00AC67",
+                "F<sub>management</sub>" = "#00AC67"
+
             )),
             scale_linetype_manual(values = c(
                 "FishingPressure" = "solid",
@@ -175,7 +177,8 @@ theme_ICES_plots <-
                 "F<sub>pa</sub>" = "dotted",
                 "F<sub>MSY</sub>" = "solid",
                 "HR MSY<sub>proxy</sub>" = "dotdash",
-                "FMSY<sub>proxy</sub>" = "dotdash"
+                "FMSY<sub>proxy</sub>" = "dotdash",
+                "F<sub>management</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "FishingPressure" = 1.5,
@@ -183,7 +186,8 @@ theme_ICES_plots <-
                 "F<sub>pa</sub>" = 1,
                 "F<sub>MSY</sub>" = .5,
                 "HR MSY<sub>proxy</sub>" = .8,
-                "FMSY<sub>proxy</sub>" = .8
+                "FMSY<sub>proxy</sub>" = .8,
+                "F<sub>management</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -783,13 +787,14 @@ ICES_plot_3 <- function(df, sagSettings) {
         sagSettings3 %>%
         filter(settingKey == 51) %>%
         pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
         str_split(pattern = ",", simplify = TRUE)
         # as.numeric()
     
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
-            c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
+            c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, Fmanagement, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
         mutate(segment = cumsum(is.na(FishingPressure)))
@@ -889,6 +894,22 @@ ICES_plot_3 <- function(df, sagSettings) {
                 text = map(
                     paste0(
                         "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
+                    ), HTML
+                )
+            ))
+    }
+
+    if (any(!is.na(df_segments$Fmanagement))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = Fmanagement,
+                linetype = "F<sub>management</sub>",
+                colour = "F<sub>management</sub>",
+                size = "F<sub>management</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>management</sub>: </b>", tail(Fmanagement, 1)
                     ), HTML
                 )
             ))
