@@ -172,12 +172,11 @@ server <- function(input, output, session) {
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
       
       info <- FishStockReferencePoints(query$assessmentkey)
-      # info <- StockList(info$AssessmentYear ) %>% filter(AssessmentKey == query$assessmentkey)
-      # browser()
+      
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear 
-      # query$speciesname <- info$SpeciesName
-
+      
+      
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year)
 
@@ -229,7 +228,16 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 
 ###### info about the stock selected for top of page
 stock_info <- reactive({
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
+  # Conditional check if filtered_row is empty
+  if (nrow(filtered_row) == 0) {
+    filtered_row <- icesSD::getSD(query$stockkeylabel, query$year)
+  }
+
+  # filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+
+  
   get_Stock_info(filtered_row$SpeciesCommonName[1], query$stockkeylabel,  SAG_data_reactive()$AssessmentYear[1], query$assessmentcomponent, SAG_data_reactive()$StockDescription[1])
   
 }) 
@@ -360,18 +368,25 @@ replace_na_with_na_string <- function(assessment_component) {
 ##### ASD info
 advice_view_info <- reactive({
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
-  if (!is_empty(asd_record)){
-    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, 
-                                        adviceStatus == "Advice", 
-                                        adviceComponent == replace_na_with_na_string(query$assessmentcomponent))
+  if (!is_empty(asd_record)) {
+    asd_record <- asd_record %>% filter(
+      adviceViewPublished == TRUE,
+      adviceStatus == "Advice",
+      adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
+    )
   }
-}) 
+})
 
 
 ##### ASD info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$year), {
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey, ]
-
+  
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
+  # Conditional check if filtered_row is empty
+  if (nrow(filtered_row) == 0) {
+    filtered_row <- icesSD::getSD(query$stockkeylabel, query$year)
+  }
+  
   asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency[1])
 
   # this is a fix to cover an exeption (like aru.27.123a4) when the assessment frequency is 2 but there is an advice in the previous year.
@@ -383,7 +398,7 @@ advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$y
     asd_record_previous <- asd_record_previous %>% filter(
       adviceViewPublished == TRUE,
       adviceStatus == "Advice",
-      adviceComponent == query$assessmentcomponent
+      adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
     )
   }
 })
