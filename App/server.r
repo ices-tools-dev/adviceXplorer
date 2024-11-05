@@ -75,7 +75,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "NA"), "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -96,7 +96,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((AssessmentComponent == "N.A."), "", AssessmentComponent)) %>%
+        mutate(AssessmentComponent = ifelse((AssessmentComponent == "NA"), "", AssessmentComponent)) %>%
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -172,12 +172,11 @@ server <- function(input, output, session) {
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
       
       info <- FishStockReferencePoints(query$assessmentkey)
-      # info <- StockList(info$AssessmentYear ) %>% filter(AssessmentKey == query$assessmentkey)
-      # browser()
+      
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear 
-      # query$speciesname <- info$SpeciesName
-
+      
+      
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year)
 
@@ -229,7 +228,16 @@ replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
 
 ###### info about the stock selected for top of page
 stock_info <- reactive({
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
+  # Conditional check if filtered_row is empty
+  if (nrow(filtered_row) == 0) {
+    filtered_row <- icesSD::getSD(query$stockkeylabel, query$year)
+  }
+
+  # filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,] 
+
+  
   get_Stock_info(filtered_row$SpeciesCommonName[1], query$stockkeylabel,  SAG_data_reactive()$AssessmentYear[1], query$assessmentcomponent, SAG_data_reactive()$StockDescription[1])
   
 }) 
@@ -282,7 +290,7 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$F != "", "F not available for this stock")#,
+      need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")#,
       # need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
@@ -291,7 +299,7 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$SSB != "", "SSB not available for this stock")#,
+      need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")#,
       # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
       
     )
@@ -301,15 +309,6 @@ output$download_SAG_Data <- downloadHandler(
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
-    
-    # info <- FishStockReferencePoints(query$assessmentkey)
-    # query$stockkeylabel <- info$StockKeyLabel
-    # query$year <- info$AssessmentYear 
-
-    # stock_name <- query$stockkeylabel
-
-    # year <- query$year 
-    
     quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
     
   }) 
@@ -333,7 +332,7 @@ output$download_SAG_Data <- downloadHandler(
   ######################### quality of assessment plots
   output$plot5 <- renderPlotly({
     validate(
-      need(advice_action_quality()$SSB != "", "SSB not available for this stock"),
+      need(advice_action_quality()$StockSize != "", "SSB not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     
@@ -342,7 +341,7 @@ output$download_SAG_Data <- downloadHandler(
   })
   output$plot6 <- renderPlotly({
     validate(
-      need(advice_action_quality()$F != "", "F not available for this stock"),
+      need(advice_action_quality()$FishingPressure != "", "FishingPressure not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
@@ -356,23 +355,38 @@ output$download_SAG_Data <- downloadHandler(
     )
     suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
   })
-  
 
+#### this function is used to replace N.A. with NA in the assessment component, it's just a placeholder
+# until I fix the ASD package 
+replace_na_with_na_string <- function(assessment_component) {
+  if (assessment_component == "NA") {
+    return("N.A.")
+  } else {
+    return(assessment_component)
+  }
+}
 ##### ASD info
 advice_view_info <- reactive({
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
-  if (!is_empty(asd_record)){
-    asd_record <- asd_record %>% filter(adviceViewPublished == TRUE, 
-                                        adviceStatus == "Advice", 
-                                        adviceComponent == query$assessmentcomponent)
+  if (!is_empty(asd_record)) {
+    asd_record <- asd_record %>% filter(
+      adviceViewPublished == TRUE,
+      adviceStatus == "Advice",
+      adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
+    )
   }
-}) 
+})
 
 
 ##### ASD info previous year
 advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$year), {
-  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey, ]
-
+  
+  filtered_row <- res_mod()[res_mod()$AssessmentKey == query$assessmentkey,]
+  # Conditional check if filtered_row is empty
+  if (nrow(filtered_row) == 0) {
+    filtered_row <- icesSD::getSD(query$stockkeylabel, query$year)
+  }
+  
   asd_record_previous <- getAdviceViewRecord(query$stockkeylabel, query$year - filtered_row$AssessmentFrequency[1])
 
   # this is a fix to cover an exeption (like aru.27.123a4) when the assessment frequency is 2 but there is an advice in the previous year.
@@ -384,7 +398,7 @@ advice_view_info_previous_year <- eventReactive(req(query$stockkeylabel, query$y
     asd_record_previous <- asd_record_previous %>% filter(
       adviceViewPublished == TRUE,
       adviceStatus == "Advice",
-      adviceComponent == query$assessmentcomponent
+      adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
     )
   }
 })

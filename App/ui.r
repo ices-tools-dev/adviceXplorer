@@ -49,6 +49,7 @@ source("utilities_load_shapefiles.r")
 source("utilities_plotting.r")
 source("utilities_mapping.r")
 source("utilities_sag_data.r")
+source("update_SAG_data.r")
 source("utilities_catch_scenarios.r")
 source("utilities_shiny_formatting.r")
 source("utilities_calendar.r")
@@ -73,7 +74,8 @@ tagList(
     useShinyjs(),
     introjsUI(),
     tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
-    tags$head(includeHTML(("google-analytics.html"))),
+    tags$head(includeHTML(("google-analytics.html")), tags$link(rel = "shortcut icon", href = "favicon.png")),
+    tags$link(rel = "shortcut icon", href = "favicon.png"),
     tags$link(rel = "stylesheet", type = "text/css", href = "css/gothic-a1.css"),
     tags$style("body {font-family: 'Gothic A1', sans-serif;}"),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),

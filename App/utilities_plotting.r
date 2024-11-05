@@ -24,7 +24,7 @@
 #'
 theme_ICES_plots <-
   function(
-    type = c("Catches", "Recruitment", "F", "SSB", "quality_SSB", "quality_F", "quality_R"), df,
+    type = c("Catches", "Recruitment", "FishingPressure", "StockSize", "quality_SSB", "quality_F", "quality_R"), df,
     title = NULL, ylegend = NULL, ymax = NULL) {
     font <- "Gothic A1, sans-serif"#"Calibri, sans-serif" # assign font family up front
     tmp <- theme_minimal() %+replace% # replace elements we want to change
@@ -59,9 +59,9 @@ theme_ICES_plots <-
                     color <- "#002b5f"
                 } else if (type == "Recruitment" | type == "quality_R") {
                     color <- "#28b3e8"
-                } else if (type == "F" | type == "quality_F") {
+                } else if (type == "FishingPressure" | type == "quality_F") {
                     color <- "#ed5f26"
-                } else if (type == "SSB" | type == "quality_SSB") {
+                } else if (type == "StockSize" | type == "quality_SSB") {
                     color <- "#047c6c"
                 }
             ),
@@ -90,7 +90,7 @@ theme_ICES_plots <-
           title <- "Catches"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$Units))
+          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$CatchesLandingsUnits))
         }
 
         if (is.null(ymax)) {
@@ -141,12 +141,12 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) {
-                    trans <- l / 1000000
+                    trans <- l / 1000000 #### need to work on this
                 }
             ),
              scale_x_continuous(breaks = breaks_pretty())
         )
-    } else if (type == "F") {
+    } else if (type == "FishingPressure") {
         if (is.null(title)) {
           title <- "Fishing pressure"
         }
@@ -162,28 +162,32 @@ theme_ICES_plots <-
                 x = "Year"
             ),
             scale_color_manual(values = c(
-                "F" = "#ed5f26",
+                "FishingPressure" = "#ed5f26",
                 "F<sub>MSY</sub>" = "#00AC67",
                 "F<sub>Lim</sub>" = "#000000",
                 "F<sub>pa</sub>" = "#000000",
                 "HR MSY<sub>proxy</sub>" = "#00AC67",
-                "FMSY<sub>proxy</sub>" = "#00AC67"
+                "FMSY<sub>proxy</sub>" = "#00AC67",
+                "F<sub>management</sub>" = "#00AC67"
+
             )),
             scale_linetype_manual(values = c(
-                "F" = "solid",
+                "FishingPressure" = "solid",
                 "F<sub>Lim</sub>" = "dashed",
                 "F<sub>pa</sub>" = "dotted",
                 "F<sub>MSY</sub>" = "solid",
                 "HR MSY<sub>proxy</sub>" = "dotdash",
-                "FMSY<sub>proxy</sub>" = "dotdash"
+                "FMSY<sub>proxy</sub>" = "dotdash",
+                "F<sub>management</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
-                "F" = 1.5,
+                "FishingPressure" = 1.5,
                 "F<sub>Lim</sub>" = .8,
                 "F<sub>pa</sub>" = 1,
                 "F<sub>MSY</sub>" = .5,
                 "HR MSY<sub>proxy</sub>" = .8,
-                "FMSY<sub>proxy</sub>" = .8
+                "FMSY<sub>proxy</sub>" = .8,
+                "F<sub>management</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -192,7 +196,7 @@ theme_ICES_plots <-
             ),
             scale_x_continuous(breaks = breaks_pretty())
         )
-    } else if (type == "SSB") {
+    } else if (type == "StockSize") {
         if (is.null(title)) {
           title <- "Spawning Stock Biomass"
         }
@@ -222,7 +226,7 @@ theme_ICES_plots <-
                 x = "Year"
             ),
             scale_color_manual(values = c(
-                "SSB" = "#047c6c",
+                "StockSize" = "#047c6c",
                 "MSY B<sub>trigger</sub>" = "#689dff",
                 "B<sub>Lim</sub>" = "#000000",
                 "B<sub>pa</sub>" = "#000000",
@@ -232,7 +236,7 @@ theme_ICES_plots <-
                 "BMGT<sub>upper</sub>" = "#689dff"
             )),
             scale_linetype_manual(values = c(
-                "SSB" = "solid",
+                "StockSize" = "solid",
                 "B<sub>Lim</sub>" = "dashed",
                 "B<sub>pa</sub>" = "dotted",
                 "MSY B<sub>trigger</sub>" = "solid",
@@ -242,7 +246,7 @@ theme_ICES_plots <-
                 "BMGT<sub>upper</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
-                "SSB" = 1.5,
+                "StockSize" = 1.5,
                 "B<sub>Lim</sub>" = .8,
                 "B<sub>pa</sub>" = 1,
                 "MSY B<sub>trigger</sub>" = .5,
@@ -522,7 +526,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Landings, Catches, Discards, Units, SAGStamp, IBC, Unallocated_Removals) %>%
+        select(Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp, IBC, Unallocated_Removals) %>%
         relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
         rename("Industrial Bycatch" = IBC) 
 
@@ -644,7 +648,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 ICES_plot_2 <- function(df, sagSettings) {
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, Low_Recruitment, High_Recruitment, RecruitmentAge, SAGStamp)
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp)
 
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
@@ -783,46 +787,47 @@ ICES_plot_3 <- function(df, sagSettings) {
         sagSettings3 %>%
         filter(settingKey == 51) %>%
         pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
         str_split(pattern = ",", simplify = TRUE)
         # as.numeric()
     
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
-            c(Year, F, Low_F, High_F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
+            c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, Fmanagement, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
-        mutate(segment = cumsum(is.na(F)))
+        mutate(segment = cumsum(is.na(FishingPressure)))
 
     
     
     # Filter out rows with NAs and create a segment identifier
     df_segments <- df3 %>%
-        filter(!is.na(F)) %>%
+        filter(!is.na(FishingPressure)) %>%
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
 
 
     p3 <- df_segments %>%
-        ggplot(., aes(x = Year, y = F))
+        ggplot(., aes(x = Year, y = FishingPressure))
     
-    if (any(!is.na(df_segments$Low_F))) {
+    if (any(!is.na(df_segments$Low_FishingPressure))) {
         p3 <- p3 +
             geom_ribbon(
                 aes(
-                    ymin = Low_F,
-                    ymax = High_F,
+                    ymin = Low_FishingPressure,
+                    ymax = High_FishingPressure,
                     fill = ConfidenceIntervalDefinition,
                     group = segment,
                     text = map(
                         paste0(
                             "<b>Year: </b>", Year,
                             "<br>",
-                            "<b>", FishingPressureDescription, ": </b>", F,
+                            "<b>", FishingPressureDescription, ": </b>", FishingPressure,
                             "<br>",
-                            "<b>High ", FishingPressureDescription," : </b>", High_F,
+                            "<b>High ", FishingPressureDescription," : </b>", High_FishingPressure,
                             "<br>",
-                            "<b>Low ", FishingPressureDescription," : </b>", Low_F
+                            "<b>Low ", FishingPressureDescription," : </b>", Low_FishingPressure
                         ), HTML
                     )
                 ),
@@ -834,14 +839,14 @@ ICES_plot_3 <- function(df, sagSettings) {
     p3 <- p3 +
         geom_line(aes(
             x = Year,
-            y = F,
-            color = "F",
+            y = FishingPressure,
+            color = "FishingPressure",
             group = segment,
             text = map(
                 paste0(
                     "<b>Year: </b>", Year,
                     "<br>",
-                    "<b>", FishingPressureDescription, ": </b>", F
+                    "<b>", FishingPressureDescription, ": </b>", FishingPressure
                 ), HTML
             )
         ))
@@ -862,17 +867,17 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$FLim))) {
+    if (any(!is.na(df_segments$Flim))) {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
-                y = FLim,
+                y = Flim,
                 linetype = "F<sub>Lim</sub>",
                 colour = "F<sub>Lim</sub>",
                 size = "F<sub>Lim</sub>",
                 text = map(
                     paste0(
-                        "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
+                        "<b>F<sub>Lim</sub>: </b>", tail(Flim, 1)
                     ), HTML
                 )
             ))
@@ -889,6 +894,22 @@ ICES_plot_3 <- function(df, sagSettings) {
                 text = map(
                     paste0(
                         "<b>F<sub>pa</sub>: </b>", tail(Fpa, 1)
+                    ), HTML
+                )
+            ))
+    }
+
+    if (any(!is.na(df_segments$Fmanagement))) {
+        p3 <- p3 +
+            geom_line(aes(
+                x = Year,
+                y = Fmanagement,
+                linetype = "F<sub>management</sub>",
+                colour = "F<sub>management</sub>",
+                size = "F<sub>management</sub>",
+                text = map(
+                    paste0(
+                        "<b>F<sub>management</sub>: </b>", tail(Fmanagement, 1)
                     ), HTML
                 )
             ))
@@ -911,14 +932,14 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    min_year <- min(df_segments$Year[which(!is.na(df_segments$F))])
+    min_year <- min(df_segments$Year[which(!is.na(df_segments$FishingPressure))])
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p3 <-
         p3 +
         xlim(min_year, max(df_segments$Year)) +
         theme_ICES_plots(
-            type = "F", df_segments,
+            type = "FishingPressure", df_segments,
             title = sagSettings3 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings3 %>% filter(settingKey == 20) %>% pull(settingValue) %>% replace_subscript_symbols(.)  %>% nullifempty()
         )
@@ -951,7 +972,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     for (i in 1:length(fig3$x$data)) {
         if (!is.null(fig3$x$data[[i]]$name)) {
             fig3$x$data[[i]]$name <- gsub("\\(", "", str_split(fig3$x$data[[i]]$name, ",")[[1]][1])
-            if (fig3$x$data[[i]]$name == "F") {
+            if (fig3$x$data[[i]]$name == "FishingPressure") {
                 fig3$x$data[[i]]$name <- df_segments$FishingPressureDescription[1]
             }
         }
@@ -960,7 +981,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     fig3
 }
 
-#' Function to plot spawning stock biomass (SSB)
+#' Function to plot spawning stock biomass (StockSize)
 #'
 #' @param df (SAG data)
 #'
@@ -995,39 +1016,39 @@ ICES_plot_4 <- function(df, sagSettings) {
     df4 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
-            c(Year, Low_SSB, SSB, High_SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
+            c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
-        mutate(segment = cumsum(is.na(SSB)))
+        mutate(segment = cumsum(is.na(StockSize)))
 
 
     # Filter out rows with NAs and create a segment identifier
     df_segments <- df4 %>%
-        filter(!is.na(SSB)) %>%
+        filter(!is.na(StockSize)) %>%
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
 
 
     p4 <- df_segments %>%
-        ggplot(., aes(x = Year, y = SSB))
+        ggplot(., aes(x = Year, y = StockSize))
     
-    if (any(!is.na(df_segments$Low_SSB))) {
+    if (any(!is.na(df_segments$Low_StockSize))) {
         p4 <- p4 +
             geom_ribbon(
-                data = df_segments %>% filter(!is.na(Low_SSB) & !is.na(High_SSB)), aes(
-                    ymin = Low_SSB,
-                    ymax = High_SSB ,
+                data = df_segments %>% filter(!is.na(Low_StockSize) & !is.na(High_StockSize)), aes(
+                    ymin = Low_StockSize,
+                    ymax = High_StockSize ,
                     fill = ConfidenceIntervalDefinition,
                     group = segment,
                     text = map(
                         paste0(
                             "<b>Year: </b>", Year,
                             "<br>",
-                            "<b>", StockSizeDescription,": </b>", SSB,
+                            "<b>", StockSizeDescription,": </b>", StockSize,
                             "<br>",
-                            "<b>High ", StockSizeDescription,": </b>", High_SSB,
+                            "<b>High ", StockSizeDescription,": </b>", High_StockSize,
                             "<br>",
-                            "<b>Low", StockSizeDescription,": </b>", Low_SSB
+                            "<b>Low", StockSizeDescription,": </b>", Low_StockSize
                         ), HTML
                     )
                 ),
@@ -1039,14 +1060,14 @@ ICES_plot_4 <- function(df, sagSettings) {
     p4 <- p4 +
         geom_line(data = df_segments, aes(
             x = Year,
-            y = SSB,
-            color = "SSB",
+            y = StockSize,
+            color = "StockSize",
             group = segment,
             text = map(
                 paste0(
                     "<b>Year: </b>", Year,
                     "<br>",
-                    "<b>", StockSizeDescription,": </b>", SSB
+                    "<b>", StockSizeDescription,": </b>", StockSize
                 ), HTML
             )
         ))
@@ -1165,12 +1186,12 @@ ICES_plot_4 <- function(df, sagSettings) {
             data = df_segments %>% filter(Year %in% diamondYears),
             aes(
                 x = Year,
-                y = SSB,
+                y = StockSize,
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
                         "<br>",
-                        "<b>Forecast spawning-stock biomass (SSB): </b>", SSB
+                        "<b>Forecast spawning-stock biomass (StockSize): </b>", StockSize
                     ), HTML
                 )
             ),
@@ -1197,11 +1218,11 @@ ICES_plot_4 <- function(df, sagSettings) {
         id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
         avedf1 <- data.frame(
             Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
-            SSB = mean(df_segments$SSB[id1], na.rm = TRUE)
+            StockSize = mean(df_segments$StockSize[id1], na.rm = TRUE)
         )
         avedf2 <- data.frame(
             Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
-            SSB = mean(df_segments$SSB[id2], na.rm = TRUE)
+            StockSize = mean(df_segments$StockSize[id2], na.rm = TRUE)
         )
 
         p4 <-
@@ -1209,13 +1230,13 @@ ICES_plot_4 <- function(df, sagSettings) {
                 data = avedf1,
                 aes(
                     x = Year,
-                    y = SSB,
+                    y = StockSize,
                     linetype = "Average",
                     colour = "Average",
                     size = "Average",
                     text = map(
                         paste0(
-                            "<b>Average: </b>", SSB
+                            "<b>Average: </b>", StockSize
                         ), HTML
                     )
                 )
@@ -1224,13 +1245,13 @@ ICES_plot_4 <- function(df, sagSettings) {
                 data = avedf2,
                 aes(
                     x = Year,
-                    y = SSB,
+                    y = StockSize,
                     linetype = "Average",
                     colour = "Average",
                     size = "Average",
                     text = map(
                         paste0(
-                            "<b>Average: </b>", SSB
+                            "<b>Average: </b>", StockSize
                         ), HTML
                     )
                 )
@@ -1239,14 +1260,14 @@ ICES_plot_4 <- function(df, sagSettings) {
 
 
 
-    min_year <- min(df_segments$Year[which(!is.na(df_segments$SSB))])
+    min_year <- min(df_segments$Year[which(!is.na(df_segments$StockSize))])
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     p4 <-
         p4 +
         xlim(min_year, max(df_segments$Year)) +
         theme_ICES_plots(
-            type = "SSB", df_segments,
+            type = "StockSize", df_segments,
             title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% replace_subscript_symbols(.) %>% nullifempty(),
             ymax = sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
@@ -1281,7 +1302,7 @@ ICES_plot_4 <- function(df, sagSettings) {
     for (i in 1:length(fig4$x$data)) {
         if (!is.null(fig4$x$data[[i]]$name)) {
             fig4$x$data[[i]]$name <- gsub("\\(", "", str_split(fig4$x$data[[i]]$name, ",")[[1]][1])
-            if (fig4$x$data[[i]]$name == "SSB") {
+            if (fig4$x$data[[i]]$name == "StockSize") {
                 fig4$x$data[[i]]$name <- df_segments$StockSizeDescription[1]
             }
         }
@@ -1292,7 +1313,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 }
 
 
-#' Function to plot spawning stock biomass (SSB) for the last 5 years (quality of assessement section)
+#' Function to plot spawning stock biomass (StockSize) for the last 5 years (quality of assessement section)
 #'
 #' @param df (quality of assessement SAG data)
 #'
@@ -1320,26 +1341,26 @@ ICES_plot_5 <- function(df, sagSettings) {
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, SSB, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) #%>%
+        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) #%>%
      
     p5 <- df5 %>%
-        ggplot(., aes(x = Year, y = SSB, color = AssessmentYear))
+        ggplot(., aes(x = Year, y = StockSize, color = AssessmentYear))
         
     p5 <- p5 +    
         geom_line(
             aes(
                 x = Year,
-                y = SSB,
+                y = StockSize,
                 color = AssessmentYear,
-                size = "SSB",
-                linetype = "SSB",
+                size = "StockSize",
+                linetype = "StockSize",
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
                         "<br>",
                         "<b>Assessment year: </b>", AssessmentYear,
                         "<br>",
-                        "<b>", StockSizeDescription, ": </b>", SSB, " ", StockSizeUnits
+                        "<b>", StockSizeDescription, ": </b>", StockSize, " ", StockSizeUnits
                     ), HTML
                 )
             ) 
@@ -1463,26 +1484,26 @@ ICES_plot_6 <- function(df, sagSettings) {
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, F, FLim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear, SAGStamp) # %>%
+        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear, SAGStamp) # %>%
        
     p6 <- df6 %>%
-        ggplot(., aes(x = Year, y = F, color = AssessmentYear)) 
+        ggplot(., aes(x = Year, y = FishingPressure, color = AssessmentYear)) 
 
     p6 <- p6 +    
         geom_line(
             aes(
                 x = Year,
-                y = F,
+                y = FishingPressure,
                 color = AssessmentYear,
-                size = "F",
-                linetype = "F",
+                size = "FishingPressure",
+                linetype = "FishingPressure",
                 text = map(
                     paste0(
                         "<b>Year: </b>", Year,
                         "<br>",
                         "<b>Assessment year: </b>", AssessmentYear,
                         "<br>",
-                        "<b>", FishingPressureDescription, ": </b>", F
+                        "<b>", FishingPressureDescription, ": </b>", FishingPressure
                     ), HTML
                 )
             ) 
@@ -1503,16 +1524,16 @@ ICES_plot_6 <- function(df, sagSettings) {
                 ))
         }
 
-        if (any(!is.na(df6$FLim))) {
+        if (any(!is.na(df6$Flim))) {
             p6 <- p6 +
                 geom_hline(aes(
-                    yintercept = tail(FLim, 1),
+                    yintercept = tail(Flim, 1),
                     linetype = "F<sub>Lim</sub>",
                     colour = "F<sub>Lim</sub>",
                     size = "F<sub>Lim</sub>",
                     text = map(
                         paste0(
-                            "<b>F<sub>Lim</sub>: </b>", tail(FLim, 1)
+                            "<b>F<sub>Lim</sub>: </b>", tail(Flim, 1)
                         ), HTML
                     )
                 ))
@@ -1812,7 +1833,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 
 
 
-#' Plot to visualise the effect of the different catch scenarios on F, SSB and the resulting total Catches
+#' Plot to visualise the effect of the different catch scenarios on F, StockSize and the resulting total Catches
 #'
 #' @param tmp (catch scenario table)
 #' @param df (SAG data)
@@ -1851,7 +1872,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         }
     Discards_yaxis_label <- "Discards (tonnes)"
        
-    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
     
     tmp <- data.frame(tmp$table)
     
@@ -1872,6 +1893,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, col_name])))
     }
+    
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
 
@@ -2096,7 +2118,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 #' @export
 #'
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
-    Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
     F_yaxis_label <- sagSettings %>%
@@ -2121,7 +2143,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     }
 
 
-    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     tmp <- data.frame(tmp$table)
 
@@ -2240,7 +2262,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
             ) %>%
             add_markers(
                 x = Basis$TotCatch,
-                y = Basis$F,
+                y = Basis$FishingPressure,
                 type = "scatter",
                 mode = "markers",
                 marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
@@ -2374,7 +2396,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 #'
 TAC_timeline <- function(final_df, catch_scenarios, df) {
    
-    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$Units))
+    Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     catch_time <- plot_ly(final_df,
         x = ~Year,
@@ -2415,7 +2437,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
         ),
     # )
         yaxis = list(
-            title = Catches_yaxis_label, # "SSB",
+            title = Catches_yaxis_label, # "StockSize",
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,

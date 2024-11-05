@@ -63,30 +63,42 @@ access_sag_data <- function(stock_code, year) {
 #'
 #' @export
 #'
+# stock_code <- "alf.27.nea"
+# year <- 2024
+# test <- access_sag_data_local(stock_code, year)
 access_sag_data_local <- function(stock_code, year) {
-  out1 <-
+  # out1 <-
+  #   lapply(
+  #     year,
+  #     function(i) {
+  #       fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+  #     }
+  #   )
+  # SAGsummary <- do.call(rbind, out1)
+
+  # out2 <-
+  #   lapply(
+  #     year,
+  #     function(j) {
+  #       fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
+  #     }
+  #   )
+  # SAGrefpts <- do.call(rbind, out2)
+
+  # data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
+  out3 <-
     lapply(
       year,
       function(i) {
-        fread(sprintf("Data/SAG_%s/SAG_summary.csv", i))
+        fread(sprintf("Data/SAG_%s/SAG.csv", i))
       }
     )
-  SAGsummary <- do.call(rbind, out1)
+  SAGsummary <- do.call(rbind, out3)
 
-  out2 <-
-    lapply(
-      year,
-      function(j) {
-        fread(sprintf("Data/SAG_%s/SAG_refpts.csv", j))
-      }
-    )
-  SAGrefpts <- do.call(rbind, out2)
-
-  data_sag <- merge(SAGsummary, SAGrefpts) %>% filter(FishStock == stock_code)
-
-  data_sag <- data_sag %>%
-    select(-FishStock) %>%
-    filter(StockPublishNote == "Stock published") %>%
+  data_sag <- SAGsummary %>%
+  filter(StockKeyLabel == stock_code) %>% 
+    # select(-FishStock) %>%
+    # filter(StockPublishNote == "Stock published") %>%
     mutate(across(everything(), ~ if (class(.) == "integer64") as.integer(.) else .))
 
   return(data_sag)
@@ -131,11 +143,11 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
     data_temp <- data_temp %>% select(
       Year,
       Recruitment, RecruitmentAge,
-      SSB, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
-      F, FLim, Fpa, FMSY, FAge, FishingPressureDescription,
-      AssessmentYear, StockPublishNote, Purpose, SAGStamp, AssessmentComponent
+      StockSize, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
+      FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription,
+      AssessmentYear, Purpose, SAGStamp, AssessmentComponent
     )
-    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0] <- "N.A." # this probably needs to go when they update ASD from "N.A." to NA
+    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0 | data_temp$AssessmentComponent == "N.A."] <- "NA" # this probably needs to go when they update ASD from "N.A." to NA
     data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
     data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
     data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
@@ -143,7 +155,7 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
     data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
   }
   # take out non published data from before 2021 in big data
-  SAG_data <- filter(data_temp, StockPublishNote == "Stock published" & Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
+  SAG_data <- filter(data_temp, Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
   # make assessmentYear as factor
   SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 
