@@ -143,7 +143,7 @@ get_Stock_info <- function(CommonName, stockcode, assessmentYear, AssessmentComp
       "<font size=", 3, ">", "Common name: ", "<b>", CommonName, "</b><br/>",
       "<font size=", 3, ">", "Stock code: ", "<b>", stockcode, "</b><br/>",
       "<font size=", 3, ">", "Assessment year: ", "<b>", assessmentYear, "</b><br/>",
-      if (all(AssessmentComponent != "N.A.") ) {
+      if (all(AssessmentComponent != "NA") ) {
         paste0(     
           "<font size=", 3, ">", "Component: ", "<b>", AssessmentComponent, "</b><br/>",     
           "<font size=", 3, ">", "Location: ", "<b>", parse_location_from_stock_description(description), "</b>"

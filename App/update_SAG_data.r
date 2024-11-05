@@ -30,31 +30,51 @@
 # options(icesSAG.use_token = FALSE)
 update_SAG <- function(year) {
   mkdir(paste0("Data/SAG_", year))
-
+  year <- 2024
   # lookup for assessment key for summary
   sag <-
     StockList(year = year) %>%
-    select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) %>%
-    rename(FishStock = StockKeyLabel)
+    select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) # %>%
+  # rename(FishStock = StockKeyLabel)
 
-  summary <- SummaryTable(sag$AssessmentKey) %>%
-    select(-AssessmentComponent, -Purpose, -AssessmentYear) %>%
-    left_join(sag, by = c("FishStock", "AssessmentKey"))
+  summary <- StockDownload(sag$AssessmentKey) %>%
+    select(-AssessmentComponent, -Purpose, -AssessmentYear, -StockDescription) %>%
+    # change AssessmentKey to integer
+    mutate(AssessmentKey = as.integer(AssessmentKey)) %>%
+    left_join(sag, by = c("StockKeyLabel", "AssessmentKey")) %>%
+    mutate(across(
+      c(
+        CustomRefPointName1,
+        CustomRefPointName2,
+        CustomRefPointName3,
+        CustomRefPointName4,
+        CustomRefPointName5
+      ), standardiseRefPoints
+    ))
 
-  write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
+
+  # write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
   refpts <- FishStockReferencePoints(sag$AssessmentKey)
-  
   refpts <- refpts %>% mutate(across(
-    c(CustomRefPointName1,
-    CustomRefPointName2,
-    CustomRefPointName3,
-    CustomRefPointName4,
-    CustomRefPointName5
-  ), standardiseRefPoints))
+    c(
+      CustomRefPointName1,
+      CustomRefPointName2,
+      CustomRefPointName3,
+      CustomRefPointName4,
+      CustomRefPointName5
+    ), standardiseRefPoints
+  ))
 
+  # Perform the merge with suffixes to handle duplicate column names
+  sagMerged <- merge(summary, refpts, by = "AssessmentKey", suffixes = c(".summary", ""))
 
-  write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
+  # Select only the columns from summary
+  sagMerged <- sagMerged[, !grepl(".summary$", names(sagMerged))]
+  # write.taf(SAG, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
+  write.taf(sagMerged, file = "SAG.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
+
+  # write.taf(refpts, file = "SAG_refpts.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 }
 
 #' Returns the data summary from the ICES Stock Assessment database.
@@ -172,23 +192,23 @@ update_SAG <- function(year) {
 
 
 
-get_CI <- function(df) {
-  out <- data.frame()
-  for (AssessmentKey in df$AssessmentKey) {
-    out_temp <- jsonlite::fromJSON(
-      URLencode(
-        sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey) 
-      )
-    )
-    out_temp <- out_temp %>% select(AssessmentKey,ConfidenceIntervalDefinition)
-    out <- rbind(out, out_temp)
+# get_CI <- function(df) {
+#   out <- data.frame()
+#   for (AssessmentKey in df$AssessmentKey) {
+#     out_temp <- jsonlite::fromJSON(
+#       URLencode(
+#         sprintf("https://sag.ices.dk/SAG_API/api/FishStockReferencePoints?assessmentKey=%s", AssessmentKey) 
+#       )
+#     )
+#     out_temp <- out_temp %>% select(AssessmentKey,ConfidenceIntervalDefinition)
+#     out <- rbind(out, out_temp)
     
-  }
+#   }
 
-  # colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
+#   # colnames(out)[which(names(out) == "assessmentKey")] <- "AssessmentKey"
   
-  return(out)
-}
+#   return(out)
+# }
 
 standardiseRefPoints <- function(totrefpoints) {
   if (any(totrefpoints %in% c(
@@ -286,6 +306,14 @@ standardiseRefPoints <- function(totrefpoints) {
       "Fpa",
       "FPa"
     )] <- "F<sub>pa</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "Fmgt"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "Fmgt"
+    )] <- "Fmanagement"
   }
 
   if (any(totrefpoints %in% c(
