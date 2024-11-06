@@ -335,9 +335,8 @@ standardize_catch_scenario_table <- function(tmp) {
   colnames(tmp_unified) <- sub(" _.*_", "", colnames(tmp_unified))
   col_names_for_display <- colnames(tmp_unified)
   
-  # rename columns to standard names
-  # colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB", "TAC change", "ADVICE change", "SSB change")
-  colnames(tmp_unified) <- c("Year", "cat", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB","CatchUnwanted","CatchUnwantedSurviving", "TAC change", "ADVICE change", "SSB change")
+  # rename columns to standard names  
+  colnames(tmp_unified) <- c("Year", "Scenario", "cS_Purpose", "TotCatch", "F", "F_wanted", "HR", "SSB","CatchUnwanted","CatchUnwantedSurviving", "TAC change", "ADVICE change", "SSB change")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "BasisAdvice", "Basis Of Advice")
   tmp_unified$cS_Purpose <- str_replace_all(tmp_unified$cS_Purpose, "OtherScenarios", "Other Scenarios")
   }
@@ -375,13 +374,18 @@ standardize_catch_scenario_table <- function(tmp) {
 #'
 #' @export
 #'
-wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_scenario_table, catch_scenario_list_previous_year, stock_name, year) {
+wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_scenario_table, adviceValue, adviceApplicableUntil, year) {
+  
+  
   catches_data <- catches_data %>%
     filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
-    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals) # %>%
-  # left_join(y = additional_LandingData, by = "Year")
-
-
+    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals)
+    
+  columns_to_check <- c("Catches", "Landings", "Discards", "IBC", "Unallocated_Removals")  # Specify the columns you want to check for all NAs
+  catches_data <- catches_data %>%
+    filter(!if_all(all_of(columns_to_check), is.na))
+  
+  # catches_data <- catches_dataTest
   #  Function to check if a column is made up of all NA values
   is_na_column <- function(dataframe, col_name) {
     return(all(is.na(dataframe[, ..col_name])))
@@ -391,22 +395,47 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
     catches_data$Catches <- rowSums(catches_data[, c("Landings", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)
     catches_data <- catches_data %>% select(c("Year", "Catches"))
   } else {
+    catches_data$Catches <- rowSums(catches_data[, c("Catches", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)
     catches_data <- catches_data %>% select(c("Year", "Catches"))
   }
 
-  catches_data <- catches_data %>% add_column(cat = "Historical Catches")
-  catch_scenario_table <- catch_scenario_table %>% select(Year, TotCatch, cat)
-
-  catches_data <- catches_data %>%
-    mutate(Catches = ifelse(Year == year, as.numeric(catch_scenario_list_previous_year$adviceValue), Catches)) %>%
-    na.omit()
-  catches_data_year_before <- catch_scenario_table
-  catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
-  catches_data_year_before$TotCatch <- tail(catches_data$Catches, 1)
-  catches_data <- setNames(catches_data, names(catch_scenario_table))
-  final_df <- rbind(catches_data, catches_data_year_before, catch_scenario_table)
+  catches_data <- catches_data %>% 
+                  add_column(Scenario = "Historical Catches") %>% 
+                  add_column(Color = "#000000") %>% 
+                  add_column(MarkerSize = 5)
+  
+  
+  palette <- tableau_color_pal("Tableau 20")(length(unique(catch_scenario_table$Scenario)))
+  catch_scenario_table <- catch_scenario_table %>% 
+                          select(Year, TotCatch, Scenario) %>% 
+                          add_column(Color = palette) %>%
+                          add_column(MarkerSize = 15)
+  
+  # catches_data <- catches_data %>%
+  #   mutate(Catches = ifelse(Year == year, as.numeric(adviceValue), Catches)) %>%
+  #   na.omit()
+  # catches_data_year_before <- catch_scenario_table
+  # catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
+  # catches_data_year_before$TotCatch <- tail(catches_data$Catches, 1)
+  catch_scenario_table <- setNames(catch_scenario_table, names(catches_data))
+  final_df <- rbind(catches_data,  catch_scenario_table)
   final_df <- na.omit(final_df)
 
+  # Extract the year from adviceApplicableUntil
+  year_advice_until <- as.numeric(format(as.Date(adviceApplicableUntil), "%Y"))
+  # year_advice_until <- 2024
+  # Append the new row to the data frame
+  final_df <- final_df %>%
+    add_row(
+      Year = year_advice_until,
+      Catches = as.numeric(adviceValue),
+      Scenario = "Previous advice",
+      Color = "#ff7f0e",
+      MarkerSize = 14
+    ) %>%
+    arrange(Year)
+
+  
   return(final_df)
 }
 
@@ -435,9 +464,9 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
 #' @export
 scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch_scen_table) {
   if (!is_empty(new_catch_scen_table) | !is_empty(new_catch_scen_table)) {
-    changes_columns <- new_catch_scen_table %>% select("cat", "TAC change", "ADVICE change", "SSB change")
+    changes_columns <- new_catch_scen_table %>% select("Scenario", "TAC change", "ADVICE change", "SSB change")
 
-    keep.cols <- c("Year", "cat", "cS_Purpose", "F", "F_wanted", "HR")
+    keep.cols <- c("Year", "Scenario", "cS_Purpose", "F", "F_wanted", "HR")
     df_old <- old_catch_scen_table %>% 
       select(all_of(keep.cols)) %>% 
       drop_cols_with_all_nas()
@@ -448,9 +477,9 @@ scale_catch_scenarios_for_radialPlot <- function(old_catch_scen_table, new_catch
       na.omit()
 
     Basis <- df_old[df_old$cS_Purpose == "Basis Of Advice", ]
-    catch_scen_table_perc <- df_new[, c("Year", "cat", "cS_Purpose")]
+    catch_scen_table_perc <- df_new[, c("Year", "Scenario", "cS_Purpose")]
     catch_scen_table_perc <- calculate_perc_change(df_new, Basis, catch_scen_table_perc)
-    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("cat")) #%>% relocate("SSB change", .after = SSB)
+    catch_scen_table_perc <- catch_scen_table_perc %>% left_join(., changes_columns, by = c("Scenario")) #%>% relocate("SSB change", .after = SSB)
     
   } else {
     catch_scen_table_perc <- character(0)
