@@ -381,7 +381,7 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
     filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
     select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals)
     
-  columns_to_check <- c("Catches", "Landings", "Discards", "IBC", "Unallocated_Removals")  # Specify the columns you want to check for all NAs
+  columns_to_check <- c("Catches", "Landings")  # Specify the columns you want to check for all NAs
   catches_data <- catches_data %>%
     filter(!if_all(all_of(columns_to_check), is.na))
   
@@ -434,7 +434,7 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
       MarkerSize = 14
     ) %>%
     arrange(Year)
-
+  
   
   return(final_df)
 }

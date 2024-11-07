@@ -1728,8 +1728,8 @@ legend_format <- function() {
         borderwidth = 2,
         orientation = 'v',
         tracegroupgap = 30,
-        traceorder = "grouped")
-       
+        traceorder = "grouped"
+    )
 }
 
 #' simple function to shorten catch scenario tick labels if they are too long
@@ -2394,166 +2394,17 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 #'
 #' @export
 #'
-# TAC_timeline <- function(final_df, catch_scenarios, df) {
-# #    browser()
-#     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
-    
-#     catch_time <- plot_ly(final_df,
-#         x = ~Year,
-#         y = ~Catches
-#     ) %>%
-#         filter(Scenario %in% catch_scenarios) %>%
-#         group_by(Scenario) %>%
-#         add_trace(
-#             x = ~Year,
-#             y = ~Catches,
-#             type = "scatter",
-#             mode = "lines+markers",
-#             color = ~Color
-#         )
-
-#     catch_time <- catch_time %>% layout(
-        
-#         paper_bgcolor = "rgb(255,255,255)",
-#         plot_bgcolor = "rgb(255,255,255)",
-#         legend = list(
-#             orientation = "h",
-#             y = -.6,
-#             yanchor = "bottom",
-#             x = 0.5,
-#             xanchor = "center",
-#             title = list(text = "Scenarios")
-#         ),
-
-#         xaxis = list(
-#             title = "Years",
-#             gridcolor = "rgb(235,235,235)",
-#             showgrid = TRUE,
-#             showline = TRUE,
-#             tickcolor = "rgb(127,127,127)",
-#             titlefont = titlefont_format(),
-#             tickfont = tickfont_format(),
-#             showticklabels = TRUE
-#         ),
-#     # )
-#         yaxis = list(
-#             title = Catches_yaxis_label, # "StockSize",
-#             gridcolor = "rgb(235,235,235)",
-#             showgrid = TRUE,
-#             showline = TRUE,
-#             showticklabels = TRUE,
-#             tickcolor = "rgb(127,127,127)",
-#             ticks = "outside",
-#             zeroline = TRUE,
-#             titlefont = titlefont_format(),
-#             tickfont = tickfont_format()
-#         )
-#     ) #%>% 
-#         #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
-# }
-
-# TAC_timeline <- function(final_df, catch_scenarios, df) {
-#     # Y-axis label for catches
-#     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
-#     # browser()
-#     # Plotly setup
-#     catch_time <- final_df %>%
-#         filter(Scenario %in% catch_scenarios) %>%
-#         plot_ly(
-#             x = ~Year,
-#             y = ~Catches,
-#             type = "scatter",
-#             mode = "lines+markers",
-#             color = ~Scenario,
-#             marker = list(size = ~MarkerSize),
-#             colors = ~Color
-#         )# %>%
-#         # layout(
-#         #     title = "Catch Scenarios Over Time",
-#         #     xaxis = list(title = "Year"),
-#         #     yaxis = list(title = "Catches")
-#         # )
-    
-#     # return(catch_time)
-#     # catch_time <- final_df %>%
-#     #     filter(Scenario %in% catch_scenarios) %>%
-#     #     plot_ly(
-#     #         x = ~Year,
-#     #         y = ~Catches,
-#     #         type = "scatter",
-#     #         mode = "lines+markers",
-#     #         color = ~Scenario,
-#     #         colors = ~Color,  # Use Color column for line and marker color
-#     #         marker = list(size = ~MarkerSize, 
-#     #                     color = ~Color),  # Use MarkerSize column for marker size
-#     #         line = list(linetype = ~ifelse(Scenario == "Historical Catches", "solid", "dot"),
-#     #                     color = ~Color,
-#     #                     size = 10)  # Solid for Historical Catches, dotted for others
-#     #     ) #%>%
-#         # group_by(Scenario) %>%
-#         # add_trace(
-#         #     x = ~Year,
-#         #     y = ~Catches,
-#         #     color = ~Scenario,
-#         #     type = "scatter",
-#         #     mode = "lines+markers",
-#         #     line = list(
-#         #         dash = ~ifelse(Scenario == "Historical Catches", "solid", "dot"),
-#         #         color = ~Color,
-#         #         size = 10 # Solid for Historical Catches, dotted for others
-#         #     ),
-#         #     marker = list(
-#         #         color = ~Color,  # Color for each scenario based on Color column
-#         #         size = ~MarkerSize  # Marker size from MarkerSize column
-#         #     )
-#         # )
-
-#     #Layout settings
-#     catch_time <- catch_time %>% layout(
-#         paper_bgcolor = "rgb(255,255,255)",
-#         plot_bgcolor = "rgb(255,255,255)",
-#         legend = list(
-#             orientation = "h",
-#             y = -0.6,
-#             yanchor = "bottom",
-#             x = 0.5,
-#             xanchor = "center",
-#             title = list(text = "Scenarios")
-#         ),
-#         xaxis = list(
-#             title = "Years",
-#             gridcolor = "rgb(235,235,235)",
-#             showgrid = TRUE,
-#             showline = TRUE,
-#             tickcolor = "rgb(127,127,127)",
-#             titlefont = titlefont_format(),
-#             tickfont = tickfont_format(),
-#             showticklabels = TRUE
-#         ),
-#         yaxis = list(
-#             title = Catches_yaxis_label,
-#             gridcolor = "rgb(235,235,235)",
-#             showgrid = TRUE,
-#             showline = TRUE,
-#             showticklabels = TRUE,
-#             tickcolor = "rgb(127,127,127)",
-#             ticks = "outside",
-#             zeroline = TRUE,
-#             titlefont = titlefont_format(),
-#             tickfont = tickfont_format()
-#         )
-#     )
-
-#     return(catch_time)
-# }
-# Define the main Plotly plotting function
 TAC_timeline <- function(final_df, catch_scenarios, df) {
+
     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
+
     # Separate historical catches
     historical_df <- final_df %>% filter(Scenario == "Historical Catches")
     previousAdvice <- final_df %>% filter(Scenario == "Previous advice")
-    other_df <- final_df %>% filter(Scenario %in% catch_scenarios) %>% filter(Scenario != "Historical Catches" & Scenario != "Previous advice")
-    # browser()
+    other_df <- final_df %>%
+        filter(Scenario %in% catch_scenarios) %>%
+        filter(Scenario != "Historical Catches" & Scenario != "Previous advice")
+    
     # Create plot for historical catches (lines only)
     catch_time <- plot_ly(
         historical_df,
@@ -2561,78 +2412,76 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
         y = ~Catches,
         type = "scatter",
         mode = "lines",
-        line = list(color =~Color,
-                    width = ~MarkerSize),
+        line = list(
+            color = ~Color,
+            width = ~MarkerSize
+        ),
         name = "Historical Catches"
-    )    
+    )
 
-    
 
-    # Add dotted lines connecting the historical catches to previous advice, and previous advice to scenarios
-    # 1. Last entry of Historical Catches to Previous Advice
-    last_historical <- historical_df[nrow(historical_df),]
-    first_previous_advice <- previousAdvice[1,]
-    
-    catch_time <- catch_time %>%
-        add_trace(
-            x = c(last_historical$Year, first_previous_advice$Year),
-            y = c(last_historical$Catches, first_previous_advice$Catches),
-            type = "scatter",
-            mode = "lines",
-            line = list(dash = "dot", color = "black", width = 1),
-            # name = "Historical to Previous Advice",
-            showlegend = FALSE
-        )
-    
-    
-    # 2. Previous Advice to other scenarios
-    for (scenario in other_df$Scenario) {
-        scenario_data <- other_df %>% filter(Scenario == scenario)
-        first_scenario <- scenario_data[1,]
-        
-        catch_time <- catch_time %>%
-            add_trace(
-                x = c(first_previous_advice$Year, first_scenario$Year),
-                y = c(first_previous_advice$Catches, first_scenario$Catches),
-                type = "scatter",
-                mode = "lines",
-                line = list(dash = "dot", color = "black", width = 1),
-                # name = paste("Previous Advice to", scenario)
-                showlegend = FALSE
-            )   
-    }
 
-    catch_time <- catch_time %>%
-            add_markers(
-                data = previousAdvice,
-                x = ~Year,
-                y = ~Catches,
-                # type = "scatter",
-                # mode = "lines+markers",
-                # line = list(color = previousAdvice$Color[1],
-                #             width = 4, dash = "dash"),
-                marker = list(size = ~MarkerSize, symbol = "circle", color = previousAdvice$Color),
-                name = "Previous advice"  # Set legend name for each scenario
-            )
-    # Add traces for other scenarios (lines + markers, with diamond shape for specific scenarios)
-    # for (scenario in unique(other_df$Scenario)) {
+    # # Add dotted lines connecting the historical catches to previous advice, and previous advice to scenarios
+    # # 1. Last entry of Historical Catches to Previous Advice
+    # last_historical <- historical_df[nrow(historical_df),]
+    # first_previous_advice <- previousAdvice[1,]
+
+    # catch_time <- catch_time %>%
+    #     add_trace(
+    #         x = c(last_historical$Year, first_previous_advice$Year),
+    #         y = c(last_historical$Catches, first_previous_advice$Catches),
+    #         type = "scatter",
+    #         mode = "lines",
+    #         line = list(dash = "dot", color = "black", width = 1),
+    #         # name = "Historical to Previous Advice",
+    #         showlegend = FALSE
+    #     )
+
+
+    # # 2. Previous Advice to other scenarios
+    # for (scenario in other_df$Scenario) {
     #     scenario_data <- other_df %>% filter(Scenario == scenario)
-    #     marker_symbol <- ifelse(scenario %in% c("Scenario1", "Scenario2", "Scenario3"), "diamond", "circle")
-        
-        catch_time <- catch_time %>%
-            add_markers(
-                data = other_df,
-                x = ~Year,
-                y = ~Catches,
-                # type = "scatter",
-                # mode = "markers",
-                # line = list(color = other_df$Color),
-                marker = list(size = ~MarkerSize, symbol =  "diamond", color = other_df$Color),
-                name = ~Scenario  # Set legend name for each scenario
-            )
+    #     first_scenario <- scenario_data[1,]
+
+    #     catch_time <- catch_time %>%
+    #         add_trace(
+    #             x = c(first_previous_advice$Year, first_scenario$Year),
+    #             y = c(first_previous_advice$Catches, first_scenario$Catches),
+    #             type = "scatter",
+    #             mode = "lines",
+    #             line = list(dash = "dot", color = "black", width = 1),
+    #             # name = paste("Previous Advice to", scenario)
+    #             showlegend = FALSE
+    #         )
     # }
-    
-        #Layout settings
+
+    catch_time <- catch_time %>%
+        add_markers(
+            data = previousAdvice,
+            x = ~Year,
+            y = ~Catches,
+            # type = "scatter",
+            # mode = "lines+markers",
+            # line = list(color = previousAdvice$Color[1],
+            #             width = 4, dash = "dash"),
+            marker = list(size = ~MarkerSize, symbol = "circle", color = previousAdvice$Color),
+            name = "Previous advice" # Set legend name for each scenario
+        )
+
+    catch_time <- catch_time %>%
+        add_markers(
+            data = other_df,
+            x = ~Year,
+            y = ~Catches,
+            # type = "scatter",
+            # mode = "markers",
+            # line = list(color = other_df$Color),
+            marker = list(size = ~MarkerSize, symbol = "diamond", color = other_df$Color),
+            name = ~Scenario # Set legend name for each scenario
+        )
+    # }
+
+    # Layout settings
     catch_time <- catch_time %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
@@ -2641,8 +2490,8 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             y = -0.6,
             yanchor = "bottom",
             x = 0.5,
-            xanchor = "center",
-            title = list(text = "Scenarios")
+            xanchor = "center"
+            # title = list(text = "Scenarios")
         ),
         xaxis = list(
             title = "Years",
@@ -2664,10 +2513,11 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             ticks = "outside",
             zeroline = TRUE,
             titlefont = titlefont_format(),
-            tickfont = tickfont_format()
+            tickfont = tickfont_format(),
+            range = c(0, NA)
         )
     )
-    
+
     return(catch_time)
 }
 
