@@ -375,50 +375,48 @@ standardize_catch_scenario_table <- function(tmp) {
 #' @export
 #'
 wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_scenario_table, adviceValue, adviceApplicableUntil, year) {
-  
-  
+  # Filter out the rows that are not advice
   catches_data <- catches_data %>%
     filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
     select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals)
     
-  columns_to_check <- c("Catches", "Landings")  # Specify the columns you want to check for all NAs
-  catches_data <- catches_data %>%
-    filter(!if_all(all_of(columns_to_check), is.na))
+  # Check if the last row is NA for both columns in columns_to_check
+  if (all(is.na(catches_data[nrow(catches_data), c("Catches", "Landings")]))) {
+    # Filter out the last row if it is NA for both columns
+    catches_data <- catches_data[-nrow(catches_data), ]
+  }
   
-  # catches_data <- catches_dataTest
   #  Function to check if a column is made up of all NA values
   is_na_column <- function(dataframe, col_name) {
     return(all(is.na(dataframe[, ..col_name])))
   }
-
-  if (is_na_column(catches_data, "Catches")) {
-    catches_data$Catches <- rowSums(catches_data[, c("Landings", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)
-    catches_data <- catches_data %>% select(c("Year", "Catches"))
-  } else {
+  # Check if the column "Landings" is NA
+  if (is_na_column(catches_data, "Landings")) {
     catches_data$Catches <- rowSums(catches_data[, c("Catches", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)
-    catches_data <- catches_data %>% select(c("Year", "Catches"))
+    catches_data <- catches_data %>% 
+                    select(c("Year", "Catches")) %>% 
+                    add_column(Scenario = "Historical Catches") %>%
+                    add_column(Color = "#000000") %>%
+                    add_column(MarkerSize = 5)
+  } else {
+    catches_data$Catches <- rowSums(catches_data[, c("Landings", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)
+    catches_data <- catches_data %>% 
+                    select(c("Year", "Catches")) %>% 
+                    add_column(Scenario = "Historical Landings") %>%
+                    add_column(Color = "#000000") %>%
+                    add_column(MarkerSize = 5)
   }
+  
+  # Create a color palette for the catch scenario table
+  palette <- tableau_color_pal("Tableau 20")(length(catch_scenario_table$Scenario))
+  catch_scenario_table <- catch_scenario_table %>%
+    select(Year, TotCatch, Scenario) %>%
+    add_column(Color = palette) %>%
+    add_column(MarkerSize = 15)
 
-  catches_data <- catches_data %>% 
-                  add_column(Scenario = "Historical Catches") %>% 
-                  add_column(Color = "#000000") %>% 
-                  add_column(MarkerSize = 5)
-  
-  
-  palette <- tableau_color_pal("Tableau 20")(length(unique(catch_scenario_table$Scenario)))
-  catch_scenario_table <- catch_scenario_table %>% 
-                          select(Year, TotCatch, Scenario) %>% 
-                          add_column(Color = palette) %>%
-                          add_column(MarkerSize = 15)
-  
-  # catches_data <- catches_data %>%
-  #   mutate(Catches = ifelse(Year == year, as.numeric(adviceValue), Catches)) %>%
-  #   na.omit()
-  # catches_data_year_before <- catch_scenario_table
-  # catches_data_year_before$Year <- catch_scenario_table$Year - 1 ## assessmnet year
-  # catches_data_year_before$TotCatch <- tail(catches_data$Catches, 1)
+  # Set the names of the columns in the catch_scenario_table to match the names of the columns in the catches_data
   catch_scenario_table <- setNames(catch_scenario_table, names(catches_data))
-  final_df <- rbind(catches_data,  catch_scenario_table)
+  final_df <- rbind(catches_data, catch_scenario_table)
   final_df <- na.omit(final_df)
 
   # Extract the year from adviceApplicableUntil
@@ -434,8 +432,8 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
       MarkerSize = 14
     ) %>%
     arrange(Year)
-  
-  
+
+
   return(final_df)
 }
 

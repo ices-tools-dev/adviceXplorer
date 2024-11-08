@@ -2399,11 +2399,11 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     # Separate historical catches
-    historical_df <- final_df %>% filter(Scenario == "Historical Catches")
+    historical_df <- final_df %>% filter(Scenario == "Historical Catches" | Scenario == "Historical Landings")
     previousAdvice <- final_df %>% filter(Scenario == "Previous advice")
     other_df <- final_df %>%
         filter(Scenario %in% catch_scenarios) %>%
-        filter(Scenario != "Historical Catches" & Scenario != "Previous advice")
+        filter(Scenario != "Historical Catches" & Scenario != "Historical Landings" & Scenario != "Previous advice")
     
     # Create plot for historical catches (lines only)
     catch_time <- plot_ly(
@@ -2416,7 +2416,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             color = ~Color,
             width = ~MarkerSize
         ),
-        name = "Historical Catches"
+        name = ~Scenario
     )
 
 
