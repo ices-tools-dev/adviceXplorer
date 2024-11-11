@@ -11,7 +11,6 @@ library(ggradar)
 library(ggtext)
 library(glue)
 library(gsubfn)
-
 library(icesSAG)
 library(icesTAF)
 library(icesVocab)
@@ -39,6 +38,7 @@ library(icesASD)
 library(zip)
 library(datamods)
 library(reactable)
+library(ggthemes)
 
 
 

@@ -1728,8 +1728,8 @@ legend_format <- function() {
         borderwidth = 2,
         orientation = 'v',
         tracegroupgap = 30,
-        traceorder = "grouped")
-       
+        traceorder = "grouped"
+    )
 }
 
 #' simple function to shorten catch scenario tick labels if they are too long
@@ -1743,7 +1743,7 @@ legend_format <- function() {
 
 #' @examples
 #' \dontrun{
-#' shorten_labels(tmp$cat)
+#' shorten_labels(tmp$Scenario)
 #' }
 #'
 #' @references
@@ -1753,7 +1753,7 @@ legend_format <- function() {
 #' @export
 #'
 shorten_labels <- function(catch_scenarios_array) {
-        
+        browser()
         for (i in 1:length(catch_scenarios_array)) {
             if (nchar(catch_scenarios_array[i]) > 14) {
                 catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 14), "...")
@@ -1797,7 +1797,7 @@ radial_plot <- function(tmp, catch_scenarios) {
     tmp <- tmp %>% select(-c(Year)) %>% na.omit() %>% mutate_if(is.numeric, rescale_function)
 
     zz <- ggplotly(
-        ggradar(tmp %>% select(-cS_Purpose) %>% filter(cat %in% catch_scenarios),
+        ggradar(tmp %>% select(-cS_Purpose) %>% filter(Scenario %in% catch_scenarios),
             base.size = 6,
             font.radar = "sans",
             values.radar = c("Min", "0", "Max"),
@@ -1825,7 +1825,7 @@ radial_plot <- function(tmp, catch_scenarios) {
             legend.text.size = 8,
             legend.position = "right"
         ),
-        tooltip = c("cat")
+        tooltip = c("Scenario")
     )
     
     zz
@@ -1898,7 +1898,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         tmp <- arrange(tmp, F_wanted)
 
         labels <- sprintf(
-            "Catch Scenario: %s", tmp$cat
+            "Catch Scenario: %s", tmp$Scenario
         ) %>% lapply(htmltools::HTML)
 
         fig_catch <- plot_ly(tmp) %>%
@@ -1908,8 +1908,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(color = "#ed5f26", size = 10),
-            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
+            marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
+            line = list(color = "#ed5f26", width = 5, dash = 'solid'),
             name = "F wanted"
         ) %>% 
         add_trace(
@@ -1926,16 +1926,17 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             y = Basis$F_wanted,
             type = "scatter",
             mode = "markers",            
-            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
             text = "Basis of advice",
-            name = "Basis of advice"
+            name = "Basis of advice",
+            showlegend = FALSE
         )
 
     if (is_na_column(tmp, "F_wanted")){
         tmp <- arrange(tmp, HR)
 
         labels <- sprintf(
-            "Catch Scenario: %s", tmp$cat
+            "Catch Scenario: %s", tmp$Scenario
         ) %>% lapply(htmltools::HTML)
 
         fig_catch <- plot_ly(tmp) %>%
@@ -1945,8 +1946,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,
-            marker = list(color = "#ed5f26", size = 10),
-            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
+            marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
+            line = list(color = "#ed5f26", width = 5, dash = 'solid'),
             name = "HR"
         ) %>% 
         add_trace(
@@ -1963,9 +1964,10 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             y = Basis$HR,
             type = "scatter",
             mode = "markers",            
-            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
             text = "Basis of advice",
-            name = "Basis of advice"
+            name = "Basis of advice",
+            showlegend = FALSE
         )
     
     }
@@ -1973,7 +1975,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         tmp <- arrange(tmp, F)
 
         labels <- sprintf(
-            "Catch Scenario: %s", tmp$cat
+            "Catch Scenario: %s", tmp$Scenario
         ) %>% lapply(htmltools::HTML)
 
         fig_catch <- plot_ly(tmp) %>%
@@ -1983,8 +1985,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             type = "scatter",
             mode = "lines+markers",
             text = labels,            
-            marker = list(color = "#ed5f26", size = 10),
-            line = list(color = "#ed5f26", width = 2, dash = 'solid'),
+            marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
+            line = list(color = "#ed5f26", width = 5, dash = 'solid'),
             name = "F"
         ) %>% 
         add_trace(
@@ -2001,9 +2003,10 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             y = Basis$F,
             type = "scatter",
             mode = "markers",            
-            marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+            marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
             text = "Basis of advice",
-            name = "Basis of advice"
+            name = "Basis of advice",
+            showlegend = FALSE
         )
     }
 
@@ -2022,8 +2025,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
                     type = "scatter",
                     mode = "lines+markers",
                     text = labels,
-                    line = list(color = "#047c6c", width = 2, dash = "solid"),
-                    marker = list(size = 10, color = "#047c6c"),
+                    line = list(color = "#047c6c", width = 5, dash = "solid"),
+                    marker = list(color = "#047c6c", size = 15, symbol = "diamond"),
                     name = "SSB",
                     yaxis = "y2"
                 ) %>%
@@ -2042,7 +2045,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
                     y = Basis$SSB / 1000,
                     type = "scatter",
                     mode = "markers",
-                    marker = list(color = "#047c6c", size = 15, symbol = "circle-open"),
+                    marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
                     text = "Basis of advice",
                     name = "Basis of advice",
                     yaxis = "y2"
@@ -2153,7 +2156,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     # print(tmp)
 
     
-    tmp$cat <- shorten_labels(tmp$cat)
+    tmp$Scenario <- shorten_labels(tmp$Scenario)
     Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice", ]
     tmp <- tmp[tmp$cS_Purpose == "Other Scenarios",] %>% 
       dplyr::filter(TotCatch != Basis$TotCatch) %>% 
@@ -2166,7 +2169,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(
-            "Catch Scenario: %s", tmp$cat
+            "Catch Scenario: %s", tmp$Scenario
         ) %>% lapply(htmltools::HTML)
         fig_catch <- plot_ly(tmp) %>%
             add_trace(
@@ -2175,8 +2178,8 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                 type = "scatter",
                 mode = "lines+markers",
                 text = labels,
-                marker = list(color = "#ed5f26", size = 10),
-                line = list(color = "#ed5f26", width = 2, dash = "solid"),
+                marker = list(color = "#ed5f26",  size = 15, symbol = "diamond"),
+                line = list(color = "#ed5f26", width = 5, dash = "solid"),
                 name = "F wanted"
             ) %>%
             add_trace(
@@ -2193,7 +2196,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                 y = Basis$F_wanted,
                 type = "scatter",
                 mode = "markers",
-                marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+                marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
                 text = "Basis of advice",
                 name = "Basis of advice"
             )
@@ -2202,7 +2205,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
           
             tmp <- arrange(tmp, HR)
             labels <- sprintf(
-              "Catch Scenario: %s", tmp$cat
+              "Catch Scenario: %s", tmp$Scenario
             ) %>% lapply(htmltools::HTML)
             
             fig_catch <- plot_ly(tmp) %>%
@@ -2212,8 +2215,8 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                     type = "scatter",
                     mode = "lines+markers",
                     text = labels,
-                    marker = list(color = "#ed5f26", size = 10),
-                    line = list(color = "#ed5f26", width = 2, dash = "solid"),
+                    marker = list(color = "#ed5f26",  size = 15, symbol = "diamond"),
+                    line = list(color = "#ed5f26", width = 5, dash = "solid"),
                     name = "HR"
                 ) %>%
                 add_trace(
@@ -2230,7 +2233,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                     y = Basis$HR,
                     type = "scatter",
                     mode = "markers",
-                    marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+                    marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
                     text = "Basis of advice",
                     name = "Basis of advice"
                 )
@@ -2238,7 +2241,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     } else {
         tmp <- arrange(tmp, F)
         labels <- sprintf(
-          "Catch Scenario: %s", tmp$cat
+          "Catch Scenario: %s", tmp$Scenario
         ) %>% lapply(htmltools::HTML)
         fig_catch <- plot_ly(tmp) %>%
             add_trace(
@@ -2247,7 +2250,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                 type = "scatter",
                 mode = "lines+markers",
                 text = labels,
-                marker = list(color = "#ed5f26", size = 10),
+                marker = list(color = "#ed5f26",  size = 15, symbol = "diamond"),
                 line = list(color = "#ed5f26", width = 2, dash = "solid"),
                 name = "F"
             ) %>%
@@ -2265,7 +2268,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
                 y = Basis$FishingPressure,
                 type = "scatter",
                 mode = "markers",
-                marker = list(color = "#ed5f26", size = 15, symbol = "circle-open"),
+                marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
                 text = "Basis of advice",
                 name = "Basis of advice"
             )
@@ -2303,7 +2306,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 
 
     fig2 <- plot_ly(tmp,
-        x = ~cat,
+        x = ~Scenario,
         y = ~CatchUnwantedSurviving,
         type = "bar",
         name = "Proj. surviving Discards",
@@ -2395,36 +2398,104 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
 #' @export
 #'
 TAC_timeline <- function(final_df, catch_scenarios, df) {
-   
+
     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
-    catch_time <- plot_ly(final_df,
+    # Separate historical catches
+    historical_df <- final_df %>% filter(Scenario == "Historical Catches" | Scenario == "Historical Landings")
+    previousAdvice <- final_df %>% filter(Scenario == "Previous advice")
+    other_df <- final_df %>%
+        filter(Scenario %in% catch_scenarios) %>%
+        filter(Scenario != "Historical Catches" & Scenario != "Historical Landings" & Scenario != "Previous advice")
+    
+    # Create plot for historical catches (lines only)
+    catch_time <- plot_ly(
+        historical_df,
         x = ~Year,
-        y = ~TotCatch
-    ) %>%
-        filter(cat %in% catch_scenarios) %>%
-        group_by(cat) %>%
-        add_trace(
+        y = ~Catches,
+        type = "scatter",
+        mode = "lines",
+        line = list(
+            color = ~Color,
+            width = ~MarkerSize
+        ),
+        name = ~Scenario
+    )
+
+
+
+    # # Add dotted lines connecting the historical catches to previous advice, and previous advice to scenarios
+    # # 1. Last entry of Historical Catches to Previous Advice
+    # last_historical <- historical_df[nrow(historical_df),]
+    # first_previous_advice <- previousAdvice[1,]
+
+    # catch_time <- catch_time %>%
+    #     add_trace(
+    #         x = c(last_historical$Year, first_previous_advice$Year),
+    #         y = c(last_historical$Catches, first_previous_advice$Catches),
+    #         type = "scatter",
+    #         mode = "lines",
+    #         line = list(dash = "dot", color = "black", width = 1),
+    #         # name = "Historical to Previous Advice",
+    #         showlegend = FALSE
+    #     )
+
+
+    # # 2. Previous Advice to other scenarios
+    # for (scenario in other_df$Scenario) {
+    #     scenario_data <- other_df %>% filter(Scenario == scenario)
+    #     first_scenario <- scenario_data[1,]
+
+    #     catch_time <- catch_time %>%
+    #         add_trace(
+    #             x = c(first_previous_advice$Year, first_scenario$Year),
+    #             y = c(first_previous_advice$Catches, first_scenario$Catches),
+    #             type = "scatter",
+    #             mode = "lines",
+    #             line = list(dash = "dot", color = "black", width = 1),
+    #             # name = paste("Previous Advice to", scenario)
+    #             showlegend = FALSE
+    #         )
+    # }
+
+    catch_time <- catch_time %>%
+        add_markers(
+            data = previousAdvice,
             x = ~Year,
-            y = ~TotCatch,
+            y = ~Catches,
             type = "scatter",
-            mode = "lines+markers",
-            color = ~cat
+            mode = "markers",
+            # line = list(color = previousAdvice$Color[1],
+            #             width = 4, dash = "dash"),
+            marker = list(size = ~MarkerSize, symbol = "circle", color = previousAdvice$Color),
+            name = "Previous advice" # Set legend name for each scenario
         )
 
+    catch_time <- catch_time %>%
+        add_markers(
+            data = other_df,
+            x = ~Year,
+            y = ~Catches,
+            type = "scatter",
+            mode = "markers",
+            # line = list(color = other_df$Color),
+            marker = list(size = ~MarkerSize, symbol = "diamond", color = other_df$Color),
+            name = ~Scenario # Set legend name for each scenario
+        )
+    # }
+
+    # Layout settings
     catch_time <- catch_time %>% layout(
-        
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
         legend = list(
             orientation = "h",
-            y = -.6,
+            y = -0.6,
             yanchor = "bottom",
             x = 0.5,
-            xanchor = "center",
-            title = list(text = "Scenarios")
+            xanchor = "center"
+            # title = list(text = "Scenarios")
         ),
-
         xaxis = list(
             title = "Years",
             gridcolor = "rgb(235,235,235)",
@@ -2435,9 +2506,8 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             tickfont = tickfont_format(),
             showticklabels = TRUE
         ),
-    # )
         yaxis = list(
-            title = Catches_yaxis_label, # "StockSize",
+            title = Catches_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -2446,12 +2516,13 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             ticks = "outside",
             zeroline = TRUE,
             titlefont = titlefont_format(),
-            tickfont = tickfont_format()
+            tickfont = tickfont_format(),
+            range = c(0, NA)
         )
-    ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
-}
+    )
 
+    return(catch_time)
+}
 
 #' Function to plot % of change from previous year assessement using a lollipop plot
 #'
@@ -2490,8 +2561,8 @@ lollipop_plot <- function(df, indicator_choice_lollipop) {
     #### the plot to the leaft leaving a big space on the left of the y labels
     
     
-    pvar <- ggplot(dd, aes(x = cat, y = value, fill = indicator, colour = indicator)) +
-        geom_segment(aes(x = cat, xend = as.factor(cat), y = 0, yend = value),
+    pvar <- ggplot(dd, aes(x = Scenario, y = value, fill = indicator, colour = indicator)) +
+        geom_segment(aes(x = Scenario, xend = as.factor(Scenario), y = 0, yend = value),
             color = "gray", lwd = 2
         ) +
         geom_point(size = 3) +
