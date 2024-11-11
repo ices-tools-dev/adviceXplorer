@@ -2328,3 +2328,449 @@ unique_stock_key_labels <- unique(filtered_summary$FishStock)
 
 # Print the unique values
 print(unique_stock_key_labels)
+
+test1 <- icesSAG::StockDownload(assessmentKey = 18715)
+names(test1)
+test2 <- icesSAG::SummaryTable(18715)
+names(test2)
+test3 <- icesSAG::FishStockReferencePoints(18715)
+names(test3)
+# check the difference between headers names in test1 and test2
+setdiff(names(test1), names(test2))
+# do the opposite
+setdiff(names(test2), names(test1))
+# check the difference between headers names in test1 and test3
+setdiff(names(test3), names(test1))
+
+
+library(shiny)
+library(plotly)
+library(dplyr)
+
+# Sample data
+df <- data.frame(
+    Year = rep(2000:2020, 3),
+    Catches = rnorm(63, 100, 20),
+    Scenario = rep(c("Scenario1", "Scenario2", "Scenario3"), each = 21),
+    Color = rep(c("#1f77b4", "#ff7f0e", "#2ca02c"), each = 21),
+    MarkerSize = rep(10, 63)
+)
+
+# Define the main Plotly plotting function
+TAC_timeline <- function(final_df, catch_scenarios) {
+    catch_time <- final_df %>%
+        filter(Scenario %in% catch_scenarios) %>%
+        plot_ly(
+            x = ~Year,
+            y = ~Catches,
+            type = "scatter",
+            mode = "lines+markers",
+            color = ~Scenario,
+            marker = list(size = ~MarkerSize)
+        ) %>%
+        layout(
+            title = "Catch Scenarios Over Time",
+            xaxis = list(title = "Year"),
+            yaxis = list(title = "Catches")
+        )
+    
+    return(catch_time)
+}
+
+# Define UI
+ui <- fluidPage(
+    titlePanel("Dynamic Scenario Plot"),
+    
+    sidebarLayout(
+        sidebarPanel(
+            # UI for selecting scenarios
+            checkboxGroupInput("selected_scenarios", "Select Scenarios:",
+                               choices = unique(df$Scenario),
+                               selected = unique(df$Scenario))
+        ),
+        
+        mainPanel(
+            # Plotly output
+            plotlyOutput("catch_plot")
+        )
+    )
+)
+
+# Define server
+server <- function(input, output, session) {
+    
+    # Initial rendering of the plot
+    output$catch_plot <- renderPlotly({
+        TAC_timeline(df, input$selected_scenarios)
+    })
+    
+    # Update plot using plotlyProxy when scenarios change
+    observe({
+        plotlyProxy("catch_plot", session) %>%
+            plotlyProxyInvoke("restyle", list(
+                x = list(df %>% filter(Scenario %in% input$selected_scenarios) %>% pull(Year)),
+                y = list(df %>% filter(Scenario %in% input$selected_scenarios) %>% pull(Catches)),
+                color = list(df %>% filter(Scenario %in% input$selected_scenarios) %>% pull(Scenario))
+            ))
+    })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+
+
+library(shiny)
+library(plotly)
+library(dplyr)
+
+# Sample data with Color column
+df <- data.frame(
+    Year = rep(2000:2020, 5),
+    Catches = rnorm(105, 100, 20),
+    Scenario = rep(c("Historical Catches", "Previous Advice", "Scenario1", "Scenario2", "Scenario3"), each = 21),
+    MarkerSize = rep(10, 105)
+)
+
+# Define colors for each scenario, including specific colors for Historical and Previous Advice
+scenario_colors <- c(
+    "Historical Catches" = "#000000",  # Black
+    "Previous Advice" = "#808080",     # Gray
+    "Scenario1" = "#1f77b4",           # Blue
+    "Scenario2" = "#ff7f0e",           # Orange
+    "Scenario3" = "#2ca02c"            # Green
+)
+
+# Add the Color column to df
+df$Color <- scenario_colors[df$Scenario]
+
+# Define the main Plotly plotting function
+TAC_timeline <- function(final_df, catch_scenarios) {
+    catch_time <- final_df %>%
+        filter(Scenario %in% catch_scenarios) %>%
+        plot_ly(
+            x = ~Year,
+            y = ~Catches,
+            type = "scatter",
+            mode = "lines+markers",
+            color = ~Scenario,
+            colors = scenario_colors,  # Apply fixed colors
+            marker = list(size = ~MarkerSize)
+        ) %>%
+        layout(
+            title = "Catch Scenarios Over Time",
+            xaxis = list(title = "Year"),
+            yaxis = list(title = "Catches")
+        )
+    
+    return(catch_time)
+}
+
+# Define UI
+ui <- fluidPage(
+    titlePanel("Dynamic Scenario Plot"),
+    
+    sidebarLayout(
+        sidebarPanel(
+            # UI for selecting scenarios
+            checkboxGroupInput("selected_scenarios", "Select Scenarios:",
+                               choices = unique(df$Scenario),
+                               selected = unique(df$Scenario))
+        ),
+        
+        mainPanel(
+            # Plotly output
+            plotlyOutput("catch_plot")
+        )
+    )
+)
+
+# Define server
+server <- function(input, output, session) {
+    
+    # Initial rendering of the plot
+    output$catch_plot <- renderPlotly({
+        TAC_timeline(df, input$selected_scenarios)
+    })
+    
+    # Update plot using plotlyProxy when scenarios change
+    observe({
+        # Filter data based on selected scenarios
+        filtered_data <- df %>% filter(Scenario %in% input$selected_scenarios)
+        
+        # Prepare lists for the `restyle` method, specifying color for each scenario
+        x_values <- split(filtered_data$Year, filtered_data$Scenario)
+        y_values <- split(filtered_data$Catches, filtered_data$Scenario)
+        colors <- lapply(names(x_values), function(scenario) scenario_colors[scenario])
+        
+        # Use plotlyProxy to update the plot
+        plotlyProxy("catch_plot", session) %>%
+            plotlyProxyInvoke("restyle", list(
+                x = x_values,
+                y = y_values,
+                "line.color" = colors  # Fix color for each scenario
+            ))
+    })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+
+
+library(shiny)
+library(plotly)
+library(dplyr)
+
+# Sample data with Color column, where Scenarios 1, 2, and 3 have the same Year (2021)
+df <- data.frame(
+    Year = c(rep(2000:2020, 2), rep(2021, 3 * 21)),
+    Catches = c(rnorm(42, 100, 20), rnorm(63, 50, 10)),
+    Scenario = c(rep("Historical Catches", 21), rep("Previous Advice", 21), rep(c("Scenario1", "Scenario2", "Scenario3"), each = 21)),
+    MarkerSize = rep(10, 105)
+)
+
+# Define colors for each scenario, including specific colors for Historical and Previous Advice
+scenario_colors <- c(
+    "Historical Catches" = "#000000",  # Black
+    "Previous Advice" = "#808080",     # Gray
+    "Scenario1" = "#1f77b4",           # Blue
+    "Scenario2" = "#ff7f0e",           # Orange
+    "Scenario3" = "#2ca02c"            # Green
+)
+
+# Add the Color column to df
+df$Color <- scenario_colors[df$Scenario]
+
+# Define the main Plotly plotting function
+TAC_timeline <- function(final_df, catch_scenarios) {
+    # Separate historical catches
+    historical_df <- final_df %>% filter(Scenario == "Historical Catches")
+    other_df <- final_df %>% filter(Scenario != "Historical Catches" & Scenario %in% catch_scenarios)
+    
+    # Create plot for historical catches (lines only)
+    catch_time <- plot_ly(
+        historical_df,
+        x = ~Year,
+        y = ~Catches,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = scenario_colors["Historical Catches"]),
+        name = "Historical Catches"
+    )
+    
+    # Add traces for other scenarios (lines + markers)
+    for (scenario in unique(other_df$Scenario)) {
+        scenario_data <- other_df %>% filter(Scenario == scenario)
+        catch_time <- catch_time %>%
+            add_trace(
+                data = scenario_data,
+                x = ~Year,
+                y = ~Catches,
+                type = "scatter",
+                mode = "lines+markers",
+                line = list(color = scenario_colors[scenario]),
+                marker = list(size = ~MarkerSize),
+                name = scenario  # Set legend name for each scenario
+            )
+    }
+    
+    catch_time <- catch_time %>%
+        layout(
+            title = "Catch Scenarios Over Time",
+            xaxis = list(title = "Year"),
+            yaxis = list(title = "Catches")
+        )
+    
+    return(catch_time)
+}
+
+# Define UI
+ui <- fluidPage(
+    titlePanel("Dynamic Scenario Plot"),
+    
+    sidebarLayout(
+        sidebarPanel(
+            # UI for selecting scenarios
+            checkboxGroupInput("selected_scenarios", "Select Scenarios:",
+                               choices = unique(df$Scenario),
+                               selected = unique(df$Scenario))
+        ),
+        
+        mainPanel(
+            # Plotly output
+            plotlyOutput("catch_plot")
+        )
+    )
+)
+
+# Define server
+server <- function(input, output, session) {
+    
+    # Initial rendering of the plot
+    output$catch_plot <- renderPlotly({
+        TAC_timeline(df, input$selected_scenarios)
+    })
+    
+    # Update plot using plotlyProxy when scenarios change
+    observe({
+        # Filter data based on selected scenarios
+        historical_data <- df %>% filter(Scenario == "Historical Catches")
+        other_data <- df %>% filter(Scenario != "Historical Catches" & Scenario %in% input$selected_scenarios)
+        
+        # Prepare lists for the `restyle` method, specifying color and name for each scenario
+        x_values <- split(other_data$Year, other_data$Scenario)
+        y_values <- split(other_data$Catches, other_data$Scenario)
+        colors <- split(other_data$Color, other_data$Scenario) %>% lapply(unique)
+        names <- names(x_values)  # Scenario names
+        
+        # Use plotlyProxy to update the plot
+        plotlyProxy("catch_plot", session) %>%
+            plotlyProxyInvoke("deleteTraces", list(1)) %>%  # Removes previous "other" traces
+            plotlyProxyInvoke("addTraces", lapply(seq_along(names), function(i) {
+                list(
+                    x = x_values[[i]],
+                    y = y_values[[i]],
+                    type = "scatter",
+                    mode = "lines+markers",
+                    line = list(color = colors[[i]]),
+                    marker = list(size = 10),
+                    name = names[i]  # Unique name for each scenario in legend
+                )
+            }))
+    })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+
+
+library(shiny)
+library(plotly)
+library(dplyr)
+
+# Sample data with Color column, where Scenarios 1, 2, and 3 have the same Year (2021)
+df <- data.frame(
+    Year = c(rep(2000:2020, 2), rep(2021, 3 * 21)),
+    Catches = c(rnorm(42, 100, 20), rnorm(63, 50, 10)),
+    Scenario = c(rep("Historical Catches", 21), rep("Previous Advice", 21), rep(c("Scenario1", "Scenario2", "Scenario3"), each = 21)),
+    MarkerSize = rep(10, 105)
+)
+
+# Define colors for each scenario, including specific colors for Historical and Previous Advice
+scenario_colors <- c(
+    "Historical Catches" = "#000000",  # Black
+    "Previous Advice" = "#808080",     # Gray
+    "Scenario1" = "#1f77b4",           # Blue
+    "Scenario2" = "#ff7f0e",           # Orange
+    "Scenario3" = "#2ca02c"            # Green
+)
+
+# Add the Color column to df
+df$Color <- scenario_colors[df$Scenario]
+
+# Define the main Plotly plotting function
+TAC_timeline <- function(final_df, catch_scenarios) {
+    # Separate historical catches
+    historical_df <- final_df %>% filter(Scenario == "Historical Catches")
+    other_df <- final_df %>% filter(Scenario != "Historical Catches" & Scenario %in% catch_scenarios)
+    
+    # Create plot for historical catches (lines only)
+    catch_time <- plot_ly(
+        historical_df,
+        x = ~Year,
+        y = ~Catches,
+        type = "scatter",
+        mode = "lines",
+        line = list(color = scenario_colors["Historical Catches"]),
+        name = "Historical Catches"
+    )
+    
+    # Add traces for other scenarios (lines + markers, with diamond shape for specific scenarios)
+    for (scenario in unique(other_df$Scenario)) {
+        scenario_data <- other_df %>% filter(Scenario == scenario)
+        marker_symbol <- ifelse(scenario %in% c("Scenario1", "Scenario2", "Scenario3"), "diamond", "circle")
+        
+        catch_time <- catch_time %>%
+            add_trace(
+                data = scenario_data,
+                x = ~Year,
+                y = ~Catches,
+                type = "scatter",
+                mode = "lines+markers",
+                line = list(color = scenario_colors[scenario]),
+                marker = list(size = ~MarkerSize, symbol = marker_symbol),
+                name = scenario  # Set legend name for each scenario
+            )
+    }
+    
+    catch_time <- catch_time %>%
+        layout(
+            title = "Catch Scenarios Over Time",
+            xaxis = list(title = "Year"),
+            yaxis = list(title = "Catches")
+        )
+    
+    return(catch_time)
+}
+
+# Define UI
+ui <- fluidPage(
+    titlePanel("Dynamic Scenario Plot"),
+    
+    sidebarLayout(
+        sidebarPanel(
+            # UI for selecting scenarios
+            checkboxGroupInput("selected_scenarios", "Select Scenarios:",
+                               choices = unique(df$Scenario),
+                               selected = unique(df$Scenario))
+        ),
+        
+        mainPanel(
+            # Plotly output
+            plotlyOutput("catch_plot")
+        )
+    )
+)
+
+# Define server
+server <- function(input, output, session) {
+    
+    # Initial rendering of the plot
+    output$catch_plot <- renderPlotly({
+        TAC_timeline(df, input$selected_scenarios)
+    })
+    
+    # Update plot using plotlyProxy when scenarios change
+    observe({
+        # Filter data based on selected scenarios
+        historical_data <- df %>% filter(Scenario == "Historical Catches")
+        other_data <- df %>% filter(Scenario != "Historical Catches" & Scenario %in% input$selected_scenarios)
+        
+        # Prepare lists for the `restyle` method, specifying color, name, and marker shape for each scenario
+        x_values <- split(other_data$Year, other_data$Scenario)
+        y_values <- split(other_data$Catches, other_data$Scenario)
+        colors <- split(other_data$Color, other_data$Scenario) %>% lapply(unique)
+        names <- names(x_values)  # Scenario names
+        marker_symbols <- ifelse(names %in% c("Scenario1", "Scenario2", "Scenario3"), "diamond-open", "circle")
+        
+        # Use plotlyProxy to update the plot
+        plotlyProxy("catch_plot", session) %>%
+            plotlyProxyInvoke("deleteTraces", list(1)) %>%  # Removes previous "other" traces
+            plotlyProxyInvoke("addTraces", lapply(seq_along(names), function(i) {
+                list(
+                    x = x_values[[i]],
+                    y = y_values[[i]],
+                    type = "scatter",
+                    mode = "lines+markers",
+                    line = list(color = colors[[i]]),
+                    marker = list(size = 10, symbol = marker_symbols[i]),
+                    name = names[i]  # Unique name for each scenario in legend
+                )
+            }))
+    })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)

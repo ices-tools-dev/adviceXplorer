@@ -449,7 +449,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year(), query$stockkeylabel, query$year)
+  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year()$adviceValue,advice_view_info_previous_year()$adviceApplicableUntil, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
@@ -466,8 +466,8 @@ output$catch_scenarios <- renderUI({
     virtualSelectInput(
       inputId = "catch_choice",
       label = "Select one or more catch scenarios:",
-      choices = unique(test_table()$cat),
-      selected = c("Historical Catches", Basis()$cat),
+      choices = unique(test_table()$Scenario),
+      selected = c("Historical Catches", "Previous advice", Basis()$Scenario),
       multiple = TRUE,
       width = "100%",
       search = TRUE
@@ -485,6 +485,34 @@ output$TAC_timeline <- renderPlotly({
   )
   TAC_timeline(test_table(), input$catch_choice, SAG_data_reactive())
 })
+
+# Update plot using plotlyProxy when scenarios change
+    eventReactive(input$catch_choice, {
+      # browser()
+      #   plotlyProxy("TAC_timeline", session) %>%
+      #       plotlyProxyInvoke("restyle", list(
+      #           x = list(test_table() %>% filter(Scenario %in% input$catch_choice) %>% pull(Year)),
+      #           y = list(test_table() %>% filter(Scenario %in% input$catch_choice) %>% pull(Catches)),
+      #           color = list(test_table() %>% filter(Scenario %in% input$catch_choice) %>% pull(Color))
+      #       ))
+      # Filter data based on selected scenarios
+      filtered_data <- test_table() %>% filter(Scenario %in% input$catch_choice)
+
+      # Prepare lists for the `restyle` method, specifying color for each scenario
+      x_values <- split(filtered_data$Year, filtered_data$Scenario)
+      y_values <- split(filtered_data$Catches, filtered_data$Scenario)
+      colors <- split(filtered_data$Color, filtered_data$Scenario) %>% lapply(unique)
+      # markers = split(filtered_data$MarkerSize, filtered_data$Scenario) %>% lapply(unique)
+      browser()
+      plotlyProxy("TAC_timeline", session) %>%
+        plotlyProxyInvoke("restyle", list(
+          x = x_values,
+          y = y_values,
+          # "line.color" = colors # Use colors from the Color column
+          colors = colors
+        ))
+    })
+# }
 
 output$download_TAC_Data <- downloadHandler(
     filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
@@ -515,8 +543,8 @@ output$catch_scenarios_radial <- renderUI({
     virtualSelectInput(
       inputId = "catch_choice_radial",
       label = "Select one or more catch scenarios:",
-      choices = unique(catch_scenario_table_percentages()$cat),
-      selected = c(Basis()$cat),
+      choices = unique(catch_scenario_table_percentages()$Scenario),
+      selected = c(Basis()$Scenario),
       multiple = TRUE,
       width = "100%",
       search = TRUE
@@ -549,7 +577,7 @@ output$catch_indicators_lollipop <- renderUI({
       choices = catch_scenario_table_percentages() %>%
         select(where(~ !any(is.na(.)))) %>%
         names() %>%
-        str_subset(pattern = c("Year|cat|cS_Purpose"), negate = TRUE),
+        str_subset(pattern = c("Year|Scenario|cS_Purpose"), negate = TRUE),
       selected = c("SSB change"),
       multiple = TRUE,
       width = "100%",
