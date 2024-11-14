@@ -379,13 +379,16 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
   catches_data <- catches_data %>%
     filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
     select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals) %>% arrange(Year)
-  # browser()
+  
   # Check if the last row is NA for both columns in columns_to_check
   if (all(is.na(catches_data[nrow(catches_data), c("Catches", "Landings")]))) {
     # Filter out the last row if it is NA for both columns
     catches_data <- catches_data[-nrow(catches_data), ]
   }
-    
+  # Function to check if a column is made up of all NA values
+  is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
   # Check if the column "Landings" is NA
   if (is_na_column(catches_data, "Landings") | sum(!is.na(catches_data$Catches)) > sum(!is.na(catches_data$Landings))) {
     catches_data$Catches <- rowSums(catches_data[, c("Catches", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)

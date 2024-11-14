@@ -536,6 +536,11 @@ ICES_plot_1 <- function(df, sagSettings) {
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
     
+    # Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
+
     if (is_na_column(df,"Landings")){
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
@@ -1884,6 +1889,11 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
       dplyr::bind_rows(Basis)
     
     
+    # Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, col_name])))
+    }
+    
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
 
@@ -2152,6 +2162,10 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
       dplyr::filter(TotCatch != Basis$TotCatch) %>% 
       dplyr::bind_rows(Basis)
     
+    # Function to check if a column is made up of all NA values
+    is_na_column <- function(dataframe, col_name) {
+        return(all(is.na(dataframe[, ..col_name])))
+    }
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(
