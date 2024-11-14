@@ -536,11 +536,6 @@ ICES_plot_1 <- function(df, sagSettings) {
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
     
-    # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, ..col_name])))
-    }
-
     if (is_na_column(df,"Landings")){
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
@@ -1753,7 +1748,7 @@ legend_format <- function() {
 #' @export
 #'
 shorten_labels <- function(catch_scenarios_array) {
-        browser()
+        
         for (i in 1:length(catch_scenarios_array)) {
             if (nchar(catch_scenarios_array[i]) > 14) {
                 catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 14), "...")
@@ -1888,11 +1883,6 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
       dplyr::filter(TotCatch != Basis$TotCatch) %>% 
       dplyr::bind_rows(Basis)
     
-    
-    # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
-    }
     
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
@@ -2162,10 +2152,6 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
       dplyr::filter(TotCatch != Basis$TotCatch) %>% 
       dplyr::bind_rows(Basis)
     
-    # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
-    }
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(
@@ -2517,7 +2503,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             zeroline = TRUE,
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
-            range = c(0, NA)
+            rangemode='tozero'
         )
     )
 

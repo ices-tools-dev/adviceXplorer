@@ -487,32 +487,25 @@ output$TAC_timeline <- renderPlotly({
 })
 
 # Update plot using plotlyProxy when scenarios change
-    eventReactive(input$catch_choice, {
-      # browser()
-      #   plotlyProxy("TAC_timeline", session) %>%
-      #       plotlyProxyInvoke("restyle", list(
-      #           x = list(test_table() %>% filter(Scenario %in% input$catch_choice) %>% pull(Year)),
-      #           y = list(test_table() %>% filter(Scenario %in% input$catch_choice) %>% pull(Catches)),
-      #           color = list(test_table() %>% filter(Scenario %in% input$catch_choice) %>% pull(Color))
-      #       ))
-      # Filter data based on selected scenarios
-      filtered_data <- test_table() %>% filter(Scenario %in% input$catch_choice)
+eventReactive(input$catch_choice, {
+  # Filter data based on selected scenarios
+  filtered_data <- test_table() %>% filter(Scenario %in% input$catch_choice)
 
-      # Prepare lists for the `restyle` method, specifying color for each scenario
-      x_values <- split(filtered_data$Year, filtered_data$Scenario)
-      y_values <- split(filtered_data$Catches, filtered_data$Scenario)
-      colors <- split(filtered_data$Color, filtered_data$Scenario) %>% lapply(unique)
-      # markers = split(filtered_data$MarkerSize, filtered_data$Scenario) %>% lapply(unique)
-      browser()
-      plotlyProxy("TAC_timeline", session) %>%
-        plotlyProxyInvoke("restyle", list(
-          x = x_values,
-          y = y_values,
-          # "line.color" = colors # Use colors from the Color column
-          colors = colors
-        ))
-    })
-# }
+  # Prepare lists for the `restyle` method, specifying color for each scenario
+  x_values <- split(filtered_data$Year, filtered_data$Scenario)
+  y_values <- split(filtered_data$Catches, filtered_data$Scenario)
+  colors <- split(filtered_data$Color, filtered_data$Scenario) %>% lapply(unique)
+  # markers = split(filtered_data$MarkerSize, filtered_data$Scenario) %>% lapply(unique)
+
+  plotlyProxy("TAC_timeline", session) %>%
+    plotlyProxyInvoke("restyle", list(
+      x = x_values,
+      y = y_values,
+      # "line.color" = colors # Use colors from the Color column
+      colors = colors
+    ))
+})
+
 
 output$download_TAC_Data <- downloadHandler(
     filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),

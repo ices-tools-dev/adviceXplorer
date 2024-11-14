@@ -385,3 +385,8 @@ get_link_replaced_advice <- function(StockKeyLabel,year) {
 }
 
 
+#  Function to check if a column is made up of all NA values
+  is_na_column <- function(dataframe, col_name) {
+    return(all(is.na(dataframe[, ..col_name])))
+  }
+
