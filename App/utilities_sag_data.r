@@ -380,7 +380,7 @@ get_additional_landing_data <- function(assessmentKey) {
 #'
 get_link_replaced_advice <- function(StockKeyLabel,year) {
   link <- access_sag_data_local(StockKeyLabel, year) %>% filter(Purpose == "Replaced")
-  link <- link$LinkToAdvice[1]
+  link <- link$Report[1]
   return(link)
 }
 
