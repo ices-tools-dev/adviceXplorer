@@ -385,3 +385,4 @@ get_link_replaced_advice <- function(StockKeyLabel,year) {
 }
 
 
+

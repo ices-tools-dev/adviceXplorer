@@ -1753,7 +1753,7 @@ legend_format <- function() {
 #' @export
 #'
 shorten_labels <- function(catch_scenarios_array) {
-        browser()
+        
         for (i in 1:length(catch_scenarios_array)) {
             if (nchar(catch_scenarios_array[i]) > 14) {
                 catch_scenarios_array[i] <- paste0(substr(catch_scenarios_array[i], 1, 14), "...")
@@ -2164,7 +2164,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
+        return(all(is.na(dataframe[, ..col_name])))
     }
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
@@ -2517,7 +2517,7 @@ TAC_timeline <- function(final_df, catch_scenarios, df) {
             zeroline = TRUE,
             titlefont = titlefont_format(),
             tickfont = tickfont_format(),
-            range = c(0, NA)
+            rangemode='tozero'
         )
     )
 
