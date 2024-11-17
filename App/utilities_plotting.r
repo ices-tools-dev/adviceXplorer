@@ -168,7 +168,9 @@ theme_ICES_plots <-
                 "F<sub>pa</sub>" = "#000000",
                 "HR MSY<sub>proxy</sub>" = "#00AC67",
                 "FMSY<sub>proxy</sub>" = "#00AC67",
-                "F<sub>management</sub>" = "#00AC67"
+                "F<sub>management</sub>" = "#769b8b",
+                "HR<sub>management</sub>" = "#769b8b"
+                
 
             )),
             scale_linetype_manual(values = c(
@@ -178,7 +180,8 @@ theme_ICES_plots <-
                 "F<sub>MSY</sub>" = "solid",
                 "HR MSY<sub>proxy</sub>" = "dotdash",
                 "FMSY<sub>proxy</sub>" = "dotdash",
-                "F<sub>management</sub>" = "dotdash"
+                "F<sub>management</sub>" = "dotdash",
+                "HR<sub>management</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
                 "FishingPressure" = 1.5,
@@ -187,7 +190,8 @@ theme_ICES_plots <-
                 "F<sub>MSY</sub>" = .5,
                 "HR MSY<sub>proxy</sub>" = .8,
                 "FMSY<sub>proxy</sub>" = .8,
-                "F<sub>management</sub>" = .8
+                "F<sub>management</sub>" = .8,
+                "HR<sub>management</sub>" = .8
             )),
             scale_fill_manual(values = c("#f2a497")),
             expand_limits(y = 0),
@@ -232,6 +236,7 @@ theme_ICES_plots <-
                 "B<sub>pa</sub>" = "#000000",
                 "Average" = "#ed5f26",
                 "I<sub>trigger</sub>" = "#689dff",
+                "B<sub>management</sub>" = "#769b8b",
                 "BMGT<sub>lower</sub>" = "#000000",
                 "BMGT<sub>upper</sub>" = "#689dff"
             )),
@@ -242,6 +247,7 @@ theme_ICES_plots <-
                 "MSY B<sub>trigger</sub>" = "solid",
                 "Average" = "solid",
                 "I<sub>trigger</sub>" = "dotdash",
+                "B<sub>management</sub>" = "dotdash",
                 "BMGT<sub>lower</sub>" = "dotted",
                 "BMGT<sub>upper</sub>" = "dotdash"
             )),
@@ -252,9 +258,10 @@ theme_ICES_plots <-
                 "MSY B<sub>trigger</sub>" = .5,
                 "Average" = .8,
                 "I<sub>trigger</sub>" = .8,
+                "B<sub>management</sub>" = .8,
                 "BMGT<sub>lower</sub>" = .8,
-                "BMGT<sub>upper</sub>" = .8                
-            )),
+                "BMGT<sub>upper</sub>" = .8
+                            )),
             scale_fill_manual(values = c("#94b0a9")),
             limits,
             scale_y_continuous(
@@ -899,7 +906,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$Fmanagement))) {
+    if (any(!is.na(df_segments$Fmanagement)) && length(customRefPoint) != 0 && customRefPoint == "Fmanagement") {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
@@ -915,22 +922,57 @@ ICES_plot_3 <- function(df, sagSettings) {
             ))
     }
 
-    #### custom reference points
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint)]])) && !customRefPoint %in% colnames(df)) {
+
+    if (any(!is.na(df_segments$HRMGT)) && length(customRefPoint) != 0 && customRefPoint == "HRMGT") {
         p3 <- p3 +
             geom_line(aes(
                 x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", customRefPoint)]],
-                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
-                colour = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
-                size = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                y = HRMGT,
+                linetype = "HR<sub>management</sub>",
+                colour = "HR<sub>management</sub>",
+                size = "HR<sub>management</sub>",
                 text = map(
                     paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                        "<b>HR<sub>management</sub>: </b>", tail(HRMGT, 1)
                     ), HTML
                 )
             ))
     }
+
+    # custom reference points 1    
+        if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]])) && !customRefPoint[1] %in% colnames(df) && grepl("^[0-5]$", customRefPoint[1])) {
+            p3 <- p3 +
+                geom_line(aes(
+                    x = Year,
+                    y = df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]],
+                    linetype = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                    colour = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                    size = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                    text = map(
+                        paste0(
+                            "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]], 1)
+                        ), HTML
+                    )
+                ))
+        }
+
+    # custom reference points 2   
+        if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]])) && !customRefPoint[2] %in% colnames(df) && grepl("^[0-5]$", customRefPoint[2])) {
+            p3 <- p3 +
+                geom_line(aes(
+                    x = Year,
+                    y = df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]],
+                    linetype = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                    colour = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                    size = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                    text = map(
+                        paste0(
+                            "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]], 1)
+                        ), HTML
+                    )
+                ))
+        }
+    
 
     min_year <- min(df_segments$Year[which(!is.na(df_segments$FishingPressure))])
     nullifempty <- function(x) if (length(x) == 0) NULL else x
@@ -1005,18 +1047,19 @@ ICES_plot_3 <- function(df, sagSettings) {
 #'
 ICES_plot_4 <- function(df, sagSettings) {
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
-
+    
     customRefPoint <-
         sagSettings4 %>%
         filter(settingKey == 51) %>%
         pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
         str_split(pattern = ",", simplify = TRUE)
     # as.numeric()
     
     df4 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
-            c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
+            c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
         mutate(segment = cumsum(is.na(StockSize)))
@@ -1120,8 +1163,23 @@ ICES_plot_4 <- function(df, sagSettings) {
                 )
             ))
     }
+    if (any(!is.na(df_segments$Bmanagement)) && length(customRefPoint) != 0 && customRefPoint == "Bmanagement") {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = Bmanagement,
+                linetype = "B<sub>management</sub>",
+                colour = "B<sub>management</sub>",
+                size = "B<sub>management</sub>",
+                text = map(
+                    paste0(
+                        "<b>B<sub>management</sub>: </b>", tail(Bmanagement, 1)
+                    ), HTML
+                )
+            ))
+    }
 
-    if (any(!is.na(df_segments$BMGT_lower))) {
+    if (any(!is.na(df_segments$BMGT_lower)) && length(customRefPoint) != 0 && customRefPoint == "BMGT_lower") {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1137,7 +1195,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$BMGT_upper))) {
+    if (any(!is.na(df_segments$BMGT_upper)) && length(customRefPoint) != 0 && customRefPoint == "BMGT_upper") {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1153,25 +1211,41 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
-    #### custom reference points
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]])) && !all(customRefPoint %in% colnames(df))) {
+    # custom reference point 1
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]])) && !all(customRefPoint[1] %in% colnames(df)) && grepl("^[0-5]$", customRefPoint[1])) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", customRefPoint)]],
-                # linetype = as.factor("dotdash"),
-                # colour = as.factor(df4[[paste0("CustomRefPointName", customRefPoint)]][1]),#"#69d371",
-                # size = as.factor(.8),
-                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
-                colour = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
-                size = df_segments[[paste0("CustomRefPointName", customRefPoint)]][1],
+                y = df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]],
+                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                colour = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                size = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
                 text = map(
                     paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint)]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint)]], 1)
+                        "<b>", df_segments[[paste0("CustomRefPointName",customRefPoint[1])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]], 1)
                     ), HTML
                 )
             ))
     }
+
+    # custom reference point 2
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]])) && !all(customRefPoint[2] %in% colnames(df)) && grepl("^[0-5]$", customRefPoint[2])) {
+        p4 <- p4 +
+            geom_line(aes(
+                x = Year,
+                y = df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]],
+                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                colour = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                size = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                text = map(
+                    paste0(
+                        "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]], 1)
+                    ), HTML
+                )
+            ))
+    }
+
+    
 
 
     diamondYears <-
