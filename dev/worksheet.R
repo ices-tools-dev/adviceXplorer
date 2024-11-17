@@ -2774,3 +2774,6 @@ server <- function(input, output, session) {
 
 # Run the app
 shinyApp(ui = ui, server = server)
+
+
+icesASD::get_catch_scenario_table(3288, 2023)
