@@ -212,15 +212,15 @@ update_SAG <- function(year) {
 
 standardiseRefPoints <- function(totrefpoints) {
   if (any(totrefpoints %in% c(
-    "FCap",
+    
     "F_{cap}",
     "Fcap"
   ))) {
     totrefpoints[totrefpoints %in% c(
-      "FCap",
+      
       "F_{cap}",
       "Fcap"
-    )] <- "F<sub>Cap</sub>"
+    )] <- "FCap"
   }
   if (any(totrefpoints %in% c(
     "F_(MSY proxy)",
@@ -265,13 +265,13 @@ standardiseRefPoints <- function(totrefpoints) {
   }
 
   if (any(totrefpoints %in% c(
-    "F_{lim}",
-    "FLim"
+    "F_{lim}"
+    
   ))) {
     totrefpoints[totrefpoints %in% c(
-      "F_{lim}",
-      "FLim"
-    )] <- "F<sub>Lim</sub>"
+      "F_{lim}"
+    
+    )] <- "FLim"
   }
 
   if (any(totrefpoints %in% c(
@@ -286,26 +286,26 @@ standardiseRefPoints <- function(totrefpoints) {
 
   if (any(totrefpoints %in% c(
     "F_{msy}",
-    "FMSY",
+    
     "Fmsy"
   ))) {
     totrefpoints[totrefpoints %in% c(
       "F_{msy}",
-      "FMSY",
+      
       "Fmsy"
-    )] <- "F<sub>MSY</sub>"
+    )] <- "FMSY"
   }
 
   if (any(totrefpoints %in% c(
     "F_{pa}",
-    "Fpa",
+    
     "FPa"
   ))) {
     totrefpoints[totrefpoints %in% c(
       "F_{pa}",
-      "Fpa",
+      
       "FPa"
-    )] <- "F<sub>pa</sub>"
+    )] <- "Fpa"
   }
 
   if (any(totrefpoints %in% c(
@@ -320,14 +320,16 @@ standardiseRefPoints <- function(totrefpoints) {
     "HR_{mgt}",
     "HR_{mgt}",
     "HR (mgt)",
-    "HRMGT"
+    "HR_{MGT}"
+    
   ))) {
     totrefpoints[totrefpoints %in% c(
       "HR_{mgt}",
       "HR_{mgt}",
       "HR (mgt)",
-      "HRMGT"
-    )] <- "HR<sub>MGT</sub>"
+      "HR_{MGT}"
+      
+    )] <- "HRMGT"
   }
 
   if (any(totrefpoints %in% c(
@@ -375,13 +377,13 @@ standardiseRefPoints <- function(totrefpoints) {
   }
 
   if (any(totrefpoints %in% c(
-    "MSY Btrigger",
-    "MSYBtrigger"
+    "MSY Btrigger"
+    
   ))) {
     totrefpoints[totrefpoints %in% c(
-      "MSY Btrigger",
-      "MSYBtrigger"
-    )] <- "MSYB<sub>trigger</sub>"
+      "MSY Btrigger"
+      
+    )] <- "MSYBtrigger"
   }
 
   if (any(totrefpoints %in% c(
@@ -394,6 +396,18 @@ standardiseRefPoints <- function(totrefpoints) {
     "MGT B {trigger}",
     "MGT B (trigger)"
     )] <- "MGTB<sub>trigger</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "Bmgt",
+    "BMGT"
+    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "Bmgt",
+      "BMGT"
+      
+    )] <- "Bmanagement"
   }
 
   if (any(totrefpoints %in% c(
