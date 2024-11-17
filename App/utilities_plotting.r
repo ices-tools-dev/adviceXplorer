@@ -801,7 +801,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
         select(
-            c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, Fmanagement, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
+            c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, Fmanagement, HRMGT, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
         mutate(segment = cumsum(is.na(FishingPressure)))
