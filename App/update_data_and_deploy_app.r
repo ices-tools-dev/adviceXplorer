@@ -37,5 +37,5 @@ source("update_SID_data.r")
 UpdateDataApp(mode = "AllYears")
 
 
-# source("deploy.r")
+source("deploy.r")
 
