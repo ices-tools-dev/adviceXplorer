@@ -385,4 +385,11 @@ get_link_replaced_advice <- function(StockKeyLabel,year) {
 }
 
 
-
+# Function to modify the assessment component to NA if it is "N.A." or "N.A"
+    modify_assessment_component <- function(assessment_component) {
+      if (length(assessment_component) != 0 && assessment_component %in% c("N.A.", "N.A")) {
+        return("NA")
+      } else {
+        return(assessment_component)
+      }
+    }
