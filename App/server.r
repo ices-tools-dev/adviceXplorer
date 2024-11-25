@@ -164,19 +164,19 @@ server <- function(input, output, session) {
   observe({
     # read url string
     query_string <- getQueryString()
-    names(query_string) <- tolower(names(query_string))    
-    
+    names(query_string) <- tolower(names(query_string))
+
     query$assessmentkey <- query_string$assessmentkey
-    query$assessmentcomponent <- query_string$assessmentcomponent
+    query$assessmentcomponent <-  modify_assessment_component(query_string$assessmentcomponent)
+    
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      
       info <- FishStockReferencePoints(query$assessmentkey)
-      
+
       query$stockkeylabel <- info$StockKeyLabel
-      query$year <- info$AssessmentYear 
-      
-      
+      query$year <- info$AssessmentYear
+
+
       msg("stock selected from url:", query$stockkeylabel)
       msg("year of SAG/SID selected from url:", query$year)
 
@@ -184,7 +184,6 @@ server <- function(input, output, session) {
       shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
       shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
       shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
-      
     }
   })
 
