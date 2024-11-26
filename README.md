@@ -1,5 +1,5 @@
 ### Online-advice Shiny app
-
+![screenshot](App/Data/www/adviceXplorer logo_color.png)
 To run the shiny app, open R with the working directory set to the root directory of this repository, and run the following:
 
 ```r
