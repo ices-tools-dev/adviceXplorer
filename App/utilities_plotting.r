@@ -2238,8 +2238,9 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, ..col_name])))
+        return(all(is.na(dataframe[, col_name])))
     }
+    
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(
