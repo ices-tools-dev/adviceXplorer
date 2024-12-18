@@ -130,20 +130,48 @@ theme_ICES_plots <-
         if (is.null(ylegend)) {
           ylegend <- "Recruitment in billions"
         }
+    
 
+    # Determine scaling factor based on RecruitmentUnit
+  scaling_factor <- switch(
+    df$UnitOfRecruitment[1],
+    "thousands" = 1000,
+    "millions" = 1000000,
+    "relative" = 1,
+    stop("Invalid RecruitmentUnit: choose 'thousands', 'millions', or 'relative'")
+  )
+        # Function to dynamically determine scaling factor and suffix
+    get_scaling <- function(values, scaling_factor) {
+      max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
+      order <- floor(log10(max_val)) # Find order of magnitude
+      
+      if (order > 9) { # Billions
+        return(list(divisor = 1e9, suffix = "billions"))
+      } else if (order >= 7 & order <= 9) { # Millions
+        return(list(divisor = 1e6, suffix = "millions"))
+      } else if (order >= 4 & order <= 6) { # Thousands
+        return(list(divisor = 1e3, suffix = "thousands"))
+      } else { # No scaling
+        return(list(divisor = 1, suffix = ""))
+      }
+    }
+
+    # Determine scaling based on Recruitment values
+    scaling <- get_scaling(df$Recruitment, scaling_factor)
+    divisor <- scaling$divisor
+    suffix <- scaling$suffix
+    browser()
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = title,
-                y = ylegend
-            ),
+            title = title,
+            y = paste0("Recruitment in ", suffix)
+        ),
             scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
             scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000 #### need to work on this
-                }
-            ),
+            expand = expansion(mult = c(0, 0.1)),
+            labels = function(l) l / divisor # Scale labels dynamically
+        ),
              scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "FishingPressure") {
@@ -399,6 +427,37 @@ theme_ICES_plots <-
     return(theme_ICES_plots)
 }
 
+
+
+
+
+
+
+
+# Function to determine the division unit
+get_division_unit <- function(value) {
+  # If relative, return the average value
+#   if (relative) {
+#     return(mean(value, na.rm = TRUE)) 
+#   }
+  
+  # Calculate the number of significant digits
+  abs_value <- abs(value)
+  sig_digits <- ifelse(abs_value > 0, ceiling(log10(abs_value)), 1)
+  
+  # Determine the division unit based on significant digits
+  if (sig_digits < 4) {
+    return(1)
+  } else if (sig_digits >= 4 & sig_digits <= 6) {
+    return(1000)
+  } else if (sig_digits >= 7 & sig_digits <= 9) {
+    return(1000000)
+  } else if (sig_digits > 9) {
+    return(1000000000)
+  } else {
+    return(value)
+  }
+}
 #' Function to create a data download button for the plotly options' bar
 #'
 #'
@@ -653,12 +712,22 @@ ICES_plot_1 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_2 <- function(df, sagSettings) {
+    scaling_factor <- switch(
+    df$UnitOfRecruitment[1],
+    "thousands" = 1000,
+    "millions" = 1000000,
+    "relative" = 1,
+    stop("Invalid RecruitmentUnit: choose 'thousands', 'millions', or 'relative'")
+  )
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp)
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp) %>% 
+        mutate(Recruitment = Recruitment * scaling_factor,
+               Low_Recruitment = Low_Recruitment * scaling_factor,
+               High_Recruitment = High_Recruitment * scaling_factor)
 
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
-
+    
     xmax <- sagSettings2 %>%
         filter(settingKey == 5) %>%
         pull(settingValue) %>%

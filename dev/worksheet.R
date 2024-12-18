@@ -2777,3 +2777,89 @@ shinyApp(ui = ui, server = server)
 
 
 icesASD::get_catch_scenario_table(3288, 2023)
+
+
+
+# Function to determine the division unit
+get_division_unit <- function(value, relative = FALSE) {
+  # If relative, return the average value
+  if (relative) {
+    return(mean(value, na.rm = TRUE)) 
+  }
+  
+  # Calculate the number of significant digits
+  abs_value <- abs(value)
+  sig_digits <- ifelse(abs_value > 0, ceiling(log10(abs_value)), 1)
+  
+  # Determine the division unit based on significant digits
+  if (sig_digits < 4) {
+    return(value/1)
+  } else if (sig_digits >= 4 & sig_digits <= 6) {
+    return(value/1000)
+  } else if (sig_digits >= 7 & sig_digits <= 9) {
+    return(value/1000000)
+  } else if (sig_digits >= 9) {
+    return(value/1000000000)
+  } else {
+    return(value)
+  }
+}
+
+# Example usage
+get_division_unit(c(123, 456), relative = TRUE)    # Returns average
+get_division_unit(123)                            # Returns 1
+get_division_unit(12345)                          # Returns 1000
+get_division_unit(12345678)                       # Returns 1000000
+get_division_unit(14000000000)
+
+# Function to calculate axis unit label
+get_axis_unit_label <- function(value, unit = "tonnes") {
+  # Calculate number of significant digits
+  abs_value <- abs(value)
+  sig_digits <- ifelse(abs_value > 0, ceiling(log10(abs_value)), 1)
+  
+  # Determine label based on unit and significant digits
+  if (unit == "tonnes") {
+    if (sig_digits < 4) {
+      return("tonnes")
+    } else if (sig_digits >= 4 & sig_digits <= 6) {
+      return("1000 t")
+    } else if (sig_digits >= 7 & sig_digits <= 9) {
+      return("million t")
+    } else {
+      return("billion t")
+    }
+  } else if (unit == "thousands") {
+    if (sig_digits < 4) {
+      return("thousands")
+    } else if (sig_digits >= 4 & sig_digits <= 6) {
+      return("millions")
+    } else {
+      return("billions")
+    }
+  } else {  # Any other unit (individuals, etc.)
+    if (sig_digits < 4) {
+      return("unit")
+    } else if (sig_digits >= 4 & sig_digits <= 6) {
+      return("thousands")
+    } else if (sig_digits >= 7 & sig_digits <= 9) {
+      return("millions")
+    } else {
+      return("billions")
+    }
+  }
+}
+
+# Example usage
+get_axis_unit_label(123, unit = "tonnes")       # Returns "tonnes"
+get_axis_unit_label(12345, unit = "tonnes")     # Returns "1000 t"
+get_axis_unit_label(12345678, unit = "tonnes")  # Returns "million t"
+get_axis_unit_label(1234567890, unit = "tonnes")# Returns "billion t"
+
+get_axis_unit_label(123, unit = "thousands")    # Returns "thousands"
+get_axis_unit_label(123456, unit = "thousands") # Returns "millions"
+get_axis_unit_label(123456789, unit = "thousands") # Returns "billions"
+
+get_axis_unit_label(123, unit = "individuals")  # Returns "unit"
+get_axis_unit_label(123456, unit = "individuals") # Returns "thousands"
+get_axis_unit_label(123456789, unit = "individuals") # Returns "millions"
