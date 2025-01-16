@@ -131,41 +131,28 @@ theme_ICES_plots <-
           ylegend <- "Recruitment in billions"
         }
     
-
     # Determine scaling factor based on RecruitmentUnit
-  scaling_factor <- switch(
-    df$UnitOfRecruitment[1],
+    scaling_factor <- switch(df$UnitOfRecruitment[1],
     "thousands" = 1000,
-    "millions" = 1000000,
-    "relative" = 1,
-    stop("Invalid RecruitmentUnit: choose 'thousands', 'millions', or 'relative'")
-  )
-        # Function to dynamically determine scaling factor and suffix
-    get_scaling <- function(values, scaling_factor) {
-      max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
-      order <- floor(log10(max_val)) # Find order of magnitude
-      
-      if (order > 9) { # Billions
-        return(list(divisor = 1e9, suffix = "billions"))
-      } else if (order >= 7 & order <= 9) { # Millions
-        return(list(divisor = 1e6, suffix = "millions"))
-      } else if (order >= 4 & order <= 6) { # Thousands
-        return(list(divisor = 1e3, suffix = "thousands"))
-      } else { # No scaling
-        return(list(divisor = 1, suffix = ""))
-      }
-    }
-
+    "Thousands" = 1000,
+    "empty" = 1000,
+    "Relative Recruitment" = 1,
+    "Number of individuals (fisheries)" = 1,
+    "tonnes" = 1,
+    stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+    )
+    
+    
     # Determine scaling based on Recruitment values
     scaling <- get_scaling(df$Recruitment, scaling_factor)
     divisor <- scaling$divisor
     suffix <- scaling$suffix
-    browser()
+   
         theme_ICES_plots <- list(
             tmp,
             labs(
             title = title,
-            y = paste0("Recruitment in ", suffix)
+            y = paste0("Recruitment (", suffix, ")")
         ),
             scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
             scale_y_continuous(
@@ -712,13 +699,22 @@ ICES_plot_1 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_2 <- function(df, sagSettings) {
-    scaling_factor <- switch(
-    df$UnitOfRecruitment[1],
-    "thousands" = 1000,
-    "millions" = 1000000,
-    "relative" = 1,
-    stop("Invalid RecruitmentUnit: choose 'thousands', 'millions', or 'relative'")
-  )
+    
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$UnitOfRecruitment[1] == "") {
+        df$UnitOfRecruitment <- "empty"
+    }
+    # Determine scaling factor based on RecruitmentUnit
+    scaling_factor <- switch(df$UnitOfRecruitment[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1000,
+        "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+    )
+  
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp) %>% 

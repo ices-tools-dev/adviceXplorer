@@ -2863,3 +2863,88 @@ get_axis_unit_label(123456789, unit = "thousands") # Returns "billions"
 get_axis_unit_label(123, unit = "individuals")  # Returns "unit"
 get_axis_unit_label(123456, unit = "individuals") # Returns "thousands"
 get_axis_unit_label(123456789, unit = "individuals") # Returns "millions"
+
+
+sag <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2024/SAG.csv", header = TRUE, sep = ",")
+
+units <- group_by(
+  sag,
+  UnitOfRecruitment,StockKeyLabel
+) %>%
+  summarise(
+    count = n()
+  ) %>%
+  arrange(desc(count))
+units
+
+write.csv(units, "D:/GitHub_2023/online-advice/UnitsOfRecruitment_2024.csv")
+#2024
+#   UnitOfRecruitment      count
+#   <chr>                  <int>
+# 1 ""                      4532
+# 2 "thousands"             3476
+# 3 "Relative Recruitment"   197
+# 4 "Thousands"               54
+#2023
+#   UnitOfRecruitment                   count        
+#   <chr>                               <int>        
+# 1 ""                                   4232
+# 2 "thousands"                          3357        
+# 3 "Number of individuals (fisheries)"   142        
+# 4 "Relative Recruitment"                115        
+# 5 "tonnes"                              112
+# 6 "Thousands"                            53 
+#2022
+#   UnitOfRecruitment                   count        
+#   <chr>                               <int>        
+# 1 ""                                   4027
+# 2 "thousands"                          3308        
+# 3 "Number of individuals (fisheries)"   211        
+# 4 "Relative Recruitment"                118        
+# 5 "tonnes"                              110  
+
+#2021
+#   UnitOfRecruitment                   count        
+#   <chr>                               <int>        
+# 1 ""                                   3847
+# 2 "thousands"                          2892        
+# 3 "Relative Recruitment"                401        
+# 4 "Number of individuals (fisheries)"   182        
+# 5 "tonnes"                              108        
+# 6 "N"                                    86
+# 7 "Numbers per hour (fisheries)"         35 
+
+#2020
+#   UnitOfRecruitment                              count       
+#   <chr>                                          <int>       
+# 1 ""                                              3823       
+# 2 "thousands"                                     2767       
+# 3 "Relative Recruitment"                           358       
+# 4 "tonnes"                                         166       
+# 5 "Number of individuals in thousands (x1000)"      71       
+# 6 "Number of individuals in millions (x1000000)"    37       
+# 7 "Number of individuals (fisheries)"               36       
+# 8 "Numbers per hour (fisheries)"                    34 
+
+#2019
+#   UnitOfRecruitment              count
+#   <chr>                          <int>
+# 1 ""                              4166
+# 2 "thousands"                     3069
+# 3 "Relative Recruitment"           598
+# 4 "Number of individuals"           70
+# 5 "Numbers per hour (fisheries)"    33
+# 6 "ratio"                           15
+
+#2018
+#   UnitOfRecruitment                            count
+#   <chr>                                        <int>
+# 1 "thousands"                                   4272
+# 2 ""                                            1420
+# 3  NA                                            371
+# 4 "Relative Recruitment"                         177
+# 5 "Number of individuals in thousands (x1000)"    62
+# 6 "No/hour"                                       54
+# 7 "N/hour"                                        45
+# 8 "tonnes"                                        33
+# 9 "kg/hour"                                       32

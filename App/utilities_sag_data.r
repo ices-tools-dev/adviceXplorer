@@ -393,3 +393,22 @@ get_link_replaced_advice <- function(StockKeyLabel,year) {
         return(assessment_component)
       }
     }
+
+
+
+
+# Function to dynamically determine scaling factor and suffix
+get_scaling <- function(values, scaling_factor) {
+  max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
+  order <- floor(log10(max_val)) # Find order of magnitude
+
+  if (order >= 9) { # Billions
+    return(list(divisor = 1e9, suffix = "billions"))
+  } else if (order >= 7 & order <= 9) { # Millions
+    return(list(divisor = 1e6, suffix = "millions"))
+  } else if (order >= 4 & order <= 6) { # Thousands
+    return(list(divisor = 1e3, suffix = "thousands"))
+  } else { # No scaling
+    return(list(divisor = 1, suffix = "relative"))
+  }
+}
