@@ -2869,7 +2869,8 @@ sag <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2024/SAG.csv", head
 
 units <- group_by(
   sag,
-  UnitOfRecruitment,StockKeyLabel
+  StockSizeUnits
+  
 ) %>%
   summarise(
     count = n()
@@ -2877,7 +2878,7 @@ units <- group_by(
   arrange(desc(count))
 units
 
-write.csv(units, "D:/GitHub_2023/online-advice/UnitsOfRecruitment_2024.csv")
+write.csv(units, "D:/GitHub_2023/online-advice/StockSizeUnits_2024.csv")
 #2024
 #   UnitOfRecruitment      count
 #   <chr>                  <int>

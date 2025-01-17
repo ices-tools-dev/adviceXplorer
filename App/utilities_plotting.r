@@ -86,11 +86,31 @@ theme_ICES_plots <-
 
     if (type == "Catches") {
 
+        # Determine scaling factor based on StockSizeUnits
+        scaling_factor <- switch(df$CatchesLandingsUnits[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1,
+        # "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        "Kilograms per hour" = 1,
+        "kilogram per square kilometer" = 1,
+        "UWTV abundance (billions)" = 1000000000,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+        
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling_ssb(c(df$Catches, df$Landings, df$Discards), scaling_factor)
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+        
         if (is.null(title)) {
           title <- "Catches"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$CatchesLandingsUnits))
+          ylegend <- paste0("Catches (", suffix, ")")
         }
 
         if (is.null(ymax)) {
@@ -116,43 +136,40 @@ theme_ICES_plots <-
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
              scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "Recruitment") {
 
+        # Determine scaling factor based on RecruitmentUnit
+        scaling_factor <- switch(df$UnitOfRecruitment[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1000,
+        "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+                
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(df$Recruitment, scaling_factor)
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
         if (is.null(title)) {
           title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
         }
         if (is.null(ylegend)) {
-          ylegend <- "Recruitment in billions"
+          ylegend <- paste0("Recruitment (", suffix, ")")
         }
-    
-    # Determine scaling factor based on RecruitmentUnit
-    scaling_factor <- switch(df$UnitOfRecruitment[1],
-    "thousands" = 1000,
-    "Thousands" = 1000,
-    "empty" = 1000,
-    "Relative Recruitment" = 1,
-    "Number of individuals (fisheries)" = 1,
-    "tonnes" = 1,
-    stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
-    )
-    
-    
-    # Determine scaling based on Recruitment values
-    scaling <- get_scaling(df$Recruitment, scaling_factor)
-    divisor <- scaling$divisor
-    suffix <- scaling$suffix
-   
+       
         theme_ICES_plots <- list(
             tmp,
             labs(
             title = title,
-            y = paste0("Recruitment (", suffix, ")")
+            y = ylegend
         ),
             scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
             scale_y_continuous(
@@ -216,14 +233,37 @@ theme_ICES_plots <-
             scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "StockSize") {
+        
+        # Determine scaling factor based on StockSizeUnits
+        scaling_factor <- switch(df$StockSizeUnits[1],
+            "thousands" = 1000,
+            "Thousands" = 1000,
+            "empty" = 1,
+            # "Relative Recruitment" = 1,
+            "Number of individuals (fisheries)" = 1,
+            "tonnes" = 1,
+            "Kilograms per hour" = 1,
+            "kilogram per square kilometer" = 1,
+            "UWTV abundance (billions)" = 1000000000,
+            "ratio" = 1,
+            stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+        
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling_ssb(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor)
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+        
+
         if (is.null(title)) {
           title <- "Spawning Stock Biomass"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
-          ylabels_func <- function(l) {
-            trans <- l / 1000 #1000000
-          }
+          ylegend <- paste0("SSB (", suffix, ")") 
+        #   ylabels_func <- function(l) {
+        #     trans <- l / 1000 #1000000
+        #   }
         } else {
           if (is.na(ylegend)) ylegend <- ""
           ylabels_func <- function(l) {
@@ -236,12 +276,12 @@ theme_ICES_plots <-
         } else {
           limits <- expand_limits(y = c(0, ymax))
         }
-
+        
         theme_ICES_plots <- list(
             tmp,
             labs(
                 title = title, 
-                y = ylegend,
+                y = ylegend, 
                 x = "Year"
             ),
             scale_color_manual(values = c(
@@ -281,9 +321,7 @@ theme_ICES_plots <-
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
              scale_x_continuous(breaks = breaks_pretty())
         )
@@ -572,16 +610,40 @@ replace_subscript_symbols <- function(text) {
 #' @export
 #'
 ICES_plot_1 <- function(df, sagSettings) {
-                # function(df, sagSettings, additional_LandingData) {
-    sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
+
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$CatchesLandingsUnits[1] == "") {
+        df$CatchesLandingsUnits <- "empty"
+    }
+
+    scaling_factor <- switch(df$CatchesLandingsUnits[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1,
+        # "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        "Kilograms per hour" = 1,
+        "kilogram per square kilometer" = 1,
+        "UWTV abundance (billions)" = 1000000000,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+                
+    sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
+    
     # df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp, IBC, Unallocated_Removals) %>%
         relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
-        rename("Industrial Bycatch" = IBC) 
+        rename("Industrial Bycatch" = IBC)  %>% 
+        mutate(Landings = Landings * scaling_factor,
+               Catches = Catches * scaling_factor,
+               Discards = Discards * scaling_factor,
+               `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor,
+               Unallocated_Removals = Unallocated_Removals * scaling_factor)
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
@@ -704,6 +766,7 @@ ICES_plot_2 <- function(df, sagSettings) {
     if (df$UnitOfRecruitment[1] == "") {
         df$UnitOfRecruitment <- "empty"
     }
+    
     # Determine scaling factor based on RecruitmentUnit
     scaling_factor <- switch(df$UnitOfRecruitment[1],
         "thousands" = 1000,
@@ -1111,6 +1174,26 @@ ICES_plot_3 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_4 <- function(df, sagSettings) {
+    
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$StockSizeUnits[1] == "") {
+        df$StockSizeUnits <- "empty"
+    }
+
+    scaling_factor <- switch(df$StockSizeUnits[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1,
+        # "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        "Kilograms per hour" = 1,
+        "kilogram per square kilometer" = 1,
+        "UWTV abundance (billions)" = 1000000000,
+        "ratio" = 1,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
     customRefPoint <-
@@ -1127,6 +1210,9 @@ ICES_plot_4 <- function(df, sagSettings) {
             c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
+        mutate(StockSize = StockSize * scaling_factor,
+               Low_StockSize = Low_StockSize * scaling_factor,
+               High_StockSize = High_StockSize * scaling_factor) %>%
         mutate(segment = cumsum(is.na(StockSize)))
 
 
@@ -1412,7 +1498,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ymax = sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
         )
 
-
+    
     # converting
     fig4 <- ggplotly(p4, tooltip = "text") %>%
         layout(
