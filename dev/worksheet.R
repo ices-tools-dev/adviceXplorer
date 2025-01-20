@@ -2949,3 +2949,72 @@ write.csv(units, "D:/GitHub_2023/online-advice/StockSizeUnits_2024.csv")
 # 7 "N/hour"                                        45
 # 8 "tonnes"                                        33
 # 9 "kg/hour"                                       32
+
+
+
+scaling_factor <- switch(df$CatchesLandingsUnits[1],
+            "thousands" = 1000,
+            "Thousands" = 1000,
+            "empty" = 1,
+            "Number of individuals (fisheries)" = 1,
+            "tonnes" = 1,
+            "Kilograms per hour" = 1,
+            "kilogram per square kilometer" = 1,
+            "UWTV abundance (billions)" = 1000000000,
+            stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
+scaling_factor <- switch(df$UnitOfRecruitment[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1000,
+        "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
+# Determine scaling factor based on StockSizeUnits
+        scaling_factor <- switch(df$StockSizeUnits[1],
+            "thousands" = 1000,
+            "Thousands" = 1000,
+            "empty" = 1,
+            # "Relative Recruitment" = 1,
+            "Number of individuals (fisheries)" = 1,
+            "tonnes" = 1,
+            "tonnes/h" = 1,
+            "Kilograms per hour" = 1,
+            "kilogram per hour" = 1,
+            "kilogram per square kilometer" = 1,
+            "kilogram per km2" = 1,
+            "Kilograms per trip" = 1,
+            "Kilograms per trap" = 1,
+            "Kilograms per hook" = 1,
+            "UWTV abundance (billions)" = 1000000000,
+            "Number of individuals (billions)" = 1000000000,
+            "ratio" = 1,
+            stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
+get_scaling_factor <- function(unit_type, unit_value) {
+  scaling_factor <- switch(unit_value,
+                           "thousands" = 1000,
+                           "Thousands" = 1000,
+                           "empty" = ifelse(unit_type == "UnitOfRecruitment", 1000, 1),
+                           "Relative Recruitment" = 1,
+                           "Number of individuals (fisheries)" = 1,
+                           "tonnes" = 1,
+                           "tonnes/h" = 1,
+                           "Kilograms per hour" = 1,
+                           "kilogram per hour" = 1,
+                           "kilogram per square kilometer" = 1,
+                           "kilogram per km2" = 1,
+                           "Kilograms per trip" = 1,
+                           "Kilograms per trap" = 1,
+                           "Kilograms per hook" = 1,
+                           "UWTV abundance (billions)" = 1000000000,
+                           "Number of individuals (billions)" = 1000000000,
+                           "ratio" = 1,
+                           stop("Invalid unit value: choose 'thousands', 'relative', or other valid units"))
+  return(scaling_factor)
+}

@@ -87,8 +87,7 @@ theme_ICES_plots <-
     if (type == "Catches") {
 
         # Determine scaling factor based on StockSizeUnits
-        scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])
-        
+        scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
         # Determine scaling based on Recruitment values
         scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
@@ -133,8 +132,7 @@ theme_ICES_plots <-
 
         # Determine scaling factor based on RecruitmentUnit
         scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
-    
-                
+        
         # Determine scaling based on Recruitment values
         scaling <- get_scaling(df$Recruitment, scaling_factor_recruitment)
         divisor <- scaling$divisor
@@ -230,10 +228,7 @@ theme_ICES_plots <-
           title <- "Spawning Stock Biomass"
         }
         if (is.null(ylegend)) {
-          ylegend <- paste0("SSB (", suffix, ")") 
-        #   ylabels_func <- function(l) {
-        #     trans <- l / 1000 #1000000
-        #   }
+          ylegend <- paste0("SSB (", suffix, ")")
         } else {
           if (is.na(ylegend)) ylegend <- ""
           ylabels_func <- function(l) {
@@ -297,8 +292,26 @@ theme_ICES_plots <-
         )
     } else if (type == "quality_SSB") {
 
+        # Determine scaling factor based on StockSizeUnits
+        scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+                
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor_stockSize, type = "ssb")
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
         if (is.null(title)) {
           title <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
+        }
+
+        if (is.null(ylegend)) {
+          ylegend <- paste0("SSB (", suffix, ")") 
+        } else {
+          if (is.na(ylegend)) ylegend <- ""
+          ylabels_func <- function(l) {
+            trans <- l
+          }
         }
 
         rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
@@ -324,8 +337,8 @@ theme_ICES_plots <-
             tmp,
             labs(
                 title = title,
-                y = "",
-                x = ""
+                y = ylegend
+                
             ),
             scale_color_manual(values = line_color
             ),
@@ -336,9 +349,7 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
             scale_x_continuous(breaks= pretty_breaks())
 
@@ -365,13 +376,16 @@ theme_ICES_plots <-
         if (is.null(title)) {
           title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
         }
+        if (is.null(ylegend)) {
+          ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
+        }
 
         theme_ICES_plots <- list(
             tmp,
             labs(
                 title = title,
-                y = "",
-                x = "Year"
+                y = ylegend
+               
             ),
             scale_color_manual(values = line_color
             ),
@@ -387,20 +401,32 @@ theme_ICES_plots <-
             scale_x_continuous(breaks= pretty_breaks())
         )
     } else if (type == "quality_R") {
+        # Determine scaling factor based on RecruitmentUnit
+        scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(df$Recruitment, scaling_factor_recruitment)
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
+        if (is.null(title)) {
+          title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
+        }
+        if (is.null(ylegend)) {
+          ylegend <- paste0("Recruitment (", suffix, ")")
+        }
+
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
         line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         
-        if (is.null(title)) {
-          title <- sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge))
-        }
+        
         theme_ICES_plots <- list(
             tmp,
             labs(
                 title = title,
-                y = "",
-                x = ""
+                y = ylegend
             ),
             scale_color_manual(values = line_color
             ),
@@ -411,9 +437,7 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
             scale_x_continuous(breaks= pretty_breaks())
         )
@@ -1768,11 +1792,23 @@ ICES_plot_6 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_7 <- function(df, sagSettings) {
+
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$UnitOfRecruitment[1] == "") {
+        df$UnitOfRecruitment <- "empty"
+    }
+    
+    # Determine scaling factor based on RecruitmentUnit
+    scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
+    
+  
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, Recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
         drop_na(Recruitment) %>%
+        mutate(Recruitment = Recruitment * scaling_factor_recruitment
+               ) %>%
         ggplot(., aes(x = Year, y = Recruitment, color = AssessmentYear)) +
         geom_line(
             aes(

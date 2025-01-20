@@ -142,7 +142,7 @@ quality_assessment_data_local <- function(stock_code, year, assessmentComponent)
     
     data_temp <- data_temp %>% select(
       Year,
-      Recruitment, RecruitmentAge,
+      Recruitment, RecruitmentAge,UnitOfRecruitment,
       StockSize, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
       FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription,
       AssessmentYear, Purpose, SAGStamp, AssessmentComponent
