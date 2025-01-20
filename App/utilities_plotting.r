@@ -302,7 +302,7 @@ theme_ICES_plots <-
         suffix <- scaling$suffix
 
         if (is.null(title)) {
-          title <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
+          title <- "Spawning Stock Biomass"
         }
 
         if (is.null(ylegend)) {
