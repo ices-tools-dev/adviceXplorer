@@ -397,34 +397,95 @@ get_link_replaced_advice <- function(StockKeyLabel,year) {
 
 
 
-# Function to dynamically determine scaling factor and suffix
-get_scaling <- function(values, scaling_factor) {
-  max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
-  order <- floor(log10(max_val)) # Find order of magnitude
+# # Function to dynamically determine scaling factor and suffix
+# get_scaling <- function(values, scaling_factor) {
+#   max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
+#   order <- floor(log10(max_val)) # Find order of magnitude
 
-  if (order >= 9) { # Billions
-    return(list(divisor = 1e9, suffix = "billions"))
-  } else if (order >= 6 & order <= 9) { # Millions
-    return(list(divisor = 1e6, suffix = "millions"))
-  } else if (order >= 4 & order < 6) { # Thousands
-    return(list(divisor = 1e3, suffix = "1000"))
-  } else { # No scaling
-    return(list(divisor = 1, suffix = "relative"))
-  }
-}
+#   if (order >= 9) { # Billions
+#     return(list(divisor = 1e9, suffix = "billions"))
+#   } else if (order >= 6 & order <= 9) { # Millions
+#     return(list(divisor = 1e6, suffix = "millions"))
+#   } else if (order >= 4 & order < 6) { # Thousands
+#     return(list(divisor = 1e3, suffix = "1000"))
+#   } else { # No scaling
+#     return(list(divisor = 1, suffix = "relative"))
+#   }
+# }
 
-# Function to dynamically determine scaling factor and suffix
-get_scaling_ssb <- function(values, scaling_factor) {
+# # Function to dynamically determine scaling factor and suffix
+# get_scaling_ssb <- function(values, scaling_factor) {
+#   max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
+#   order <- floor(log10(max_val)) # Find order of magnitude
+  
+#   if (order >= 9) { # Billions
+#     return(list(divisor = 1e9, suffix = "billions t"))
+#   } else if (order >= 6 & order <= 9) { # Millions
+#     return(list(divisor = 1e6, suffix = "millions t"))
+#   } else if (order >= 3 & order < 6) { # Thousands
+#     return(list(divisor = 1e3, suffix = "1000 t"))
+#   } else { # No scaling
+#     return(list(divisor = 1, suffix = "relative")) #or tonnes
+#   }
+# }
+
+# # Function to dynamically determine scaling factor and suffix
+# get_scaling_catches <- function(values, scaling_factor) {
+#   max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
+#   order <- floor(log10(max_val)) # Find order of magnitude
+  
+#   if (order >= 9) { # Billions
+#     return(list(divisor = 1e9, suffix = "billions t"))
+#   } else if (order >= 6 & order <= 9) { # Millions
+#     return(list(divisor = 1e6, suffix = "millions t"))
+#   } else if (order >= 3 & order < 6) { # Thousands
+#     return(list(divisor = 1e3, suffix = "1000 t"))
+#   } else { # No scaling
+#     return(list(divisor = 1, suffix = "tonnes")) 
+#   }
+# }
+
+
+
+get_scaling <- function(values, scaling_factor, type = "default") {
   max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
   order <- floor(log10(max_val)) # Find order of magnitude
   
+  suffix <- switch(type,
+                   "ssb" = c("billions t", "millions t", "1000 t", "relative"),
+                   "catches" = c("billions t", "millions t", "1000 t", "tonnes"),
+                   c("billions", "millions", "1000", "relative"))
+  
   if (order >= 9) { # Billions
-    return(list(divisor = 1e9, suffix = "billions t"))
+    return(list(divisor = 1e9, suffix = suffix[1]))
   } else if (order >= 6 & order <= 9) { # Millions
-    return(list(divisor = 1e6, suffix = "millions t"))
+    return(list(divisor = 1e6, suffix = suffix[2]))
   } else if (order >= 3 & order < 6) { # Thousands
-    return(list(divisor = 1e3, suffix = "1000 t"))
+    return(list(divisor = 1e3, suffix = suffix[3]))
   } else { # No scaling
-    return(list(divisor = 1, suffix = "relative")) #or tonnes
+    return(list(divisor = 1, suffix = suffix[4]))
   }
+}
+
+get_scaling_factor <- function(unit_type, unit_value) {
+  scaling_factor <- switch(unit_value,
+                           "thousands" = 1000,
+                           "Thousands" = 1000,
+                           "empty" = ifelse(unit_type == "UnitOfRecruitment", 1000, 1),
+                           "Relative Recruitment" = 1,
+                           "Number of individuals (fisheries)" = 1,
+                           "tonnes" = 1,
+                           "tonnes/h" = 1,
+                           "Kilograms per hour" = 1,
+                           "kilogram per hour" = 1,
+                           "kilogram per square kilometer" = 1,
+                           "kilogram per km2" = 1,
+                           "Kilograms per trip" = 1,
+                           "Kilograms per trap" = 1,
+                           "Kilograms per hook" = 1,
+                           "UWTV abundance (billions)" = 1000000000,
+                           "Number of individuals (billions)" = 1000000000,
+                           "ratio" = 1,
+                           stop("Invalid unit value: choose 'thousands', 'relative', or other valid units"))
+  return(scaling_factor)
 }
