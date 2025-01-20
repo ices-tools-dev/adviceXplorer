@@ -242,9 +242,16 @@ theme_ICES_plots <-
             # "Relative Recruitment" = 1,
             "Number of individuals (fisheries)" = 1,
             "tonnes" = 1,
+            "tonnes/h" = 1,
             "Kilograms per hour" = 1,
+            "kilogram per hour" = 1,
             "kilogram per square kilometer" = 1,
+            "kilogram per km2" = 1,
+            "Kilograms per trip" = 1,
+            "Kilograms per trap" = 1,
+            "Kilograms per hook" = 1,
             "UWTV abundance (billions)" = 1000000000,
+            "Number of individuals (billions)" = 1000000000,
             "ratio" = 1,
             stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
         )
@@ -255,7 +262,7 @@ theme_ICES_plots <-
         divisor <- scaling$divisor
         suffix <- scaling$suffix
         
-
+        
         if (is.null(title)) {
           title <- "Spawning Stock Biomass"
         }
@@ -928,6 +935,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
+        arrange(Year) %>%
         select(
             c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, Fmanagement, HRMGT, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
@@ -1179,7 +1187,7 @@ ICES_plot_4 <- function(df, sagSettings) {
     if (df$StockSizeUnits[1] == "") {
         df$StockSizeUnits <- "empty"
     }
-
+    
     scaling_factor <- switch(df$StockSizeUnits[1],
         "thousands" = 1000,
         "Thousands" = 1000,
@@ -1187,9 +1195,16 @@ ICES_plot_4 <- function(df, sagSettings) {
         # "Relative Recruitment" = 1,
         "Number of individuals (fisheries)" = 1,
         "tonnes" = 1,
+        "tonnes/h" = 1,
         "Kilograms per hour" = 1,
+        "kilogram per hour" = 1,
         "kilogram per square kilometer" = 1,
+        "kilogram per km2" = 1,
+        "Kilograms per trip" = 1,
+        "Kilograms per trap" = 1,
+        "Kilograms per hook" = 1,
         "UWTV abundance (billions)" = 1000000000,
+        "Number of individuals (billions)" = 1000000000,
         "ratio" = 1,
         stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
         )
@@ -1206,6 +1221,7 @@ ICES_plot_4 <- function(df, sagSettings) {
     
     df4 <- df %>%
         filter(Purpose == "Advice") %>%
+        arrange(Year) %>%
         select(
             c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
