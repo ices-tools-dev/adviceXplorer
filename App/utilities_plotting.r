@@ -1507,11 +1507,19 @@ ICES_plot_4 <- function(df, sagSettings) {
 ICES_plot_5 <- function(df, sagSettings) {
     
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$StockSizeUnits[1] == "") {
+        df$StockSizeUnits <- "empty"
+    }
+    
+    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) #%>%
-     
+        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) %>%
+        mutate(StockSize = StockSize * scaling_factor_stockSize)
+
     p5 <- df5 %>%
         ggplot(., aes(x = Year, y = StockSize, color = AssessmentYear))
         
