@@ -2777,3 +2777,244 @@ shinyApp(ui = ui, server = server)
 
 
 icesASD::get_catch_scenario_table(3288, 2023)
+
+
+
+# Function to determine the division unit
+get_division_unit <- function(value, relative = FALSE) {
+  # If relative, return the average value
+  if (relative) {
+    return(mean(value, na.rm = TRUE)) 
+  }
+  
+  # Calculate the number of significant digits
+  abs_value <- abs(value)
+  sig_digits <- ifelse(abs_value > 0, ceiling(log10(abs_value)), 1)
+  
+  # Determine the division unit based on significant digits
+  if (sig_digits < 4) {
+    return(value/1)
+  } else if (sig_digits >= 4 & sig_digits <= 6) {
+    return(value/1000)
+  } else if (sig_digits >= 7 & sig_digits <= 9) {
+    return(value/1000000)
+  } else if (sig_digits >= 9) {
+    return(value/1000000000)
+  } else {
+    return(value)
+  }
+}
+
+# Example usage
+get_division_unit(c(123, 456), relative = TRUE)    # Returns average
+get_division_unit(123)                            # Returns 1
+get_division_unit(12345)                          # Returns 1000
+get_division_unit(12345678)                       # Returns 1000000
+get_division_unit(14000000000)
+
+# Function to calculate axis unit label
+get_axis_unit_label <- function(value, unit = "tonnes") {
+  # Calculate number of significant digits
+  abs_value <- abs(value)
+  sig_digits <- ifelse(abs_value > 0, ceiling(log10(abs_value)), 1)
+  
+  # Determine label based on unit and significant digits
+  if (unit == "tonnes") {
+    if (sig_digits < 4) {
+      return("tonnes")
+    } else if (sig_digits >= 4 & sig_digits <= 6) {
+      return("1000 t")
+    } else if (sig_digits >= 7 & sig_digits <= 9) {
+      return("million t")
+    } else {
+      return("billion t")
+    }
+  } else if (unit == "thousands") {
+    if (sig_digits < 4) {
+      return("thousands")
+    } else if (sig_digits >= 4 & sig_digits <= 6) {
+      return("millions")
+    } else {
+      return("billions")
+    }
+  } else {  # Any other unit (individuals, etc.)
+    if (sig_digits < 4) {
+      return("unit")
+    } else if (sig_digits >= 4 & sig_digits <= 6) {
+      return("thousands")
+    } else if (sig_digits >= 7 & sig_digits <= 9) {
+      return("millions")
+    } else {
+      return("billions")
+    }
+  }
+}
+
+# Example usage
+get_axis_unit_label(123, unit = "tonnes")       # Returns "tonnes"
+get_axis_unit_label(12345, unit = "tonnes")     # Returns "1000 t"
+get_axis_unit_label(12345678, unit = "tonnes")  # Returns "million t"
+get_axis_unit_label(1234567890, unit = "tonnes")# Returns "billion t"
+
+get_axis_unit_label(123, unit = "thousands")    # Returns "thousands"
+get_axis_unit_label(123456, unit = "thousands") # Returns "millions"
+get_axis_unit_label(123456789, unit = "thousands") # Returns "billions"
+
+get_axis_unit_label(123, unit = "individuals")  # Returns "unit"
+get_axis_unit_label(123456, unit = "individuals") # Returns "thousands"
+get_axis_unit_label(123456789, unit = "individuals") # Returns "millions"
+
+
+sag <- read.table("D:/GitHub_2023/online-advice/App/Data/SAG_2024/SAG.csv", header = TRUE, sep = ",")
+
+units <- group_by(
+  sag,
+  StockSizeUnits
+  
+) %>%
+  summarise(
+    count = n()
+  ) %>%
+  arrange(desc(count))
+units
+
+write.csv(units, "D:/GitHub_2023/online-advice/StockSizeUnits_2024.csv")
+#2024
+#   UnitOfRecruitment      count
+#   <chr>                  <int>
+# 1 ""                      4532
+# 2 "thousands"             3476
+# 3 "Relative Recruitment"   197
+# 4 "Thousands"               54
+#2023
+#   UnitOfRecruitment                   count        
+#   <chr>                               <int>        
+# 1 ""                                   4232
+# 2 "thousands"                          3357        
+# 3 "Number of individuals (fisheries)"   142        
+# 4 "Relative Recruitment"                115        
+# 5 "tonnes"                              112
+# 6 "Thousands"                            53 
+#2022
+#   UnitOfRecruitment                   count        
+#   <chr>                               <int>        
+# 1 ""                                   4027
+# 2 "thousands"                          3308        
+# 3 "Number of individuals (fisheries)"   211        
+# 4 "Relative Recruitment"                118        
+# 5 "tonnes"                              110  
+
+#2021
+#   UnitOfRecruitment                   count        
+#   <chr>                               <int>        
+# 1 ""                                   3847
+# 2 "thousands"                          2892        
+# 3 "Relative Recruitment"                401        
+# 4 "Number of individuals (fisheries)"   182        
+# 5 "tonnes"                              108        
+# 6 "N"                                    86
+# 7 "Numbers per hour (fisheries)"         35 
+
+#2020
+#   UnitOfRecruitment                              count       
+#   <chr>                                          <int>       
+# 1 ""                                              3823       
+# 2 "thousands"                                     2767       
+# 3 "Relative Recruitment"                           358       
+# 4 "tonnes"                                         166       
+# 5 "Number of individuals in thousands (x1000)"      71       
+# 6 "Number of individuals in millions (x1000000)"    37       
+# 7 "Number of individuals (fisheries)"               36       
+# 8 "Numbers per hour (fisheries)"                    34 
+
+#2019
+#   UnitOfRecruitment              count
+#   <chr>                          <int>
+# 1 ""                              4166
+# 2 "thousands"                     3069
+# 3 "Relative Recruitment"           598
+# 4 "Number of individuals"           70
+# 5 "Numbers per hour (fisheries)"    33
+# 6 "ratio"                           15
+
+#2018
+#   UnitOfRecruitment                            count
+#   <chr>                                        <int>
+# 1 "thousands"                                   4272
+# 2 ""                                            1420
+# 3  NA                                            371
+# 4 "Relative Recruitment"                         177
+# 5 "Number of individuals in thousands (x1000)"    62
+# 6 "No/hour"                                       54
+# 7 "N/hour"                                        45
+# 8 "tonnes"                                        33
+# 9 "kg/hour"                                       32
+
+
+
+scaling_factor <- switch(df$CatchesLandingsUnits[1],
+            "thousands" = 1000,
+            "Thousands" = 1000,
+            "empty" = 1,
+            "Number of individuals (fisheries)" = 1,
+            "tonnes" = 1,
+            "Kilograms per hour" = 1,
+            "kilogram per square kilometer" = 1,
+            "UWTV abundance (billions)" = 1000000000,
+            stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
+scaling_factor <- switch(df$UnitOfRecruitment[1],
+        "thousands" = 1000,
+        "Thousands" = 1000,
+        "empty" = 1000,
+        "Relative Recruitment" = 1,
+        "Number of individuals (fisheries)" = 1,
+        "tonnes" = 1,
+        stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
+# Determine scaling factor based on StockSizeUnits
+        scaling_factor <- switch(df$StockSizeUnits[1],
+            "thousands" = 1000,
+            "Thousands" = 1000,
+            "empty" = 1,
+            # "Relative Recruitment" = 1,
+            "Number of individuals (fisheries)" = 1,
+            "tonnes" = 1,
+            "tonnes/h" = 1,
+            "Kilograms per hour" = 1,
+            "kilogram per hour" = 1,
+            "kilogram per square kilometer" = 1,
+            "kilogram per km2" = 1,
+            "Kilograms per trip" = 1,
+            "Kilograms per trap" = 1,
+            "Kilograms per hook" = 1,
+            "UWTV abundance (billions)" = 1000000000,
+            "Number of individuals (billions)" = 1000000000,
+            "ratio" = 1,
+            stop("Invalid RecruitmentUnit: choose 'thousands', or 'relative'")
+        )
+
+get_scaling_factor <- function(unit_type, unit_value) {
+  scaling_factor <- switch(unit_value,
+                           "thousands" = 1000,
+                           "Thousands" = 1000,
+                           "empty" = ifelse(unit_type == "UnitOfRecruitment", 1000, 1),
+                           "Relative Recruitment" = 1,
+                           "Number of individuals (fisheries)" = 1,
+                           "tonnes" = 1,
+                           "tonnes/h" = 1,
+                           "Kilograms per hour" = 1,
+                           "kilogram per hour" = 1,
+                           "kilogram per square kilometer" = 1,
+                           "kilogram per km2" = 1,
+                           "Kilograms per trip" = 1,
+                           "Kilograms per trap" = 1,
+                           "Kilograms per hook" = 1,
+                           "UWTV abundance (billions)" = 1000000000,
+                           "Number of individuals (billions)" = 1000000000,
+                           "ratio" = 1,
+                           stop("Invalid unit value: choose 'thousands', 'relative', or other valid units"))
+  return(scaling_factor)
+}

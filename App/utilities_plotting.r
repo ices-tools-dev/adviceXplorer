@@ -86,11 +86,19 @@ theme_ICES_plots <-
 
     if (type == "Catches") {
 
+        # Determine scaling factor based on StockSizeUnits
+        scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+        
         if (is.null(title)) {
           title <- "Catches"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("Catches in 1000 %s", dplyr::last(df$CatchesLandingsUnits))
+          ylegend <- paste0("Catches (", suffix, ")")
         }
 
         if (is.null(ymax)) {
@@ -116,34 +124,38 @@ theme_ICES_plots <-
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
              scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "Recruitment") {
 
+        # Determine scaling factor based on RecruitmentUnit
+        scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(df$Recruitment, scaling_factor_recruitment)
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
         if (is.null(title)) {
           title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
         }
         if (is.null(ylegend)) {
-          ylegend <- "Recruitment in billions"
+          ylegend <- paste0("Recruitment (", suffix, ")")
         }
-
+       
         theme_ICES_plots <- list(
             tmp,
             labs(
-                title = title,
-                y = ylegend
-            ),
+            title = title,
+            y = ylegend
+        ),
             scale_fill_manual(values = c("Recruitment" = "#28b3e8")),
             scale_y_continuous(
-                expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000 #### need to work on this
-                }
-            ),
+            expand = expansion(mult = c(0, 0.1)),
+            labels = function(l) l / divisor # Scale labels dynamically
+        ),
              scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "FishingPressure") {
@@ -201,14 +213,22 @@ theme_ICES_plots <-
             scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "StockSize") {
+        
+        # Determine scaling factor based on StockSizeUnits
+        scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+                
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor_stockSize, type = "ssb")
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+        
+        
         if (is.null(title)) {
           title <- "Spawning Stock Biomass"
         }
         if (is.null(ylegend)) {
-          ylegend <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
-          ylabels_func <- function(l) {
-            trans <- l / 1000 #1000000
-          }
+          ylegend <- paste0("SSB (", suffix, ")")
         } else {
           if (is.na(ylegend)) ylegend <- ""
           ylabels_func <- function(l) {
@@ -221,12 +241,12 @@ theme_ICES_plots <-
         } else {
           limits <- expand_limits(y = c(0, ymax))
         }
-
+        
         theme_ICES_plots <- list(
             tmp,
             labs(
                 title = title, 
-                y = ylegend,
+                y = ylegend, 
                 x = "Year"
             ),
             scale_color_manual(values = c(
@@ -266,16 +286,32 @@ theme_ICES_plots <-
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
              scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "quality_SSB") {
 
+        # Determine scaling factor based on StockSizeUnits
+        scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+                
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor_stockSize, type = "ssb")
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
         if (is.null(title)) {
           title <- sprintf("%s in 1000 %s", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
+        }
+
+        if (is.null(ylegend)) {
+          ylegend <- paste0("SSB (", suffix, ")") 
+        } else {
+          if (is.na(ylegend)) ylegend <- ""
+          ylabels_func <- function(l) {
+            trans <- l
+          }
         }
 
         rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
@@ -301,8 +337,8 @@ theme_ICES_plots <-
             tmp,
             labs(
                 title = title,
-                y = "",
-                x = ""
+                y = ylegend
+                
             ),
             scale_color_manual(values = line_color
             ),
@@ -313,9 +349,7 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
             scale_x_continuous(breaks= pretty_breaks())
 
@@ -342,13 +376,16 @@ theme_ICES_plots <-
         if (is.null(title)) {
           title <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
         }
+        if (is.null(ylegend)) {
+          ylegend <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
+        }
 
         theme_ICES_plots <- list(
             tmp,
             labs(
                 title = title,
-                y = "",
-                x = "Year"
+                y = ylegend
+               
             ),
             scale_color_manual(values = line_color
             ),
@@ -364,20 +401,32 @@ theme_ICES_plots <-
             scale_x_continuous(breaks= pretty_breaks())
         )
     } else if (type == "quality_R") {
+        # Determine scaling factor based on RecruitmentUnit
+        scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
+        
+        # Determine scaling based on Recruitment values
+        scaling <- get_scaling(df$Recruitment, scaling_factor_recruitment)
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
+        if (is.null(title)) {
+          title <- sprintf("Recruitment <sub>(age %s)</sub>", dplyr::last(df$RecruitmentAge))
+        }
+        if (is.null(ylegend)) {
+          ylegend <- paste0("Recruitment (", suffix, ")")
+        }
+
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
         line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         
-        if (is.null(title)) {
-          title <- sprintf("Rec <sub>(age %s)</sub> (Billions)", dplyr::last(df$RecruitmentAge))
-        }
+        
         theme_ICES_plots <- list(
             tmp,
             labs(
                 title = title,
-                y = "",
-                x = ""
+                y = ylegend
             ),
             scale_color_manual(values = line_color
             ),
@@ -388,9 +437,7 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
-                labels = function(l) {
-                    trans <- l / 1000000
-                }
+                labels = function(l) l / divisor # Scale labels dynamically
             ),
             scale_x_continuous(breaks= pretty_breaks())
         )
@@ -398,6 +445,14 @@ theme_ICES_plots <-
 
     return(theme_ICES_plots)
 }
+
+
+
+
+
+
+
+
 
 #' Function to create a data download button for the plotly options' bar
 #'
@@ -450,42 +505,42 @@ disclaimer <- " Find disclaimer at https://raw.githubusercontent.com/ices-tools-
 #     )
 # return(dl_button)
 # }
-data_download_button <- function(disclaimer_text) {
+# data_download_button <- function(disclaimer_text) {
 
-    icon_svg_path = "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z"
+#     icon_svg_path = "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z"
 
-    dl_button <- list(
-        name = "Download data",
-        icon = list(
-            path = icon_svg_path,
-            transform = "scale(0.84) translate(-1, -1)"
-        ),
-        click = htmlwidgets::JS(paste0("
-            function(gd) {
-                console.log(gd.data);
-                var text = '';
-                for(var i = 0; i < gd.data.length; i++) {
-                    text += gd.layout.xaxis.title.text + gd.data[i].name + ',' + gd.data[i].x + '\\n';
-                    text += gd.layout.yaxis.title.text + gd.data[i].name + ',' + gd.data[i].y + '\\n';
-                };
+#     dl_button <- list(
+#         name = "Download data",
+#         icon = list(
+#             path = icon_svg_path,
+#             transform = "scale(0.84) translate(-1, -1)"
+#         ),
+#         click = htmlwidgets::JS(paste0("
+#             function(gd) {
+#                 console.log(gd.data);
+#                 var text = '';
+#                 for(var i = 0; i < gd.data.length; i++) {
+#                     text += gd.layout.xaxis.title.text + gd.data[i].name + ',' + gd.data[i].x + '\\n';
+#                     text += gd.layout.yaxis.title.text + gd.data[i].name + ',' + gd.data[i].y + '\\n';
+#                 };
 
-                // Add the disclaimer to the text
-                text += '\\nDisclaimer: ' + '", disclaimer_text, "' + '\\n';
+#                 // Add the disclaimer to the text
+#                 text += '\\nDisclaimer: ' + '", disclaimer_text, "' + '\\n';
 
-                var blob = new Blob([text], {type: 'text/plain'});
-                var a = document.createElement('a');
-                const object_URL = URL.createObjectURL(blob);
-                a.href = object_URL;
-                a.download = 'data.csv';
-                document.body.appendChild(a);
-                a.click();
-                URL.revokeObjectURL(object_URL);
-            }
-        "))
-    )
+#                 var blob = new Blob([text], {type: 'text/plain'});
+#                 var a = document.createElement('a');
+#                 const object_URL = URL.createObjectURL(blob);
+#                 a.href = object_URL;
+#                 a.download = 'data.csv';
+#                 document.body.appendChild(a);
+#                 a.click();
+#                 URL.revokeObjectURL(object_URL);
+#             }
+#         "))
+#     )
 
-    return(dl_button)
-}
+#     return(dl_button)
+# }
 
 
 
@@ -526,16 +581,29 @@ replace_subscript_symbols <- function(text) {
 #' @export
 #'
 ICES_plot_1 <- function(df, sagSettings) {
-                # function(df, sagSettings, additional_LandingData) {
-    sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
+
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$CatchesLandingsUnits[1] == "") {
+        df$CatchesLandingsUnits <- "empty"
+    }
+    scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])
+    
+                
+    sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
+    
     # df <- df %>% left_join(y = additional_LandingData, by = "Year")
 
     df1 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp, IBC, Unallocated_Removals) %>%
         relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
-        rename("Industrial Bycatch" = IBC) 
+        rename("Industrial Bycatch" = IBC)  %>% 
+        mutate(Landings = Landings * scaling_factor_catches,
+               Catches = Catches * scaling_factor_catches,
+               Discards = Discards * scaling_factor_catches,
+               `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
+               Unallocated_Removals = Unallocated_Removals * scaling_factor_catches)
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
@@ -653,12 +721,25 @@ ICES_plot_1 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_2 <- function(df, sagSettings) {
+    
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$UnitOfRecruitment[1] == "") {
+        df$UnitOfRecruitment <- "empty"
+    }
+    
+    # Determine scaling factor based on RecruitmentUnit
+    scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
+    
+  
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp)
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp) %>% 
+        mutate(Recruitment = Recruitment * scaling_factor_recruitment,
+               Low_Recruitment = Low_Recruitment * scaling_factor_recruitment,
+               High_Recruitment = High_Recruitment * scaling_factor_recruitment)
 
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
-
+    
     xmax <- sagSettings2 %>%
         filter(settingKey == 5) %>%
         pull(settingValue) %>%
@@ -800,6 +881,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     
     df3 <- df %>%
         filter(Purpose == "Advice") %>%
+        arrange(Year) %>%
         select(
             c(Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge, Fmanagement, HRMGT, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, FMGT_lower, FMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
@@ -1046,6 +1128,15 @@ ICES_plot_3 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_4 <- function(df, sagSettings) {
+    
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$StockSizeUnits[1] == "") {
+        df$StockSizeUnits <- "empty"
+    }
+    
+    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+    
+
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
     customRefPoint <-
@@ -1058,10 +1149,14 @@ ICES_plot_4 <- function(df, sagSettings) {
     
     df4 <- df %>%
         filter(Purpose == "Advice") %>%
+        arrange(Year) %>%
         select(
             c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
         ) %>%
+        mutate(StockSize = StockSize * scaling_factor_stockSize,
+               Low_StockSize = Low_StockSize * scaling_factor_stockSize,
+               High_StockSize = High_StockSize * scaling_factor_stockSize) %>%
         mutate(segment = cumsum(is.na(StockSize)))
 
 
@@ -1347,7 +1442,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ymax = sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
         )
 
-
+    
     # converting
     fig4 <- ggplotly(p4, tooltip = "text") %>%
         layout(
@@ -1697,11 +1792,23 @@ ICES_plot_6 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_7 <- function(df, sagSettings) {
+
+    # If df$UnitOfRecruitment is empty, set it to NA
+    if (df$UnitOfRecruitment[1] == "") {
+        df$UnitOfRecruitment <- "empty"
+    }
+    
+    # Determine scaling factor based on RecruitmentUnit
+    scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
+    
+  
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
         select(Year, Recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
         drop_na(Recruitment) %>%
+        mutate(Recruitment = Recruitment * scaling_factor_recruitment
+               ) %>%
         ggplot(., aes(x = Year, y = Recruitment, color = AssessmentYear)) +
         geom_line(
             aes(
