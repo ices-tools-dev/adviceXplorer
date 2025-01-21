@@ -903,7 +903,7 @@ ICES_plot_3 <- function(df, sagSettings) {
     if (any(!is.na(df_segments$Low_FishingPressure))) {
         p3 <- p3 +
             geom_ribbon(
-                aes(
+                data = df_segments %>% filter(!is.na(Low_FishingPressure) & !is.na(High_FishingPressure)), aes(
                     ymin = Low_FishingPressure,
                     ymax = High_FishingPressure,
                     fill = ConfidenceIntervalDefinition,
@@ -1055,6 +1055,38 @@ ICES_plot_3 <- function(df, sagSettings) {
                 ))
         }
     
+    diamondYears <-
+        sagSettings3 %>%
+        filter(settingKey == 14) %>%
+        pull(settingValue) %>%
+        str_split(pattern = ",", simplify = TRUE) %>%
+        as.numeric()
+
+    if (any(!is.na(diamondYears))) {
+        p3 <- p3 + geom_point(
+            data = df_segments %>% filter(Year %in% diamondYears),
+            aes(
+                x = Year,
+                y = FishingPressure,
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Estimated fishing pressure: </b>", FishingPressure
+                    ), HTML
+                )
+            ),
+            shape = 23,
+            fill = "#cfcfcf",
+            color = "#ed5f26",
+            size = 2.5,
+            show.legend = FALSE,
+            inherit.aes = FALSE
+        )
+    }
+
+
+
 
     min_year <- min(df_segments$Year[which(!is.na(df_segments$FishingPressure))])
     nullifempty <- function(x) if (length(x) == 0) NULL else x
@@ -1366,7 +1398,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ),
             shape = 23,
             fill = "#cfcfcf",
-            color = "#3aa6ff",
+            color = "#047c6c",
             size = 2.5,
             show.legend = FALSE,
             inherit.aes = FALSE
