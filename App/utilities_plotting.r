@@ -119,7 +119,8 @@ theme_ICES_plots <-
                 "Catches" = "#002b5f",
                 "Industrial Bycatch" = "#00b29d",
                 "Unallocated_Removals" = "#6eb200",
-                "Down-weighted Catches" = "#6eb5d2"
+                "Down-weighted Catches" = "#6eb5d2",
+                "RecreationalCatch" = "#eb5c24"
             )),
             limits,
             scale_y_continuous(
@@ -592,18 +593,91 @@ ICES_plot_1 <- function(df, sagSettings) {
                 
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
     
-    # df <- df %>% left_join(y = additional_LandingData, by = "Year")
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    additionalCustomeSeries <-
+        sagSettings1 %>%
+        filter(settingKey == 43) %>%
+        pull(settingValue) %>%
+        as.numeric() %>% 
+        nullifempty()
+    
+   
 
-    df1 <- df %>%
-        filter(Purpose == "Advice") %>%
-        select(Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp, IBC, Unallocated_Removals) %>%
-        relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
-        rename("Industrial Bycatch" = IBC)  %>% 
-        mutate(Landings = Landings * scaling_factor_catches,
-               Catches = Catches * scaling_factor_catches,
-               Discards = Discards * scaling_factor_catches,
-               `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
-               Unallocated_Removals = Unallocated_Removals * scaling_factor_catches)
+    # df1 <- df %>%
+    #     filter(Purpose == "Advice") %>%
+    #     select(c(Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp, IBC, Unallocated_Removals),
+    #     if (length(additionalCustomeSeries) != 0) c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))) %>%
+    #     relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%        
+    #     rename("Industrial Bycatch" = IBC)  %>% 
+    #     mutate(Landings = Landings * scaling_factor_catches,
+    #            Catches = Catches * scaling_factor_catches,
+    #            Discards = Discards * scaling_factor_catches,
+    #            `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
+    #            Unallocated_Removals = Unallocated_Removals * scaling_factor_catches)
+        
+
+    # if (length(additionalCustomeSeries) != 0) {
+    #     names(df1)[names(df1) == paste0("Custom", additionalCustomeSeries)] <- df1[[paste0("CustomName", additionalCustomeSeries)]][1]
+    #     df1[[paste0("CustomName", additionalCustomeSeries)]] <- NULL
+        
+    # }
+    # Define a function to process and refactor the dataframe
+process_dataframe <- function(df, additionalCustomeSeries, scaling_factor_catches) {
+  # Filter for relevant rows and select initial columns
+  df1 <- df %>%
+    filter(Purpose == "Advice") %>%
+    select(
+      Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp,
+      IBC, Unallocated_Removals,
+      # Dynamically include custom columns if present
+      if (!is.null(additionalCustomeSeries)) {
+        c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+      }
+    ) %>%
+    # Relocate standard columns
+    relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
+    # Rename Industrial Bycatch
+    rename("Industrial Bycatch" = IBC) %>%
+    # Scale numerical columns
+    mutate(
+      Landings = Landings * scaling_factor_catches,
+      Catches = Catches * scaling_factor_catches,
+      Discards = Discards * scaling_factor_catches,
+      `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
+      Unallocated_Removals = Unallocated_Removals * scaling_factor_catches
+    )
+  
+  # Handle custom columns if additionalCustomeSeries is not empty
+  if (!is.null(additionalCustomeSeries)) {
+    for (index in additionalCustomeSeries) {
+      custom_col <- paste0("Custom", index)
+      custom_name_col <- paste0("CustomName", index)
+      
+      # Ensure the custom name column exists and has a non-empty value
+      if (custom_name_col %in% names(df1) && !is.na(df1[[custom_name_col]][1]) && df1[[custom_name_col]][1] != "") {
+        # Rename the custom column using the first value in the corresponding CustomName column
+        new_name <- df1[[custom_name_col]][1]
+        names(df1)[names(df1) == custom_col] <- new_name
+        
+        # Relocate the renamed custom column before Unallocated_Removals
+        df1 <- df1 %>%
+          relocate(all_of(new_name), .before = Unallocated_Removals) 
+        
+        # Multiply the custom column by scaling_factor_catches
+        df1[[new_name]] <- df1[[new_name]] * scaling_factor_catches
+        
+        # Drop the CustomName column
+        df1[[custom_name_col]] <- NULL
+      }
+    }
+  }
+  
+  return(df1)
+}
+
+# Example usage
+df1 <- process_dataframe(df, additionalCustomeSeries, scaling_factor_catches)
+ browser()
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
@@ -662,7 +736,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 
 
 
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
     
     p1 <-
         p1 +
