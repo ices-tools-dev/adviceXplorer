@@ -489,3 +489,61 @@ get_scaling_factor <- function(unit_type, unit_value) {
                            stop("Invalid unit value: choose 'thousands', 'relative', or other valid units"))
   return(scaling_factor)
 }
+
+
+# Define a function to process and refactor the dataframe
+process_dataframe_catches <- function(df, additionalCustomeSeries, scaling_factor_catches) {
+  # Filter for relevant rows and select initial columns
+  df1 <- df %>%
+    filter(Purpose == "Advice") %>%
+    select(
+      Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp,
+      IBC, Unallocated_Removals,
+      # Dynamically include custom columns if present
+      if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+        c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+      }
+    ) %>%
+    # Relocate standard columns
+    relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
+    # Rename Industrial Bycatch
+    rename(
+      "Industrial Bycatch" = IBC,
+      "Unallocated Removals" = Unallocated_Removals
+    ) %>%
+    # Scale numerical columns
+    mutate(
+      Landings = Landings * scaling_factor_catches,
+      Catches = Catches * scaling_factor_catches,
+      Discards = Discards * scaling_factor_catches,
+      `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
+      `Unallocated Removals` = `Unallocated Removals` * scaling_factor_catches
+    )
+
+  # Handle custom columns if additionalCustomeSeries is not empty
+  if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+    for (index in additionalCustomeSeries) {
+      custom_col <- paste0("Custom", index)
+      custom_name_col <- paste0("CustomName", index)
+
+      # Ensure the custom name column exists and has a non-empty value
+      if (custom_name_col %in% names(df1) && !is.na(df1[[custom_name_col]][1]) && df1[[custom_name_col]][1] != "") {
+        # Rename the custom column using the first value in the corresponding CustomName column
+        new_name <- df1[[custom_name_col]][1]
+        names(df1)[names(df1) == custom_col] <- new_name
+
+        # Relocate the renamed custom column before `Unallocated Removals`
+        df1 <- df1 %>%
+          relocate(all_of(new_name), .before = `Unallocated Removals`)
+
+        # Multiply the custom column by scaling_factor_catches
+        df1[[new_name]] <- df1[[new_name]] * scaling_factor_catches
+
+        # Drop the CustomName column
+        df1[[custom_name_col]] <- NULL
+      }
+    }
+  }
+
+  return(df1)
+}

@@ -582,124 +582,48 @@ replace_subscript_symbols <- function(text) {
 #' @export
 #'
 ICES_plot_1 <- function(df, sagSettings) {
-
-
     # If df$UnitOfRecruitment is empty, set it to NA
     if (df$CatchesLandingsUnits[1] == "") {
         df$CatchesLandingsUnits <- "empty"
     }
     scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])
-    
-                
+
+
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
-    
+
     nullifempty <- function(x) if (length(x) == 0) NULL else x
     additionalCustomeSeries <-
         sagSettings1 %>%
         filter(settingKey == 43) %>%
         pull(settingValue) %>%
-        as.numeric() %>% 
+        as.numeric() %>%
         nullifempty()
     
-   
+    
+    df1 <- process_dataframe_catches(df, additionalCustomeSeries, scaling_factor_catches)
 
-    # df1 <- df %>%
-    #     filter(Purpose == "Advice") %>%
-    #     select(c(Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp, IBC, Unallocated_Removals),
-    #     if (length(additionalCustomeSeries) != 0) c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))) %>%
-    #     relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%        
-    #     rename("Industrial Bycatch" = IBC)  %>% 
-    #     mutate(Landings = Landings * scaling_factor_catches,
-    #            Catches = Catches * scaling_factor_catches,
-    #            Discards = Discards * scaling_factor_catches,
-    #            `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
-    #            Unallocated_Removals = Unallocated_Removals * scaling_factor_catches)
-        
-
-    # if (length(additionalCustomeSeries) != 0) {
-    #     names(df1)[names(df1) == paste0("Custom", additionalCustomeSeries)] <- df1[[paste0("CustomName", additionalCustomeSeries)]][1]
-    #     df1[[paste0("CustomName", additionalCustomeSeries)]] <- NULL
-        
-    # }
-    # Define a function to process and refactor the dataframe
-process_dataframe <- function(df, additionalCustomeSeries, scaling_factor_catches) {
-  # Filter for relevant rows and select initial columns
-  df1 <- df %>%
-    filter(Purpose == "Advice") %>%
-    select(
-      Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp,
-      IBC, Unallocated_Removals,
-      # Dynamically include custom columns if present
-      if (!is.null(additionalCustomeSeries)) {
-        c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
-      }
-    ) %>%
-    # Relocate standard columns
-    relocate(c(IBC, Unallocated_Removals), .after = Discards) %>%
-    # Rename Industrial Bycatch
-    rename("Industrial Bycatch" = IBC) %>%
-    # Scale numerical columns
-    mutate(
-      Landings = Landings * scaling_factor_catches,
-      Catches = Catches * scaling_factor_catches,
-      Discards = Discards * scaling_factor_catches,
-      `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
-      Unallocated_Removals = Unallocated_Removals * scaling_factor_catches
-    )
-  
-  # Handle custom columns if additionalCustomeSeries is not empty
-  if (!is.null(additionalCustomeSeries)) {
-    for (index in additionalCustomeSeries) {
-      custom_col <- paste0("Custom", index)
-      custom_name_col <- paste0("CustomName", index)
-      
-      # Ensure the custom name column exists and has a non-empty value
-      if (custom_name_col %in% names(df1) && !is.na(df1[[custom_name_col]][1]) && df1[[custom_name_col]][1] != "") {
-        # Rename the custom column using the first value in the corresponding CustomName column
-        new_name <- df1[[custom_name_col]][1]
-        names(df1)[names(df1) == custom_col] <- new_name
-        
-        # Relocate the renamed custom column before Unallocated_Removals
-        df1 <- df1 %>%
-          relocate(all_of(new_name), .before = Unallocated_Removals) 
-        
-        # Multiply the custom column by scaling_factor_catches
-        df1[[new_name]] <- df1[[new_name]] * scaling_factor_catches
-        
-        # Drop the CustomName column
-        df1[[custom_name_col]] <- NULL
-      }
-    }
-  }
-  
-  return(df1)
-}
-
-# Example usage
-df1 <- process_dataframe(df, additionalCustomeSeries, scaling_factor_catches)
- browser()
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
         pull(settingValue) %>%
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
-    
+
     # Function to check if a column is made up of all NA values
     is_na_column <- function(dataframe, col_name) {
         return(all(is.na(dataframe[, ..col_name])))
     }
 
-    if (is_na_column(df,"Landings")){
+    if (is_na_column(df, "Landings")) {
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
-        gather(type, count, Catches:Unallocated_Removals)
+            gather(type, count, Catches:`Unallocated Removals`)
     } else {
         df1 <- df1 %>%
-        select(-Catches) %>% 
-        gather(type, count, Landings:Unallocated_Removals)
+            select(-Catches) %>%
+            gather(type, count, Landings:`Unallocated Removals`)
     }
-    
+
 
     p1 <- df1 %>%
         ggplot(., aes(
@@ -715,36 +639,36 @@ df1 <- process_dataframe(df, additionalCustomeSeries, scaling_factor_catches)
             )
         )) +
         geom_bar(position = "stack", stat = "identity", data = df1 %>% filter(!Year %in% shadeYears))
-    
+
     if (any(!is.na(shadeYears))) {
-        p1 <- p1 + geom_bar(stat = "identity", 
-                            data = df1 %>% filter(Year %in% shadeYears), 
-                            aes(x = Year, 
-                            y = count, 
-                            fill = "Down-weighted Catches",
-                            text = map(
-                                    paste0(
-                                        "<b>Year: </b>", Year,
-                                        "<br>",
-                                        "<b>Down-weighted or preliminary Catches: </b>", count
-                                    ), HTML
-                                )),
-                            alpha = 0.5, 
-                            show.legend = FALSE, 
-                            inherit.aes = FALSE)
+        p1 <- p1 + geom_bar(
+            stat = "identity",
+            data = df1 %>% filter(Year %in% shadeYears),
+            aes(
+                x = Year,
+                y = count,
+                fill = "Down-weighted Catches",
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>Down-weighted or preliminary Catches: </b>", count
+                    ), HTML
+                )
+            ),
+            alpha = 0.5,
+            show.legend = FALSE,
+            inherit.aes = FALSE
+        )
     }
 
 
-
-    
-    
     p1 <-
         p1 +
         theme_ICES_plots(
             type = "Catches", df,
             title = sagSettings1 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
             ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
-        
         )
 
 
@@ -766,8 +690,8 @@ df1 <- process_dataframe(df, additionalCustomeSeries, scaling_factor_catches)
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        )
+    
     fig1
 }
 
