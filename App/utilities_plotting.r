@@ -1158,40 +1158,87 @@ ICES_plot_3 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_4 <- function(df, sagSettings) {
-    
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
     # If df$UnitOfRecruitment is empty, set it to NA
     if (df$StockSizeUnits[1] == "") {
         df$StockSizeUnits <- "empty"
     }
     
-    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])    
+    # sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+    # # Extract custom reference points
+    # customRefPoint <- sagSettings4 %>%
+    #     filter(settingKey == 51) %>%
+    #     pull(settingValue) %>%
+    #     standardiseRefPoints(.) %>%
+    #     str_split(pattern = ",", simplify = TRUE)
     
+    # # Extract additional custom series
+    # additionalCustomeSeries <- sagSettings4 %>%
+    #     filter(settingKey == 45) %>%
+    #     pull(settingValue) %>%
+    #     as.numeric() %>%
+    #     nullifempty()
+    
+    processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
+    
+#     customRefPoint <-
+#         sagSettings4 %>%
+#         filter(settingKey == 51) %>%
+#         pull(settingValue) %>%
+#         standardiseRefPoints(.) %>%
+#         str_split(pattern = ",", simplify = TRUE)
+    
+    
+#     additionalCustomeSeries <-
+#         sagSettings4 %>%
+#         filter(settingKey == 45) %>%
+#         pull(settingValue) %>%
+#         as.numeric() %>%
+#         nullifempty()
+    
+#     df4 <- df %>%
+#         filter(Purpose == "Advice") %>%
+#         arrange(Year) %>%
+#         select(
+#             c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
+#             if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
+#                 c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+#             },
+#             if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+#                 c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+#             }
+#         ) %>%
+#         mutate(
+#             StockSize = StockSize * scaling_factor_stockSize,
+#             Low_StockSize = Low_StockSize * scaling_factor_stockSize,
+#             High_StockSize = High_StockSize * scaling_factor_stockSize
+#         ) %>%
+#         mutate(segment = cumsum(is.na(StockSize)))
 
-    sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
-    
-    customRefPoint <-
-        sagSettings4 %>%
-        filter(settingKey == 51) %>%
-        pull(settingValue) %>%
-        standardiseRefPoints(.) %>%
-        str_split(pattern = ",", simplify = TRUE)
-    # as.numeric()
-    
-    df4 <- df %>%
-        filter(Purpose == "Advice") %>%
-        arrange(Year) %>%
-        select(
-            c(Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger, Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition, BMGT_lower, BMGT_upper),
-            if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
-        ) %>%
-        mutate(StockSize = StockSize * scaling_factor_stockSize,
-               Low_StockSize = Low_StockSize * scaling_factor_stockSize,
-               High_StockSize = High_StockSize * scaling_factor_stockSize) %>%
-        mutate(segment = cumsum(is.na(StockSize)))
+#     # Handle additional custom series
+#   if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+#     for (index in additionalCustomeSeries) {
+#       custom_col <- paste0("Custom", index)
+#       custom_name_col <- paste0("CustomName", index)
 
+#       # Ensure the custom name column exists and has a valid value
+#       if (custom_name_col %in% names(df4) && !is.na(df4[[custom_name_col]][1]) && nzchar(df4[[custom_name_col]][1])) {
+#         # Rename the custom column using the first value in the corresponding CustomName column
+#         new_name <- df4[[custom_name_col]][1]
+#         names(df4)[names(df4) == custom_col] <- new_name
+
+#         # Drop the CustomName column
+#         df4[[custom_name_col]] <- NULL
+
+#       }
+#       }
+#       }
+
+    
 
     # Filter out rows with NAs and create a segment identifier
-    df_segments <- df4 %>%
+    df_segments <- processed$df4 %>%
         filter(!is.na(StockSize)) %>%
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
@@ -1288,7 +1335,7 @@ ICES_plot_4 <- function(df, sagSettings) {
                 )
             ))
     }
-    if (any(!is.na(df_segments$Bmanagement)) && length(customRefPoint) != 0 && customRefPoint == "Bmanagement") {
+    if (any(!is.na(df_segments$Bmanagement)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "Bmanagement") {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1304,7 +1351,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$BMGT_lower)) && length(customRefPoint) != 0 && customRefPoint == "BMGT_lower") {
+    if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "BMGT_lower") {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1320,7 +1367,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$BMGT_upper)) && length(customRefPoint) != 0 && customRefPoint == "BMGT_upper") {
+    if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "BMGT_upper") {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1337,44 +1384,59 @@ ICES_plot_4 <- function(df, sagSettings) {
     }
 
     # custom reference point 1
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]])) && !all(customRefPoint[1] %in% colnames(df)) && grepl("^[0-5]$", customRefPoint[1])) {
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]])) && !all(processed$customRefPoint[1] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[1])) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]],
-                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
-                colour = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
-                size = df_segments[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]],
+                linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
+                colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
+                size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
                 text = map(
                     paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName",customRefPoint[1])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint[1])]], 1)
+                        "<b>", df_segments[[paste0("CustomRefPointName",processed$customRefPoint[1])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]], 1)
                     ), HTML
                 )
             ))
     }
 
     # custom reference point 2
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]])) && !all(customRefPoint[2] %in% colnames(df)) && grepl("^[0-5]$", customRefPoint[2])) {
+    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]])) && !all(processed$customRefPoint[2] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[2])) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]],
-                linetype = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
-                colour = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
-                size = df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1],
+                y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]],
+                linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
+                colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
+                size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
                 text = map(
                     paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName", customRefPoint[2])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", customRefPoint[2])]], 1)
+                        "<b>", df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]], 1)
+                    ), HTML
+                )
+            ))
+    }
+   
+    # custom data time series
+    if (!is.null(processed$additionalCustomeSeries) && !is.na(processed$additionalCustomeSeries)) {
+        p4 <- p4 +
+            geom_line(data = df_segments, aes(
+                x = Year,
+                y = df_segments[[processed$new_name]] * scaling_factor_stockSize,
+                color = processed$new_name,
+                group = segment,
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>", processed$new_name,": </b>", df_segments[[processed$new_name]]
                     ), HTML
                 )
             ))
     }
 
-    
-
-
     diamondYears <-
-        sagSettings4 %>%
+        processed$sagSettings4 %>%
         filter(settingKey == 14) %>%
         pull(settingValue) %>%
         str_split(pattern = ",", simplify = TRUE) %>%
@@ -1406,7 +1468,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 
     # add average lines
     averageYears <-
-        sagSettings4 %>%
+        processed$sagSettings4 %>%
         filter(settingKey == 46) %>%
         pull(settingValue) %>%
         str_split(",", simplify = TRUE) %>%
@@ -1460,16 +1522,16 @@ ICES_plot_4 <- function(df, sagSettings) {
 
 
     min_year <- min(df_segments$Year[which(!is.na(df_segments$StockSize))])
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
 
     p4 <-
         p4 +
         xlim(min_year, max(df_segments$Year)) +
         theme_ICES_plots(
             type = "StockSize", df_segments,
-            title = sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-            ylegend = sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% replace_subscript_symbols(.) %>% nullifempty(),
-            ymax = sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
+            title = processed$sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+            ylegend = processed$sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% replace_subscript_symbols(.) %>% nullifempty(),
+            ymax = processed$sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
         )
 
     

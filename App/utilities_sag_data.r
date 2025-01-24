@@ -547,3 +547,75 @@ process_dataframe_catches <- function(df, additionalCustomeSeries, scaling_facto
 
   return(df1)
 }
+
+
+process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
+  nullifempty <- function(x) if (length(x) == 0) NULL else x
+  # Filter settings for SAGChartKey 4
+  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+
+  # Extract custom reference points
+  customRefPoint <- sagSettings4 %>%
+    filter(settingKey == 51) %>%
+    pull(settingValue) %>%
+    standardiseRefPoints(.) %>%
+    str_split(pattern = ",", simplify = TRUE)
+
+  # Extract additional custom series
+  additionalCustomeSeries <- sagSettings4 %>%
+    filter(settingKey == 45) %>%
+    pull(settingValue) %>%
+    as.numeric() %>%
+    nullifempty()
+
+  # Process the dataframe
+  df4 <- df %>%
+    filter(Purpose == "Advice") %>%
+    arrange(Year) %>%
+    select(
+      c(
+        Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger,
+        Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition,
+        BMGT_lower, BMGT_upper
+      ),
+      if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
+        c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+      },
+      if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+        c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+      }
+    ) %>%
+    mutate(
+      StockSize = StockSize * scaling_factor_stockSize,
+      Low_StockSize = Low_StockSize * scaling_factor_stockSize,
+      High_StockSize = High_StockSize * scaling_factor_stockSize
+    ) %>%
+    mutate(segment = cumsum(is.na(StockSize)))
+  new_name <- list()
+  # Handle additional custom series
+  if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+    for (index in additionalCustomeSeries) {
+      custom_col <- paste0("Custom", index)
+      custom_name_col <- paste0("CustomName", index)
+
+      # Ensure the custom name column exists and has a valid value
+      if (custom_name_col %in% names(df4) && !is.na(df4[[custom_name_col]][1]) && nzchar(df4[[custom_name_col]][1])) {
+        # Rename the custom column using the first value in the corresponding CustomName column
+        new_name <- df4[[custom_name_col]][1]
+        names(df4)[names(df4) == custom_col] <- new_name
+
+        # Drop the CustomName column
+        df4[[custom_name_col]] <- NULL
+      }
+    }
+  }
+
+  return(list(
+    df4 = df4,
+    sagSettings4 = sagSettings4,
+    customRefPoint = customRefPoint,
+    additionalCustomeSeries = additionalCustomeSeries,
+    new_name = new_name
+  ))
+}
+

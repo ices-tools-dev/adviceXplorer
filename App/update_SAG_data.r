@@ -320,14 +320,16 @@ standardiseRefPoints <- function(totrefpoints) {
     "HR_{mgt}",
     "HR_{mgt}",
     "HR (mgt)",
-    "HR_{MGT}"
+    "HR_{MGT}",
+    "HRmgt"
     
   ))) {
     totrefpoints[totrefpoints %in% c(
       "HR_{mgt}",
       "HR_{mgt}",
       "HR (mgt)",
-      "HR_{MGT}"
+      "HR_{MGT}",
+      "HRmgt"
       
     )] <- "HRMGT"
   }
