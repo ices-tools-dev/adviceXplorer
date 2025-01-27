@@ -549,6 +549,80 @@ process_dataframe_catches <- function(df, additionalCustomeSeries, scaling_facto
 }
 
 
+process_dataframe_F <- function(df, sagSettings) {
+  nullifempty <- function(x) if (length(x) == 0) NULL else x
+  # Filter settings for SAGChartKey 3
+  sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
+
+  # Extract custom reference points
+  customRefPoint <-
+        sagSettings3 %>%
+        filter(settingKey == 51) %>%
+        pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
+        str_split(pattern = ",", simplify = TRUE)
+        # as.numeric()
+
+  # Extract additional custom series
+  additionalCustomeSeries <- sagSettings3 %>%
+    filter(settingKey == 45) %>%
+    pull(settingValue) %>%
+    as.numeric() %>%
+    nullifempty()
+
+  # Process the dataframe
+  df3 <- df %>%
+    filter(Purpose == "Advice") %>%
+    arrange(Year) %>%
+    select(
+      c(
+        Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge,
+        Fmanagement, HRMGT, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, 
+        FMGT_lower, FMGT_upper
+      ),
+      if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
+        c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+      },
+      if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+        c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+      }
+    ) %>%
+   mutate(segment = cumsum(is.na(FishingPressure)))
+   
+   new_name <- list()
+  # Handle additional custom series
+  if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+    for (index in additionalCustomeSeries) {
+      custom_col <- paste0("Custom", index)
+      custom_name_col <- paste0("CustomName", index)
+
+      # Ensure the custom name column exists and has a valid value
+      if (custom_name_col %in% names(df3) && !is.na(df3[[custom_name_col]][1]) && nzchar(df3[[custom_name_col]][1])) {
+        # Rename the custom column using the first value in the corresponding CustomName column
+        new_name <- df3[[custom_name_col]][1]
+        names(df3)[names(df3) == custom_col] <- new_name
+
+        # Drop the CustomName column
+        df3[[custom_name_col]] <- NULL
+      }
+    }
+  }
+
+  return(list(
+    df3 = df3,
+    sagSettings3 = sagSettings3,
+    customRefPoint = customRefPoint,
+    additionalCustomeSeries = additionalCustomeSeries,
+    new_name = new_name
+  ))
+}
+
+
+
+
+
+
+
 process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
   nullifempty <- function(x) if (length(x) == 0) NULL else x
   # Filter settings for SAGChartKey 4
