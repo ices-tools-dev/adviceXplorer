@@ -206,9 +206,9 @@ SAG_plots_1_2_fluid <- function() {
 #' 
 SAG_plots_3_4_fluid <- function() {
   fluidRow(
-    column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),
-    
-    column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+    column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),    
+    column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%"))),
+    column(6, withSpinner(plotlyOutput("customPlot1", height = "100%", width = "100%")))
   )
 }
 ##############################################Quality of assessment tab

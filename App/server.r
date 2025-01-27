@@ -307,6 +307,27 @@ output$download_SAG_Data <- downloadHandler(
   })
 
 
+  # output$conditionalCustomPlot1 <- renderUI({
+  # if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) != 0) {
+    
+  #   # Render the plot output only if data is available
+  #   plotlyOutput("customPlot1")
+  # } else {
+  #   # Otherwise, display a message or leave it blank
+  #   # h4("No custom data available for plotting")
+  # }
+  # })
+  output$customPlot1 <- renderPlotly({
+    # if (!is_empty(sagSettings() %>% filter(SAGChartKey == 15))) {
+    # validate(
+    #   need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
+    #   need(all(!15 %in% drop_plots()), "Figure not included in the published advice for this stock")
+    # )
+    suppressWarnings(ICES_custom_plot_1(SAG_data_reactive(), sagSettings()))
+    # }
+  })
+
+
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
     quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
