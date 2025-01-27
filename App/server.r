@@ -61,10 +61,11 @@ server <- function(input, output, session) {
   ###########################################################  Render stock selection table
 
   res_modo <- reactive({
+    
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-
+    
     if (length(input$selected_locations) > 1) {
       res_mod() %>%
         select(
@@ -75,7 +76,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((AssessmentComponent == "NA"), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -96,7 +97,7 @@ server <- function(input, output, session) {
           "SpeciesCommonName",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((AssessmentComponent == "NA"), "", AssessmentComponent)) %>%
+        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,

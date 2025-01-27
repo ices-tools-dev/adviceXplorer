@@ -309,10 +309,12 @@ standardiseRefPoints <- function(totrefpoints) {
   }
 
   if (any(totrefpoints %in% c(
-    "Fmgt"    
+    "Fmgt",
+    "F_{MGT}"    
   ))) {
     totrefpoints[totrefpoints %in% c(
-      "Fmgt"
+      "Fmgt",
+      "F_{MGT}"
     )] <- "Fmanagement"
   }
 
@@ -320,16 +322,20 @@ standardiseRefPoints <- function(totrefpoints) {
     "HR_{mgt}",
     "HR_{mgt}",
     "HR (mgt)",
-    "HR_{MGT}"
+    "HR_{MGT}",
+    "HRmgt",
+    "HRMGT"
     
   ))) {
     totrefpoints[totrefpoints %in% c(
       "HR_{mgt}",
       "HR_{mgt}",
       "HR (mgt)",
-      "HR_{MGT}"
+      "HR_{MGT}",
+      "HRmgt",
+      "HRMGT"
       
-    )] <- "HRMGT"
+    )] <- "HR<sub>MGT</sub>"
   }
 
   if (any(totrefpoints %in% c(
