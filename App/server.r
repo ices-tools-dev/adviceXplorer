@@ -326,7 +326,15 @@ output$download_SAG_Data <- downloadHandler(
     suppressWarnings(ICES_custom_plot_1(SAG_data_reactive(), sagSettings()))
     # }
   })
-
+output$customPlot2 <- renderPlotly({
+    # if (!is_empty(sagSettings() %>% filter(SAGChartKey == 15))) {
+    # validate(
+    #   need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
+    #   need(all(!15 %in% drop_plots()), "Figure not included in the published advice for this stock")
+    # )
+    suppressWarnings(ICES_custom_plot_2(SAG_data_reactive(), sagSettings()))
+    # }
+  })
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
