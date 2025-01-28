@@ -3018,3 +3018,236 @@ get_scaling_factor <- function(unit_type, unit_value) {
                            stop("Invalid unit value: choose 'thousands', 'relative', or other valid units"))
   return(scaling_factor)
 }
+
+
+
+
+
+# Required Libraries
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(plotly)
+
+# UI
+ui <- page_fillable(
+  theme = bs_theme(bootswatch = "flatly"), # Use a modern theme
+  fillable_row(
+    # Dropdown for selecting which plots to display
+    fillable_column(
+      width = 4,
+      selectInput(
+        inputId = "selected_plots",
+        label = "Select Plots to Display:",
+        choices = c("Plot 1", "Plot 2", "Plot 3"),
+        selected = "Plot 1",
+        multiple = TRUE
+      )
+    )
+  ),
+  fillable_row(
+    # Placeholder for dynamic cards
+    uiOutput("plotCards")
+  )
+)
+
+# Server
+server <- function(input, output, session) {
+  # Define the data and plots dynamically
+  plotData <- reactive({
+    list(
+      "Plot 1" = ggplot(mtcars, aes(mpg, wt)) + 
+        geom_point(color = "blue") + 
+        ggtitle("Scatter Plot: MPG vs Weight"),
+      "Plot 2" = ggplot(mtcars, aes(gear, fill = factor(cyl))) + 
+        geom_bar() + 
+        ggtitle("Bar Plot: Gear by Cylinders"),
+      "Plot 3" = ggplot(mtcars, aes(mpg)) + 
+        geom_histogram(binwidth = 5, fill = "orange") + 
+        ggtitle("Histogram of MPG")
+    )
+  })
+  
+  # Dynamically generate cards for selected plots
+  output$plotCards <- renderUI({
+    req(input$selected_plots) # Ensure plots are selected
+    selectedPlots <- input$selected_plots
+    
+    # Generate a card for each selected plot
+    lapply(selectedPlots, function(plotName) {
+      card(
+        full_screen = TRUE, # Allow card to expand full screen
+        card_header(plotName),
+        card_body(
+          plotlyOutput(outputId = paste0("plot_", plotName))
+        ),
+        card_footer("Footer text (optional)")
+      )
+    })
+  })
+  
+  # Render each plot dynamically based on selection
+  observe({
+    req(input$selected_plots)
+    for (plotName in input$selected_plots) {
+      local({
+        currentPlot <- plotName
+        output[[paste0("plot_", currentPlot)]] <- renderPlotly({
+          ggplotly(plotData()[[currentPlot]]) # Convert ggplot to Plotly
+        })
+      })
+    }
+  })
+}
+
+# Run the App
+shinyApp(ui, server)
+
+
+# Required Libraries
+# Required Libraries
+# Required Libraries
+# Required Libraries
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+# UI
+ui <- fluidPage(
+  theme = bs_theme(bootswatch = "flatly"), # Use a clean Bootstrap theme
+  fluidRow(
+    column(
+      width = 4, # First plot in a responsive column
+      card(
+        card_header("Plot 1: Scatter Plot"),
+        card_body(
+          plotOutput("plot1") # Output for static ggplot
+        )
+      )
+    ),
+    column(
+      width = 4, # Second plot in a responsive column
+      card(
+        card_header("Plot 2: Bar Plot"),
+        card_body(
+          plotOutput("plot2") # Output for static ggplot
+        )
+      )
+    ),
+    column(
+      width = 4, # Third plot in a responsive column
+      card(
+        card_header("Plot 3: Histogram"),
+        card_body(
+          plotOutput("plot3") # Output for static ggplot
+        )
+      )
+    )
+  )
+)
+
+# Server
+server <- function(input, output, session) {
+  # Render Plot 1
+  output$plot1 <- renderPlot({
+    ggplot(mtcars, aes(mpg, wt)) +
+      geom_point(color = "blue") +
+      ggtitle("Scatter Plot: MPG vs Weight")
+  })
+  
+  # Render Plot 2
+  output$plot2 <- renderPlot({
+    ggplot(mtcars, aes(gear, fill = factor(cyl))) +
+      geom_bar() +
+      ggtitle("Bar Plot: Gear by Cylinders")
+  })
+  
+  # Render Plot 3
+  output$plot3 <- renderPlot({
+    ggplot(mtcars, aes(mpg)) +
+      geom_histogram(binwidth = 5, fill = "orange") +
+      ggtitle("Histogram of MPG")
+  })
+}
+
+# Run the App
+shinyApp(ui, server)
+
+
+
+# Required Libraries
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+# UI
+ui <- fluidPage(
+  theme = bs_theme(bootswatch = "flatly"), # Use a modern Bootstrap theme
+  fluidRow(
+    column(
+      width = 12,
+      # Buttons to dynamically add or remove plots
+      actionButton("add_plot", "Add Plot", class = "btn-primary"),
+      actionButton("remove_plot", "Remove Plot", class = "btn-danger"),
+      br(), br()
+    )
+  ),
+  fluidRow(
+    # Dynamic UI for the plots
+    uiOutput("plot_grid")
+  )
+)
+
+# Server
+server <- function(input, output, session) {
+  # Reactive value to store the number of plots
+  num_plots <- reactiveVal(0)
+  
+  # Observe the "Add Plot" button
+  observeEvent(input$add_plot, {
+    num_plots(num_plots() + 1) # Increment the number of plots
+  })
+  
+  # Observe the "Remove Plot" button
+  observeEvent(input$remove_plot, {
+    num_plots(max(0, num_plots() - 1)) # Decrement the number of plots, but not below 0
+  })
+  
+  # Generate dynamic UI for plots
+  output$plot_grid <- renderUI({
+    # Create a responsive grid of plots
+    plot_outputs <- lapply(seq_len(num_plots()), function(i) {
+      column(
+        width = 4, # Each plot gets a column width of 4 (3 per row)
+        card(
+          card_header(paste("Plot", i)),
+          card_body(plotOutput(outputId = paste0("plot_", i))) # Dynamic plot output
+        )
+      )
+    })
+    do.call(fluidRow, plot_outputs) # Wrap all plots in a fluidRow
+  })
+  
+  # Dynamically render each plot
+  observe({
+    lapply(seq_len(num_plots()), function(i) {
+      local({
+        plot_index <- i
+        output[[paste0("plot_", plot_index)]] <- renderPlot({
+          # Generate different plots based on the index
+          ggplot(mtcars, aes(mpg, wt)) +
+            geom_point(color = scales::hue_pal()(num_plots())[plot_index]) +
+            ggtitle(paste("Scatter Plot", plot_index))
+        })
+      })
+    })
+  })
+}
+
+# Run the App
+shinyApp(ui, server)
+
+
+
+
+

@@ -307,33 +307,44 @@ output$download_SAG_Data <- downloadHandler(
   })
 
 
-  # output$conditionalCustomPlot1 <- renderUI({
-  # if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) != 0) {
-    
-  #   # Render the plot output only if data is available
-  #   plotlyOutput("customPlot1")
-  # } else {
-  #   # Otherwise, display a message or leave it blank
-  #   # h4("No custom data available for plotting")
-  # }
-  # })
+  
   output$customPlot1 <- renderPlotly({
-    # if (!is_empty(sagSettings() %>% filter(SAGChartKey == 15))) {
-    # validate(
-    #   need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
-    #   need(all(!15 %in% drop_plots()), "Figure not included in the published advice for this stock")
-    # )
-    suppressWarnings(ICES_custom_plot_1(SAG_data_reactive(), sagSettings()))
-    # }
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
+    } else {
+    # Return NULL if the condition is not met
+    return(NULL)
+  }
   })
 output$customPlot2 <- renderPlotly({
-    # if (!is_empty(sagSettings() %>% filter(SAGChartKey == 15))) {
-    # validate(
-    #   need(SAG_data_reactive()$SSB != "", "SSB not available for this stock"),
-    #   need(all(!15 %in% drop_plots()), "Figure not included in the published advice for this stock")
-    # )
-    suppressWarnings(ICES_custom_plot_2(SAG_data_reactive(), sagSettings()))
-    # }
+  
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 16))
+    } else {
+    # Return NULL if the condition is not met
+    return(NULL)
+  }
+  })
+
+  output$customPlot3 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 17)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 17))
+    } else {
+    # Return NULL if the condition is not met
+    return(NULL)
+  }
+  })
+  output$customPlot4 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 18)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 18))
+    } else {
+    # Return NULL if the condition is not met
+    return(NULL)
+  }
   })
 
 ####################### Quality of assessment data

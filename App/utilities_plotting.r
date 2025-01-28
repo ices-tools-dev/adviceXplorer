@@ -1707,129 +1707,129 @@ ICES_plot_4 <- function(df, sagSettings) {
 #     figC1
 # }
 
-ICES_custom_plot_1 <- function(df, sagSettings) {
-    sagSettings15 <- sagSettings %>% filter(SAGChartKey == 15)
+# ICES_custom_plot_1 <- function(df, sagSettings) {
+#     sagSettings15 <- sagSettings %>% filter(SAGChartKey == 15)
     
-    # Extract custom data and graph type
-    customData <- sagSettings15 %>%
-        filter(settingKey == 44) %>%
-        pull(settingValue) %>%
-        str_split(",", simplify = TRUE) %>%
-        as.numeric()
+#     # Extract custom data and graph type
+#     customData <- sagSettings15 %>%
+#         filter(settingKey == 44) %>%
+#         pull(settingValue) %>%
+#         str_split(",", simplify = TRUE) %>%
+#         as.numeric()
 
-    graphType <- sagSettings15 %>%
-        filter(settingKey == 50) %>%
-        pull(settingValue) %>%
-        str_split(",", simplify = TRUE) %>%
-        as.numeric()
+#     graphType <- sagSettings15 %>%
+#         filter(settingKey == 50) %>%
+#         pull(settingValue) %>%
+#         str_split(",", simplify = TRUE) %>%
+#         as.numeric()
 
-    # Create regex patterns for selecting columns
-    patternValues <- paste0("Custom(", paste(customData, collapse = "|"), ")$")
-    patternNames <- paste0("CustomName(", paste(customData, collapse = "|"), ")$")
+#     # Create regex patterns for selecting columns
+#     patternValues <- paste0("Custom(", paste(customData, collapse = "|"), ")$")
+#     patternNames <- paste0("CustomName(", paste(customData, collapse = "|"), ")$")
 
-    # Select relevant columns
-    selected_data <- df %>%
-        select(c(Year, matches(patternValues), matches(patternNames)))
+#     # Select relevant columns
+#     selected_data <- df %>%
+#         select(c(Year, matches(patternValues), matches(patternNames)))
 
-    custom_cols <- grep("^Custom[0-9]+$", names(selected_data), value = TRUE)
-    custom_name_cols <- grep("^CustomName[0-9]+$", names(selected_data), value = TRUE)
-    custom_cols <- sort(custom_cols)
-    custom_name_cols <- sort(custom_name_cols)
+#     custom_cols <- grep("^Custom[0-9]+$", names(selected_data), value = TRUE)
+#     custom_name_cols <- grep("^CustomName[0-9]+$", names(selected_data), value = TRUE)
+#     custom_cols <- sort(custom_cols)
+#     custom_name_cols <- sort(custom_name_cols)
     
-    # Replace custom column names with extracted names
-    first_col_index <- which(names(selected_data) == custom_name_cols[1])
-    last_col_index <- ncol(selected_data)
-    first_row_values <- selected_data[1, first_col_index:last_col_index]
-    names(selected_data)[which(names(selected_data) %in% custom_cols)] <- as.character(first_row_values)
+#     # Replace custom column names with extracted names
+#     first_col_index <- which(names(selected_data) == custom_name_cols[1])
+#     last_col_index <- ncol(selected_data)
+#     first_row_values <- selected_data[1, first_col_index:last_col_index]
+#     names(selected_data)[which(names(selected_data) %in% custom_cols)] <- as.character(first_row_values)
 
-    # Remove custom name columns and reshape data
-    selected_data <- selected_data %>%
-        select(-custom_name_cols) %>%
-        gather(type, count, -Year)
+#     # Remove custom name columns and reshape data
+#     selected_data <- selected_data %>%
+#         select(-custom_name_cols) %>%
+#         gather(type, count, -Year)
 
-    # Create the plot based on graphType
-    if (graphType == 2 || graphType == 1) {
-        pCustom1 <- ggplot(selected_data, aes(
-        x = Year,
-        y = count,
-        group = type,  # Grouping ensures each 'type' gets a separate line
-        color = type,  # Assigns distinct colors to each category
-        text = paste0(
-            "<b>Year: </b>", Year, "<br>",
-            "<b>", type, ": </b>", count
-        )
-            )) +
-            geom_line(size = 1)  # Adds lines with a specified thickness
+#     # Create the plot based on graphType
+#     if (graphType == 2 || graphType == 1) {
+#         pCustom1 <- ggplot(selected_data, aes(
+#         x = Year,
+#         y = count,
+#         group = type,  # Grouping ensures each 'type' gets a separate line
+#         color = type,  # Assigns distinct colors to each category
+#         text = paste0(
+#             "<b>Year: </b>", Year, "<br>",
+#             "<b>", type, ": </b>", count
+#         )
+#             )) +
+#             geom_line(size = 1)  # Adds lines with a specified thickness
             
-    } else if (graphType == 3) {
-        pCustom1 <- ggplot(selected_data, aes(
-            x = Year,
-            y = count,
-            fill = type,
-            text = paste0(
-                "<b>Year: </b>", Year, "<br>",
-                "<b>", type, ": </b>", count
-            )
-        )) +
-            geom_bar(position = "stack", stat = "identity") +
-            scale_fill_brewer(palette = "Spectral")
-    }
+#     } else if (graphType == 3) {
+#         pCustom1 <- ggplot(selected_data, aes(
+#             x = Year,
+#             y = count,
+#             fill = type,
+#             text = paste0(
+#                 "<b>Year: </b>", Year, "<br>",
+#                 "<b>", type, ": </b>", count
+#             )
+#         )) +
+#             geom_bar(position = "stack", stat = "identity") +
+#             scale_fill_brewer(palette = "Spectral")
+#     }
     
-    # Nullify empty values
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+#     # Nullify empty values
+#     nullifempty <- function(x) if (length(x) == 0) NULL else x
 
-    # Add theme and labels
-    pCustom1 <- pCustom1 +
-        theme_ICES_plots(
-            type = "Custom1", df,
-            title = sagSettings15 %>%
-                filter(settingKey == 1) %>%
-                pull(settingValue) %>%
-                nullifempty(),
-            ylegend = sagSettings15 %>%
-                filter(settingKey == 20) %>%
-                pull(settingValue) %>%
-                as.character() %>%
-                nullifempty(),
-            ymax = sagSettings15 %>%
-                filter(settingKey == 6) %>%
-                pull(settingValue) %>%
-                as.numeric() %>%
-                nullifempty()
-        )
+#     # Add theme and labels
+#     pCustom1 <- pCustom1 +
+#         theme_ICES_plots(
+#             type = "Custom1", df,
+#             title = sagSettings15 %>%
+#                 filter(settingKey == 1) %>%
+#                 pull(settingValue) %>%
+#                 nullifempty(),
+#             ylegend = sagSettings15 %>%
+#                 filter(settingKey == 20) %>%
+#                 pull(settingValue) %>%
+#                 as.character() %>%
+#                 nullifempty(),
+#             ymax = sagSettings15 %>%
+#                 filter(settingKey == 6) %>%
+#                 pull(settingValue) %>%
+#                 as.numeric() %>%
+#                 nullifempty()
+#         )
 
-    # Convert to plotly
-    figC1 <- ggplotly(pCustom1, tooltip = "text") %>%
-        layout(
-            autosize = TRUE,
-            legend = list(
-                itemsizing = "trace",
-                orientation = "h",
-                y = -0.3,
-                yanchor = "bottom",
-                x = 0.5,
-                xanchor = "center",
-                title = list(text = "")
-            ),
-            xaxis = list(zeroline = TRUE),
-            annotations = list(
-                showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
-                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right"
-            )
-        )
+#     # Convert to plotly
+#     figC1 <- ggplotly(pCustom1, tooltip = "text") %>%
+#         layout(
+#             autosize = TRUE,
+#             legend = list(
+#                 itemsizing = "trace",
+#                 orientation = "h",
+#                 y = -0.3,
+#                 yanchor = "bottom",
+#                 x = 0.5,
+#                 xanchor = "center",
+#                 title = list(text = "")
+#             ),
+#             xaxis = list(zeroline = TRUE),
+#             annotations = list(
+#                 showarrow = FALSE,
+#                 text = tail(df$SAGStamp, 1),
+#                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+#                 yref = "paper", y = 1, xref = "paper", x = 1,
+#                 yanchor = "right", xanchor = "right"
+#             )
+#         )
 
-    # Clean legend names
-    for (i in seq_along(figC1$x$data)) {
-        if (!is.null(figC1$x$data[[i]]$name)) {
-            figC1$x$data[[i]]$name <- gsub("\\(", "", str_split(figC1$x$data[[i]]$name, ",")[[1]][1])
-        }
-    }
+#     # Clean legend names
+#     for (i in seq_along(figC1$x$data)) {
+#         if (!is.null(figC1$x$data[[i]]$name)) {
+#             figC1$x$data[[i]]$name <- gsub("\\(", "", str_split(figC1$x$data[[i]]$name, ",")[[1]][1])
+#         }
+#     }
 
-    figC1
-}
+#     figC1
+# }
 
 
 # ICES_custom_plot_2 <- function(df, sagSettings) {
@@ -1968,17 +1968,17 @@ ICES_custom_plot_1 <- function(df, sagSettings) {
 #     figC2
 # }
 
-ICES_custom_plot_2 <- function(df, sagSettings) {
-    sagSettings16 <- sagSettings %>% filter(SAGChartKey == 16)
-
+ICES_custom_plot <- function(df, sagSettings, ChartKey) {
+    sagSettingsCustom <- sagSettings %>% filter(SAGChartKey == ChartKey)
+   
     # Extract custom data and graph type
-    customData <- sagSettings16 %>%
+    customData <- sagSettingsCustom %>%
         filter(settingKey == 44) %>%
         pull(settingValue) %>%
         str_split(",", simplify = TRUE) %>%
         as.numeric()
 
-    graphType <- sagSettings16 %>%
+    graphType <- sagSettingsCustom %>%
         filter(settingKey == 50) %>%
         pull(settingValue) %>%
         as.numeric()
@@ -2027,8 +2027,12 @@ ICES_custom_plot_2 <- function(df, sagSettings) {
     # Initialize base plot
     pCustom2 <- ggplot(selected_data_wide, aes(x = Year))
 
-    # Logic for graphType == 2
-    if (graphType == 2) {
+
+    # Logic for graphType == 1 (Standard line plot)
+    if (graphType == 1) {
+        pCustom2 <- pCustom2 +
+            geom_line(aes(y = Series1, color = series_names[1]), size = 1)
+    } else if (graphType == 2) {
         if (num_series == 2) {
             # Two data series → plot as two lines
             pCustom2 <- pCustom2 +
@@ -2040,36 +2044,33 @@ ICES_custom_plot_2 <- function(df, sagSettings) {
                 geom_ribbon(aes(ymin = Series2, ymax = Series3, fill = "Range"), alpha = 0.4) +
                 geom_line(aes(y = Series1, color = "Middle"), size = 1)
         }
-    }
-
-    # Logic for graphType == 1 (Standard line plot)
-    if (graphType == 1) {
-        pCustom2 <- pCustom2 +
-            geom_line(aes(y = Series2, color = "Middle"), size = 1)
-    }
-    
-    # Logic for graphType == 3 (Bar plot)
-    if (graphType == 3) {
+    } else if (graphType == 3) {
         pCustom2 <- pCustom2 +
             geom_bar(data = selected_data, aes(y = count, fill = type), position = "stack", stat = "identity") +
-            scale_fill_brewer(palette = "Spectral")
+            scale_fill_manual(values = c("#fda500", "#002b5f", "#00b29d", "#6eb200", "#6eb5d2", "#eb5c24"))
     }
+
+    
+    browser()
+    # Logic for graphType == 3 (Bar plot)
+    
+    
     # Nullify empty values
     nullifempty <- function(x) if (length(x) == 0) NULL else x
     # Add themes and labels
      pCustom2 <- pCustom2 +
         theme_ICES_plots(
             type = "Custom1", df,
-            title = sagSettings16 %>%
+            title = sagSettingsCustom %>%
                 filter(settingKey == 1) %>%
                 pull(settingValue) %>%
                 nullifempty(),
-            ylegend = sagSettings16 %>%
+            ylegend = sagSettingsCustom %>%
                 filter(settingKey == 20) %>%
                 pull(settingValue) %>%
                 as.character() %>%
                 nullifempty(),
-            ymax = sagSettings16 %>%
+            ymax = sagSettingsCustom %>%
                 filter(settingKey == 6) %>%
                 pull(settingValue) %>%
                 as.numeric() %>%
