@@ -283,7 +283,8 @@ theme_ICES_plots <-
                 "BMGT<sub>lower</sub>" = .8,
                 "BMGT<sub>upper</sub>" = .8
                             )),
-            scale_fill_manual(values = c("#94b0a9")),
+            scale_fill_manual(values = c("#94b0a9","#689dff","#769b8b")),
+            # add custom scale for marker size
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
@@ -302,10 +303,10 @@ theme_ICES_plots <-
         # suffix <- scaling$suffix
         
         if (is.null(title)) {
-          title <- "Catches"
+          title <- ""
         }
         if (is.null(ylegend)) {
-          ylegend <- paste0("Catches (", suffix, ")")
+          ylegend <- ""
         }
 
         # if (is.null(ymax)) {
@@ -1252,7 +1253,7 @@ ICES_plot_4 <- function(df, sagSettings) {
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
 
-    browser()
+    
     p4 <- df_segments %>%
         ggplot(., aes(x = Year, y = StockSize))
     
@@ -1312,12 +1313,13 @@ ICES_plot_4 <- function(df, sagSettings) {
     #     ))
     # p4 <- p4 +
     #     geom_errorbar(data = df_segments[df_segments$show_error, ], aes(
-    #         x = Year,
+            
     #         y = StockSize,
     #         ymin = Low_StockSize,
     #         ymax = High_StockSize,
     #         color = "StockSize",
     #         group = segment,
+    #         orientation = "y",
     #         text = map(
     #             paste0(
     #                 "<b>Year: </b>", Year,
@@ -1327,9 +1329,7 @@ ICES_plot_4 <- function(df, sagSettings) {
     #         )
     #     ))
 
-# geom_point(aes(y = Series1, color = series_names[1]), size = 2, data = selected_data_wide[selected_data_wide$show_error, ]) +
-# geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
-                
+              
     if (any(!is.na(df_segments$MSYBtrigger))) {
         p4 <- p4 +
             geom_line(aes(
@@ -1666,6 +1666,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     
     # Select relevant columns
     selected_data <- df %>%
+        arrange(Year) %>%
         select(c(Year, matches(patternValues), matches(patternNames)))
         # mutate(segment = cumsum(is.na(matches(patternValues))))
     
@@ -1720,8 +1721,9 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
             segment = cumsum(is.na(Series1)),
             is_single_value_in_segment = ave(!is.na(Series1), segment, FUN = function(x) sum(x) == 1),
             show_error = !is.na(Series1) & is_single_value_in_segment
-        )
-        
+        ) %>% 
+        na.omit()
+    
     # Initialize base plot
     pCustom <- ggplot(selected_data_wide, aes(x = Year))
 
@@ -1741,12 +1743,11 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
                 geom_line(aes(y = Series2, color = series_names[2]))
         } else if (num_series == 3) {
             # Three data series → plot ribbon (shaded area) with middle line
-
             pCustom <- pCustom +
                 geom_ribbon(aes(ymin = Series2, ymax = Series3, fill = "Range", group = segment), alpha = 0.4) +      
-                geom_line(aes(y = Series1, color = series_names[1])) +
-                geom_point(aes(y = Series1, color = series_names[1]), size = 2, data = selected_data_wide[selected_data_wide$show_error, ]) +
-                geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
+                geom_line(aes(y = Series1, color = series_names[1], group = segment)) #+
+                # geom_point(aes(y = Series1, color = series_names[1]), size = 2, data = selected_data_wide[selected_data_wide$show_error, ]) +
+                # geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
                 
         }
     # Logic for graphType == 3 (Bar plot)
