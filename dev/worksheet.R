@@ -3251,5 +3251,62 @@ shinyApp(ui, server)
 
 
 
+library(shiny)
 
+ui <- fluidPage(
+  titlePanel("Dynamic Plot Layout"),
+  fluidRow(
+    uiOutput("dynamicPlots")  # UI output for dynamic rendering
+  )
+)
 
+server <- function(input, output, session) {
+  # Sample data: Some datasets might be NULL (representing missing plots)
+  dataset_list <- list(
+    data1 = mtcars,   # Available
+    data2 = iris,     # Not available
+    data3 = iris,     # Available
+    data4 = mtcars,   # Available
+    data5 = iris      # Available
+  )
+
+  output$dynamicPlots <- renderUI({
+    available_plots <- names(dataset_list)[sapply(dataset_list, function(x) !is.null(x))]
+
+    if (length(available_plots) == 0) {
+      return(h3("No data available for plotting."))
+    }
+
+    # Create dynamic rows with max 2 plots per row
+    plot_list <- lapply(seq(1, length(available_plots), by = 2), function(i) {
+      row_content <- list()
+      row_content[[1]] <- column(6, plotOutput(paste0("plot_", available_plots[i])))
+
+      if (i + 1 <= length(available_plots)) {  # Check if there is a second plot for this row
+        row_content[[2]] <- column(6, plotOutput(paste0("plot_", available_plots[i + 1])))
+      }
+
+      do.call(fluidRow, row_content)  # Wrap each row in fluidRow
+    })
+
+    do.call(tagList, plot_list)  # Return all rows
+  })
+
+  # Dynamically render plots based on available data
+  observe({
+    for (name in names(dataset_list)) {
+      local({
+        dataset <- dataset_list[[name]]
+        plot_id <- paste0("plot_", name)
+
+        output[[plot_id]] <- renderPlot({
+          if (!is.null(dataset)) {
+            plot(dataset[, 1], dataset[, 2], main = paste("Plot for", name))
+          }
+        })
+      })
+    }
+  })
+}
+
+shinyApp(ui, server)
