@@ -957,6 +957,7 @@ ICES_plot_3 <- function(df, sagSettings) {
                     )
                 ),
                 linetype = "blank",
+                alpha = 0.8,
                 size = 0
             )
     }
@@ -1278,6 +1279,7 @@ ICES_plot_4 <- function(df, sagSettings) {
                     )
                 ),
                 linetype = "blank",
+                alpha = 0.8,
                 size = 0
             )
     }
@@ -1730,31 +1732,121 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     # Logic for graphType == 1 (Standard line plot)
     if (graphType == 1) {
         pCustom <- pCustom +
-            geom_line(aes(x = Year, y = Series1, color = series_names[1]))
+            geom_line(aes(
+                x = Year,
+                y = Series1,
+                color = series_names[1],
+                group = segment,
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>", series_names[1], ": </b>", Series1
+                    ), HTML
+                )
+            ))
     } else if (graphType == 2) {
         if (num_series == 1) {
             # Single data series → plot as line
             pCustom <- pCustom +
-                geom_line(aes(y = Series1, color = series_names[1]))
+                geom_line(aes(
+                    y = Series1,
+                    color = series_names[1],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[1], ": </b>", Series1
+                        ), HTML
+                    )
+                ))
         } else if (num_series == 2) {
             # Two data series → plot as two lines
             pCustom <- pCustom +
-                geom_line(aes(y = Series1, color = series_names[1])) +
-                geom_line(aes(y = Series2, color = series_names[2]))
+                geom_line(aes(
+                    y = Series1,
+                    color = series_names[1],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[1], ": </b>", Series1
+                        ), HTML
+                    )
+                )) +
+                geom_line(aes(
+                    y = Series2,
+                    color = series_names[2],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[2], ": </b>", Series2
+                        ), HTML
+                    )
+                ))
         } else if (num_series == 3) {
             # Three data series → plot ribbon (shaded area) with middle line
             pCustom <- pCustom +
-                geom_ribbon(aes(ymin = Series2, ymax = Series3, fill = "Range", group = segment), alpha = 0.4) +      
-                geom_line(aes(y = Series1, color = series_names[1], group = segment)) #+
-                # geom_point(aes(y = Series1, color = series_names[1]), size = 2, data = selected_data_wide[selected_data_wide$show_error, ]) +
-                # geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
-                
+                geom_ribbon(
+                    aes(
+                        ymin = Series2,
+                        ymax = Series3,
+                        fill = "sd",
+                        group = segment,
+                        text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>High ", series_names[3],": </b>", Series3,
+                            "<br>",
+                            "<b>Low", series_names[2],": </b>", Series2
+                        ), HTML
+                    )
+                    ),
+                    alpha = 0.4
+                ) +
+                geom_line(aes(
+                    y = Series1,
+                    color = series_names[1],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[1], ": </b>", Series1
+                        ), HTML
+                    )
+                )) #+
+            # geom_point(aes(y = Series1, color = series_names[1]), size = 2, data = selected_data_wide[selected_data_wide$show_error, ]) +
+            # geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
         }
-    # Logic for graphType == 3 (Bar plot)
+        # Logic for graphType == 3 (Bar plot)
     } else if (graphType == 3) {
+        pCustom <- ggplot(selected_data, aes(
+            x = Year,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", type, ": </b>", count
+                ), HTML
+            )
+        ))
+
         pCustom <- pCustom +
-            geom_bar(data = selected_data, aes(y = count, fill = type), position = "stack", stat = "identity")
-            
+            geom_bar(
+                data = selected_data,
+                aes(
+                    y = count,
+                    fill = type,
+                ),
+                position = "stack",
+                stat = "identity"
+            )
     }
     
     # custom reference point 1
