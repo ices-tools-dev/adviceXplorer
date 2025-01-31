@@ -285,8 +285,7 @@ output$download_SAG_Data <- downloadHandler(
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock") # ,
-      # need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock")      
     )
     if (is.null(sagSettings() %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
       suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
@@ -297,8 +296,7 @@ output$download_SAG_Data <- downloadHandler(
   
   output$plot3 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")#,
-      # need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")      
     )
 if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
@@ -309,8 +307,7 @@ if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 
   
   output$plot4 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")#,
-      # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")      
       
     )
 if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
@@ -319,16 +316,13 @@ if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 
       return(NULL)
     }
   })
-
-
   
   output$customPlot1 <- renderPlotly({
     
     if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
     
     suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
-    } else {
-    # Return NULL if the condition is not met
+    } else {    
     return(NULL)
   }
   })
@@ -337,8 +331,7 @@ output$customPlot2 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
     
     suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 16))
-    } else {
-    # Return NULL if the condition is not met
+    } else {    
     return(NULL)
   }
   })
@@ -347,8 +340,7 @@ output$customPlot2 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 17)) >= 1) {
     
     suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 17))
-    } else {
-    # Return NULL if the condition is not met
+    } else {    
     return(NULL)
   }
   })
@@ -356,8 +348,7 @@ output$customPlot2 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 18)) >= 1) {
     
     suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 18))
-    } else {
-    # Return NULL if the condition is not met
+    } else {    
     return(NULL)
   }
   })
