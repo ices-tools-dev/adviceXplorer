@@ -698,3 +698,4 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
   ))
 }
 
+nullifempty <- function(x) if (length(x) == 0) NULL else x

@@ -3264,7 +3264,7 @@ server <- function(input, output, session) {
   # Sample data: Some datasets might be NULL (representing missing plots)
   dataset_list <- list(
     data1 = mtcars,   # Available
-    data2 = iris,     # Not available
+    data2 = NULL,     # Not available
     data3 = iris,     # Available
     data4 = mtcars,   # Available
     data5 = iris      # Available

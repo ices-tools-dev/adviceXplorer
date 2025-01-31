@@ -272,20 +272,27 @@ output$download_SAG_Data <- downloadHandler(
 ######################### Stock development over time plots
 
   output$plot1 <- renderPlotly({
-     validate(
-      need(c(SAG_data_reactive()$Landings,SAG_data_reactive()$Catches) != "", "Landings not available for this stock")#,
+    validate(
+      need(c(SAG_data_reactive()$Landings, SAG_data_reactive()$Catches) != "", "Landings not available for this stock") # ,
       # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
-
-})
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 1) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
+  })
 
   output$plot2 <- renderPlotly({
     validate(
-      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock")#,
+      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock") # ,
       # need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
   })
   
   output$plot3 <- renderPlotly({
@@ -293,8 +300,11 @@ output$download_SAG_Data <- downloadHandler(
       need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")#,
       # need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-
+if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
   })
   
   output$plot4 <- renderPlotly({
@@ -303,12 +313,17 @@ output$download_SAG_Data <- downloadHandler(
       # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
       
     )
+if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
     suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
   })
 
 
   
   output$customPlot1 <- renderPlotly({
+    
     if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
     
     suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))

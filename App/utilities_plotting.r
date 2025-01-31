@@ -1299,20 +1299,20 @@ ICES_plot_4 <- function(df, sagSettings) {
             )
         ))
     
-    # p4 <- p4 +
-    #     geom_point(data = df_segments[df_segments$show_error, ], aes(
-    #         x = Year,
-    #         y = StockSize,
-    #         color = "StockSize",
-    #         group = segment,
-    #         text = map(
-    #             paste0(
-    #                 "<b>Year: </b>", Year,
-    #                 "<br>",
-    #                 "<b>", StockSizeDescription,": </b>", StockSize
-    #             ), HTML
-    #         )
-    #     ))
+    p4 <- p4 +
+        geom_point(data = df_segments[df_segments$show_error, ], aes(
+            x = Year,
+            y = StockSize,
+            color = "StockSize",
+            group = segment,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", StockSizeDescription,": </b>", StockSize
+                ), HTML
+            )
+        ))
     # p4 <- p4 +
     #     geom_errorbar(data = df_segments[df_segments$show_error, ], aes(
             
