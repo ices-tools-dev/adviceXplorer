@@ -404,24 +404,48 @@ output$customPlot2 <- renderPlotly({
 
 #### this function is used to replace N.A. with NA in the assessment component, it's just a placeholder
 # until I fix the ASD package 
+# replace_na_with_na_string <- function(assessment_component) {
+#   if (assessment_component == "NA") {
+#     return("N.A.")
+#   } else {
+#     return(assessment_component)
+#   }
+# }
+# ##### ASD info
+# advice_view_info <- reactive({
+#   browser()
+#   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
+#   if (!is_empty(asd_record)) {
+#     asd_record <- asd_record %>% filter(
+#       adviceViewPublished == TRUE,
+#       adviceStatus == "Advice",
+#       adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
+#     )
+#   }
+# })
 replace_na_with_na_string <- function(assessment_component) {
-  if (assessment_component == "NA") {
+  if (is.na(assessment_component) || assessment_component == "NA") {
     return("N.A.")
   } else {
     return(assessment_component)
   }
 }
-##### ASD info
+
 advice_view_info <- reactive({
+  
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
+  
   if (!is_empty(asd_record)) {
+    target_component <- replace_na_with_na_string(query$assessmentcomponent)
+    
     asd_record <- asd_record %>% filter(
       adviceViewPublished == TRUE,
       adviceStatus == "Advice",
-      adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
+      adviceComponent == target_component | (is.na(adviceComponent) & target_component == "N.A.")
     )
   }
 })
+
 
 
 ##### ASD info previous year
