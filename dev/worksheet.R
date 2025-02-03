@@ -3310,3 +3310,65 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+
+library(shiny)
+library(plotly)
+library(dplyr)
+
+ui <- fluidPage(
+  titlePanel("Dynamic Plot Layout"),
+  fluidRow(
+    uiOutput("dynamicPlots")  # UI output for dynamic rendering
+  )
+)
+
+server <- function(input, output, session) {
+  # Define a list of plot output IDs
+  plot_outputs <- list("customPlot1", "customPlot2", "customPlot3", "customPlot4", "customPlot5")
+
+  # Example renderPlotly outputs (Replace with your real logic)
+  output$customPlot1 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
+    } else {
+      return(NULL)
+    }
+  })
+
+  output$customPlot2 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 20)) >= 1) {
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 20))
+    } else {
+      return(NULL)
+    }
+  })
+
+  # More plots following the same logic...
+  
+  output$dynamicPlots <- renderUI({
+    # Filter valid plots (not NULL)
+    valid_plots <- plot_outputs[sapply(plot_outputs, function(p) !is.null(output[[p]]))]
+
+    if (length(valid_plots) == 0) {
+      return(h3("No plots available."))
+    }
+
+    # Create dynamic rows with max 2 plots per row
+    plot_list <- lapply(seq(1, length(valid_plots), by = 2), function(i) {
+      row_content <- list()
+      row_content[[1]] <- column(6, plotlyOutput(valid_plots[i]))
+
+      if (i + 1 <= length(valid_plots)) {
+        row_content[[2]] <- column(6, plotlyOutput(valid_plots[i + 1]))
+      }
+
+      do.call(fluidRow, row_content)
+    })
+
+    do.call(tagList, plot_list)  # Return all rows
+  })
+}
+
+shinyApp(ui, server)

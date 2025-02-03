@@ -123,13 +123,16 @@ navbarPage(
             header_info_and_headline("stock_infos1", "Advice_Headline1"),
             sidebarPanel(
              width = 12,
-            SAG_plots_1_2_fluid(),
-            br(),
-            SAG_plots_3_4_fluid(),
-            br(),
-            SAG_plots_custom_1_2_fluid(),
-            br(),
-            SAG_plots_custom_3_4_fluid()
+            fluidRow(
+                uiOutput("dynamicPlots")  # UI output for dynamic rendering
+            )
+            # SAG_plots_1_2_fluid(),
+            # br(),
+            # SAG_plots_3_4_fluid(),
+            # br(),
+            # SAG_plots_custom_1_2_fluid(),
+            # br(),
+            # SAG_plots_custom_3_4_fluid()
             )
             ),
 

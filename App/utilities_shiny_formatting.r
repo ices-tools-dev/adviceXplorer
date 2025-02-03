@@ -228,6 +228,10 @@ SAG_plots_custom_3_4_fluid <- function() {
     column(6, withSpinner(plotlyOutput("customPlot4", height = "100%", width = "100%")))
   )
 }
+
+
+
+
 ##############################################Quality of assessment tab
 
 #' Creates the UI element of the quality of assessment plots

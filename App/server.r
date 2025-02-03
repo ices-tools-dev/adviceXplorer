@@ -270,6 +270,23 @@ output$download_SAG_Data <- downloadHandler(
   )
 
 ######################### Stock development over time plots
+  valid_plots <- reactiveValues(active = c())
+
+  observe({
+    browser()
+    active_plots <- c()  # Temporary list to store valid plots
+    data <- req(SAG_data_reactive()) # Wait for both to be available
+    # Check for plot1 conditions
+    landings_available <- !all(SAG_data_reactive()$Landings == "") && !all(SAG_data_reactive()$Catches == "")
+    setting_condition <- is.null(sagSettings() %>% filter(SAGChartKey == 1, settingKey == 22) %>% pull(settingValue) %>% nullifempty())
+
+    if (landings_available && setting_condition) {
+      active_plots <- c(active_plots, "plot1")
+    }
+
+    valid_plots$active <- active_plots  # Update reactive list
+    browser()
+  })
 
   output$plot1 <- renderPlotly({
     validate(
@@ -277,6 +294,7 @@ output$download_SAG_Data <- downloadHandler(
       # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
     if (is.null(sagSettings() %>% filter(SAGChartKey == 1) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "plot1")))
       suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
     } else {
       return(NULL)
@@ -284,10 +302,11 @@ output$download_SAG_Data <- downloadHandler(
   })
 
   output$plot2 <- renderPlotly({
-    validate(
-      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock")      
-    )
+    # validate(
+    #   need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock")      
+    # )
     if (is.null(sagSettings() %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "plot2")))
       suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
     } else {
       return(NULL)
@@ -295,64 +314,87 @@ output$download_SAG_Data <- downloadHandler(
   })
   
   output$plot3 <- renderPlotly({
-    validate(
-      need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")      
-    )
-if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-    suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
+    # validate(
+    #   need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")
+    # )
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "plot3")))
+      suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
     } else {
       return(NULL)
     }
   })
   
   output$plot4 <- renderPlotly({
-    validate(
-      need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")      
-      
-    )
-if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-    suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
+    # validate(
+    #   need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")
+
+    # )
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "plot4")))
+      suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
     } else {
       return(NULL)
     }
   })
   
   output$customPlot1 <- renderPlotly({
-    
     if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
-    } else {    
-    return(NULL)
-  }
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "customPlot1")))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
+    } else {
+      return(NULL)
+    }
   })
-output$customPlot2 <- renderPlotly({
-  
+  output$customPlot2 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 16))
-    } else {    
-    return(NULL)
-  }
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "customPlot2")))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 16))
+    } else {
+      return(NULL)
+    }
   })
 
   output$customPlot3 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 17)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 17))
-    } else {    
-    return(NULL)
-  }
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "customPlot3")))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 17))
+    } else {
+      return(NULL)
+    }
   })
   output$customPlot4 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 18)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 18))
-    } else {    
-    return(NULL)
-  }
+      # isolate(valid_plots$active <- unique(c(valid_plots$active, "customPlot4")))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 18))
+    } else {
+      return(NULL)
+    }
   })
 
+
+  output$dynamicPlots <- renderUI({
+    # Get active (valid) plots
+    valid_ids <- isolate(valid_plots$active)
+    
+    if (length(valid_ids) == 0) {
+      return(h3("No plots available."))
+    }
+
+    # Create dynamic rows with max 2 plots per row
+    plot_list <- lapply(seq(1, length(valid_ids), by = 2), function(i) {
+      row_content <- list()
+      row_content[[1]] <- column(6, plotlyOutput(valid_ids[i]))
+
+      if (i + 1 <= length(valid_ids)) {
+        row_content[[2]] <- column(6, plotlyOutput(valid_ids[i + 1]))
+      }
+
+      do.call(fluidRow, row_content)
+    })
+
+    do.call(tagList, plot_list)  # Return all rows
+  })
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
     quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
