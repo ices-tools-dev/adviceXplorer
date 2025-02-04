@@ -1825,7 +1825,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
             # geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
         }
         # Logic for graphType == 3 (Bar plot)
-    } else if (graphType == 3) {        
+    } else if (graphType == 3 || graphType == 4) {        
 
         # Determine scaling based on Recruitment values
         if (df$CatchesLandingsUnits[1] == "") {
