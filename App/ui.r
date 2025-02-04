@@ -42,6 +42,7 @@ library(ggthemes)
 
 
 
+
 ########## Load utilities ############
 source("utilities_help.r")
 source("utilities_SID_data.r")
@@ -124,7 +125,11 @@ navbarPage(
              width = 12,
             SAG_plots_1_2_fluid(),
             br(),
-            SAG_plots_3_4_fluid()
+            SAG_plots_3_4_fluid(),
+            br(),
+            SAG_plots_custom_1_2_fluid(),
+            br(),
+            SAG_plots_custom_3_4_fluid()
             )
             ),
 

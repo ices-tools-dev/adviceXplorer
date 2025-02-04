@@ -24,7 +24,8 @@
 #'
 theme_ICES_plots <-
   function(
-    type = c("Catches", "Recruitment", "FishingPressure", "StockSize", "quality_SSB", "quality_F", "quality_R"), df,
+    type = c("Catches", "Recruitment", "FishingPressure", "StockSize","Custom1", 
+    "quality_SSB", "quality_F", "quality_R"), df,
     title = NULL, ylegend = NULL, ymax = NULL) {
     font <- "Gothic A1, sans-serif"#"Calibri, sans-serif" # assign font family up front
     tmp <- theme_minimal() %+replace% # replace elements we want to change
@@ -85,7 +86,6 @@ theme_ICES_plots <-
         )
 
     if (type == "Catches") {
-
         # Determine scaling factor based on StockSizeUnits
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
@@ -283,13 +283,69 @@ theme_ICES_plots <-
                 "BMGT<sub>lower</sub>" = .8,
                 "BMGT<sub>upper</sub>" = .8
                             )),
-            scale_fill_manual(values = c("#94b0a9")),
+            scale_fill_manual(values = c("#94b0a9","#689dff","#769b8b")),
+            # add custom scale for marker size
             limits,
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
             ),
              scale_x_continuous(breaks = breaks_pretty())
+        )
+
+    } else if (type == "Custom1") {
+        # Determine scaling factor based on StockSizeUnits
+        # scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
+        
+        # # Determine scaling based on Recruitment values
+        # scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        # divisor <- scaling$divisor
+        # suffix <- scaling$suffix
+        
+        if (is.null(title)) {
+          title <- ""
+        }
+        if (is.null(ylegend)) {
+          ylegend <- ""
+        }
+
+        # if (is.null(ymax)) {
+        #   limits <- expand_limits(y = 0)
+        # } else {
+        #   limits <- expand_limits(y = c(0, ymax))
+        # }
+        
+        theme_ICES_plots <- list(
+            tmp,
+            labs(
+                title = title,
+                y = ylegend
+            ),
+            scale_fill_manual(values = c("#fda500", 
+                                            "#002b5f", 
+                                            "#00b29d", 
+                                            "#6eb200", 
+                                            "#6eb5d2", 
+                                            "#eb5c24")),
+            scale_linetype_manual(values = c("solid", 
+                                            "dashed", 
+                                            "dotted", 
+                                            "dotdash", 
+                                            "longdash", 
+                                            "twodash")),
+            scale_size_manual(values = c(1, 
+                                        .8, 
+                                        .8, 
+                                        .8, 
+                                        .8, 
+                                        .8))
+            # scale_fill_manual(values = scales::hue_pal()(length(unique(selected_data$type))))
+            # limits
+            # scale_y_continuous(
+            #     expand = expansion(mult = c(0, 0.1)),
+            #     labels = function(l) l / divisor # Scale labels dynamically
+            # ),
+            #  scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "quality_SSB") {
 
@@ -901,6 +957,7 @@ ICES_plot_3 <- function(df, sagSettings) {
                     )
                 ),
                 linetype = "blank",
+                alpha = 0.8,
                 size = 0
             )
     }
@@ -1197,7 +1254,7 @@ ICES_plot_4 <- function(df, sagSettings) {
         group_by(segment) %>%
         mutate(start = first(Year), end = last(Year))
 
-
+    
     p4 <- df_segments %>%
         ggplot(., aes(x = Year, y = StockSize))
     
@@ -1222,6 +1279,7 @@ ICES_plot_4 <- function(df, sagSettings) {
                     )
                 ),
                 linetype = "blank",
+                alpha = 0.8,
                 size = 0
             )
     }
@@ -1240,8 +1298,40 @@ ICES_plot_4 <- function(df, sagSettings) {
                 ), HTML
             )
         ))
+    
+    p4 <- p4 +
+        geom_point(data = df_segments[df_segments$show_error, ], aes(
+            x = Year,
+            y = StockSize,
+            color = "StockSize",
+            group = segment,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", StockSizeDescription,": </b>", StockSize
+                ), HTML
+            )
+        ))
+    # p4 <- p4 +
+    #     geom_errorbar(data = df_segments[df_segments$show_error, ], aes(
+            
+    #         y = StockSize,
+    #         ymin = Low_StockSize,
+    #         ymax = High_StockSize,
+    #         color = "StockSize",
+    #         group = segment,
+    #         orientation = "y",
+    #         text = map(
+    #             paste0(
+    #                 "<b>Year: </b>", Year,
+    #                 "<br>",
+    #                 "<b>", StockSizeDescription,": </b>", StockSize
+    #             ), HTML
+    #         )
+    #     ))
 
-
+              
     if (any(!is.na(df_segments$MSYBtrigger))) {
         p4 <- p4 +
             geom_line(aes(
@@ -1542,6 +1632,318 @@ ICES_plot_4 <- function(df, sagSettings) {
 
 
     fig4
+}
+
+
+ICES_custom_plot <- function(df, sagSettings, ChartKey) {
+    sagSettingsCustom <- sagSettings %>% filter(SAGChartKey == ChartKey)
+   
+    # Extract custom data and graph type
+    customData <- sagSettingsCustom %>%
+        filter(settingKey == 44) %>%
+        pull(settingValue) %>%
+        str_split(",", simplify = TRUE) %>%
+        as.numeric()
+
+    # Extract custom reference points
+    customRefPoint <-
+        sagSettingsCustom %>%
+        filter(settingKey == 51) %>%
+        pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
+        str_split(pattern = ",", simplify = TRUE) %>% 
+        as.numeric()
+    
+
+    graphType <- sagSettingsCustom %>%
+        filter(settingKey == 50) %>%
+        pull(settingValue) %>%
+        as.numeric()
+
+    # Create regex patterns for selecting columns
+    patternValues <- paste0("Custom(", paste(customData, collapse = "|"), ")$")
+    patternNames <- paste0("CustomName(", paste(customData, collapse = "|"), ")$")
+    patternValuesRefPoint <- paste0("CustomRefPointValue(", paste(customRefPoint, collapse = "|"), ")$")
+    patternNamesRefPoint <- paste0("CustomRefPointName(", paste(customRefPoint, collapse = "|"), ")$")
+    
+    # Select relevant columns
+    selected_data <- df %>%
+        arrange(Year) %>%
+        select(c(Year, matches(patternValues), matches(patternNames)))
+        # mutate(segment = cumsum(is.na(matches(patternValues))))
+    
+    custom_cols <- grep("^Custom[0-9]+$", names(selected_data), value = TRUE)
+    custom_name_cols <- grep("^CustomName[0-9]+$", names(selected_data), value = TRUE)
+    # custom_cols_ref <- grep("^CustomRefPointValue[0-9]+$", names(selected_data), value = TRUE)
+    # custom_name_cols_ref <- grep("^CustomRefPointName[0-9]+$", names(selected_data), value = TRUE)
+    
+    custom_cols <- sort(custom_cols)
+    custom_name_cols <- sort(custom_name_cols)
+
+    # Replace custom column names with extracted names
+    first_col_index <- which(names(selected_data) == custom_name_cols[1])
+    last_col_index <- ncol(selected_data)
+    first_row_values <- selected_data[1, first_col_index:last_col_index]
+    names(selected_data)[which(names(selected_data) %in% custom_cols)] <- as.character(first_row_values)
+
+    # Remove custom name columns and reshape data
+    selected_data <- selected_data %>%
+        select(-custom_name_cols) %>%
+        gather(type, count, -Year)
+    
+    # Include reference points in the plot
+    ref_points <- df %>% select(Year, matches(patternValuesRefPoint),matches(patternNamesRefPoint))  %>% 
+        filter(Year >= min(selected_data$Year[which(!is.na(selected_data$count))]))
+    
+    # Determine the number of series available
+    num_series <- length(unique(selected_data$type))
+
+    # Reshape data to wide format for easier series management
+    selected_data_wide <- selected_data %>%
+        spread(type, count)
+        
+    
+    # Dynamically rename columns for clarity
+    series_names <- colnames(selected_data_wide)[-1] # Exclude 'Year' column
+    
+    if (num_series == 1) {
+        names(selected_data_wide)[2] <- "Series1"        
+    }
+    if (num_series >= 2) {
+        names(selected_data_wide)[2] <- "Series1"
+        names(selected_data_wide)[3] <- "Series2"
+    }
+    if (num_series == 3) {
+        names(selected_data_wide)[4] <- "Series3"
+    }
+    
+    # Add segment column to identify single data points
+    selected_data_wide <- selected_data_wide %>%
+        mutate(
+            segment = cumsum(is.na(Series1)),
+            is_single_value_in_segment = ave(!is.na(Series1), segment, FUN = function(x) sum(x) == 1),
+            show_error = !is.na(Series1) & is_single_value_in_segment
+        ) %>% 
+        na.omit()
+    
+    # Initialize base plot
+    pCustom <- ggplot(selected_data_wide, aes(x = Year))
+
+    # Logic for graphType == 1 (Standard line plot)
+    if (graphType == 1) {
+        pCustom <- pCustom +
+            geom_line(aes(
+                x = Year,
+                y = Series1,
+                color = series_names[1],
+                group = segment,
+                text = map(
+                    paste0(
+                        "<b>Year: </b>", Year,
+                        "<br>",
+                        "<b>", series_names[1], ": </b>", Series1
+                    ), HTML
+                )
+            ))
+    } else if (graphType == 2) {
+        if (num_series == 1) {
+            # Single data series → plot as line
+            pCustom <- pCustom +
+                geom_line(aes(
+                    y = Series1,
+                    color = series_names[1],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[1], ": </b>", Series1
+                        ), HTML
+                    )
+                ))
+        } else if (num_series == 2) {
+            # Two data series → plot as two lines
+            pCustom <- pCustom +
+                geom_line(aes(
+                    y = Series1,
+                    color = series_names[1],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[1], ": </b>", Series1
+                        ), HTML
+                    )
+                )) +
+                geom_line(aes(
+                    y = Series2,
+                    color = series_names[2],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[2], ": </b>", Series2
+                        ), HTML
+                    )
+                ))
+        } else if (num_series == 3) {
+            # Three data series → plot ribbon (shaded area) with middle line
+            pCustom <- pCustom +
+                geom_ribbon(
+                    aes(
+                        ymin = Series2,
+                        ymax = Series3,
+                        fill = "sd",
+                        group = segment,
+                        text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>High ", series_names[3],": </b>", Series3,
+                            "<br>",
+                            "<b>Low", series_names[2],": </b>", Series2
+                        ), HTML
+                    )
+                    ),
+                    alpha = 0.4
+                ) +
+                geom_line(aes(
+                    y = Series1,
+                    color = series_names[1],
+                    group = segment,
+                    text = map(
+                        paste0(
+                            "<b>Year: </b>", Year,
+                            "<br>",
+                            "<b>", series_names[1], ": </b>", Series1
+                        ), HTML
+                    )
+                )) #+
+            # geom_point(aes(y = Series1, color = series_names[1]), size = 2, data = selected_data_wide[selected_data_wide$show_error, ]) +
+            # geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
+        }
+        # Logic for graphType == 3 (Bar plot)
+    } else if (graphType == 3) {        
+
+        # Determine scaling based on Recruitment values
+        if (df$CatchesLandingsUnits[1] == "") {
+            df$CatchesLandingsUnits <- "empty"
+        }
+        scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
+        
+        
+        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
+        pCustom <- ggplot(selected_data, aes(
+            x = Year,
+            text = map(
+                paste0(
+                    "<b>Year: </b>", Year,
+                    "<br>",
+                    "<b>", type, ": </b>", count
+                ), HTML
+            )
+        ))
+
+        pCustom <- pCustom +
+            geom_bar(
+                data = selected_data,
+                aes(
+                    y = count,
+                    fill = type,
+                ),
+                position = "stack",
+                stat = "identity"
+                
+            ) +
+            scale_y_continuous(
+                expand = expansion(mult = c(0, 0.1)),
+                labels = function(l) l / divisor #divisor # Scale labels dynamically
+            )
+    }
+    
+    # custom reference point 1
+    if (any(!is.na(ref_points[[paste0("CustomRefPointValue", customRefPoint[1])]])) && !all(customRefPoint[1] %in% colnames(df)) && grepl("^[0-5]$", customRefPoint[1])) {
+        pCustom <- pCustom +
+            geom_line(data = ref_points, aes(
+                x = Year,
+                y = ref_points[[paste0("CustomRefPointValue", customRefPoint[1])]],
+                linetype = ref_points[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                colour = ref_points[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                size = ref_points[[paste0("CustomRefPointName", customRefPoint[1])]][1],
+                text = map(
+                    paste0(
+                        "<b>", ref_points[[paste0("CustomRefPointName",customRefPoint[1])]][1], ": </b>", tail(ref_points[[paste0("CustomRefPointValue", customRefPoint[1])]], 1)
+                    ), HTML
+                )
+            ))
+    }
+    
+    
+    
+    
+    # Nullify empty values
+    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    # Add themes and labels
+     pCustom <- pCustom +
+        xlim(min(selected_data$Year[which(!is.na(selected_data$count))]), max(selected_data$Year)) +
+        theme_ICES_plots(
+            type = "Custom1", df,
+            title = sagSettingsCustom %>%
+                filter(settingKey == 1) %>%
+                pull(settingValue) %>%
+                nullifempty(),
+            ylegend = sagSettingsCustom %>%
+                filter(settingKey == 20) %>%
+                pull(settingValue) %>%
+                as.character() %>%
+                nullifempty(),
+            ymax = sagSettingsCustom %>%
+                filter(settingKey == 6) %>%
+                pull(settingValue) %>%
+                as.numeric() %>%
+                nullifempty()
+        )
+
+    # Convert to plotly for interactivity
+    figC2 <- ggplotly(pCustom, tooltip = "text") %>%
+        layout(
+            autosize = TRUE,
+            legend = list(
+                itemsizing = "trace",
+                orientation = "h",
+                y = -0.3,
+                yanchor = "bottom",
+                x = 0.5,
+                xanchor = "center",
+                title = list(text = "")
+            ),
+            xaxis = list(zeroline = TRUE),
+            yaxis = list(
+                rangemode='tozero',
+                zeroline = TRUE
+            ),
+            annotations = list(
+                showarrow = FALSE,
+                text = tail(df$SAGStamp, 1),
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1, xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right"
+            )
+        )
+
+    # Clean legend names
+    for (i in seq_along(figC2$x$data)) {
+        if (!is.null(figC2$x$data[[i]]$name)) {
+            figC2$x$data[[i]]$name <- gsub("\\(", "", str_split(figC2$x$data[[i]]$name, ",")[[1]][1])
+        }
+    }
+
+    return(figC2)
 }
 
 

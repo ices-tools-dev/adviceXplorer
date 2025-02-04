@@ -57,7 +57,7 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #'
 #' @export
 get_Advice_View_Headline <- function(catch_scenario_list, SAGLinktoAdvice, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
-
+  
   catch_scenario_advice_sentence <- HTML(
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",

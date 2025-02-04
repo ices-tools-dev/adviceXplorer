@@ -272,40 +272,90 @@ output$download_SAG_Data <- downloadHandler(
 ######################### Stock development over time plots
 
   output$plot1 <- renderPlotly({
-     validate(
-      need(c(SAG_data_reactive()$Landings,SAG_data_reactive()$Catches) != "", "Landings not available for this stock")#,
+    
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 1) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+      need(c(SAG_data_reactive()$Landings, SAG_data_reactive()$Catches) != "", "") # ,
       # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
-
-})
+      suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
+  })
 
   output$plot2 <- renderPlotly({
-    validate(
-      need(SAG_data_reactive()$Recruitment != "", "Recruitment not available for this stock")#,
-      # need(all(!c(0, 2) %in% drop_plots()), "Figure not included in the published advice for this stock")
+    
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+      need(SAG_data_reactive()$Recruitment != "", "")      
     )
-    suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
+      suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
   })
   
   output$plot3 <- renderPlotly({
-    validate(
-      need(SAG_data_reactive()$FishingPressure != "", "FishingPressure not available for this stock")#,
-      # need(all(!c(0, 3) %in% drop_plots()), "Figure not included in the published advice for this stock")
+    
+if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+  validate(
+      need(SAG_data_reactive()$FishingPressure != "", "")      
     )
-
     suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
   })
   
   output$plot4 <- renderPlotly({
-    validate(
-      need(SAG_data_reactive()$StockSize != "", "StockSize not available for this stock")#,
-      # need(all(!c(0,4) %in% drop_plots()), "Figure not included in the published advice for this stock")
+    
+if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+  validate(
+      need(SAG_data_reactive()$StockSize != "", "")      
       
     )
     suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
+    } else {
+      return(NULL)
+    }
+  })
+  
+  output$customPlot1 <- renderPlotly({
+    
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
+    } else {    
+    return(NULL)
+  }
+  })
+output$customPlot2 <- renderPlotly({
+  
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 16))
+    } else {    
+    return(NULL)
+  }
   })
 
+  output$customPlot3 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 17)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 17))
+    } else {    
+    return(NULL)
+  }
+  })
+  output$customPlot4 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 18)) >= 1) {
+    
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 18))
+    } else {    
+    return(NULL)
+  }
+  })
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
@@ -358,24 +408,48 @@ output$download_SAG_Data <- downloadHandler(
 
 #### this function is used to replace N.A. with NA in the assessment component, it's just a placeholder
 # until I fix the ASD package 
+# replace_na_with_na_string <- function(assessment_component) {
+#   if (assessment_component == "NA") {
+#     return("N.A.")
+#   } else {
+#     return(assessment_component)
+#   }
+# }
+# ##### ASD info
+# advice_view_info <- reactive({
+#   browser()
+#   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
+#   if (!is_empty(asd_record)) {
+#     asd_record <- asd_record %>% filter(
+#       adviceViewPublished == TRUE,
+#       adviceStatus == "Advice",
+#       adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
+#     )
+#   }
+# })
 replace_na_with_na_string <- function(assessment_component) {
-  if (assessment_component == "NA") {
+  if (is.na(assessment_component) || assessment_component == "NA") {
     return("N.A.")
   } else {
     return(assessment_component)
   }
 }
-##### ASD info
+
 advice_view_info <- reactive({
+  
   asd_record <- getAdviceViewRecord(assessmentKey = query$assessmentkey)
+  
   if (!is_empty(asd_record)) {
+    target_component <- replace_na_with_na_string(query$assessmentcomponent)
+    
     asd_record <- asd_record %>% filter(
       adviceViewPublished == TRUE,
       adviceStatus == "Advice",
-      adviceComponent == replace_na_with_na_string(query$assessmentcomponent)
+      adviceComponent == target_component | (is.na(adviceComponent) & target_component == "N.A.")
     )
   }
 })
+
 
 
 ##### ASD info previous year

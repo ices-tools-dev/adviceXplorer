@@ -664,7 +664,12 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
       Low_StockSize = Low_StockSize * scaling_factor_stockSize,
       High_StockSize = High_StockSize * scaling_factor_stockSize
     ) %>%
-    mutate(segment = cumsum(is.na(StockSize)))
+    mutate(
+      segment = cumsum(is.na(StockSize)),
+      is_single_value_in_segment = ave(!is.na(StockSize), segment, FUN = function(x) sum(x) == 1),
+      show_error = !is.na(StockSize) & is_single_value_in_segment
+    )
+
   new_name <- list()
   # Handle additional custom series
   if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
@@ -693,3 +698,4 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
   ))
 }
 
+nullifempty <- function(x) if (length(x) == 0) NULL else x
