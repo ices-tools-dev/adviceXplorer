@@ -175,13 +175,13 @@ SAG_plots_right_panel <- function() {
 #'
 #' @export
 #' 
-SAG_plots_1_2_fluid <- function() {
-  fluidRow(
-    column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),
+# SAG_plots_1_2_fluid <- function() {
+#   fluidRow(
+#     column(6, withSpinner(plotlyOutput("plot1", height = "100%", width = "100%"))),
     
-    column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
-  )
-}
+#     column(6, withSpinner(plotlyOutput("plot2", height = "100%", width = "100%")))
+#   )
+# }
 
 #' Creates the UI element of the right panel of the "Stock dev over time" tab,
 #' which includes the F and SSB.
@@ -204,30 +204,30 @@ SAG_plots_1_2_fluid <- function() {
 #'
 #' @export
 #' 
-SAG_plots_3_4_fluid <- function() {
-  fluidRow(
-    column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),    
-    column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
+# SAG_plots_3_4_fluid <- function() {
+#   fluidRow(
+#     column(6, withSpinner(plotlyOutput("plot3", height = "100%", width = "100%"))),    
+#     column(6, withSpinner(plotlyOutput("plot4", height = "100%", width = "100%")))
 
-  )
-}
+#   )
+# }
 
 
-SAG_plots_custom_1_2_fluid <- function() {
-  fluidRow(
-    column(6, withSpinner(plotlyOutput("customPlot1", height = "100%", width = "100%"))),
-    column(6, withSpinner(plotlyOutput("customPlot2", height = "100%", width = "100%")))
+# SAG_plots_custom_1_2_fluid <- function() {
+#   fluidRow(
+#     column(6, withSpinner(plotlyOutput("customPlot1", height = "100%", width = "100%"))),
+#     column(6, withSpinner(plotlyOutput("customPlot2", height = "100%", width = "100%")))
     
-  )
-}
+#   )
+# }
 
-SAG_plots_custom_3_4_fluid <- function() {
-  fluidRow(
+# SAG_plots_custom_3_4_fluid <- function() {
+#   fluidRow(
     
-    column(6, withSpinner(plotlyOutput("customPlot3", height = "100%", width = "100%"))),
-    column(6, withSpinner(plotlyOutput("customPlot4", height = "100%", width = "100%")))
-  )
-}
+#     column(6, withSpinner(plotlyOutput("customPlot3", height = "100%", width = "100%"))),
+#     column(6, withSpinner(plotlyOutput("customPlot4", height = "100%", width = "100%")))
+#   )
+# }
 
 
 
@@ -259,24 +259,24 @@ quality_of_assessment <- function(){
     cellWidths = c("33%", "33%", "33%"),
     cellArgs = list(style = "padding: 6px"),
     panel(
-      title = "5",
+      title = "9",
       fillPage(
-        tags$style(type = "text/css", "#plot5  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
-        withSpinner(plotlyOutput("plot5", height = "100%", width = "100%"))
+        tags$style(type = "text/css", "#plot9  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+        withSpinner(plotlyOutput("plot9", height = "100%", width = "100%"))
       )
     ),
     panel(
-      title = "6",
+      title = "10",
       fillPage(
-        tags$style(type = "text/css", "#plot6  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
-        withSpinner(plotlyOutput("plot6", height = "100%", width = "100%"))
+        tags$style(type = "text/css", "#plot10  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+        withSpinner(plotlyOutput("plot10", height = "100%", width = "100%"))
       )
     ),
     panel(
-      title = "7",
+      title = "11",
       fillPage(
-        tags$style(type = "text/css", "#plot7  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
-        withSpinner(plotlyOutput("plot7", height = "100%", width = "100%"))
+        tags$style(type = "text/css", "#plot11  overflow-y: auto; !important;}"), # {height: calc(5vh - 10px); width:calc(100vw - 10px)
+        withSpinner(plotlyOutput("plot11", height = "100%", width = "100%"))
       )
     )
   )
