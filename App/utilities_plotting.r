@@ -1825,7 +1825,19 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
             # geom_errorbar(aes(y = Series1, ymin = Series2, ymax = Series3, color = series_names[1]), width = 0.2, data = selected_data_wide[selected_data_wide$show_error, ])
         }
         # Logic for graphType == 3 (Bar plot)
-    } else if (graphType == 3) {
+    } else if (graphType == 3) {        
+
+        # Determine scaling based on Recruitment values
+        if (df$CatchesLandingsUnits[1] == "") {
+            df$CatchesLandingsUnits <- "empty"
+        }
+        scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
+        
+        
+        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        divisor <- scaling$divisor
+        suffix <- scaling$suffix
+
         pCustom <- ggplot(selected_data, aes(
             x = Year,
             text = map(
@@ -1846,6 +1858,11 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
                 ),
                 position = "stack",
                 stat = "identity"
+                
+            ) +
+            scale_y_continuous(
+                expand = expansion(mult = c(0, 0.1)),
+                labels = function(l) l / divisor #divisor # Scale labels dynamically
             )
     }
     
