@@ -42,9 +42,53 @@ update_SID <- function(year) {
     stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent), stock_list_long, by = "StockKeyLabel", all = TRUE) %>%
         select(!AssessmentKey.y) %>%
         rename(AssessmentKey = AssessmentKey.x)
-    # some tidying up and adding description
+    
+    
+    # # Loop through each row and update AssessmentKey if necessary
+    # for (i in 1:nrow(stock_list_long)) {
+    #     if (is.na(stock_list_long$AssessmentKey[i]) &&
+    #         !is.na(stock_list_long$YearOfLastAssessment[i]) &&
+    #         stock_list_long$YearOfLastAssessment[i] != 0) {
+    #         # Find the assessment key
+    #         assessment_key <- icesSAG::findAssessmentKey(
+    #             stock_list_long$StockKeyLabel[i],
+    #             year = stock_list_long$YearOfLastAssessment[i]
+    #         )
+
+    #         # Check if the assessment key is valid before assigning
+    #         if (length(assessment_key) > 0) {
+    #             stock_list_long$AssessmentKey[i] <- assessment_key
+    #         }
+    #     }
+    # }
+
+
+    # Filter rows where AssessmentKey is NA and YearOfLastAssessment is not NA or 0
+    valid_rows <- which(is.na(stock_list_long$AssessmentKey) &
+        !is.na(stock_list_long$YearOfLastAssessment) &
+        stock_list_long$YearOfLastAssessment != 0)
+
+    # Find assessment keys for valid rows
+    assessment_keys <- sapply(valid_rows, function(i) {
+        icesSAG::findAssessmentKey(stock_list_long$StockKeyLabel[i],
+            year = stock_list_long$YearOfLastAssessment[i]
+        )
+    })
+
+    # Assign valid assessment keys back to the data frame
+    valid_keys <- sapply(assessment_keys, length) > 0
+    stock_list_long$AssessmentKey[valid_rows[valid_keys]] <- unlist(assessment_keys[valid_keys])
     stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
 
+    # the following line find the last assessment year for each stock, just fill in assessment keys that are NA, when possible
+    # stock_list_long <- stock_list_long %>%
+    #     mutate(AssessmentKey = case_when(
+    #         is.na(AssessmentKey) & !is.na(YearOfLastAssessment) & YearOfLastAssessment != 0 ~
+    #             icesSAG::findAssessmentKey(StockKeyLabel, year = YearOfLastAssessment),
+    #         TRUE ~ AssessmentKey
+    #     )) %>%
+    #     drop_na(AssessmentKey)
+    
     stock_list_long <- stock_list_long %>%
         dplyr::mutate(
             stock_location = parse_location_from_stock_description(StockKeyDescription)

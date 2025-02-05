@@ -40,7 +40,7 @@ stock_selection_left_side <- function() {
       ),
     virtualSelectInput(
       inputId = "selected_years",
-      label = "Assessment Year:",
+      label = "Active year:",
       choices = Years$Year,
       selected = 2024,
       multiple = FALSE,
