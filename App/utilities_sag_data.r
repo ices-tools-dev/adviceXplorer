@@ -448,7 +448,7 @@ get_link_replaced_advice <- function(StockKeyLabel,year) {
 
 
 get_scaling <- function(values, scaling_factor, type = "default") {
-  max_val <- max(values, na.rm = TRUE) * scaling_factor # Find max value
+  max_val <- as.numeric(max(values, na.rm = TRUE)) * scaling_factor # Find max value
   order <- floor(log10(max_val)) # Find order of magnitude
   
   suffix <- switch(type,
@@ -494,10 +494,11 @@ get_scaling_factor <- function(unit_type, unit_value) {
 # Define a function to process and refactor the dataframe
 process_dataframe_catches <- function(df, additionalCustomeSeries, scaling_factor_catches) {
   # Filter for relevant rows and select initial columns
+  
   df1 <- df %>%
     filter(Purpose == "Advice") %>%
     select(
-      Year, Landings, Catches, Discards, CatchesLandingsUnits, SAGStamp,
+      Year, Landings, Catches, Discards, CatchesLandingsUnits, #SAGStamp,
       IBC, Unallocated_Removals,
       # Dynamically include custom columns if present
       if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
@@ -513,11 +514,12 @@ process_dataframe_catches <- function(df, additionalCustomeSeries, scaling_facto
     ) %>%
     # Scale numerical columns
     mutate(
-      Landings = Landings * scaling_factor_catches,
-      Catches = Catches * scaling_factor_catches,
-      Discards = Discards * scaling_factor_catches,
-      `Industrial Bycatch` = `Industrial Bycatch` * scaling_factor_catches,
-      `Unallocated Removals` = `Unallocated Removals` * scaling_factor_catches
+      Year = as.numeric(Year),
+      Landings = as.numeric(Landings) * scaling_factor_catches,
+      Catches = as.numeric(Catches) * scaling_factor_catches,
+      Discards = as.numeric(Discards) * scaling_factor_catches,
+      `Industrial Bycatch` = as.numeric(`Industrial Bycatch`) * scaling_factor_catches,
+      `Unallocated Removals` = as.numeric(`Unallocated Removals`) * scaling_factor_catches
     )
 
   # Handle custom columns if additionalCustomeSeries is not empty
@@ -577,7 +579,7 @@ process_dataframe_F <- function(df, sagSettings) {
     select(
       c(
         Year, FishingPressure, Low_FishingPressure, High_FishingPressure, Flim, Fpa, FMSY, FAge,
-        Fmanagement, HRMGT, FishingPressureDescription, SAGStamp, ConfidenceIntervalDefinition, 
+        Fmanagement, HRMGT, FishingPressureDescription,  ConfidenceIntervalDefinition, #SAGStamp,
         FMGT_lower, FMGT_upper
       ),
       if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
@@ -649,7 +651,7 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
     select(
       c(
         Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger,
-        Bmanagement, StockSizeDescription, StockSizeUnits, SAGStamp, ConfidenceIntervalDefinition,
+        Bmanagement, StockSizeDescription, StockSizeUnits,  ConfidenceIntervalDefinition, #SAGStamp,
         BMGT_lower, BMGT_upper
       ),
       if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
@@ -660,9 +662,9 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
       }
     ) %>%
     mutate(
-      StockSize = StockSize * scaling_factor_stockSize,
-      Low_StockSize = Low_StockSize * scaling_factor_stockSize,
-      High_StockSize = High_StockSize * scaling_factor_stockSize
+      StockSize = as.numeric(StockSize) * scaling_factor_stockSize,
+      Low_StockSize = as.numeric(Low_StockSize) * scaling_factor_stockSize,
+      High_StockSize = as.numeric(High_StockSize) * scaling_factor_stockSize
     ) %>%
     mutate(
       segment = cumsum(is.na(StockSize)),
@@ -699,3 +701,55 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
 }
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+
+
+
+getSAGData <- function(assessmentKey) {
+  # Download the SAG data
+  # assessmentKey <- findAssessmentKey(stock_code, year = YearOfLastAssessment)
+  summary <- StockDownload(assessmentKey) %>%
+    # select(-AssessmentComponent, -Purpose, -AssessmentYear, -StockDescription) %>%
+    # change AssessmentKey to integer
+    mutate(AssessmentKey = as.integer(AssessmentKey)) %>%
+    # left_join(sag, by = c("StockKeyLabel", "AssessmentKey")) %>%
+    mutate(across(
+      c(
+        CustomRefPointName1,
+        CustomRefPointName2,
+        CustomRefPointName3,
+        CustomRefPointName4,
+        CustomRefPointName5
+      ), standardiseRefPoints
+    ))
+ 
+  refpts <- FishStockReferencePoints(assessmentKey)
+  refpts <- refpts %>% mutate(across(
+    c(
+      CustomRefPointName1,
+      CustomRefPointName2,
+      CustomRefPointName3,
+      CustomRefPointName4,
+      CustomRefPointName5
+    ), standardiseRefPoints
+  ))
+
+  # Perform the merge with suffixes to handle duplicate column names
+  sagMerged <- merge(summary, refpts, by = "AssessmentKey", suffixes = c(".summary", ""))
+
+  # Select only the columns from summary
+  sagMerged <- sagMerged[, !grepl(".summary$", names(sagMerged))]
+
+  return(sagMerged)
+  
+}
+# getSAGData("agn.27.nea", 2024)
+
+is_na_column <- function(dataframe, col_name) {
+  # Ensure col_name is treated as a string and extract column correctly
+  if (!col_name %in% names(dataframe)) {
+    stop("Column not found in dataframe")
+  }
+  
+  return(all(is.na(dataframe[[col_name]])))
+}

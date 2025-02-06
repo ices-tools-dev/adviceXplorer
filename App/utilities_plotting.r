@@ -90,7 +90,7 @@ theme_ICES_plots <-
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        scaling <- get_scaling(as.numeric(c(df$Catches, df$Landings, df$Discards)), scaling_factor_catches, type = "catches")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
         
@@ -104,7 +104,7 @@ theme_ICES_plots <-
         if (is.null(ymax)) {
           limits <- expand_limits(y = 0)
         } else {
-          limits <- expand_limits(y = c(0, ymax))
+          limits <- expand_limits(y = c(0, as.numeric(ymax)))
         }
         
         theme_ICES_plots <- list(
@@ -647,7 +647,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    # nullifempty <- function(x) if (length(x) == 0) NULL else x
     additionalCustomeSeries <-
         sagSettings1 %>%
         filter(settingKey == 43) %>%
@@ -657,7 +657,7 @@ ICES_plot_1 <- function(df, sagSettings) {
     
     
     df1 <- process_dataframe_catches(df, additionalCustomeSeries, scaling_factor_catches)
-
+    
 
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
@@ -665,10 +665,10 @@ ICES_plot_1 <- function(df, sagSettings) {
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
 
-    # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, ..col_name])))
-    }
+    # # Function to check if a column is made up of all NA values
+    # is_na_column <- function(dataframe, col_name) {
+    #     return(all(is.na(dataframe[, ..col_name])))
+    # }
 
     if (is_na_column(df, "Landings")) {
         # df1$Landings <- df1$Catches
@@ -727,7 +727,7 @@ ICES_plot_1 <- function(df, sagSettings) {
             ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
         )
 
-
+    
     # converting
     fig1 <- ggplotly(p1, tooltip = "text") %>%
         layout(
@@ -738,14 +738,14 @@ ICES_plot_1 <- function(df, sagSettings) {
                 x = 0.5,
                 xanchor = "center",
                 title = list(text = "")
-            ),
-            annotations = list(
-                showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
-                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right"
-            )
+            )#,
+            # annotations = list(
+            #     showarrow = FALSE,
+            #     # text = tail(df$SAGStamp, 1),
+            #     font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+            #     yref = "paper", y = 1, xref = "paper", x = 1,
+            #     yanchor = "right", xanchor = "right"
+            # )
         )
     
     fig1
@@ -787,7 +787,7 @@ ICES_plot_2 <- function(df, sagSettings) {
   
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp) %>% 
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge) %>% #, SAGStamp
         mutate(Recruitment = Recruitment * scaling_factor_recruitment,
                Low_Recruitment = Low_Recruitment * scaling_factor_recruitment,
                High_Recruitment = High_Recruitment * scaling_factor_recruitment)
@@ -888,7 +888,7 @@ ICES_plot_2 <- function(df, sagSettings) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1192,7 +1192,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1614,7 +1614,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1929,7 +1929,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1975,7 +1975,7 @@ ICES_plot_5 <- function(df, sagSettings) {
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) #%>%
+        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits) #%>% , SAGStamp
      
     p5 <- df5 %>%
         ggplot(., aes(x = Year, y = StockSize, color = AssessmentYear))
@@ -2076,7 +2076,7 @@ ICES_plot_5 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                # text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2118,7 +2118,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear, SAGStamp) # %>%
+        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear) # %>% , SAGStamp
        
     p6 <- df6 %>%
         ggplot(., aes(x = Year, y = FishingPressure, color = AssessmentYear)) 
@@ -2218,7 +2218,7 @@ ICES_plot_6 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                # text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2270,7 +2270,7 @@ ICES_plot_7 <- function(df, sagSettings) {
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
+        select(Year, Recruitment, RecruitmentAge, AssessmentYear) %>% #, SAGStamp
         drop_na(Recruitment) %>%
         mutate(Recruitment = Recruitment * scaling_factor_recruitment
                ) %>%
@@ -2323,7 +2323,7 @@ ICES_plot_7 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                # text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2536,9 +2536,9 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     
     
     # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
-    }
+    # is_na_column <- function(dataframe, col_name) {
+    #     return(all(is.na(dataframe[, col_name])))
+    # }
     
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
@@ -2809,9 +2809,9 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
       dplyr::bind_rows(Basis)
     
     # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
-    }
+    # is_na_column <- function(dataframe, col_name) {
+    #     return(all(is.na(dataframe[, col_name])))
+    # }
     
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)

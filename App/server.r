@@ -199,10 +199,11 @@ server <- function(input, output, session) {
 
     year <- query$year #####
     msg("downloading:", year)
-
+    # filtered_row <- res_mod()[selected(), ]
     #   # Dowload the data
-    access_sag_data_local(stock_name, year) %>%
-      filter(AssessmentKey == query$assessmentkey)
+    getSAGData(query$assessmentkey)
+    # getSAGData(stock_code = stock_name, year = filtered_row$YearOfLastAssessment) %>%
+    #   filter(AssessmentKey == query$assessmentkey)
   })
   
   sagSettings <- reactive({
