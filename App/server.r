@@ -223,7 +223,7 @@ server <- function(input, output, session) {
 # })
 
 replaced_advice_doi <- eventReactive(req(query$assessmentkey), {
-  get_link_replaced_advice(query$assessmentkey)
+  get_link_replaced_advice(SAG_data_reactive())
 })
 
 
