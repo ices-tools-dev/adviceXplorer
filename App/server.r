@@ -249,7 +249,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(), SAG_data_reactive()$LinkToAdvice[1], replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
+  get_Advice_View_Headline(advice_view_info(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({

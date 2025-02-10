@@ -539,7 +539,7 @@ process_dataframe_catches <- function(df, additionalCustomeSeries, scaling_facto
           relocate(all_of(new_name), .before = `Unallocated Removals`)
 
         # Multiply the custom column by scaling_factor_catches
-        df1[[new_name]] <- df1[[new_name]] * scaling_factor_catches
+        df1[[new_name]] <- as.numeric(df1[[new_name]]) * scaling_factor_catches
 
         # Drop the CustomName column
         df1[[custom_name_col]] <- NULL
@@ -571,7 +571,7 @@ process_dataframe_F <- function(df, sagSettings) {
     pull(settingValue) %>%
     as.numeric() %>%
     nullifempty()
-
+  
   # Process the dataframe
   df3 <- df %>%
     filter(Purpose == "Advice") %>%
@@ -589,6 +589,20 @@ process_dataframe_F <- function(df, sagSettings) {
         c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
       }
     ) %>%
+    mutate(
+      Year = as.numeric(Year),
+      FishingPressure = as.numeric(FishingPressure),
+      Low_FishingPressure = as.numeric(Low_FishingPressure),
+      High_FishingPressure = as.numeric(High_FishingPressure),
+      Flim = as.numeric(Flim),
+      Fpa = as.numeric(Fpa),
+      FMSY = as.numeric(FMSY),
+      Fmanagement = as.numeric(Fmanagement),
+      HRMGT = as.numeric(HRMGT),
+      FMGT_lower = as.numeric(FMGT_lower),
+      FMGT_upper = as.numeric(FMGT_upper),
+      across(starts_with("CustomRefPointValue"), as.numeric)
+    ) %>%
    mutate(segment = cumsum(is.na(FishingPressure)))
    
    new_name <- list()
@@ -603,7 +617,8 @@ process_dataframe_F <- function(df, sagSettings) {
         # Rename the custom column using the first value in the corresponding CustomName column
         new_name <- df3[[custom_name_col]][1]
         names(df3)[names(df3) == custom_col] <- new_name
-
+        # Multiply the custom column by scaling_factor_catches
+        df3[[new_name]] <- as.numeric(df3[[new_name]])
         # Drop the CustomName column
         df3[[custom_name_col]] <- NULL
       }
@@ -662,9 +677,17 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
       }
     ) %>%
     mutate(
+      Year = as.numeric(Year),
+      Blim = as.numeric(Blim), #* scaling_factor_stockSize,
+      Bpa = as.numeric(Bpa), #* scaling_factor_stockSize,
+      MSYBtrigger = as.numeric(MSYBtrigger), #* scaling_factor_stockSize,
+      Bmanagement = as.numeric(Bmanagement), #* scaling_factor_stockSize,
+      BMGT_lower = as.numeric(BMGT_lower), #* scaling_factor_stockSize,
+      BMGT_upper = as.numeric(BMGT_upper), #* scaling_factor_stockSize,
       StockSize = as.numeric(StockSize) * scaling_factor_stockSize,
       Low_StockSize = as.numeric(Low_StockSize) * scaling_factor_stockSize,
-      High_StockSize = as.numeric(High_StockSize) * scaling_factor_stockSize
+      High_StockSize = as.numeric(High_StockSize) * scaling_factor_stockSize,
+      across(starts_with("CustomRefPointValue"), as.numeric)
     ) %>%
     mutate(
       segment = cumsum(is.na(StockSize)),
@@ -684,7 +707,8 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
         # Rename the custom column using the first value in the corresponding CustomName column
         new_name <- df4[[custom_name_col]][1]
         names(df4)[names(df4) == custom_col] <- new_name
-
+        # Multiply the custom column by scaling_factor_catches
+        df4[[new_name]] <- as.numeric(df4[[new_name]]) * scaling_factor_stockSize
         # Drop the CustomName column
         df4[[custom_name_col]] <- NULL
       }

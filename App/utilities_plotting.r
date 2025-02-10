@@ -126,8 +126,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-             scale_x_continuous(breaks = breaks_pretty())
+            )#,
+            #  scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "Recruitment") {
 
@@ -135,7 +135,7 @@ theme_ICES_plots <-
         scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(df$Recruitment, scaling_factor_recruitment)
+        scaling <- get_scaling(as.numeric(df$Recruitment), scaling_factor_recruitment)
         divisor <- scaling$divisor
         suffix <- scaling$suffix
 
@@ -210,8 +210,8 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)) # ,
-            ),
-            scale_x_continuous(breaks = breaks_pretty())
+            )#,
+            # scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "StockSize") {
         
@@ -220,7 +220,7 @@ theme_ICES_plots <-
                 
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor_stockSize, type = "ssb")
+        scaling <- get_scaling(as.numeric(c(df$StockSize, df$High_StockSize, df$Low_StockSize)), scaling_factor_stockSize, type = "ssb")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
         
@@ -289,8 +289,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-             scale_x_continuous(breaks = breaks_pretty())
+            )#,
+            #  scale_x_continuous(breaks = breaks_pretty())
         )
 
     } else if (type == "Custom1") {
@@ -407,8 +407,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
+            )#,
+            # scale_x_continuous(breaks= pretty_breaks())
 
         )
     } else if (type == "quality_F") {
@@ -454,8 +454,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1))
 
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
+            )#,
+            # scale_x_continuous(breaks= pretty_breaks())
         )
     } else if (type == "quality_R") {
         # Determine scaling factor based on RecruitmentUnit
@@ -495,8 +495,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
+            )#,
+            # scale_x_continuous(breaks= pretty_breaks())
         )
     }
 
@@ -670,7 +670,7 @@ ICES_plot_1 <- function(df, sagSettings) {
     #     return(all(is.na(dataframe[, ..col_name])))
     # }
 
-    if (is_na_column(df, "Landings")) {
+    if (is_na_column(df1, "Landings")) {
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
             gather(type, count, Catches:`Unallocated Removals`)
@@ -787,10 +787,13 @@ ICES_plot_2 <- function(df, sagSettings) {
   
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge) %>% #, SAGStamp
-        mutate(Recruitment = Recruitment * scaling_factor_recruitment,
-               Low_Recruitment = Low_Recruitment * scaling_factor_recruitment,
-               High_Recruitment = High_Recruitment * scaling_factor_recruitment)
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge) %>% # , SAGStamp
+        mutate(
+            Year = as.numeric(Year),
+            Recruitment = as.numeric(Recruitment) * scaling_factor_recruitment,
+            Low_Recruitment = as.numeric(Low_Recruitment) * scaling_factor_recruitment,
+            High_Recruitment = as.numeric(High_Recruitment) * scaling_factor_recruitment
+        )
 
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
     
@@ -925,7 +928,7 @@ ICES_plot_2 <- function(df, sagSettings) {
 ICES_plot_3 <- function(df, sagSettings) {
 
     processed <- process_dataframe_F(df, sagSettings)
-        
+    
     # Filter out rows with NAs and create a segment identifier
     df_segments <- processed$df3 %>%
         filter(!is.na(FishingPressure)) %>%
@@ -1236,7 +1239,7 @@ ICES_plot_3 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_4 <- function(df, sagSettings) {
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    # nullifempty <- function(x) if (length(x) == 0) NULL else x
     # If df$UnitOfRecruitment is empty, set it to NA
     if (df$StockSizeUnits[1] == "") {
         df$StockSizeUnits <- "empty"
@@ -1246,7 +1249,7 @@ ICES_plot_4 <- function(df, sagSettings) {
        
     processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
 
-    
+   
 
     # Filter out rows with NAs and create a segment identifier
     df_segments <- processed$df4 %>%
@@ -1669,7 +1672,9 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     # Select relevant columns
     selected_data <- df %>%
         arrange(Year) %>%
-        select(c(Year, matches(patternValues), matches(patternNames)))
+        select(c(Year, matches(patternValues), matches(patternNames))) %>% 
+        mutate(Year = as.numeric(Year)) %>% 
+        mutate_at(vars(matches(patternValues)), as.numeric)
         # mutate(segment = cumsum(is.na(matches(patternValues))))
     
     custom_cols <- grep("^Custom[0-9]+$", names(selected_data), value = TRUE)
@@ -1693,7 +1698,10 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     
     # Include reference points in the plot
     ref_points <- df %>% select(Year, matches(patternValuesRefPoint),matches(patternNamesRefPoint))  %>% 
-        filter(Year >= min(selected_data$Year[which(!is.na(selected_data$count))]))
+        filter(Year >= min(selected_data$Year[which(!is.na(selected_data$count))])) %>% 
+        mutate_at(vars(matches(patternValuesRefPoint)), as.numeric) %>% 
+        mutate(Year = as.numeric(Year))
+    
     
     # Determine the number of series available
     num_series <- length(unique(selected_data$type))
@@ -1834,7 +1842,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
         
-        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        scaling <- get_scaling(as.numeric(c(df$Catches, df$Landings, df$Discards)), scaling_factor_catches, type = "catches")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
 
