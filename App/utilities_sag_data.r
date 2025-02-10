@@ -379,20 +379,21 @@ get_additional_landing_data <- function(assessmentKey) {
 #' @export
 #'
 get_link_replaced_advice <- function(StockKeyLabel,year) {
-  link <- access_sag_data_local(StockKeyLabel, year) %>% filter(Purpose == "Replaced")
+  # link <- access_sag_data_local(StockKeyLabel, year) %>% filter(Purpose == "Replaced")
+  link <- getSAGData(assessmentKey)  %>% filter(Purpose == "Replaced")
   link <- link$Report[1]
   return(link)
 }
 
 
 # Function to modify the assessment component to NA if it is "N.A." or "N.A"
-    modify_assessment_component <- function(assessment_component) {
-      if (length(assessment_component) != 0 && assessment_component %in% c("N.A.", "N.A")) {
-        return("NA")
-      } else {
-        return(assessment_component)
-      }
-    }
+modify_assessment_component <- function(assessment_component) {
+  if (length(assessment_component) != 0 && assessment_component %in% c("N.A.", "N.A")) {
+    return("NA")
+  } else {
+    return(assessment_component)
+  }
+}
 
 
 
@@ -777,3 +778,4 @@ is_na_column <- function(dataframe, col_name) {
   
   return(all(is.na(dataframe[[col_name]])))
 }
+

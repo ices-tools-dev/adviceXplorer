@@ -217,13 +217,13 @@ server <- function(input, output, session) {
       pull(SAGChartKey) %>%
       as.numeric})
   
-##### get link to library pdf advice
-advice_doi <- eventReactive((req(SAG_data_reactive())),{  
-  SAG_data_reactive()$LinkToAdvice[1]
-})
+# ##### get link to library pdf advice
+# advice_doi <- eventReactive((req(SAG_data_reactive())),{  
+#   SAG_data_reactive()$LinkToAdvice[1]
+# })
 
-replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
-  get_link_replaced_advice(query$stockkeylabel,query$year)
+replaced_advice_doi <- eventReactive(req(query$assessmentkey), {
+  get_link_replaced_advice(query$assessmentkey)
 })
 
 
