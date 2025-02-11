@@ -46,6 +46,7 @@ library(ggthemes)
 ########## Load utilities ############
 source("utilities_help.r")
 source("utilities_SID_data.r")
+source("update_SID_data.r")
 source("utilities_load_shapefiles.r")
 source("utilities_plotting.r")
 source("utilities_mapping.r")
