@@ -532,7 +532,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year()$adviceValue,advice_view_info_previous_year()$adviceApplicableUntil, query$year)
+  wrangle_catches_with_scenarios(SAG_data_reactive(),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year()$adviceValue,advice_view_info_previous_year()$adviceApplicableUntil, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)

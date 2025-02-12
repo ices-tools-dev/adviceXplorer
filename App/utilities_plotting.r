@@ -373,7 +373,7 @@ theme_ICES_plots <-
 
         rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
         
-        line_color <- rev(c("#969696","#737373","#525252","#252525","#047c6c")) %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#047c6c")) %>% head(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         line_color_rfpt <- c( "#000000","#000000", "#689dff")
         names(line_color_rfpt) <- rfpt
@@ -414,7 +414,7 @@ theme_ICES_plots <-
     } else if (type == "quality_F") {
         rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
 
-        line_color <- rev(c("#969696","#737373","#525252","#252525","#ed5f26")) %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#ed5f26")) %>% head(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         line_color_rfpt <- c( "#000000","#000000", "#00AC67")
         names(line_color_rfpt) <- rfpt
@@ -475,7 +475,7 @@ theme_ICES_plots <-
 
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_color <- rev(c("#969696","#737373","#525252","#252525","#28b3e8")) %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#28b3e8")) %>% head(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         
         
@@ -2516,9 +2516,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 #'
 
 catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
-    
-    
-    
+       
     F_yaxis_label <- sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(F_yaxis_label)) {
           F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
