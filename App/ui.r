@@ -40,8 +40,13 @@ library(datamods)
 library(reactable)
 library(ggthemes)
 
+library(future)
+library(promises)
+library(data.table)
+library(memoise)
+library(future.apply)
 
-
+plan(multisession)  # Enable parallel execution
 
 ########## Load utilities ############
 source("utilities_help.r")

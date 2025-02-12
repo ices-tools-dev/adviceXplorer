@@ -78,42 +78,29 @@ getSID <- function(year) {
     # Convert 1 row per ecoregion
     stock_list_long <- separate_ecoregions(stock_list_all)
 
+    # # Add icons using stock illustrations
+    # stock_list_long$icon <- paste0(
+    #     '<img src="', match_stockcode_to_illustration(stock_list_long$StockKeyLabel, stock_list_long), '" height=40>'
+    # )
     # Add icons using stock illustrations
-    stock_list_long$icon <- paste0(
-        '<img src="', match_stockcode_to_illustration(stock_list_long$StockKeyLabel, stock_list_long), '" height=40>'
-    )
-
-    # # Fetch ASDList and ensure it's a data frame
-    # message("Fetching ASD advice records...")
-    # ASDList <- icesASD::getAdviceViewRecord(year = year)
-
-    # if (is.null(ASDList) || identical(ASDList, list()) || nrow(ASDList) == 0) {
-    #     ASDList <- data.frame(
-    #         StockKeyLabel = character(),
-    #         AssessmentKey = character(),
-    #         AssessmentComponent = character(),
-    #         stringsAsFactors = FALSE
-    #     )
-    # } else {
+    setDT(stock_list_long)
+    stock_list_long[, icon := paste0('<img src="', match_stockcode_to_illustration(StockKeyLabel, stock_list_long), '" height=40>')]
 
     
     # Get unique valid years (excluding NA and 0)
     valid_years <- unique(stock_list_long$YearOfLastAssessment)
     valid_years <- valid_years[!is.na(valid_years) & valid_years != 0]
 
-    # valid_years <- unique(stock_list_long$AssessmentKey)
-    # valid_years <- valid_years[!is.na(valid_years) & valid_years != 0]
-
-    # Fetch ASDList for each valid year and combine results
-    ASDList <- do.call(rbind, lapply(valid_years, function(y) {
+    
+    # Parallelized API calls for ASD records
+    ASDList <- rbindlist(future_lapply(valid_years, function(y) {
         message("Fetching ASD advice records for year: ", y)
-        icesASD::getAdviceViewRecord(year = y)
-    }))
-    # browser()
+        as.data.table(icesASD::getAdviceViewRecord(year = y))
+    }), fill = TRUE)
+    
     ASDList <- ASDList %>% group_by(stockCode) %>% filter(assessmentYear == max(assessmentYear, na.rm = TRUE, finite = TRUE)) %>% ungroup()
     
-    #     filter(YearOfLastAssessment == max(YearOfLastAssessment, na.rm = TRUE, finite = TRUE)) %>%
-    #     ungroup()
+    
     # Ensure ASDList is a valid data frame
     if (is.null(ASDList) || identical(ASDList, list()) || nrow(ASDList) == 0) {
         ASDList <- data.frame(
@@ -132,37 +119,31 @@ getSID <- function(year) {
             ) %>%
             filter(adviceStatus == "Advice")
     }
+    setDT(ASDList)
     
+    # Efficient merge using data.table
+    stock_list_long <- ASDList[stock_list_long, on = "StockKeyLabel"]
     # Merge stock list with ASDList
     message("Merging SID and ASD records...")
-    stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent),
-        stock_list_long,
-        by = "StockKeyLabel",
-        all = TRUE
-    ) %>%
-        select(-AssessmentKey.y) %>%
-        rename(AssessmentKey = AssessmentKey.x)
+    # leaving this in for now
+    # stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent),
+    #     stock_list_long,
+    #     by = "StockKeyLabel",
+    #     all = TRUE
+    # ) %>%
+    #     select(-AssessmentKey.y) %>%
+    #     rename(AssessmentKey = AssessmentKey.x)
     
     # Find missing AssessmentKeys using YearOfLastAssessment
     missing_keys <- which(is.na(stock_list_long$AssessmentKey) &
         !is.na(stock_list_long$YearOfLastAssessment) &
         stock_list_long$YearOfLastAssessment != 0)
 
-    # if (length(missing_keys) > 0) {
-    #     message("Finding missing assessment keys...")
-    #     assessment_keys <- lapply(missing_keys, function(i) {
-    #         icesSAG::findAssessmentKey(stock_list_long$StockKeyLabel[i],
-    #                                    year = stock_list_long$YearOfLastAssessment[i])
-    #     })
-
-    #     valid_keys <- lengths(assessment_keys) > 0
-    #     stock_list_long$AssessmentKey[missing_keys[valid_keys]] <- unlist(assessment_keys[valid_keys])
-    # }
     if (length(missing_keys) > 0) {
         message("Finding missing assessment keys...")
 
         # Retrieve assessment keys (returns list)
-        assessment_keys <- lapply(missing_keys, function(i) {
+        assessment_keys <- future_lapply(missing_keys, function(i) {
             keys <- icesSAG::findAssessmentKey(stock_list_long$StockKeyLabel[i],
                 year = stock_list_long$YearOfLastAssessment[i]
             )
@@ -173,16 +154,57 @@ getSID <- function(year) {
         stock_list_long$AssessmentKey[missing_keys] <- unlist(assessment_keys)
     }
 
+
+    # this solution spreads the different calls across threads, but each thread is still calling
+    # the webservice multiple times, which is not ideal
+    # # Identify missing AssessmentKeys
+    # missing_rows <- stock_list_long %>%
+    #     filter(is.na(AssessmentKey) & !is.na(YearOfLastAssessment) & YearOfLastAssessment != 0)
+
+    # # Get unique (StockKeyLabel, YearOfLastAssessment) pairs
+    # missing_pairs <- unique(missing_rows[, c("StockKeyLabel", "YearOfLastAssessment")])
+
+    # if (nrow(missing_pairs) > 0) {
+    #     message("Finding missing assessment keys in parallel...")
+
+    #     # Parallel batch processing
+    #     results <- future_lapply(seq_len(nrow(missing_pairs)), function(i) {
+    #         stock <- missing_pairs$StockKeyLabel[i]
+    #         year <- missing_pairs$YearOfLastAssessment[i]
+
+    #         keys <- icesSAG::findAssessmentKey(stock, year)
+    #         if (length(keys) > 0) keys[1] else NA  # Return only the first key
+    #     })
+
+    #     # Convert results to a lookup table
+    #     assessment_lookup <- data.frame(
+    #         StockKeyLabel = missing_pairs$StockKeyLabel,
+    #         YearOfLastAssessment = missing_pairs$YearOfLastAssessment,
+    #         AssessmentKey = unlist(results)
+    #     )
+
+    #     # Merge back into stock_list_long
+    #     stock_list_long <- stock_list_long %>%
+    #         left_join(assessment_lookup, by = c("StockKeyLabel", "YearOfLastAssessment")) %>%
+    #         mutate(AssessmentKey = coalesce(AssessmentKey.x, AssessmentKey.y)) %>%
+    #         select(-AssessmentKey.x, -AssessmentKey.y)
+    # }
+
     # Drop rows where AssessmentKey is still NA
-    stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)
+    stock_list_long <- stock_list_long[!is.na(AssessmentKey)]
+
+    # Extract stock location
+    stock_list_long[, stock_location := parse_location_from_stock_description(StockKeyDescription)]
+
+
+
+
+    # # Drop rows where AssessmentKey is still NA
+    # stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)    
     
+    # # Add stock location from description
     # stock_list_long <- stock_list_long %>%
-    #     group_by(StockKeyLabel, AssessmentComponent) %>%
-    #     filter(YearOfLastAssessment == max(YearOfLastAssessment, na.rm = TRUE, finite = TRUE)) %>%
-    #     ungroup()
-    # Add stock location from description
-    stock_list_long <- stock_list_long %>%
-        mutate(stock_location = parse_location_from_stock_description(StockKeyDescription))
+    #     mutate(stock_location = parse_location_from_stock_description(StockKeyDescription))
 
     message("Data processing complete.")
     return(stock_list_long)
@@ -221,4 +243,6 @@ UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
         update_SID(year)
     }
 }
+
+
 
