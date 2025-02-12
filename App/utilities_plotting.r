@@ -372,8 +372,8 @@ theme_ICES_plots <-
         }
 
         rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
-
-        line_color <- c("#969696","#737373","#525252","#252525","#047c6c") %>% tail(length(unique(df$AssessmentYear)))
+        
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#047c6c")) %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         line_color_rfpt <- c( "#000000","#000000", "#689dff")
         names(line_color_rfpt) <- rfpt
@@ -414,7 +414,7 @@ theme_ICES_plots <-
     } else if (type == "quality_F") {
         rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
 
-        line_color <- c("#969696","#737373","#525252","#252525","#ed5f26") %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#ed5f26")) %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         line_color_rfpt <- c( "#000000","#000000", "#00AC67")
         names(line_color_rfpt) <- rfpt
@@ -475,7 +475,7 @@ theme_ICES_plots <-
 
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#28b3e8")) %>% tail(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         
         
@@ -1986,7 +1986,7 @@ ICES_plot_5 <- function(df, sagSettings) {
         select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits) %>%  #%>% , SAGStamp
         arrange(desc(AssessmentYear))
     
-    browser()
+    
     p5 <- df5 %>%
         ggplot(., aes(x = Year, y = StockSize, color = AssessmentYear))
         
@@ -2057,7 +2057,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 
         
     
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+        
         
         title_temp <- sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
         if (is.null(title_temp)){
@@ -2201,7 +2201,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 
         
        
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+        
 
         title_temp <- sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
         if (is.null(title_temp)){
@@ -2308,7 +2308,7 @@ ICES_plot_7 <- function(df, sagSettings) {
             )
         )
 
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+        # nullifempty <- function(x) if (length(x) == 0) NULL else x
 
         title_temp <- sagSettings2 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
         if (is.null(title_temp)){
