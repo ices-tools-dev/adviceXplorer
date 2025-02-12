@@ -1983,8 +1983,10 @@ ICES_plot_5 <- function(df, sagSettings) {
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits) #%>% , SAGStamp
-     
+        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits) %>%  #%>% , SAGStamp
+        arrange(desc(AssessmentYear))
+    
+    browser()
     p5 <- df5 %>%
         ggplot(., aes(x = Year, y = StockSize, color = AssessmentYear))
         
@@ -2126,8 +2128,9 @@ ICES_plot_6 <- function(df, sagSettings) {
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear) # %>% , SAGStamp
-       
+        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear) %>%  # %>% , SAGStamp
+        arrange(desc(AssessmentYear))
+        
     p6 <- df6 %>%
         ggplot(., aes(x = Year, y = FishingPressure, color = AssessmentYear)) 
 
@@ -2278,7 +2281,8 @@ ICES_plot_7 <- function(df, sagSettings) {
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, RecruitmentAge, AssessmentYear) %>% #, SAGStamp
+        select(Year, Recruitment, RecruitmentAge, AssessmentYear) %>%  #, SAGStamp
+        arrange(desc(AssessmentYear)) %>%
         drop_na(Recruitment) %>%
         mutate(Recruitment = Recruitment * scaling_factor_recruitment
                ) %>%

@@ -120,7 +120,7 @@ getSID <- function(year) {
             filter(adviceStatus == "Advice")
     }
     setDT(ASDList)
-    
+
     # Efficient merge using data.table
     stock_list_long <- ASDList[stock_list_long, on = "StockKeyLabel"]
     # Merge stock list with ASDList
@@ -143,7 +143,7 @@ getSID <- function(year) {
         message("Finding missing assessment keys...")
 
         # Retrieve assessment keys (returns list)
-        assessment_keys <- future_lapply(missing_keys, function(i) {
+        assessment_keys <- lapply(missing_keys, function(i) {
             keys <- icesSAG::findAssessmentKey(stock_list_long$StockKeyLabel[i],
                 year = stock_list_long$YearOfLastAssessment[i]
             )

@@ -361,9 +361,16 @@ output$customPlot2 <- renderPlotly({
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
-    quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
+    # Extract custom data and graph type
+    yearsToDisplay <- sagSettings() %>%
+      filter(settingKey == 58) %>%
+      pull(settingValue) %>%
+      # str_split(",", simplify = TRUE) %>%
+      as.numeric() %>%
+      nullifempty()
     
-  }) 
+    getSAGQualityAssessment(query$stockkeylabel, query$year, query$assessmentcomponent, yearsToDisplay)
+  })
   
 
 
