@@ -2516,7 +2516,8 @@ radial_plot <- function(tmp, catch_scenarios) {
 #'
 
 catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
+    
     
     F_yaxis_label <- sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(F_yaxis_label)) {
@@ -2535,8 +2536,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     tmp <- data.frame(tmp$table)
     
     
-    tmp$fmsy <- tail(df$FMSY,1)
-    tmp$blim <- tail(df$Blim,1)
+    tmp$fmsy <- as.numeric(tail(df$FMSY,1))
+    tmp$blim <- as.numeric(tail(df$Blim,1))
     
     
 
