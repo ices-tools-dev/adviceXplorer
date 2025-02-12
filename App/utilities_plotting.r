@@ -2779,7 +2779,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 #'
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
 
     F_yaxis_label <- sagSettings %>%
         filter(SAGChartKey == 3) %>%
@@ -2806,11 +2806,9 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     tmp <- data.frame(tmp$table)
-
-
-    tmp$fmsy <- tail(df$FMSY, 1)
-    tmp$blim <- tail(df$Blim, 1)
-    # print(tmp)
+    tmp$fmsy <- as.numeric(tail(df$FMSY,1))
+    tmp$blim <- as.numeric(tail(df$Blim,1))
+    
 
     
     tmp$Scenario <- shorten_labels(tmp$Scenario)
@@ -2819,11 +2817,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
       dplyr::filter(TotCatch != Basis$TotCatch) %>% 
       dplyr::bind_rows(Basis)
     
-    # Function to check if a column is made up of all NA values
-    # is_na_column <- function(dataframe, col_name) {
-    #     return(all(is.na(dataframe[, col_name])))
-    # }
-    
+        
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(
