@@ -639,7 +639,8 @@ replace_subscript_symbols <- function(text) {
 #'
 ICES_plot_1 <- function(df, sagSettings) {
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$CatchesLandingsUnits[1] == "") {
+    
+    if (is.na(df$CatchesLandingsUnits[1])) {
         df$CatchesLandingsUnits <- "empty"
     }
     scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])
@@ -777,7 +778,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 ICES_plot_2 <- function(df, sagSettings) {
     
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$UnitOfRecruitment[1] == "") {
+    if (is.na(df$UnitOfRecruitment[1])) {
         df$UnitOfRecruitment <- "empty"
     }
     
@@ -1241,7 +1242,7 @@ ICES_plot_3 <- function(df, sagSettings) {
 ICES_plot_4 <- function(df, sagSettings) {
     # nullifempty <- function(x) if (length(x) == 0) NULL else x
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$StockSizeUnits[1] == "") {
+    if (is.na(df$StockSizeUnits[1])) {
         df$StockSizeUnits <- "empty"
     }
     
@@ -1836,7 +1837,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     } else if (graphType == 3 || graphType == 4) {        
 
         # Determine scaling based on Recruitment values
-        if (df$CatchesLandingsUnits[1] == "") {
+        if (is.na(df$CatchesLandingsUnits[1])) {
             df$CatchesLandingsUnits <- "empty"
         }
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
@@ -2270,7 +2271,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 ICES_plot_7 <- function(df, sagSettings) {
 
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$UnitOfRecruitment[1] == "") {
+    if (is.na(df$UnitOfRecruitment[1])) {
         df$UnitOfRecruitment <- "empty"
     }
     

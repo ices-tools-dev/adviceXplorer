@@ -733,7 +733,7 @@ nullifempty <- function(x) if (length(x) == 0) NULL else x
 getSAGData <- function(assessmentKey) {
   # Download the SAG data
   # assessmentKey <- findAssessmentKey(stock_code, year = YearOfLastAssessment)
-  summary <- StockDownload(assessmentKey) %>%
+  summary <- icesSAG::getStockDownloadData(assessmentKey) %>%
     # select(-AssessmentComponent, -Purpose, -AssessmentYear, -StockDescription) %>%
     # change AssessmentKey to integer
     mutate(AssessmentKey = as.integer(AssessmentKey)) %>%
@@ -748,7 +748,7 @@ getSAGData <- function(assessmentKey) {
       ), standardiseRefPoints
     ))
  
-  refpts <- FishStockReferencePoints(assessmentKey)
+  refpts <- icesSAG::getFishStockReferencePoints(assessmentKey)
   refpts <- refpts %>% mutate(across(
     c(
       CustomRefPointName1,

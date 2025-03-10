@@ -173,7 +173,7 @@ server <- function(input, output, session) {
     
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      info <- FishStockReferencePoints(query$assessmentkey)
+      info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
 
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear
@@ -191,7 +191,7 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    info <- FishStockReferencePoints(query$assessmentkey)
+    info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
 
@@ -208,7 +208,7 @@ server <- function(input, output, session) {
   })
   
   sagSettings <- reactive({
-    temp_setting <- getSAGSettings(query$assessmentkey)
+    temp_setting <- icesSAG::getSAGSettingsForAStock(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
 
   })  

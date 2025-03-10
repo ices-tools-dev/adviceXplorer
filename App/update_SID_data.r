@@ -144,7 +144,7 @@ getSID <- function(year) {
 
         # Retrieve assessment keys (returns list)
         assessment_keys <- lapply(missing_keys, function(i) {
-            keys <- icesSAG::findAssessmentKey(stock_list_long$StockKeyLabel[i],
+            keys <- findAssessmentKey(stock_list_long$StockKeyLabel[i],
                 year = stock_list_long$YearOfLastAssessment[i]
             )
             if (length(keys) > 0) keys[1] else NA # Take only the first key or return NA
