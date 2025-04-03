@@ -134,25 +134,29 @@ getSID <- function(year) {
     #     select(-AssessmentKey.y) %>%
     #     rename(AssessmentKey = AssessmentKey.x)
     
-    # Find missing AssessmentKeys using YearOfLastAssessment
-    missing_keys <- which(is.na(stock_list_long$AssessmentKey) &
+    # Filter out rows where AssessmentKey is NA and YearOfLastAssessment is NA or 0
+    missing_keys <- which(!is.na(stock_list_long$AssessmentKey) &
         !is.na(stock_list_long$YearOfLastAssessment) &
         stock_list_long$YearOfLastAssessment != 0)
 
-    if (length(missing_keys) > 0) {
-        message("Finding missing assessment keys...")
+    stock_list_long <- stock_list_long[missing_keys,]
 
-        # Retrieve assessment keys (returns list)
-        assessment_keys <- lapply(missing_keys, function(i) {
-            keys <- findAssessmentKey(stock_list_long$StockKeyLabel[i],
-                year = stock_list_long$YearOfLastAssessment[i]
-            )
-            if (length(keys) > 0) keys[1] else NA # Take only the first key or return NA
-        })
+    
+    # if (length(missing_keys) > 0) {
+    #     message("Finding missing assessment keys...")
 
-        # Convert list to vector and assign
-        stock_list_long$AssessmentKey[missing_keys] <- unlist(assessment_keys)
-    }
+    #     # Retrieve assessment keys (returns list)
+    #     assessment_keys <- lapply(missing_keys, function(i) {
+    #         keys <- findAssessmentKey(stock_list_long$StockKeyLabel[i],
+    #             year = stock_list_long$YearOfLastAssessment[i]
+    #         )
+    #         if (length(keys) > 0) keys[1] else NA # Take only the first key or return NA
+    #     })
+
+    #     # Convert list to vector and assign
+    #     stock_list_long$AssessmentKey[missing_keys] <- unlist(assessment_keys)
+        
+    # }
 
 
     # this solution spreads the different calls across threads, but each thread is still calling
@@ -191,20 +195,11 @@ getSID <- function(year) {
     # }
 
     # Drop rows where AssessmentKey is still NA
-    stock_list_long <- stock_list_long[!is.na(AssessmentKey)]
+    # stock_list_long <- stock_list_long[!is.na(AssessmentKey)]
 
     # Extract stock location
     stock_list_long[, stock_location := parse_location_from_stock_description(StockKeyDescription)]
 
-
-
-
-    # # Drop rows where AssessmentKey is still NA
-    # stock_list_long <- stock_list_long %>% drop_na(AssessmentKey)    
-    
-    # # Add stock location from description
-    # stock_list_long <- stock_list_long %>%
-    #     mutate(stock_location = parse_location_from_stock_description(StockKeyDescription))
 
     message("Data processing complete.")
     return(stock_list_long)
