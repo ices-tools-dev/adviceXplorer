@@ -659,17 +659,12 @@ ICES_plot_1 <- function(df, sagSettings) {
     
     df1 <- process_dataframe_catches(df, additionalCustomeSeries, scaling_factor_catches)
     
-
+    
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
         pull(settingValue) %>%
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
-
-    # # Function to check if a column is made up of all NA values
-    # is_na_column <- function(dataframe, col_name) {
-    #     return(all(is.na(dataframe[, ..col_name])))
-    # }
 
     if (is_na_column(df1, "Landings")) {
         # df1$Landings <- df1$Catches
@@ -681,6 +676,7 @@ ICES_plot_1 <- function(df, sagSettings) {
             gather(type, count, Landings:`Unallocated Removals`)
     }
 
+    df1 <- df1 %>% drop_na()
 
     p1 <- df1 %>%
         ggplot(., aes(
