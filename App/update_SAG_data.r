@@ -33,11 +33,11 @@ update_SAG <- function(year) {
   year <- 2024
   # lookup for assessment key for summary
   sag <-
-    StockList(year = year) %>%
+    getListStocks(year = year) %>%
     select(AssessmentKey, StockKeyLabel, AssessmentYear, Purpose, StockDescription, ModifiedDate, SAGStamp, LinkToAdvice, AssessmentComponent) # %>%
   # rename(FishStock = StockKeyLabel)
 
-  summary <- StockDownload(sag$AssessmentKey) %>%
+  summary <- getStockDownloadData(sag$AssessmentKey) %>%
     select(-AssessmentComponent, -Purpose, -AssessmentYear, -StockDescription) %>%
     # change AssessmentKey to integer
     mutate(AssessmentKey = as.integer(AssessmentKey)) %>%
@@ -55,7 +55,7 @@ update_SAG <- function(year) {
 
   # write.taf(summary, file = "SAG_summary.csv", dir = paste0("Data/SAG_", year), quote = TRUE)
 
-  refpts <- FishStockReferencePoints(sag$AssessmentKey)
+  refpts <- getFishStockReferencePoints(sag$AssessmentKey)
   refpts <- refpts %>% mutate(across(
     c(
       CustomRefPointName1,

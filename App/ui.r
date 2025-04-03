@@ -3,7 +3,6 @@ library(data.table)
 library(dplyr)
 library(dygraphs)
 library(DT)
-library(fisheryO)
 library(htmltools)
 library(htmlwidgets)
 library(ggplot2)
@@ -40,12 +39,18 @@ library(datamods)
 library(reactable)
 library(ggthemes)
 
+library(future)
+library(promises)
+library(data.table)
+library(memoise)
+library(future.apply)
 
-
+plan(multisession)  # Enable parallel execution
 
 ########## Load utilities ############
 source("utilities_help.r")
 source("utilities_SID_data.r")
+source("update_SID_data.r")
 source("utilities_load_shapefiles.r")
 source("utilities_plotting.r")
 source("utilities_mapping.r")
@@ -75,8 +80,7 @@ tagList(
     useShinyjs(),
     introjsUI(),
     tags$script(src = "https://kit.fontawesome.com/ac71e9cf8e.js"),
-    tags$head(includeHTML(("google-analytics.html")), tags$link(rel = "shortcut icon", href = "favicon.png")),
-    tags$link(rel = "shortcut icon", href = "X_ advixeXplorer.png"),
+    tags$head(includeHTML(("google-analytics.html")), tags$link(rel = "shortcut icon", href = "X.png")),
     tags$link(rel = "stylesheet", type = "text/css", href = "css/gothic-a1.css"),
     tags$style("body {font-family: 'Gothic A1', sans-serif;}"),
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),

@@ -35,7 +35,8 @@ server <- function(input, output, session) {
   eco_filter <- reactive({
     req(input$selected_locations, input$selected_years)
     
-    stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
+    # stock_list_long <- fread(sprintf("Data/SID_%s/SID.csv", input$selected_years))
+    stock_list_long <- getSID(input$selected_years)
     stock_list_long <- purrr::map_dfr(
       .x = input$selected_locations,
       .f = function(.x) stock_list_long %>% dplyr::filter(str_detect(EcoRegion, .x))
@@ -172,7 +173,7 @@ server <- function(input, output, session) {
     
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      info <- FishStockReferencePoints(query$assessmentkey)
+      info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
 
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear
@@ -190,7 +191,7 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    info <- FishStockReferencePoints(query$assessmentkey)
+    info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
 
@@ -199,14 +200,15 @@ server <- function(input, output, session) {
 
     year <- query$year #####
     msg("downloading:", year)
-
+    # filtered_row <- res_mod()[selected(), ]
     #   # Dowload the data
-    access_sag_data_local(stock_name, year) %>%
-      filter(AssessmentKey == query$assessmentkey)
+    getSAGData(query$assessmentkey)
+    # getSAGData(stock_code = stock_name, year = filtered_row$YearOfLastAssessment) %>%
+    #   filter(AssessmentKey == query$assessmentkey)
   })
   
   sagSettings <- reactive({
-    temp_setting <- getSAGSettings(query$assessmentkey)
+    temp_setting <- icesSAG::getSAGSettingsForAStock(query$assessmentkey)
     temp_setting[!(temp_setting$settingValue == ""), ]
 
   })  
@@ -216,13 +218,13 @@ server <- function(input, output, session) {
       pull(SAGChartKey) %>%
       as.numeric})
   
-##### get link to library pdf advice
-advice_doi <- eventReactive((req(SAG_data_reactive())),{  
-  SAG_data_reactive()$LinkToAdvice[1]
-})
+# ##### get link to library pdf advice
+# advice_doi <- eventReactive((req(SAG_data_reactive())),{  
+#   SAG_data_reactive()$LinkToAdvice[1]
+# })
 
-replaced_advice_doi <- eventReactive(req(query$stockkeylabel,query$year), {
-  get_link_replaced_advice(query$stockkeylabel,query$year)
+replaced_advice_doi <- eventReactive(req(query$assessmentkey), {
+  get_link_replaced_advice(SAG_data_reactive())
 })
 
 
@@ -248,7 +250,7 @@ output$stock_infos1 <- output$stock_infos2 <- output$stock_infos3 <- renderUI(
 
 ##### advice headline (right side of page)
 advice_view_headline <- reactive({
-  get_Advice_View_Headline(advice_view_info(), SAG_data_reactive()$LinkToAdvice[1], replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
+  get_Advice_View_Headline(advice_view_info(), replaced_advice_doi(), input$tabset, catch_scenario_table()$table, drop_plots())
 }) 
 
 output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <- renderUI({
@@ -359,9 +361,16 @@ output$customPlot2 <- renderPlotly({
 
 ####################### Quality of assessment data
   advice_action_quality <- reactive({
-    quality_assessment_data_local(query$stockkeylabel, query$year, query$assessmentcomponent) 
+    # Extract custom data and graph type
+    yearsToDisplay <- sagSettings() %>%
+      filter(settingKey == 58) %>%
+      pull(settingValue) %>%
+      # str_split(",", simplify = TRUE) %>%
+      as.numeric() %>%
+      nullifempty()
     
-  }) 
+    getSAGQualityAssessment(query$stockkeylabel, query$year, query$assessmentcomponent, yearsToDisplay)
+  })
   
 
 
@@ -523,7 +532,7 @@ test_table <- eventReactive(catch_scenario_table(), {
     need(!is_empty(advice_view_info_previous_year()), "No ASD entry in previous assessment year")
    
   )
-  wrangle_catches_with_scenarios(access_sag_data_local(query$stockkeylabel, query$year),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year()$adviceValue,advice_view_info_previous_year()$adviceApplicableUntil, query$year)
+  wrangle_catches_with_scenarios(SAG_data_reactive(),query$assessmentkey, catch_scenario_table()$table, advice_view_info_previous_year()$adviceValue,advice_view_info_previous_year()$adviceApplicableUntil, query$year)
 })
 
 ########## Historical catches panel (Definition of basis of advice)
