@@ -727,7 +727,13 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
 
-
+convert_false_to_F <- function(x) {
+  if (x == FALSE) {
+    return("F")
+  } else {
+    return(x)
+  }
+}
 
 
 getSAGData <- function(assessmentKey) {
@@ -765,6 +771,9 @@ getSAGData <- function(assessmentKey) {
   # Select only the columns from summary
   sagMerged <- sagMerged[, !grepl(".summary$", names(sagMerged))]
 
+  # sagMerged$FishingPressureDescription <- convert_false_to_F(sagMerged$FishingPressureDescription)
+  sagMerged <- sagMerged %>% mutate(FishingPressureDescription = if_else(FishingPressureDescription == FALSE, "F", as.character(FishingPressureDescription)))
+  
   return(sagMerged)
   
 }
