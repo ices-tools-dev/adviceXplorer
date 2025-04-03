@@ -1394,8 +1394,8 @@ ICES_plot_4 <- function(df, sagSettings) {
                 )
             ))
     }
-
-    if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "BMGT_lower") {
+   
+    if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_lower")) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1411,7 +1411,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "BMGT_upper") {
+    if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_upper")) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
