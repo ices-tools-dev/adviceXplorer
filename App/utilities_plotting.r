@@ -90,7 +90,7 @@ theme_ICES_plots <-
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        scaling <- get_scaling(as.numeric(c(df$Catches, df$Landings, df$Discards)), scaling_factor_catches, type = "catches")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
         
@@ -104,7 +104,7 @@ theme_ICES_plots <-
         if (is.null(ymax)) {
           limits <- expand_limits(y = 0)
         } else {
-          limits <- expand_limits(y = c(0, ymax))
+          limits <- expand_limits(y = c(0, as.numeric(ymax)))
         }
         
         theme_ICES_plots <- list(
@@ -126,8 +126,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-             scale_x_continuous(breaks = breaks_pretty())
+            )#,
+            #  scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "Recruitment") {
 
@@ -135,7 +135,7 @@ theme_ICES_plots <-
         scaling_factor_recruitment <- get_scaling_factor("UnitOfRecruitment", df$UnitOfRecruitment[1])
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(df$Recruitment, scaling_factor_recruitment)
+        scaling <- get_scaling(as.numeric(df$Recruitment), scaling_factor_recruitment)
         divisor <- scaling$divisor
         suffix <- scaling$suffix
 
@@ -210,8 +210,8 @@ theme_ICES_plots <-
             expand_limits(y = 0),
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)) # ,
-            ),
-            scale_x_continuous(breaks = breaks_pretty())
+            )#,
+            # scale_x_continuous(breaks = breaks_pretty())
         )
     } else if (type == "StockSize") {
         
@@ -220,7 +220,7 @@ theme_ICES_plots <-
                 
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor_stockSize, type = "ssb")
+        scaling <- get_scaling(as.numeric(c(df$StockSize, df$High_StockSize, df$Low_StockSize)), scaling_factor_stockSize, type = "ssb")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
         
@@ -289,8 +289,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-             scale_x_continuous(breaks = breaks_pretty())
+            )#,
+            #  scale_x_continuous(breaks = breaks_pretty())
         )
 
     } else if (type == "Custom1") {
@@ -372,8 +372,8 @@ theme_ICES_plots <-
         }
 
         rfpt <- c( "B<sub>Lim</sub>", "B<sub>pa</sub>","MSY B<sub>trigger</sub>")
-
-        line_color <- c("#969696","#737373","#525252","#252525","#047c6c") %>% tail(length(unique(df$AssessmentYear)))
+        
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#047c6c")) %>% head(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         line_color_rfpt <- c( "#000000","#000000", "#689dff")
         names(line_color_rfpt) <- rfpt
@@ -407,14 +407,14 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
+            )#,
+            # scale_x_continuous(breaks= pretty_breaks())
 
         )
     } else if (type == "quality_F") {
         rfpt <- c( "F<sub>Lim</sub>","F<sub>pa</sub>", "F<sub>MSY</sub>")
 
-        line_color <- c("#969696","#737373","#525252","#252525","#ed5f26") %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#ed5f26")) %>% head(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         line_color_rfpt <- c( "#000000","#000000", "#00AC67")
         names(line_color_rfpt) <- rfpt
@@ -454,8 +454,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1))
 
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
+            )#,
+            # scale_x_continuous(breaks= pretty_breaks())
         )
     } else if (type == "quality_R") {
         # Determine scaling factor based on RecruitmentUnit
@@ -475,7 +475,7 @@ theme_ICES_plots <-
 
         line_type <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) "solid")
         line_size <- sapply(as.character(sort(unique(df$AssessmentYear))), function(x) 1)
-        line_color <- c("#969696","#737373","#525252","#252525","#28b3e8") %>% tail(length(unique(df$AssessmentYear)))
+        line_color <- rev(c("#969696","#737373","#525252","#252525","#28b3e8")) %>% head(length(unique(df$AssessmentYear)))
         names(line_color) <- as.character(sort(unique(df$AssessmentYear)))
         
         
@@ -495,8 +495,8 @@ theme_ICES_plots <-
             scale_y_continuous(
                 expand = expansion(mult = c(0, 0.1)),
                 labels = function(l) l / divisor # Scale labels dynamically
-            ),
-            scale_x_continuous(breaks= pretty_breaks())
+            )#,
+            # scale_x_continuous(breaks= pretty_breaks())
         )
     }
 
@@ -639,7 +639,8 @@ replace_subscript_symbols <- function(text) {
 #'
 ICES_plot_1 <- function(df, sagSettings) {
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$CatchesLandingsUnits[1] == "") {
+    
+    if (is.na(df$CatchesLandingsUnits[1])) {
         df$CatchesLandingsUnits <- "empty"
     }
     scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])
@@ -647,7 +648,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    # nullifempty <- function(x) if (length(x) == 0) NULL else x
     additionalCustomeSeries <-
         sagSettings1 %>%
         filter(settingKey == 43) %>%
@@ -657,29 +658,26 @@ ICES_plot_1 <- function(df, sagSettings) {
     
     
     df1 <- process_dataframe_catches(df, additionalCustomeSeries, scaling_factor_catches)
-
-
+    
+    
     shadeYears <- sagSettings1 %>%
         filter(settingKey == 14) %>%
         pull(settingValue) %>%
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
 
-    # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, ..col_name])))
-    }
-
-    if (is_na_column(df, "Landings")) {
+    if (is_na_column(df1, "Landings")) {
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
+            select(-Landings) %>%
             gather(type, count, Catches:`Unallocated Removals`)
     } else {
         df1 <- df1 %>%
             select(-Catches) %>%
             gather(type, count, Landings:`Unallocated Removals`)
     }
-
+    
+    df1 <- df1 %>% drop_na()
 
     p1 <- df1 %>%
         ggplot(., aes(
@@ -727,7 +725,7 @@ ICES_plot_1 <- function(df, sagSettings) {
             ylegend = sagSettings1 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty(),
         )
 
-
+    
     # converting
     fig1 <- ggplotly(p1, tooltip = "text") %>%
         layout(
@@ -738,14 +736,14 @@ ICES_plot_1 <- function(df, sagSettings) {
                 x = 0.5,
                 xanchor = "center",
                 title = list(text = "")
-            ),
-            annotations = list(
-                showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
-                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right"
-            )
+            )#,
+            # annotations = list(
+            #     showarrow = FALSE,
+            #     # text = tail(df$SAGStamp, 1),
+            #     font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+            #     yref = "paper", y = 1, xref = "paper", x = 1,
+            #     yanchor = "right", xanchor = "right"
+            # )
         )
     
     fig1
@@ -777,7 +775,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 ICES_plot_2 <- function(df, sagSettings) {
     
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$UnitOfRecruitment[1] == "") {
+    if (is.na(df$UnitOfRecruitment[1])) {
         df$UnitOfRecruitment <- "empty"
     }
     
@@ -787,10 +785,13 @@ ICES_plot_2 <- function(df, sagSettings) {
   
     df2 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge, SAGStamp) %>% 
-        mutate(Recruitment = Recruitment * scaling_factor_recruitment,
-               Low_Recruitment = Low_Recruitment * scaling_factor_recruitment,
-               High_Recruitment = High_Recruitment * scaling_factor_recruitment)
+        select(Year, Recruitment, Low_Recruitment, High_Recruitment, UnitOfRecruitment, RecruitmentAge) %>% # , SAGStamp
+        mutate(
+            Year = as.numeric(Year),
+            Recruitment = as.numeric(Recruitment) * scaling_factor_recruitment,
+            Low_Recruitment = as.numeric(Low_Recruitment) * scaling_factor_recruitment,
+            High_Recruitment = as.numeric(High_Recruitment) * scaling_factor_recruitment
+        )
 
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
     
@@ -888,7 +889,7 @@ ICES_plot_2 <- function(df, sagSettings) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -925,7 +926,7 @@ ICES_plot_2 <- function(df, sagSettings) {
 ICES_plot_3 <- function(df, sagSettings) {
 
     processed <- process_dataframe_F(df, sagSettings)
-        
+    
     # Filter out rows with NAs and create a segment identifier
     df_segments <- processed$df3 %>%
         filter(!is.na(FishingPressure)) %>%
@@ -1192,7 +1193,7 @@ ICES_plot_3 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1236,9 +1237,9 @@ ICES_plot_3 <- function(df, sagSettings) {
 #' @export
 #'
 ICES_plot_4 <- function(df, sagSettings) {
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    # nullifempty <- function(x) if (length(x) == 0) NULL else x
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$StockSizeUnits[1] == "") {
+    if (is.na(df$StockSizeUnits[1])) {
         df$StockSizeUnits <- "empty"
     }
     
@@ -1246,7 +1247,7 @@ ICES_plot_4 <- function(df, sagSettings) {
        
     processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
 
-    
+   
 
     # Filter out rows with NAs and create a segment identifier
     df_segments <- processed$df4 %>%
@@ -1394,8 +1395,8 @@ ICES_plot_4 <- function(df, sagSettings) {
                 )
             ))
     }
-
-    if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "BMGT_lower") {
+   
+    if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_lower")) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1411,7 +1412,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             ))
     }
 
-    if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "BMGT_upper") {
+    if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_upper")) {
         p4 <- p4 +
             geom_line(aes(
                 x = Year,
@@ -1614,7 +1615,7 @@ ICES_plot_4 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1669,7 +1670,9 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     # Select relevant columns
     selected_data <- df %>%
         arrange(Year) %>%
-        select(c(Year, matches(patternValues), matches(patternNames)))
+        select(c(Year, matches(patternValues), matches(patternNames))) %>% 
+        mutate(Year = as.numeric(Year)) %>% 
+        mutate_at(vars(matches(patternValues)), as.numeric)
         # mutate(segment = cumsum(is.na(matches(patternValues))))
     
     custom_cols <- grep("^Custom[0-9]+$", names(selected_data), value = TRUE)
@@ -1693,7 +1696,10 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     
     # Include reference points in the plot
     ref_points <- df %>% select(Year, matches(patternValuesRefPoint),matches(patternNamesRefPoint))  %>% 
-        filter(Year >= min(selected_data$Year[which(!is.na(selected_data$count))]))
+        filter(Year >= min(selected_data$Year[which(!is.na(selected_data$count))])) %>% 
+        mutate_at(vars(matches(patternValuesRefPoint)), as.numeric) %>% 
+        mutate(Year = as.numeric(Year))
+    
     
     # Determine the number of series available
     num_series <- length(unique(selected_data$type))
@@ -1828,13 +1834,13 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     } else if (graphType == 3 || graphType == 4) {        
 
         # Determine scaling based on Recruitment values
-        if (df$CatchesLandingsUnits[1] == "") {
+        if (is.na(df$CatchesLandingsUnits[1])) {
             df$CatchesLandingsUnits <- "empty"
         }
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
         
-        scaling <- get_scaling(c(df$Catches, df$Landings, df$Discards), scaling_factor_catches, type = "catches")
+        scaling <- get_scaling(as.numeric(c(df$Catches, df$Landings, df$Discards)), scaling_factor_catches, type = "catches")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
 
@@ -1929,7 +1935,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp, 1),
+                # text = tail(df$SAGStamp, 1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
@@ -1982,9 +1988,10 @@ ICES_plot_5 <- function(df, sagSettings) {
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits, SAGStamp) %>%
-        mutate(StockSize = StockSize * scaling_factor_stockSize)
-
+        select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits) %>%  #%>% , SAGStamp
+        arrange(desc(AssessmentYear))
+    
+    
     p5 <- df5 %>%
         ggplot(., aes(x = Year, y = StockSize, color = AssessmentYear))
         
@@ -2055,7 +2062,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 
         
     
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+        
         
         title_temp <- sagSettings4 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
         if (is.null(title_temp)){
@@ -2084,7 +2091,7 @@ ICES_plot_5 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                # text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2126,8 +2133,9 @@ ICES_plot_6 <- function(df, sagSettings) {
 
     df6 <- df %>%
         filter(Purpose == "Advice") %>%
-        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear, SAGStamp) # %>%
-       
+        select(Year, FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription, AssessmentYear) %>%  # %>% , SAGStamp
+        arrange(desc(AssessmentYear))
+        
     p6 <- df6 %>%
         ggplot(., aes(x = Year, y = FishingPressure, color = AssessmentYear)) 
 
@@ -2198,7 +2206,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 
         
        
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+        
 
         title_temp <- sagSettings3 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
         if (is.null(title_temp)){
@@ -2226,7 +2234,7 @@ ICES_plot_6 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                # text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2267,7 +2275,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 ICES_plot_7 <- function(df, sagSettings) {
 
     # If df$UnitOfRecruitment is empty, set it to NA
-    if (df$UnitOfRecruitment[1] == "") {
+    if (is.na(df$UnitOfRecruitment[1])) {
         df$UnitOfRecruitment <- "empty"
     }
     
@@ -2278,7 +2286,8 @@ ICES_plot_7 <- function(df, sagSettings) {
     sagSettings2 <- sagSettings %>% filter(SAGChartKey == 2)
 
     p7 <- df %>% filter(Purpose == "Advice") %>%
-        select(Year, Recruitment, RecruitmentAge, AssessmentYear, SAGStamp) %>%
+        select(Year, Recruitment, RecruitmentAge, AssessmentYear) %>%  #, SAGStamp
+        arrange(desc(AssessmentYear)) %>%
         drop_na(Recruitment) %>%
         mutate(Recruitment = Recruitment * scaling_factor_recruitment
                ) %>%
@@ -2304,7 +2313,7 @@ ICES_plot_7 <- function(df, sagSettings) {
             )
         )
 
-        nullifempty <- function(x) if (length(x) == 0) NULL else x
+        # nullifempty <- function(x) if (length(x) == 0) NULL else x
 
         title_temp <- sagSettings2 %>% filter(settingKey == 55) %>% pull(settingValue) %>% as.character() %>% nullifempty()
         if (is.null(title_temp)){
@@ -2331,7 +2340,7 @@ ICES_plot_7 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                text = tail(df$SAGStamp,1),
+                # text = tail(df$SAGStamp,1),
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1, xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
@@ -2512,8 +2521,7 @@ radial_plot <- function(tmp, catch_scenarios) {
 #'
 
 catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
-    
+       
     F_yaxis_label <- sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
     if (is.null(F_yaxis_label)) {
           F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
@@ -2531,8 +2539,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     tmp <- data.frame(tmp$table)
     
     
-    tmp$fmsy <- tail(df$FMSY,1)
-    tmp$blim <- tail(df$Blim,1)
+    tmp$fmsy <- as.numeric(tail(df$FMSY,1))
+    tmp$blim <- as.numeric(tail(df$Blim,1))
     
     
 
@@ -2544,9 +2552,9 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
     
     
     # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
-    }
+    # is_na_column <- function(dataframe, col_name) {
+    #     return(all(is.na(dataframe[, col_name])))
+    # }
     
     if (is_na_column(tmp, "F")){
         tmp <- arrange(tmp, F_wanted)
@@ -2776,7 +2784,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
 #'
 catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     Discards_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
-    nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
 
     F_yaxis_label <- sagSettings %>%
         filter(SAGChartKey == 3) %>%
@@ -2803,11 +2811,9 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
 
     tmp <- data.frame(tmp$table)
-
-
-    tmp$fmsy <- tail(df$FMSY, 1)
-    tmp$blim <- tail(df$Blim, 1)
-    # print(tmp)
+    tmp$fmsy <- as.numeric(tail(df$FMSY,1))
+    tmp$blim <- as.numeric(tail(df$Blim,1))
+    
 
     
     tmp$Scenario <- shorten_labels(tmp$Scenario)
@@ -2816,11 +2822,7 @@ catch_scenario_plot_1_nephrops <- function(tmp, df, sagSettings) {
       dplyr::filter(TotCatch != Basis$TotCatch) %>% 
       dplyr::bind_rows(Basis)
     
-    # Function to check if a column is made up of all NA values
-    is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, col_name])))
-    }
-    
+        
     if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
         labels <- sprintf(

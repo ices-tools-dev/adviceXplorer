@@ -56,14 +56,14 @@ get_Advice_View_Summary <- function(catch_scenario_list, StockDescription) {
 #' 
 #'
 #' @export
-get_Advice_View_Headline <- function(catch_scenario_list, SAGLinktoAdvice, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
+get_Advice_View_Headline <- function(catch_scenario_list, replaced_advice_doi, tabset_id, catch_scenario_table, drop_plots) {
   
   catch_scenario_advice_sentence <- HTML(
     paste0(
       "<span class='hovertext' data-hover='Click here to access the pdf version of the Advice'>",
       # "<a href='", advice_doi, "' target='_blank'>",
       # "<a href='", catch_scenario_list$adviceDOI, "' target='_blank'>",
-      "<a href='", SAGLinktoAdvice, "' target='_blank'>",
+      "<a href='", catch_scenario_list$adviceLink, "' target='_blank'>",
       "<b><i><font size=4> Headline advice </b></i><i class='fa-solid fa-up-right-from-square'></i></font></a></span>",
       "<br/>",
       "<font size=3>", catch_scenario_list$adviceSentence, "</font>",
@@ -378,17 +378,20 @@ wrangle_catches_with_scenarios <- function(catches_data, assessmentkey, catch_sc
   # Filter out the rows that are not advice
   catches_data <- catches_data %>%
     filter(Purpose == "Advice", AssessmentKey == assessmentkey) %>%
-    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals) %>% arrange(Year)
+    select(Year, Catches, Landings, Discards, IBC, Unallocated_Removals) %>% arrange(Year) %>% 
+    mutate(Year = as.numeric(Year),
+           Catches = as.numeric(Catches),
+           Landings = as.numeric(Landings),
+           Discards = as.numeric(Discards),
+           IBC = as.numeric(IBC),
+           Unallocated_Removals = as.numeric(Unallocated_Removals))
   
   # Check if the last row is NA for both columns in columns_to_check
   if (all(is.na(catches_data[nrow(catches_data), c("Catches", "Landings")]))) {
     # Filter out the last row if it is NA for both columns
     catches_data <- catches_data[-nrow(catches_data), ]
   }
-  # Function to check if a column is made up of all NA values
-  is_na_column <- function(dataframe, col_name) {
-        return(all(is.na(dataframe[, ..col_name])))
-    }
+  
   # Check if the column "Landings" is NA
   if (is_na_column(catches_data, "Landings") | sum(!is.na(catches_data$Catches)) > sum(!is.na(catches_data$Landings))) {
     catches_data$Catches <- rowSums(catches_data[, c("Catches", "Discards", "IBC", "Unallocated_Removals")], na.rm = TRUE)

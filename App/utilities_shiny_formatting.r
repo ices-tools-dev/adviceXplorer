@@ -42,7 +42,7 @@ stock_selection_left_side <- function() {
       inputId = "selected_years",
       label = "Active year:",
       choices = Years$Year,
-      selected = 2024,
+      selected = as.numeric(format(Sys.Date(), "%Y")),
       multiple = FALSE,
       width = "100%",
       search = TRUE,
