@@ -669,13 +669,14 @@ ICES_plot_1 <- function(df, sagSettings) {
     if (is_na_column(df1, "Landings")) {
         # df1$Landings <- df1$Catches
         df1 <- df1 %>%
+            select(-Landings) %>%
             gather(type, count, Catches:`Unallocated Removals`)
     } else {
         df1 <- df1 %>%
             select(-Catches) %>%
             gather(type, count, Landings:`Unallocated Removals`)
     }
-
+    
     df1 <- df1 %>% drop_na()
 
     p1 <- df1 %>%
