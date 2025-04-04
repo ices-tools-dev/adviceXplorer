@@ -771,13 +771,9 @@ getSAGData <- function(assessmentKey) {
   # Select only the columns from summary
   sagMerged <- sagMerged[, !grepl(".summary$", names(sagMerged))]
 
-  # sagMerged$FishingPressureDescription <- convert_false_to_F(sagMerged$FishingPressureDescription)
-  sagMerged <- sagMerged %>% mutate(FishingPressureDescription = if_else(FishingPressureDescription == FALSE, "F", as.character(FishingPressureDescription)))
-  
-  return(sagMerged)
-  
+  return(sagMerged)  
 }
-# getSAGData("agn.27.nea", 2024)
+
 
 is_na_column <- function(dataframe, col_name) {
   # Ensure col_name is treated as a string and extract column correctly
