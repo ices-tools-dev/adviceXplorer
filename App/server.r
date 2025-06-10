@@ -76,7 +76,7 @@ server <- function(input, output, session) {
           "EcoRegion",
           "icon",
           "SpeciesCommonName",
-          "YearOfLastAssessment",
+          # "YearOfLastAssessment",
           "stock_location"
         ) %>%
         mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
@@ -86,7 +86,7 @@ server <- function(input, output, session) {
           "Ecoregion" = EcoRegion,
           " " = icon,
           "Common name" = SpeciesCommonName,
-          "Year of last assessment" = YearOfLastAssessment,
+          # "Year of last assessment" = YearOfLastAssessment,
           "Location" = stock_location
         ) %>%
         {
@@ -99,7 +99,7 @@ server <- function(input, output, session) {
           "AssessmentComponent",
           "icon",
           "SpeciesCommonName",
-          "YearOfLastAssessment",
+          # "YearOfLastAssessment",
           "stock_location"
         ) %>%
         mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
@@ -108,7 +108,7 @@ server <- function(input, output, session) {
           "Component" = AssessmentComponent,
           " " = icon,
           "Common name" = SpeciesCommonName,
-          "Year of last assessment" = YearOfLastAssessment,
+          # "Year of last assessment" = YearOfLastAssessment,
           "Location" = stock_location
         ) %>%
         {
@@ -135,11 +135,11 @@ server <- function(input, output, session) {
           filterable = FALSE,
           align = "center",
           aggregate = "unique"
-        ),
-        "Year of last assessment" = colDef(
-          filterable = TRUE,
-          align = "left"
         )
+        # "Year of last assessment" = colDef(
+        #   filterable = TRUE,
+        #   align = "left"
+        # )
       ),
       theme = reactableTheme(
         stripedColor = "#eff2f5",
