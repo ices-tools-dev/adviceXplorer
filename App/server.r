@@ -45,7 +45,8 @@ server <- function(input, output, session) {
     if (nrow(stock_list_long) != 0) {
     stock_list_long %>% 
       dplyr::arrange(StockKeyLabel)
-      
+    
+    
       
   }
   }) %>%
@@ -75,6 +76,7 @@ server <- function(input, output, session) {
           "EcoRegion",
           "icon",
           "SpeciesCommonName",
+          "YearOfLastAssessment",
           "stock_location"
         ) %>%
         mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
@@ -84,6 +86,7 @@ server <- function(input, output, session) {
           "Ecoregion" = EcoRegion,
           " " = icon,
           "Common name" = SpeciesCommonName,
+          "Year of last assessment" = YearOfLastAssessment,
           "Location" = stock_location
         ) %>%
         {
@@ -96,6 +99,7 @@ server <- function(input, output, session) {
           "AssessmentComponent",
           "icon",
           "SpeciesCommonName",
+          "YearOfLastAssessment",
           "stock_location"
         ) %>%
         mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
@@ -104,6 +108,7 @@ server <- function(input, output, session) {
           "Component" = AssessmentComponent,
           " " = icon,
           "Common name" = SpeciesCommonName,
+          "Year of last assessment" = YearOfLastAssessment,
           "Location" = stock_location
         ) %>%
         {
@@ -130,6 +135,10 @@ server <- function(input, output, session) {
           filterable = FALSE,
           align = "center",
           aggregate = "unique"
+        ),
+        "Year of last assessment" = colDef(
+          filterable = TRUE,
+          align = "left"
         )
       ),
       theme = reactableTheme(
