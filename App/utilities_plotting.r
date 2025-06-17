@@ -1688,7 +1688,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
     last_col_index <- ncol(selected_data)
     first_row_values <- selected_data[1, first_col_index:last_col_index]
     names(selected_data)[which(names(selected_data) %in% custom_cols)] <- as.character(first_row_values)
-    browser()
+    
     # Remove custom name columns and reshape data
     selected_data <- selected_data %>%
         select(-custom_name_cols) %>%
