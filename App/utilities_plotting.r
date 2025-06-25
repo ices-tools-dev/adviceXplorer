@@ -637,7 +637,7 @@ replace_subscript_symbols <- function(text) {
 #'
 #' @export
 #'
-ICES_plot_1 <- function(df, sagSettings) {
+ICES_plot_1 <- function(df, sagSettings, sagStamp) {
     # If df$UnitOfRecruitment is empty, set it to NA
     
     if (is.na(df$CatchesLandingsUnits[1])) {
@@ -736,14 +736,15 @@ ICES_plot_1 <- function(df, sagSettings) {
                 x = 0.5,
                 xanchor = "center",
                 title = list(text = "")
-            )#,
-            # annotations = list(
-            #     showarrow = FALSE,
-            #     # text = tail(df$SAGStamp, 1),
-            #     font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-            #     yref = "paper", y = 1, xref = "paper", x = 1,
-            #     yanchor = "right", xanchor = "right"
-            # )
+            ),
+            annotations = list(
+                showarrow = FALSE,
+                text = sagStamp,
+                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+                yref = "paper", y = 1.05, 
+                xref = "paper", x = 1,
+                yanchor = "right", xanchor = "right"
+            )
         )
     
     fig1
@@ -772,7 +773,7 @@ ICES_plot_1 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_2 <- function(df, sagSettings) {
+ICES_plot_2 <- function(df, sagSettings, sagStamp) {
     
     # If df$UnitOfRecruitment is empty, set it to NA
     if (is.na(df$UnitOfRecruitment[1])) {
@@ -889,9 +890,10 @@ ICES_plot_2 <- function(df, sagSettings) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp, 1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05,
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
         ) #%>%
@@ -923,7 +925,7 @@ ICES_plot_2 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_3 <- function(df, sagSettings) {
+ICES_plot_3 <- function(df, sagSettings, sagStamp) {
 
     processed <- process_dataframe_F(df, sagSettings)
     
@@ -1193,9 +1195,10 @@ ICES_plot_3 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp, 1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05,
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
         ) #%>% 
@@ -1236,7 +1239,7 @@ ICES_plot_3 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_4 <- function(df, sagSettings) {
+ICES_plot_4 <- function(df, sagSettings, sagStamp) {
     # nullifempty <- function(x) if (length(x) == 0) NULL else x
     # If df$UnitOfRecruitment is empty, set it to NA
     if (is.na(df$StockSizeUnits[1])) {
@@ -1615,9 +1618,10 @@ ICES_plot_4 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp, 1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05, 
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
         )  #%>% style(showlegend = FALSE, traces = 2)
@@ -1636,7 +1640,7 @@ ICES_plot_4 <- function(df, sagSettings) {
 }
 
 
-ICES_custom_plot <- function(df, sagSettings, ChartKey) {
+ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
     sagSettingsCustom <- sagSettings %>% filter(SAGChartKey == ChartKey)
    
     # Extract custom data and graph type
@@ -1935,9 +1939,10 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
             ),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp, 1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05, 
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right"
             )
         )
@@ -1975,7 +1980,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey) {
 #'
 #' @export
 #'
-ICES_plot_5 <- function(df, sagSettings) {
+ICES_plot_5 <- function(df, sagSettings, sagStamp) {
     
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
@@ -2084,12 +2089,13 @@ ICES_plot_5 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp,1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05, 
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer))) 
+        )
+        
 
     for (i in 1:length(fig5$x$data)) {
         if (!is.null(fig5$x$data[[i]]$name)) {
@@ -2121,7 +2127,7 @@ ICES_plot_5 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_6 <- function(df, sagSettings) {
+ICES_plot_6 <- function(df, sagSettings, sagStamp) {
     sagSettings3 <- sagSettings %>% filter(SAGChartKey == 3)
 
     df6 <- df %>%
@@ -2227,9 +2233,10 @@ ICES_plot_6 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp,1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05, 
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
         ) #%>% 
         #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
@@ -2265,7 +2272,7 @@ ICES_plot_6 <- function(df, sagSettings) {
 #'
 #' @export
 #'
-ICES_plot_7 <- function(df, sagSettings) {
+ICES_plot_7 <- function(df, sagSettings, sagStamp) {
 
     # If df$UnitOfRecruitment is empty, set it to NA
     if (is.na(df$UnitOfRecruitment[1])) {
@@ -2333,12 +2340,12 @@ ICES_plot_7 <- function(df, sagSettings) {
             xaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
-                # text = tail(df$SAGStamp,1),
+                text = sagStamp,
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1, xref = "paper", x = 1,
+                yref = "paper", y = 1.05, 
+                xref = "paper", x = 1,
                 yanchor = "right", xanchor = "right")
-        ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
+        ) 
 
     for (i in 1:length(fig7$x$data)) {
         if (!is.null(fig7$x$data[[i]]$name)) {
