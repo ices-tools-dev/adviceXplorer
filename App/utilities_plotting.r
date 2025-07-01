@@ -1979,6 +1979,11 @@ ICES_plot_5 <- function(df, sagSettings) {
     
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
+    if (is.na(df$StockSizeUnits[1])) {
+        df$StockSizeUnits <- "empty"
+    }
+    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+    
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
         select(Year, AssessmentYear, StockSize, Blim, Bpa, MSYBtrigger, StockSizeDescription, StockSizeUnits) %>%  #%>% , SAGStamp

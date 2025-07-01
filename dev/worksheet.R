@@ -3310,3 +3310,35 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+test <- icesSAG::getStockDownloadData(18715)
+test <- icesSAG::getSAG("had.27.46a20", 2024)
+
+
+download_SID <- function(Year) {
+  stock_list_all <- jsonlite::fromJSON(
+    URLencode(
+      sprintf("http://sd.ices.dk/services/odata4/StockListDWs4?$filter=ActiveYear eq %s&$select=StockKeyLabel, StockKeyDescription, SpeciesCommonName, EcoRegion, DataCategory, YearOfLastAssessment, AssessmentFrequency, YearOfNextAssessment, AssessmentKey", Year)
+    )
+  )$value
+  # stock_list_all <- stock_list_all %>% filter(!StockKeyLabel %in% adviceXplorer_stocks_to_exclude_for_lunch)
+  return(stock_list_all)
+}
+
+test2 <- download_SID(2025)
+head(test2)
+# find how many NA in AssessmentKey
+sum(is.na(test2$AssessmentKey)) # 0 NA
+library(dplyr)
+df <- test2 %>% filter(is.na(AssessmentKey))
+devtools::install_github("ices-tools-prod/icesSAG")
+
+install.packages("icesSAG")
+library(icesSAG)
+getSAGGraphs(19287)
+
+
+icesASD::getAdviceViewRecord(year = 2025, stock = "ank.27.78abd")
+icesASD::get_catch_scenario_table(3876)
+icesSAG::getSAGGraphs(19277)
+icesSAG::getListStocks(assessmentKey = 19277)
