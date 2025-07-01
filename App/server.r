@@ -200,11 +200,11 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
-    # info <- icesSAG::getListStocks(query$assessmentkey)
+    # info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
+    info <- icesSAG::getListStocks(query$assessmentkey)
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
-    query$sagStamp <- "230387"#info$sagStamp
+    query$sagStamp <- info$sagStamp
 
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)
