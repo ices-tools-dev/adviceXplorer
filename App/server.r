@@ -67,7 +67,7 @@ server <- function(input, output, session) {
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-    
+    browser()
     if (length(input$selected_locations) > 1) {
       res_mod() %>%
         select(
@@ -182,8 +182,8 @@ server <- function(input, output, session) {
     
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
-
+      # info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
+      info <- getStockInfoFromSAG(query$assessmentkey)
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear
 
@@ -200,11 +200,11 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    # info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
-    info <- icesSAG::getListStocks(query$assessmentkey)
+    info <- getStockInfoFromSAG(query$assessmentkey)
+      
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
-    query$sagStamp <- info$sagStamp
+    query$sagStamp <- info$SAGStamp
 
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)

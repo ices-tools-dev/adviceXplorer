@@ -930,3 +930,12 @@ getSAGQualityAssessment <- function(stock_code, year, assessmentComponent, years
   
   return(all_sag_data)
 }
+
+
+getStockInfoFromSAG <- function(assessmentKey){
+info <- jsonlite::fromJSON(
+    utils::URLencode(
+      sprintf("https://sag.ices.dk/SAG_API/api/StockList?year=0&assessmentKey=%s", assessmentKey)
+    )
+  )
+}
