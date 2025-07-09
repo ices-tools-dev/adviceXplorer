@@ -79,7 +79,7 @@ server <- function(input, output, session) {
           # "YearOfLastAssessment",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)) | AssessmentComponent == "NA", "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -102,7 +102,7 @@ server <- function(input, output, session) {
           # "YearOfLastAssessment",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)) | AssessmentComponent == "NA", "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
