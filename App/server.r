@@ -79,7 +79,7 @@ server <- function(input, output, session) {
           # "YearOfLastAssessment",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)) | AssessmentComponent == "NA", "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -102,7 +102,7 @@ server <- function(input, output, session) {
           # "YearOfLastAssessment",
           "stock_location"
         ) %>%
-        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)), "", AssessmentComponent)) %>% 
+        mutate(AssessmentComponent = ifelse((is.na(AssessmentComponent)) | AssessmentComponent == "NA", "", AssessmentComponent)) %>% 
         rename(
           "Stock code" = StockKeyLabel,
           "Component" = AssessmentComponent,
@@ -182,8 +182,8 @@ server <- function(input, output, session) {
     
 
     if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
-
+      # info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
+      info <- getStockInfoFromSAG(query$assessmentkey)
       query$stockkeylabel <- info$StockKeyLabel
       query$year <- info$AssessmentYear
 
@@ -200,9 +200,11 @@ server <- function(input, output, session) {
 
   ######### SAG data
   SAG_data_reactive <- reactive({
-    info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
+    info <- getStockInfoFromSAG(query$assessmentkey)
+      
     query$stockkeylabel <- info$StockKeyLabel
     query$year <- info$AssessmentYear ####
+    query$sagStamp <- info$SAGStamp
 
     stock_name <- query$stockkeylabel
     msg("downloading:", stock_name)
@@ -289,7 +291,7 @@ output$download_SAG_Data <- downloadHandler(
       need(c(SAG_data_reactive()$Landings, SAG_data_reactive()$Catches) != "", "") # ,
       # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-      suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings()))
+      suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
     }
@@ -301,7 +303,7 @@ output$download_SAG_Data <- downloadHandler(
       validate(
       need(SAG_data_reactive()$Recruitment != "", "")      
     )
-      suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings()))
+      suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
     }
@@ -313,7 +315,7 @@ if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 
   validate(
       need(SAG_data_reactive()$FishingPressure != "", "")      
     )
-    suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings()))
+    suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
     }
@@ -326,7 +328,7 @@ if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 
       need(SAG_data_reactive()$StockSize != "", "")      
       
     )
-    suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings()))
+    suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
     }
@@ -336,7 +338,7 @@ if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 
     
     if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
     
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 15))
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 15, query$sagStamp))
     } else {    
     return(NULL)
   }
@@ -344,26 +346,26 @@ if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 
 output$customPlot2 <- renderPlotly({
   
     if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 16))
-    } else {    
+
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 16, query$sagStamp))
+    } else {
     return(NULL)
   }
   })
 
   output$customPlot3 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 17)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 17))
-    } else {    
+
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 17, query$sagStamp))
+    } else {
     return(NULL)
   }
   })
   output$customPlot4 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 18)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), 18))
-    } else {    
+
+    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 18, query$sagStamp))
+    } else {
     return(NULL)
   }
   })
@@ -403,8 +405,8 @@ output$customPlot2 <- renderPlotly({
       need(advice_action_quality()$StockSize != "", "SSB not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    
-    suppressWarnings(ICES_plot_5(advice_action_quality(), sagSettings()))
+
+    suppressWarnings(ICES_plot_5(advice_action_quality(), sagSettings(), query$sagStamp))
 
   })
   output$plot6 <- renderPlotly({
@@ -413,7 +415,7 @@ output$customPlot2 <- renderPlotly({
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
 
-    suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings()))
+    suppressWarnings(ICES_plot_6(advice_action_quality(), sagSettings(), query$sagStamp))
 
   })
   output$plot7 <- renderPlotly({
@@ -421,7 +423,7 @@ output$customPlot2 <- renderPlotly({
       need(advice_action_quality()$Recruitment != "", "Recruitment not available for this stock"),
       need(all(!10 %in% drop_plots()), "Figure not included in the published advice for this stock")
     )
-    suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings()))
+    suppressWarnings(ICES_plot_7(advice_action_quality(), sagSettings(), query$sagStamp))
   })
 
 #### this function is used to replace N.A. with NA in the assessment component, it's just a placeholder

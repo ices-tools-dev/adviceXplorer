@@ -3342,3 +3342,14 @@ icesASD::getAdviceViewRecord(year = 2025, stock = "ank.27.78abd")
 icesASD::get_catch_scenario_table(3876)
 icesSAG::getSAGGraphs(19277)
 icesSAG::getListStocks(assessmentKey = 19277)
+
+
+## install github package
+remotes::install_github("ices-tools-prod/icesSAG")
+
+icesSAG::getListStocks(assessmentKey = 18808)
+sagList <- jsonlite::fromJSON(
+    utils::URLencode(
+      sprintf("https://sag.ices.dk/SAG_API/api/StockList?year=0&assessmentKey=%s", 18808)
+    )
+  )
