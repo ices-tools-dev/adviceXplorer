@@ -862,7 +862,7 @@ getSAGQualityAssessment <- function(stock_code, year, assessmentComponent, years
   #create a sequence of years from the variable year to 5 years prior, 
   #if yearsToDisplay is provided then from year to yearsToDisplay years prior
   if (!is.null(yearsToDisplay)) {
-    years <- seq(year, year - (yearsToDisplay-1))
+    years <- seq(year, year - (yearsToDisplay - 1))
   } else {
     years <- seq(year, year - 4)
   }
@@ -910,6 +910,7 @@ getSAGQualityAssessment <- function(stock_code, year, assessmentComponent, years
       
       # Convert character columns
       data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+      data_temp$UnitOfRecruitment <- as.character(data_temp$UnitOfRecruitment)
       data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
       data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
       data_temp$FAge <- as.character(data_temp$FAge)

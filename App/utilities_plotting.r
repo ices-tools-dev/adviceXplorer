@@ -1987,6 +1987,7 @@ ICES_plot_5 <- function(df, sagSettings, sagStamp) {
     if (is.na(df$StockSizeUnits[1])) {
         df$StockSizeUnits <- "empty"
     }
+    
     scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
     
     df5 <- df %>%
