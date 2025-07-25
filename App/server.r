@@ -67,7 +67,7 @@ server <- function(input, output, session) {
     validate(
       need(!nrow(eco_filter()) == 0, "No published stocks in the selected ecoregion and year")
     )
-    browser()
+    
     if (length(input$selected_locations) > 1) {
       res_mod() %>%
         select(
