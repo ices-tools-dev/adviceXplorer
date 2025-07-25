@@ -2075,7 +2075,7 @@ ICES_plot_5 <- function(df, sagSettings, sagStamp) {
         }
         
 
-browser()
+
         p5 <-
             p5 +
             theme_ICES_plots(
