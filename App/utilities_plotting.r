@@ -350,9 +350,9 @@ theme_ICES_plots <-
     } else if (type == "quality_SSB") {
 
         # Determine scaling factor based on StockSizeUnits
-        scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
-                
-        
+        scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", tail(df$StockSizeUnits, 1))
+
+
         # Determine scaling based on Recruitment values
         scaling <- get_scaling(c(df$StockSize, df$High_StockSize, df$Low_StockSize), scaling_factor_stockSize, type = "ssb")
         divisor <- scaling$divisor
@@ -1984,11 +1984,12 @@ ICES_plot_5 <- function(df, sagSettings, sagStamp) {
     
     sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
     
-    if (is.na(df$StockSizeUnits[1])) {
+
+    if (is.na(tail(df$StockSizeUnits, 1))) {
         df$StockSizeUnits <- "empty"
     }
     
-    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", tail(df$StockSizeUnits, 1))
     
     df5 <- df %>%
         filter(Purpose == "Advice") %>%
@@ -2074,7 +2075,7 @@ ICES_plot_5 <- function(df, sagSettings, sagStamp) {
         }
         
 
-
+browser()
         p5 <-
             p5 +
             theme_ICES_plots(
