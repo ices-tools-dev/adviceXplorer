@@ -3310,3 +3310,14 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+## install github package
+remotes::install_github("ices-tools-prod/icesSAG")
+
+icesSAG::getListStocks(assessmentKey = 18808)
+sagList <- jsonlite::fromJSON(
+    utils::URLencode(
+      sprintf("https://sag.ices.dk/SAG_API/api/StockList?year=0&assessmentKey=%s", 18808)
+    )
+  )
