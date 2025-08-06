@@ -648,7 +648,7 @@ ICES_plot_1 <- function(df, sagSettings, sagStamp) {
 
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
-    # nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
     additionalCustomeSeries <-
         sagSettings1 %>%
         filter(settingKey == 43) %>%
@@ -665,14 +665,14 @@ ICES_plot_1 <- function(df, sagSettings, sagStamp) {
         pull(settingValue) %>%
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
+
+    OnlyCatches <-
+        sagSettings1 %>%
+        filter(settingKey == 32) %>%
+        pull(settingValue) %>%
+        nullifempty()
     
-    # Retrieve the setting
-    # NoCaches <- sagSettings1 %>%
-    #     filter(settingKey == 43) %>%
-    #     pull(settingValue) %>%
-    #     nullifempty()
-    
-    if (is_na_column(df1, "Landings")) {        
+    if (is_na_column(df1, "Landings") || !is.null(OnlyCatches)) {        
         df1 <- df1 %>%
             select(-Landings) %>%
             # gather(type, count, Catches:`Unallocated Removals`)
@@ -694,7 +694,7 @@ ICES_plot_1 <- function(df, sagSettings, sagStamp) {
                  names_to = "type",
                  values_to = "count")
     }
-
+    
     ## remove rows with NA in count
     df1 <- df1 %>% filter(!is.na(count))
 
