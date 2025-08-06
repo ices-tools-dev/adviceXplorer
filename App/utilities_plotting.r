@@ -648,7 +648,7 @@ ICES_plot_1 <- function(df, sagSettings, sagStamp) {
 
     sagSettings1 <- sagSettings %>% filter(SAGChartKey == 1)
 
-    # nullifempty <- function(x) if (length(x) == 0) NULL else x
+    
     additionalCustomeSeries <-
         sagSettings1 %>%
         filter(settingKey == 43) %>%
@@ -666,19 +666,39 @@ ICES_plot_1 <- function(df, sagSettings, sagStamp) {
         str_split(pattern = ",", simplify = TRUE) %>%
         as.numeric()
 
-    if (is_na_column(df1, "Landings")) {
-        # df1$Landings <- df1$Catches
+    OnlyCatches <-
+        sagSettings1 %>%
+        filter(settingKey == 32) %>%
+        pull(settingValue) %>%
+        nullifempty()
+    
+    if (is_na_column(df1, "Landings") || !is.null(OnlyCatches)) {        
         df1 <- df1 %>%
             select(-Landings) %>%
-            gather(type, count, Catches:`Unallocated Removals`)
+            # gather(type, count, Catches:`Unallocated Removals`)
+            pivot_longer(cols = Catches:`Unallocated Removals`,
+                 names_to = "type",
+                 values_to = "count")
+    } else if (!is.null(additionalCustomeSeries)) {
+        df1 <- df1 %>%
+            select(-Catches) %>%
+            # gather(type, count, Landings:`Unallocated Removals`)
+            pivot_longer(cols = Landings:`Unallocated Removals`,
+                 names_to = "type",
+                 values_to = "count")
     } else {
         df1 <- df1 %>%
             select(-Catches) %>%
-            gather(type, count, Landings:`Unallocated Removals`)
+            # gather(type, count, Landings:`Unallocated Removals`)
+            pivot_longer(cols = Landings:`Unallocated Removals`,
+                 names_to = "type",
+                 values_to = "count")
     }
     
-    df1 <- df1 %>% drop_na()
+    ## remove rows with NA in count
+    df1 <- df1 %>% filter(!is.na(count))
 
+        
     p1 <- df1 %>%
         ggplot(., aes(
             x = Year,
