@@ -1713,6 +1713,9 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
     first_row_values <- selected_data[1, first_col_index:last_col_index]
     names(selected_data)[which(names(selected_data) %in% custom_cols)] <- as.character(first_row_values)
     
+    # if in the column names there is any NA replace with trace1, trace2, etc.
+    names(selected_data)[is.na(names(selected_data))] <- paste0("trace", seq_along(names(selected_data)[is.na(names(selected_data))]))
+
     # Remove custom name columns and reshape data
     selected_data <- selected_data %>%
         select(-custom_name_cols) %>%
