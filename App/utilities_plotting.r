@@ -1271,7 +1271,7 @@ ICES_plot_4 <- function(df, sagSettings, sagStamp) {
        
     processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
 
-   
+    
 
     # Filter out rows with NAs and create a segment identifier
     df_segments <- processed$df4 %>%
@@ -1643,7 +1643,8 @@ ICES_plot_4 <- function(df, sagSettings, sagStamp) {
                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
                 yref = "paper", y = 1.05, 
                 xref = "paper", x = 1,
-                yanchor = "right", xanchor = "right"
+                yanchor = "right", 
+                xanchor = "right"
             )
         )  #%>% style(showlegend = FALSE, traces = 2)
 
@@ -1957,10 +1958,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
                 title = list(text = "")
             ),
             xaxis = list(zeroline = TRUE),
-            yaxis = list(
-                rangemode='tozero',
-                zeroline = TRUE
-            ),
+            yaxis = list(zeroline = TRUE),
             annotations = list(
                 showarrow = FALSE,
                 text = sagStamp,

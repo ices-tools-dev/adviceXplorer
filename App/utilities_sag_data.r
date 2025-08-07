@@ -484,6 +484,7 @@ get_scaling_factor <- function(unit_type, unit_value) {
                            "Kilograms per trip" = 1,
                            "Kilograms per trap" = 1,
                            "Kilograms per hook" = 1,
+                           "Kilograms per day" = 1,
                            "UWTV abundance (billions)" = 1000000000,
                            "Number of individuals (billions)" = 1000000000,
                            "ratio" = 1,
@@ -814,38 +815,38 @@ is_na_column <- function(dataframe, col_name) {
 # }
 
 
-quality_assessment_data_local <- function(stock_code, year, assessmentComponent) {
-  years <- c(2024, 2023, 2022, 2021, 2020)
-  years <- years[years <= year]
-  datalist <- list()
+# quality_assessment_data_local <- function(stock_code, year, assessmentComponent) {
+#   years <- c(2024, 2023, 2022, 2021, 2020)
+#   years <- years[years <= year]
+#   datalist <- list()
 
-  data_temp <- try(access_sag_data_local(stock_code, years))
-  if (isTRUE(class(data_temp) == "try-error")) {
-    next
-  } else {
-    data_temp <- filter(data_temp, between(Year, 2005, 2024))
+#   data_temp <- try(access_sag_data_local(stock_code, years))
+#   if (isTRUE(class(data_temp) == "try-error")) {
+#     next
+#   } else {
+#     data_temp <- filter(data_temp, between(Year, 2005, 2024))
     
-    data_temp <- data_temp %>% select(
-      Year,
-      Recruitment, RecruitmentAge,UnitOfRecruitment,
-      StockSize, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
-      FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription,
-      AssessmentYear, Purpose, SAGStamp, AssessmentComponent
-    )
-    data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0 | data_temp$AssessmentComponent == "N.A."] <- "NA" # this probably needs to go when they update ASD from "N.A." to NA
-    data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
-    data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
-    data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
-    data_temp$FAge <- as.character(data_temp$FAge)
-    data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
-  }
-  # take out non published data from before 2021 in big data
-  SAG_data <- filter(data_temp, Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
-  # make assessmentYear as factor
-  SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
+#     data_temp <- data_temp %>% select(
+#       Year,
+#       Recruitment, RecruitmentAge,UnitOfRecruitment,
+#       StockSize, Bpa, Blim, MSYBtrigger, StockSizeDescription, StockSizeUnits,
+#       FishingPressure, Flim, Fpa, FMSY, FAge, FishingPressureDescription,
+#       AssessmentYear, Purpose, SAGStamp, AssessmentComponent
+#     )
+#     data_temp$AssessmentComponent[data_temp$AssessmentComponent == "" | is.na(data_temp$AssessmentComponent) | data_temp$AssessmentComponent == 0 | data_temp$AssessmentComponent == "N.A."] <- "NA" # this probably needs to go when they update ASD from "N.A." to NA
+#     data_temp$RecruitmentAge <- as.character(data_temp$RecruitmentAge)
+#     data_temp$StockSizeDescription <- as.character(data_temp$StockSizeDescription)
+#     data_temp$StockSizeUnits <- as.character(data_temp$StockSizeUnits)
+#     data_temp$FAge <- as.character(data_temp$FAge)
+#     data_temp$FishingPressureDescription <- as.character(data_temp$FishingPressureDescription)
+#   }
+#   # take out non published data from before 2021 in big data
+#   SAG_data <- filter(data_temp, Purpose == "Advice" & AssessmentComponent == assessmentComponent) %>% distinct()
+#   # make assessmentYear as factor
+#   SAG_data$AssessmentYear <- as.factor(SAG_data$AssessmentYear)
 
-  return(SAG_data)
-}
+#   return(SAG_data)
+# }
 
 # library(future)
 # library(promises)
