@@ -38,8 +38,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# csv files
-#*.csv
+.dcf
 
 # SAG csv files
 /App/Data/SAG_2017/
@@ -64,3 +63,4 @@ vignettes/*.pdf
 /dev/worksheet.R
 
 /hangman/
+
