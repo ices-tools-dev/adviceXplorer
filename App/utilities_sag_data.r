@@ -894,7 +894,7 @@ getSAGQualityAssessment <- function(stock_code, year, assessmentComponent, years
       data_temp$FMSY <- as.numeric(data_temp$FMSY)
       # data_temp$AssessmentYear <- as.factor(data_temp$AssessmentYear)
       # Filter the data for the required year range
-      data_temp <- filter(data_temp, between(Year, 2005, 2024))
+      data_temp <- filter(data_temp, between(Year, 2005, year))
       
       # Select necessary columns
       data_temp <- data_temp %>% select(
