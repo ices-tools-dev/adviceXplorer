@@ -427,5 +427,22 @@ standardiseRefPoints <- function(totrefpoints) {
     "HR {pa}"
     )] <- "HR<sub>pa</sub>"
   }
+
+  if (any(totrefpoints %in% c(
+    "F/F_{MSY}"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F/F_{MSY}"      
+    )] <- "F/F<sub>MSY</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "B/B_{MSY}"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "B/B_{MSY}"      
+    )] <- "B/B<sub>MSY</sub>"
+  }
+
   return(totrefpoints)
 }

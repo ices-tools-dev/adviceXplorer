@@ -1338,24 +1338,7 @@ ICES_plot_4 <- function(df, sagSettings, sagStamp) {
                 ), HTML
             )
         ))
-    # p4 <- p4 +
-    #     geom_errorbar(data = df_segments[df_segments$show_error, ], aes(
-            
-    #         y = StockSize,
-    #         ymin = Low_StockSize,
-    #         ymax = High_StockSize,
-    #         color = "StockSize",
-    #         group = segment,
-    #         orientation = "y",
-    #         text = map(
-    #             paste0(
-    #                 "<b>Year: </b>", Year,
-    #                 "<br>",
-    #                 "<b>", StockSizeDescription,": </b>", StockSize
-    #             ), HTML
-    #         )
-    #     ))
-
+    
               
     if (any(!is.na(df_segments$MSYBtrigger))) {
         p4 <- p4 +
@@ -2549,42 +2532,49 @@ radial_plot <- function(tmp, catch_scenarios) {
 #'
 
 catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
-       
-    F_yaxis_label <- sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+
+    F_yaxis_label <- sagSettings %>%
+        filter(SAGChartKey == 3) %>%
+        filter(settingKey == 20) %>%
+        pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
+        as.character() %>%
+        nullifempty()
+
     if (is.null(F_yaxis_label)) {
-          F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>",dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
-        }
-    
-    
-    SSB_yaxis_label <- sagSettings %>% filter(SAGChartKey == 4) %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% nullifempty()
+        F_yaxis_label <- sprintf("%s <sub>(ages %s)</sub>", dplyr::last(df$FishingPressureDescription), dplyr::last(df$FAge))
+    }
+
+
+    SSB_yaxis_label <- sagSettings %>%
+        filter(SAGChartKey == 4) %>%
+        filter(settingKey == 20) %>%
+        pull(settingValue) %>%
+        standardiseRefPoints(.) %>%
+        as.character() %>%
+        nullifempty()
+
     if (is.null(SSB_yaxis_label)) {
-    SSB_yaxis_label <- sprintf("%s (1000 %s)", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
-        }
-    Discards_yaxis_label <- "Discards (tonnes)"
-       
+        SSB_yaxis_label <- sprintf("%s (%s)", dplyr::last(df$StockSizeDescription), dplyr::last(df$StockSizeUnits))
+    }
+
+    # Discards_yaxis_label <- "Discards (tonnes)"
     Catches_yaxis_label <- sprintf("Catches (%s)", dplyr::last(df$CatchesLandingsUnits))
-    
+
     tmp <- data.frame(tmp$table)
-    
-    
-    tmp$fmsy <- as.numeric(tail(df$FMSY,1))
-    tmp$blim <- as.numeric(tail(df$Blim,1))
-    
+    tmp$fmsy <- as.numeric(tail(df$FMSY, 1))
+    tmp$blim <- as.numeric(tail(df$Blim, 1))
     
 
+
+
+    Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice", ]
+    tmp <- tmp[tmp$cS_Purpose == "Other Scenarios", ] %>%
+        dplyr::filter(TotCatch != Basis$TotCatch) %>%
+        dplyr::bind_rows(Basis)
     
-    Basis <- tmp[tmp$cS_Purpose == "Basis Of Advice",]
-    tmp <- tmp[tmp$cS_Purpose == "Other Scenarios",] %>% 
-      dplyr::filter(TotCatch != Basis$TotCatch) %>% 
-      dplyr::bind_rows(Basis)
-    
-    
-    # Function to check if a column is made up of all NA values
-    # is_na_column <- function(dataframe, col_name) {
-    #     return(all(is.na(dataframe[, col_name])))
-    # }
-    
-    if (is_na_column(tmp, "F")){
+
+    if (is_na_column(tmp, "F")) {
         tmp <- arrange(tmp, F_wanted)
 
         labels <- sprintf(
@@ -2592,75 +2582,74 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         ) %>% lapply(htmltools::HTML)
 
         fig_catch <- plot_ly(tmp) %>%
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ F_wanted,
-            type = "scatter",
-            mode = "lines+markers",
-            text = labels,
-            marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
-            line = list(color = "#ed5f26", width = 5, dash = 'solid'),
-            name = "F wanted"
-        ) %>% 
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ fmsy,
-            type = "scatter",
-            mode = "lines",
-            text = "FMSY",
-            line = list(color = "#00AC67", width = .9, dash = 'solid'),
-            name = "FMSY"
-        ) %>% 
-        add_markers(
-            x = Basis$TotCatch,
-            y = Basis$F_wanted,
-            type = "scatter",
-            mode = "markers",            
-            marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
-            text = "Basis of advice",
-            name = "Basis of advice",
-            showlegend = FALSE
-        )
+            add_trace(
+                x = ~TotCatch,
+                y = ~F_wanted,
+                type = "scatter",
+                mode = "lines+markers",
+                text = labels,
+                marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
+                line = list(color = "#ed5f26", width = 5, dash = "solid"),
+                name = "F wanted"
+            ) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~fmsy,
+                type = "scatter",
+                mode = "lines",
+                text = "FMSY",
+                line = list(color = "#00AC67", width = .9, dash = "solid"),
+                name = "FMSY"
+            ) %>%
+            add_markers(
+                x = Basis$TotCatch,
+                y = Basis$F_wanted,
+                type = "scatter",
+                mode = "markers",
+                marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
+                text = "Basis of advice",
+                name = "Basis of advice",
+                showlegend = FALSE
+            )
 
-    if (is_na_column(tmp, "F_wanted")){
-        tmp <- arrange(tmp, HR)
+        if (is_na_column(tmp, "F_wanted")) {
+            tmp <- arrange(tmp, HR)
 
-        labels <- sprintf(
-            "Catch Scenario: %s", tmp$Scenario
-        ) %>% lapply(htmltools::HTML)
+            labels <- sprintf(
+                "Catch Scenario: %s", tmp$Scenario
+            ) %>% lapply(htmltools::HTML)
 
-        fig_catch <- plot_ly(tmp) %>%
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ HR,
-            type = "scatter",
-            mode = "lines+markers",
-            text = labels,
-            marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
-            line = list(color = "#ed5f26", width = 5, dash = 'solid'),
-            name = "HR"
-        ) %>% 
-        add_trace(
-            x = ~ TotCatch,
-            y = ~ fmsy,
-            type = "scatter",
-            mode = "lines",
-            text = "FMSY",
-            line = list(color = "#00AC67", width = .9, dash = 'solid'),
-            name = "FMSY"
-        ) %>% 
-        add_markers(
-            x = Basis$TotCatch,
-            y = Basis$HR,
-            type = "scatter",
-            mode = "markers",            
-            marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
-            text = "Basis of advice",
-            name = "Basis of advice",
-            showlegend = FALSE
-        )
-    
-    }
+            fig_catch <- plot_ly(tmp) %>%
+                add_trace(
+                    x = ~TotCatch,
+                    y = ~HR,
+                    type = "scatter",
+                    mode = "lines+markers",
+                    text = labels,
+                    marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
+                    line = list(color = "#ed5f26", width = 5, dash = "solid"),
+                    name = "HR"
+                ) %>%
+                add_trace(
+                    x = ~TotCatch,
+                    y = ~fmsy,
+                    type = "scatter",
+                    mode = "lines",
+                    text = "FMSY",
+                    line = list(color = "#00AC67", width = .9, dash = "solid"),
+                    name = "FMSY"
+                ) %>%
+                add_markers(
+                    x = Basis$TotCatch,
+                    y = Basis$HR,
+                    type = "scatter",
+                    mode = "markers",
+                    marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
+                    text = "Basis of advice",
+                    name = "Basis of advice",
+                    showlegend = FALSE
+                )
+        }
     } else {
         tmp <- arrange(tmp, F)
 
@@ -2669,92 +2658,92 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
         ) %>% lapply(htmltools::HTML)
 
         fig_catch <- plot_ly(tmp) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~F,
+                type = "scatter",
+                mode = "lines+markers",
+                text = labels,
+                marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
+                line = list(color = "#ed5f26", width = 5, dash = "solid"),
+                name = "F"
+            ) %>%
+            add_trace(
+                x = ~TotCatch,
+                y = ~fmsy,
+                type = "scatter",
+                mode = "lines",
+                text = "FMSY",
+                line = list(color = "#00AC67", width = .9, dash = "solid"),
+                name = "FMSY"
+            ) %>%
+            add_markers(
+                x = Basis$TotCatch,
+                y = Basis$F,
+                type = "scatter",
+                mode = "markers",
+                marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
+                text = "Basis of advice",
+                name = "Basis of advice",
+                showlegend = FALSE
+            )
+    }
+
+    ay <- list(
+        overlaying = "y",
+        side = "right",
+        title = SSB_yaxis_label,
+        titlefont = titlefont_format(),
+        tickfont = tickfont_format()
+    )
+
+    fig_catch <- fig_catch %>%
         add_trace(
-            x = ~ TotCatch,
-            y = ~ F,
+            x = ~TotCatch,
+            y = ~ SSB,
             type = "scatter",
             mode = "lines+markers",
-            text = labels,            
-            marker = list(color = "#ed5f26", size = 15, symbol = "diamond"),
-            line = list(color = "#ed5f26", width = 5, dash = 'solid'),
-            name = "F"
-        ) %>% 
+            text = labels,
+            line = list(color = "#047c6c", width = 5, dash = "solid"),
+            marker = list(color = "#047c6c", size = 15, symbol = "diamond"),
+            name = "SSB",
+            yaxis = "y2"
+        ) %>%
         add_trace(
-            x = ~ TotCatch,
-            y = ~ fmsy,
+            x = ~TotCatch,
+            y = ~ blim,
             type = "scatter",
             mode = "lines",
-            text = "FMSY",
-            line = list(color = "#00AC67", width = .9, dash = 'solid'),
-            name = "FMSY"
-        ) %>% 
+            text = "BLim",
+            line = list(color = "black", width = .9, dash = "dash"),
+            name = "BLim",
+            yaxis = "y2"
+        ) %>%
         add_markers(
             x = Basis$TotCatch,
-            y = Basis$F,
+            y = Basis$SSB,
             type = "scatter",
-            mode = "markers",            
+            mode = "markers",
             marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
             text = "Basis of advice",
             name = "Basis of advice",
-            showlegend = FALSE
-        )
-    }
-
-        ay <- list(
-            overlaying = "y",
-            side = "right",
-            title = SSB_yaxis_label,
-            titlefont = titlefont_format(),
-            tickfont = tickfont_format()
+            yaxis = "y2"
         )
 
-            fig_catch <- fig_catch %>%
-                add_trace(
-                    x = ~TotCatch,
-                    y = ~ SSB / 1000,
-                    type = "scatter",
-                    mode = "lines+markers",
-                    text = labels,
-                    line = list(color = "#047c6c", width = 5, dash = "solid"),
-                    marker = list(color = "#047c6c", size = 15, symbol = "diamond"),
-                    name = "SSB",
-                    yaxis = "y2"
-                ) %>%
-                add_trace(
-                    x = ~TotCatch,
-                    y = ~ blim / 1000,
-                    type = "scatter",
-                    mode = "lines",
-                    text = "BLim",
-                    line = list(color = "black", width = .9, dash = "dash"),
-                    name = "BLim",
-                    yaxis = "y2"
-                ) %>%
-                add_markers(
-                    x = Basis$TotCatch,
-                    y = Basis$SSB / 1000,
-                    type = "scatter",
-                    mode = "markers",
-                    marker = list(color = "#000000", size = 20, symbol = "diamond-open"),
-                    text = "Basis of advice",
-                    name = "Basis of advice",
-                    yaxis = "y2"
-                )
-   
-    
+
     fig_catch <- fig_catch %>% layout(
         paper_bgcolor = "rgb(255,255,255)",
         plot_bgcolor = "rgb(255,255,255)",
         hovermode = "x",
         yaxis2 = ay,
         legend = list(
-                orientation = "h",
-                y = 1.05,
-                yanchor = "bottom",
-                x = 0.5,
-                xanchor = "center",
-                title = list(text = "")
-            ),
+            orientation = "h",
+            y = 1.05,
+            yanchor = "bottom",
+            x = 0.5,
+            xanchor = "center",
+            title = list(text = "")
+        ),
         autosize = T,
         margin = list(l = 120, r = 120, b = 120, t = 50, pad = 8),
         xaxis = list(
@@ -2768,7 +2757,7 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             showticklabels = TRUE
         ),
         yaxis = list(
-            title = F_yaxis_label, 
+            title = F_yaxis_label,
             gridcolor = "rgb(235,235,235)",
             showgrid = TRUE,
             showline = TRUE,
@@ -2780,10 +2769,8 @@ catch_scenario_plot_1 <- function(tmp, df, sagSettings) {
             titlefont = titlefont_format(),
             tickfont = tickfont_format()
         )
-    ) #%>% 
-        #config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
-
-
+    ) # %>%
+    # config(modeBarButtonsToAdd = list(data_download_button(disclaimer)))
 }
 
 
