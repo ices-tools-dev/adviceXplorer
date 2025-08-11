@@ -274,7 +274,20 @@ output$download_SAG_Data <- downloadHandler(
     content = function(fname) {
       
       fs <- c("Disclaimer.txt", "adviceXplorer_SAG_data.csv")
-      write.csv(SAG_data_reactive() %>% select(where(~ !all(is.na(.)))), file = "adviceXplorer_SAG_data.csv")
+
+      data_out <- SAG_data_reactive() %>% 
+        select(where(~ !all(is.na(.)))) %>%
+        mutate(across(where(is.numeric), ~ format(., decimal.mark = ".", scientific = FALSE)))
+
+      write.csv(data_out, file = "adviceXplorer_SAG_data.csv", row.names = FALSE, quote = FALSE)
+      # write.csv(SAG_data_reactive() %>% select(where(~ !all(is.na(.)))), file = "adviceXplorer_SAG_data.csv", dec = ".")
+      # write.csv(
+      #   SAG_data_reactive() %>% select(where(~ !all(is.na(.)))),
+      #   file = "adviceXplorer_SAG_data.csv",
+      #   dec = ".",
+      #   row.names = FALSE,
+      #   quote = FALSE
+      # )
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
