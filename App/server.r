@@ -278,7 +278,7 @@ output$download_SAG_Data <- downloadHandler(
       data_out <- SAG_data_reactive() %>% 
         select(where(~ !all(is.na(.)))) %>%
         mutate(across(where(is.numeric), ~ format(., decimal.mark = ".", scientific = FALSE)))
-      browser()
+      
       write.csv(data_out, file = paste0(SAG_data_reactive()$StockKeyLabel[1], "-adviceXplorer_SAG_data.csv"), row.names = FALSE, quote = FALSE)      
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
@@ -397,12 +397,12 @@ output$customPlot2 <- renderPlotly({
       
       fs <- c("Disclaimer.txt", paste0(SAG_data_reactive()$StockKeyLabel[1], "-adviceXplorer_QualityofAssessment_data.csv"))
 
-      data_out <- advice_action_quality() %>% 
+      data_out_qual <- advice_action_quality() %>% 
         select(where(~ !all(is.na(.)))) %>%
         mutate(across(where(is.numeric), ~ format(., decimal.mark = ".", scientific = FALSE)))
 
-      write.csv(data_out, file = paste0(SAG_data_reactive()$StockKeyLabel[1], "-adviceXplorer_QualityofAssessment_data.csv"), row.names = FALSE, quote = FALSE)
-      write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
+        write.csv(data_out_qual, file = paste0(SAG_data_reactive()$StockKeyLabel[1], "-adviceXplorer_QualityofAssessment_data.csv"), row.names = FALSE, quote = FALSE)
+        write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
     },
@@ -612,7 +612,7 @@ eventReactive(input$catch_choice, {
 
 
 output$download_TAC_Data <- downloadHandler(
-    filename = paste0(query$stockkeylabel,"-adviceXplorer_data-", Sys.Date(), ".zip"),
+    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
       fs <- c("Disclaimer.txt", paste0(SAG_data_reactive()$StockKeyLabel[1], "-adviceXplorer_HistCatches_data.csv"))
       write.csv(test_table(), file = paste0(SAG_data_reactive()$StockKeyLabel[1], "-adviceXplorer_HistCatches_data.csv"))
