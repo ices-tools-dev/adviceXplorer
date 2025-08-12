@@ -1,0 +1,52 @@
+"","Year","Catches","Scenario","Color","MarkerSize"
+"1",1983,126299,"Historical Landings","#000000",5
+"2",1984,151625,"Historical Landings","#000000",5
+"3",1985,139363,"Historical Landings","#000000",5
+"4",1986,112167,"Historical Landings","#000000",5
+"5",1987,124772,"Historical Landings","#000000",5
+"6",1988,94108,"Historical Landings","#000000",5
+"7",1989,94126,"Historical Landings","#000000",5
+"8",1990,89714,"Historical Landings","#000000",5
+"9",1991,67872,"Historical Landings","#000000",5
+"10",1992,82717,"Historical Landings","#000000",5
+"11",1993,96416,"Historical Landings","#000000",5
+"12",1994,90923,"Historical Landings","#000000",5
+"13",1995,112458,"Historical Landings","#000000",5
+"14",1996,87884,"Historical Landings","#000000",5
+"15",1997,76347,"Historical Landings","#000000",5
+"16",1998,68728,"Historical Landings","#000000",5
+"17",1999,40077,"Historical Landings","#000000",5
+"18",2000,34051,"Historical Landings","#000000",5
+"19",2001,28596,"Historical Landings","#000000",5
+"20",2002,23820,"Historical Landings","#000000",5
+"21",2003,18461,"Historical Landings","#000000",5
+"22",2004,13198,"Historical Landings","#000000",5
+"23",2005,12726,"Historical Landings","#000000",5
+"24",2006,11789,"Historical Landings","#000000",5
+"25",2007,22643,"Historical Landings","#000000",5
+"26",2008,23627,"Historical Landings","#000000",5
+"27",2009,22184,"Historical Landings","#000000",5
+"28",2010,24615,"Historical Landings","#000000",5
+"29",2011,27599,"Historical Landings","#000000",5
+"30",2012,29293,"Historical Landings","#000000",5
+"31",2013,29313,"Historical Landings","#000000",5
+"32",2014,29610,"Historical Landings","#000000",5
+"33",2015,34838,"Historical Landings","#000000",5
+"34",2016,42159,"Historical Landings","#000000",5
+"35",2017,43977,"Historical Landings","#000000",5
+"36",2018,37418,"Historical Landings","#000000",5
+"37",2019,25570,"Historical Landings","#000000",5
+"38",2020,17851,"Historical Landings","#000000",5
+"39",2021,20652,"Historical Landings","#000000",5
+"40",2022,20855,"Historical Landings","#000000",5
+"41",2023,24961,"Historical Landings","#000000",5
+"42",2025,9920,"Precautionary considerations: F(2024, Northwestern) × 0.35*","#4E79A7",15
+"43",2025,16280,"FMSY","#A0CBE8",15
+"44",2025,10591,"FMSY lower","#F28E2B",15
+"45",2025,25275,"FMSY upper","#FFBE7D",15
+"46",2025,0,"F = 0","#59A14F",15
+"47",2025,35980,"Fpa","#8CD17D",15
+"48",2025,44343,"SSB (2026) = Blim","#B6992D",15
+"49",2025,33838,"SSB (2026) = MSY Btrigger = Bpa","#F1CE63",15
+"50",2025,24436,"F = F2024","#499894",15
+"51",2025,20662,"SSB(2026)=SSB(2025)","#86BCB6",15
