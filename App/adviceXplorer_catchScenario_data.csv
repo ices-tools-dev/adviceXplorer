@@ -1,5 +1,0 @@
-"","Year","cS_Label","cS_Purpose","Total catch* (2026) _CatchTotal_","Projected landings (2026) _CatchWanted_","Projected discards** (2026) _CatchUnwanted_","Fishing mortality F2026/FMSY (2026) _FTotal_","Stock size B2027/BMSY (2027) _StockSize_","% B/BMSY change *** (2027) _Other_","% total allowable catch (TAC) change^ (2026) _TACchange_","% advice change^^ (2026) _Advchange_"
-"1",2026,"Maximum sustainable yield (MSY) approach (35th percentile of predicted catch distribution under F = FMSY)","BasisAdvice",3086,2950,136,0.92,1.36,-13,3.9,3.9
-"2",2026,"FMSY","OtherScenarios",3314,3168,146,1,1.33,-15.5,11.6,11.6
-"3",2026,"F=F2025","OtherScenarios",1390,1329,61,0.39,1.57,2.4,-53,-53
-"4",2026,"F=0","OtherScenarios",0,0,0,0,1.74,12,-100,-100

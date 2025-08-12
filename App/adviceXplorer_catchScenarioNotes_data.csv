@@ -1,6 +1,0 @@
-"","catchOptionsTableKey","adviceKey","symbol","notes"
-"1",2709,3857,"*","Based on the average discard rate."
-"2",2709,3857,"**","Including below minimum size (BMS) landings, assuming recent discard rate."
-"3",2709,3857,"***","B/BMSY 2027 relative to B/BMSY 2026."
-"4",2709,3857,"^","Total advised catch in 2026 relative to the EU–UK agreed catch limit approach for 2025 (2970 tonnes). This limit reflects the sum of the EU–UK agreed TACs in 2025 (2953 tonnes), divided by 0.9945 to account for a 0.55% deduction for third-country catches, following the method for projecting third-country catches (EU–UK Joint Committee, 2023)."
-"5",2709,3857,"^^","Advice value for 2026 relative to the advice value for 2025 (2970tonnes)."
