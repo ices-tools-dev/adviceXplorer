@@ -270,11 +270,16 @@ output$Advice_Headline1 <- output$Advice_Headline2 <- output$Advice_Headline3 <-
 
 
 output$download_SAG_Data <- downloadHandler(
-    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    filename = paste0(query$stockkeylabel, "-adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
       
       fs <- c("Disclaimer.txt", "adviceXplorer_SAG_data.csv")
-      write.csv(SAG_data_reactive() %>% select(where(~ !all(is.na(.)))), file = "adviceXplorer_SAG_data.csv")
+
+      data_out <- SAG_data_reactive() %>% 
+        select(where(~ !all(is.na(.)))) %>%
+        mutate(across(where(is.numeric), ~ format(., decimal.mark = ".", scientific = FALSE)))
+
+      write.csv(data_out, file = "adviceXplorer_SAG_data.csv", row.names = FALSE, quote = FALSE)      
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
@@ -387,11 +392,16 @@ output$customPlot2 <- renderPlotly({
 
 ##### button to download SAG data for quality of assessemnt
   output$download_QualAss_Data <- downloadHandler(
-    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    filename = paste0(query$stockkeylabel,"-adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
       
       fs <- c("Disclaimer.txt", "adviceXplorer_QualityofAssessment_data.csv")
-      write.csv(advice_action_quality(), file = "adviceXplorer_QualityofAssessment_data.csv")
+
+      data_out <- advice_action_quality() %>% 
+        select(where(~ !all(is.na(.)))) %>%
+        mutate(across(where(is.numeric), ~ format(., decimal.mark = ".", scientific = FALSE)))
+
+      write.csv(data_out, file = "adviceXplorer_QualityofAssessment_data.csv", row.names = FALSE, quote = FALSE)
       write.table(read.delim("https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt"),  file = "Disclaimer.txt", row.names = FALSE)
       
       zip::zip(zipfile=fname, files=fs)
@@ -602,7 +612,7 @@ eventReactive(input$catch_choice, {
 
 
 output$download_TAC_Data <- downloadHandler(
-    filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+    filename = paste0(query$stockkeylabel,"-adviceXplorer_data-", Sys.Date(), ".zip"),
     content = function(fname) {
       
       fs <- c("Disclaimer.txt", "adviceXplorer_HistCatches_data.csv")
@@ -747,7 +757,7 @@ output$table <- renderReactable({
 })
 
 output$download_catch_table <- downloadHandler(
-  filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
+  filename = paste0(query$stockkeylabel,"-adviceXplorer_data-", Sys.Date(), ".zip"),
   content = function(fname) {
     fs <- c("Disclaimer.txt", "adviceXplorer_catchScenario_data.csv", "adviceXplorer_catchScenarioNotes_data.csv")
     write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = "adviceXplorer_catchScenario_data.csv")

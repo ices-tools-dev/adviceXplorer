@@ -244,12 +244,16 @@ standardiseRefPoints <- function(totrefpoints) {
     "I_{trigger}",
     "I (trigger)",
     "I_{trigger}",
+    "I_(trigger)",
+    "I_trigger)",
     "Itrigger"
   ))) {
     totrefpoints[totrefpoints %in% c(
       "I_{trigger}",
       "I (trigger)",
       "I_{trigger}",
+      "I_(trigger)",
+      "I_trigger)",
       "Itrigger"
     )] <- "I<sub>trigger</sub>"
   }
@@ -427,5 +431,30 @@ standardiseRefPoints <- function(totrefpoints) {
     "HR {pa}"
     )] <- "HR<sub>pa</sub>"
   }
+
+  if (any(totrefpoints %in% c(
+    "F/F_{MSY}"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "F/F_{MSY}"      
+    )] <- "F/F<sub>MSY</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "B/B_{MSY}"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "B/B_{MSY}"      
+    )] <- "B/B<sub>MSY</sub>"
+  }
+
+  if (any(totrefpoints %in% c(
+    "L_{F=M}/L_{mean}"    
+  ))) {
+    totrefpoints[totrefpoints %in% c(
+      "L_{F=M}/L_{mean}"      
+    )] <- "L<sub>F=M</sub>/L<sub>mean</sub>"
+  }
+
   return(totrefpoints)
 }
