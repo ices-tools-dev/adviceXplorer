@@ -756,7 +756,7 @@ output$table <- renderReactable({
 })
 
 output$download_catch_table <- downloadHandler(
-  filename = paste0(query$stockkeylabel,"-adviceXplorer_data-", Sys.Date(), ".zip"),
+  filename = paste0("adviceXplorer_data-", Sys.Date(), ".zip"),
   content = function(fname) {
     fs <- c("Disclaimer.txt", "adviceXplorer_catchScenario_data.csv", "adviceXplorer_catchScenarioNotes_data.csv")    
     write.csv(icesASD::get_catch_scenario_table(advice_view_info()$adviceKey, query$year), file = "adviceXplorer_catchScenario_data.csv")
