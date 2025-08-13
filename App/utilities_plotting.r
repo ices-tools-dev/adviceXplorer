@@ -326,18 +326,24 @@ theme_ICES_plots <-
                                             "#00b29d", 
                                             "#6eb200", 
                                             "#6eb5d2", 
-                                            "#eb5c24")),
+                                            "#eb5c24",
+                                            "#ec2626",
+                                            "#ad26ec")),
             scale_linetype_manual(values = c("solid", 
                                             "dashed", 
                                             "dotted", 
                                             "dotdash", 
                                             "longdash", 
-                                            "twodash")),
+                                            "twodash",
+                                            "dotted",
+                                            "dashed")),
             scale_size_manual(values = c(1, 
                                         .8, 
                                         .8, 
                                         .8, 
                                         .8, 
+                                        .8,
+                                        .8,
                                         .8))
             # scale_fill_manual(values = scales::hue_pal()(length(unique(selected_data$type))))
             # limits
@@ -1647,6 +1653,7 @@ ICES_plot_4 <- function(df, sagSettings, sagStamp) {
 
 ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
     sagSettingsCustom <- sagSettings %>% filter(SAGChartKey == ChartKey)
+    
    
     # Extract custom data and graph type
     customData <- sagSettingsCustom %>%
@@ -1664,7 +1671,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
         str_split(pattern = ",", simplify = TRUE) %>% 
         as.numeric()
     
-
+    
     graphType <- sagSettingsCustom %>%
         filter(settingKey == 50) %>%
         pull(settingValue) %>%
@@ -1724,17 +1731,23 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
     # Dynamically rename columns for clarity
     series_names <- colnames(selected_data_wide)[-1] # Exclude 'Year' column
     
-    if (num_series == 1) {
-        names(selected_data_wide)[2] <- "Series1"        
-    }
-    if (num_series >= 2) {
-        names(selected_data_wide)[2] <- "Series1"
-        names(selected_data_wide)[3] <- "Series2"
-    }
-    if (num_series == 3) {
-        names(selected_data_wide)[4] <- "Series3"
-    }
-    
+    # if (num_series == 1) {
+    #     names(selected_data_wide)[2] <- "Series1"        
+    # }
+    # if (num_series >= 2) {
+    #     names(selected_data_wide)[2] <- "Series1"
+    #     names(selected_data_wide)[3] <- "Series2"
+    # }
+    # if (num_series == 3) {
+    #     names(selected_data_wide)[4] <- "Series3"
+    # }
+   
+    # Create new names for all series
+    new_names <- paste0("Series", seq_along(series_names))
+    # Assign them to columns 2 onwards
+    names(selected_data_wide)[-1] <- new_names
+
+
     # Add segment column to identify single data points
     selected_data_wide <- selected_data_wide %>%
         mutate(
@@ -1852,7 +1865,7 @@ ICES_custom_plot <- function(df, sagSettings, ChartKey, sagStamp) {
         scaling_factor_catches <- get_scaling_factor("CatchesLandingsUnits", df$CatchesLandingsUnits[1])        
         
         
-        scaling <- get_scaling(as.numeric(c(df$Catches, df$Landings, df$Discards)), scaling_factor_catches, type = "catches")
+        scaling <- get_scaling(as.numeric(c(df$Catches, df$Landings, df$Discards, selected_data$count)), scaling_factor_catches, type = "catches")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
 
