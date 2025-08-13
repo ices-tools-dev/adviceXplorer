@@ -482,6 +482,7 @@ get_scaling_factor <- function(unit_type, unit_value) {
                            "Kilograms per hour" = 1,
                            "kilogram per hour" = 1,
                            "kilogram per square kilometer" = 1,
+                           "Kilograms per 1000 hooks" = 1,
                            "kilogram per km2" = 1,
                            "Kilograms per trip" = 1,
                            "Kilograms per trap" = 1,
