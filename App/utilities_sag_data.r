@@ -474,6 +474,7 @@ get_scaling_factor <- function(unit_type, unit_value) {
   scaling_factor <- switch(unit_value,
                            "thousands" = 1000,
                            "Thousands" = 1000,
+                           "1000t" = 1, # this was introduced for her.27.5a
                            "empty" = ifelse(unit_type == "UnitOfRecruitment", 1000, 1),
                            "Relative Recruitment" = 1,
                            "Number of individuals (fisheries)" = 1,
