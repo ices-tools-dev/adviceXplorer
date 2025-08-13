@@ -468,7 +468,9 @@ get_scaling <- function(values, scaling_factor, type = "default") {
   }
 }
 
+
 get_scaling_factor <- function(unit_type, unit_value) {
+  
   scaling_factor <- switch(unit_value,
                            "thousands" = 1000,
                            "Thousands" = 1000,
@@ -488,6 +490,7 @@ get_scaling_factor <- function(unit_type, unit_value) {
                            "UWTV abundance (billions)" = 1000000000,
                            "Number of individuals (billions)" = 1000000000,
                            "ratio" = 1,
+                           "N" = 1,
                            stop("Invalid unit value: choose 'thousands', 'relative', or other valid units"))
   return(scaling_factor)
 }
