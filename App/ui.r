@@ -158,6 +158,7 @@ navbarPage(
         )
         
     ),
+    bslib::nav_spacer(),
     navbarMenu(
             "Resources",
             tabPanel(
