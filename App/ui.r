@@ -112,7 +112,7 @@ navbarPage(
     title = title_html,
     tabPanel(
         "Stock selection",
-        style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+        style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden !important;", 
         sidebarLayout(
             sidebarPanel = stock_selection_left_side(),
             mainPanel = stock_selection_right_side()
@@ -123,7 +123,7 @@ navbarPage(
 ########################################## New version of SAG plots ############################
     tabPanel(
             "Development over time",
-            style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+            style = "max-height: 90vh; overflow-y: auto; overflow-x: hidden !important;", 
             header_info_and_headline("stock_infos1", "Advice_Headline1"),
             sidebarPanel(
              width = 12,
@@ -148,7 +148,7 @@ navbarPage(
 
     tabPanel(
         "Catch scenarios",
-        style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden; !important;", 
+        style = " max-height: 90vh; overflow-y: auto; overflow-x: hidden !important;", 
         header_info_and_headline("stock_infos3", "Advice_Headline3"),
         mainPanel(width = 12,  
           sidebarLayout(
@@ -176,7 +176,8 @@ navbarPage(
             tabPanel(
                 "Citation",
                 htmlOutput("citation")
-            )
+            ),
+            align = "right"
         )
 )   
 )
