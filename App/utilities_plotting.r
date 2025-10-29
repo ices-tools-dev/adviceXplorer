@@ -220,7 +220,7 @@ theme_ICES_plots <-
                 
         
         # Determine scaling based on Recruitment values
-        scaling <- get_scaling(as.numeric(c(df$StockSize, df$High_StockSize, df$Low_StockSize)), scaling_factor_stockSize, type = "ssb")
+        scaling <- get_scaling(as.numeric(c(df$StockSize, df$High_StockSize, df$Low_StockSize, df$TBiomass)), scaling_factor_stockSize, type = "ssb")
         divisor <- scaling$divisor
         suffix <- scaling$suffix
         
@@ -251,7 +251,7 @@ theme_ICES_plots <-
                 x = "Year"
             ),
             scale_color_manual(values = c(
-                "StockSize" = "#047c6c",
+                "Metric" = "#047c6c",
                 "MSY B<sub>trigger</sub>" = "#689dff",
                 "B<sub>Lim</sub>" = "#000000",
                 "B<sub>pa</sub>" = "#000000",
@@ -262,7 +262,7 @@ theme_ICES_plots <-
                 "BMGT<sub>upper</sub>" = "#689dff"
             )),
             scale_linetype_manual(values = c(
-                "StockSize" = "solid",
+                "Metric" = "solid",
                 "B<sub>Lim</sub>" = "dashed",
                 "B<sub>pa</sub>" = "dotted",
                 "MSY B<sub>trigger</sub>" = "solid",
@@ -273,7 +273,7 @@ theme_ICES_plots <-
                 "BMGT<sub>upper</sub>" = "dotdash"
             )),
             scale_size_manual(values = c(
-                "StockSize" = 1.5,
+                "Metric" = 1.5,
                 "B<sub>Lim</sub>" = .8,
                 "B<sub>pa</sub>" = 1,
                 "MSY B<sub>trigger</sub>" = .5,
@@ -1260,388 +1260,694 @@ ICES_plot_3 <- function(df, sagSettings, sagStamp) {
 #'
 #' @export
 #'
-ICES_plot_4 <- function(df, sagSettings, sagStamp) {
-    # nullifempty <- function(x) if (length(x) == 0) NULL else x
-    # If df$UnitOfRecruitment is empty, set it to NA
-    if (is.na(df$StockSizeUnits[1])) {
-        df$StockSizeUnits <- "empty"
-    }
-    
-    scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])    
+# ICES_plot_4 <- function(df, sagSettings, sagStamp) {
+#     # nullifempty <- function(x) if (length(x) == 0) NULL else x
+#     # If df$UnitOfRecruitment is empty, set it to NA
+#     if (is.na(df$StockSizeUnits[1])) {
+#         df$StockSizeUnits <- "empty"
+#     }
+#     browser()
+#     scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])    
        
-    processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
+#     processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
 
     
 
-    # Filter out rows with NAs and create a segment identifier
-    df_segments <- processed$df4 %>%
-        filter(!is.na(StockSize)) %>%
-        group_by(segment) %>%
-        mutate(start = first(Year), end = last(Year))
+#     # Filter out rows with NAs and create a segment identifier
+#     df_segments <- processed$df4 %>%
+#         filter(!is.na(StockSize)) %>%
+#         group_by(segment) %>%
+#         mutate(start = first(Year), end = last(Year))
 
     
-    p4 <- df_segments %>%
-        ggplot(., aes(x = Year, y = StockSize))
+#     p4 <- df_segments %>%
+#         ggplot(., aes(x = Year, y = StockSize))
     
-    if (any(!is.na(df_segments$Low_StockSize))) {
-        p4 <- p4 +
-            geom_ribbon(
-                data = df_segments %>% filter(!is.na(Low_StockSize) & !is.na(High_StockSize)), aes(
-                    ymin = Low_StockSize,
-                    ymax = High_StockSize ,
-                    fill = as.character(ConfidenceIntervalDefinition),
-                    group = segment,
-                    text = map(
-                        paste0(
-                            "<b>Year: </b>", Year,
-                            "<br>",
-                            "<b>", StockSizeDescription,": </b>", StockSize,
-                            "<br>",
-                            "<b>High ", StockSizeDescription,": </b>", High_StockSize,
-                            "<br>",
-                            "<b>Low", StockSizeDescription,": </b>", Low_StockSize
-                        ), HTML
-                    )
-                ),
-                linetype = "blank",
-                alpha = 0.8,
-                size = 0
-            )
-    }
+#     if (any(!is.na(df_segments$Low_StockSize))) {
+#         p4 <- p4 +
+#             geom_ribbon(
+#                 data = df_segments %>% filter(!is.na(Low_StockSize) & !is.na(High_StockSize)), aes(
+#                     ymin = Low_StockSize,
+#                     ymax = High_StockSize ,
+#                     fill = as.character(ConfidenceIntervalDefinition),
+#                     group = segment,
+#                     text = map(
+#                         paste0(
+#                             "<b>Year: </b>", Year,
+#                             "<br>",
+#                             "<b>", StockSizeDescription,": </b>", StockSize,
+#                             "<br>",
+#                             "<b>High ", StockSizeDescription,": </b>", High_StockSize,
+#                             "<br>",
+#                             "<b>Low", StockSizeDescription,": </b>", Low_StockSize
+#                         ), HTML
+#                     )
+#                 ),
+#                 linetype = "blank",
+#                 alpha = 0.8,
+#                 size = 0
+#             )
+#     }
 
-    p4 <- p4 +
-        geom_line(data = df_segments, aes(
-            x = Year,
-            y = StockSize,
-            color = "StockSize",
-            group = segment,
-            text = map(
-                paste0(
-                    "<b>Year: </b>", Year,
-                    "<br>",
-                    "<b>", StockSizeDescription,": </b>", StockSize
-                ), HTML
-            )
-        ))
+#     p4 <- p4 +
+#         geom_line(data = df_segments, aes(
+#             x = Year,
+#             y = StockSize,
+#             color = "StockSize",
+#             group = segment,
+#             text = map(
+#                 paste0(
+#                     "<b>Year: </b>", Year,
+#                     "<br>",
+#                     "<b>", StockSizeDescription,": </b>", StockSize
+#                 ), HTML
+#             )
+#         ))
     
-    p4 <- p4 +
-        geom_point(data = df_segments[df_segments$show_error, ], aes(
-            x = Year,
-            y = StockSize,
-            color = "StockSize",
-            group = segment,
-            text = map(
-                paste0(
-                    "<b>Year: </b>", Year,
-                    "<br>",
-                    "<b>", StockSizeDescription,": </b>", StockSize
-                ), HTML
-            )
-        ))
+#     p4 <- p4 +
+#         geom_point(data = df_segments[df_segments$show_error, ], aes(
+#             x = Year,
+#             y = StockSize,
+#             color = "StockSize",
+#             group = segment,
+#             text = map(
+#                 paste0(
+#                     "<b>Year: </b>", Year,
+#                     "<br>",
+#                     "<b>", StockSizeDescription,": </b>", StockSize
+#                 ), HTML
+#             )
+#         ))
     
               
-    if (any(!is.na(df_segments$MSYBtrigger))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = MSYBtrigger,
-                linetype = "MSY B<sub>trigger</sub>",
-                colour = "MSY B<sub>trigger</sub>",
-                size = "MSY B<sub>trigger</sub>",
-                text = map(
-                    paste0(
-                        "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
-                    ), HTML
-                )
-            ))
-    }
+#     if (any(!is.na(df_segments$MSYBtrigger))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = MSYBtrigger,
+#                 linetype = "MSY B<sub>trigger</sub>",
+#                 colour = "MSY B<sub>trigger</sub>",
+#                 size = "MSY B<sub>trigger</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>MSY B<sub>trigger</sub>: </b>", tail(MSYBtrigger, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    if (any(!is.na(df_segments$Blim))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = Blim,
-                linetype = "B<sub>Lim</sub>",
-                colour = "B<sub>Lim</sub>",
-                size = "B<sub>Lim</sub>",
-                text = map(
-                    paste0(
-                        "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
-                    ), HTML
-                )
-            ))
-    }
+#     if (any(!is.na(df_segments$Blim))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = Blim,
+#                 linetype = "B<sub>Lim</sub>",
+#                 colour = "B<sub>Lim</sub>",
+#                 size = "B<sub>Lim</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>B<sub>Lim</sub>: </b>", tail(Blim, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    if (any(!is.na(df_segments$Bpa))) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = Bpa,
-                linetype = "B<sub>pa</sub>",
-                colour = "B<sub>pa</sub>",
-                size = "B<sub>pa</sub>",
-                text = map(
-                    paste0(
-                        "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
-                    ), HTML
-                )
-            ))
-    }
-    if (any(!is.na(df_segments$Bmanagement)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "Bmanagement") {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = Bmanagement,
-                linetype = "B<sub>management</sub>",
-                colour = "B<sub>management</sub>",
-                size = "B<sub>management</sub>",
-                text = map(
-                    paste0(
-                        "<b>B<sub>management</sub>: </b>", tail(Bmanagement, 1)
-                    ), HTML
-                )
-            ))
-    }
+#     if (any(!is.na(df_segments$Bpa))) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = Bpa,
+#                 linetype = "B<sub>pa</sub>",
+#                 colour = "B<sub>pa</sub>",
+#                 size = "B<sub>pa</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>B<sub>pa</sub>: </b>", tail(Bpa, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
+#     if (any(!is.na(df_segments$Bmanagement)) && length(processed$customRefPoint) != 0 && processed$customRefPoint == "Bmanagement") {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = Bmanagement,
+#                 linetype = "B<sub>management</sub>",
+#                 colour = "B<sub>management</sub>",
+#                 size = "B<sub>management</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>B<sub>management</sub>: </b>", tail(Bmanagement, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
    
-    if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_lower")) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = BMGT_lower,
-                linetype = "BMGT<sub>lower</sub>",
-                colour = "BMGT<sub>lower</sub>",
-                size = "BMGT<sub>lower</sub>",
-                text = map(
-                    paste0(
-                        "<b>BMGT<sub>lower</sub>: </b>", tail(BMGT_lower, 1)
-                    ), HTML
-                )
-            ))
-    }
+#     if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_lower")) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = BMGT_lower,
+#                 linetype = "BMGT<sub>lower</sub>",
+#                 colour = "BMGT<sub>lower</sub>",
+#                 size = "BMGT<sub>lower</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>BMGT<sub>lower</sub>: </b>", tail(BMGT_lower, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_upper")) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = BMGT_upper,
-                linetype = "BMGT<sub>upper</sub>",
-                colour = "BMGT<sub>upper</sub>",
-                size = "BMGT<sub>upper</sub>",
-                text = map(
-                    paste0(
-                        "<b>BMGT<sub>upper</sub>: </b>", tail(BMGT_upper, 1)
-                    ), HTML
-                )
-            ))
-    }
+#     if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 && any(processed$customRefPoint == "BMGT_upper")) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = BMGT_upper,
+#                 linetype = "BMGT<sub>upper</sub>",
+#                 colour = "BMGT<sub>upper</sub>",
+#                 size = "BMGT<sub>upper</sub>",
+#                 text = map(
+#                     paste0(
+#                         "<b>BMGT<sub>upper</sub>: </b>", tail(BMGT_upper, 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    # custom reference point 1
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]])) && !all(processed$customRefPoint[1] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[1])) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]],
-                linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
-                colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
-                size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
-                text = map(
-                    paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName",processed$customRefPoint[1])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]], 1)
-                    ), HTML
-                )
-            ))
-    }
+#     # custom reference point 1
+#     if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]])) && !all(processed$customRefPoint[1] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[1])) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]],
+#                 linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
+#                 colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
+#                 size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[1])]][1],
+#                 text = map(
+#                     paste0(
+#                         "<b>", df_segments[[paste0("CustomRefPointName",processed$customRefPoint[1])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[1])]], 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    # custom reference point 2
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]])) && !all(processed$customRefPoint[2] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[2])) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]],
-                linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
-                colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
-                size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
-                text = map(
-                    paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]], 1)
-                    ), HTML
-                )
-            ))
-    }
+#     # custom reference point 2
+#     if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]])) && !all(processed$customRefPoint[2] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[2])) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]],
+#                 linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
+#                 colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
+#                 size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1],
+#                 text = map(
+#                     paste0(
+#                         "<b>", df_segments[[paste0("CustomRefPointName", processed$customRefPoint[2])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[2])]], 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    # custom reference point 2
-    if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[3])]])) && !all(processed$customRefPoint[3] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[3])) {
-        p4 <- p4 +
-            geom_line(aes(
-                x = Year,
-                y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[3])]],
-                linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1],
-                colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1],
-                size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1],
-                text = map(
-                    paste0(
-                        "<b>", df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[3])]], 1)
-                    ), HTML
-                )
-            ))
-    }
+#     # custom reference point 2
+#     if (any(!is.na(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[3])]])) && !all(processed$customRefPoint[3] %in% colnames(df)) && grepl("^[0-5]$", processed$customRefPoint[3])) {
+#         p4 <- p4 +
+#             geom_line(aes(
+#                 x = Year,
+#                 y = df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[3])]],
+#                 linetype = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1],
+#                 colour = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1],
+#                 size = df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1],
+#                 text = map(
+#                     paste0(
+#                         "<b>", df_segments[[paste0("CustomRefPointName", processed$customRefPoint[3])]][1], ": </b>", tail(df_segments[[paste0("CustomRefPointValue", processed$customRefPoint[3])]], 1)
+#                     ), HTML
+#                 )
+#             ))
+#     }
    
-    # custom data time series
-    if (!is.null(processed$additionalCustomeSeries) && !is.na(processed$additionalCustomeSeries) && length(processed$new_name) != 0) {
-        p4 <- p4 +
-            geom_line(data = df_segments, aes(
-                x = Year,
-                y = df_segments[[processed$new_name]] * scaling_factor_stockSize,
-                color = processed$new_name,
-                group = segment,
-                text = map(
-                    paste0(
-                        "<b>Year: </b>", Year,
-                        "<br>",
-                        "<b>", processed$new_name,": </b>", df_segments[[processed$new_name]]
-                    ), HTML
-                )
-            ))
-    }
+#     # custom data time series
+#     if (!is.null(processed$additionalCustomeSeries) && !is.na(processed$additionalCustomeSeries) && length(processed$new_name) != 0) {
+#         p4 <- p4 +
+#             geom_line(data = df_segments, aes(
+#                 x = Year,
+#                 y = df_segments[[processed$new_name]] * scaling_factor_stockSize,
+#                 color = processed$new_name,
+#                 group = segment,
+#                 text = map(
+#                     paste0(
+#                         "<b>Year: </b>", Year,
+#                         "<br>",
+#                         "<b>", processed$new_name,": </b>", df_segments[[processed$new_name]]
+#                     ), HTML
+#                 )
+#             ))
+#     }
 
-    diamondYears <-
-        processed$sagSettings4 %>%
-        filter(settingKey == 14) %>%
-        pull(settingValue) %>%
-        str_split(pattern = ",", simplify = TRUE) %>%
-        as.numeric()
+#     diamondYears <-
+#         processed$sagSettings4 %>%
+#         filter(settingKey == 14) %>%
+#         pull(settingValue) %>%
+#         str_split(pattern = ",", simplify = TRUE) %>%
+#         as.numeric()
 
-    if (any(!is.na(diamondYears))) {
-        p4 <- p4 + geom_point(
-            data = df_segments %>% filter(Year %in% diamondYears),
-            aes(
-                x = Year,
-                y = StockSize,
-                text = map(
-                    paste0(
-                        "<b>Year: </b>", Year,
-                        "<br>",
-                        "<b>Forecast spawning-stock biomass (StockSize): </b>", StockSize
-                    ), HTML
-                )
-            ),
-            shape = 23,
-            fill = "#cfcfcf",
-            color = "#047c6c",
-            size = 2.5,
-            show.legend = FALSE,
-            inherit.aes = FALSE
-        )
-    }
-
-
-    # add average lines
-    averageYears <-
-        processed$sagSettings4 %>%
-        filter(settingKey == 46) %>%
-        pull(settingValue) %>%
-        str_split(",", simplify = TRUE) %>%
-        as.numeric()
-
-    if (length(averageYears)) {
-        id1 <- nrow(df_segments) - 1:averageYears[1] + 1
-        id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
-        avedf1 <- data.frame(
-            Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
-            StockSize = mean(df_segments$StockSize[id1], na.rm = TRUE)
-        )
-        avedf2 <- data.frame(
-            Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
-            StockSize = mean(df_segments$StockSize[id2], na.rm = TRUE)
-        )
-
-        p4 <-
-            p4 + geom_line(
-                data = avedf1,
-                aes(
-                    x = Year,
-                    y = StockSize,
-                    linetype = "Average",
-                    colour = "Average",
-                    size = "Average",
-                    text = map(
-                        paste0(
-                            "<b>Average: </b>", StockSize
-                        ), HTML
-                    )
-                )
-            ) +
-            geom_line(
-                data = avedf2,
-                aes(
-                    x = Year,
-                    y = StockSize,
-                    linetype = "Average",
-                    colour = "Average",
-                    size = "Average",
-                    text = map(
-                        paste0(
-                            "<b>Average: </b>", StockSize
-                        ), HTML
-                    )
-                )
-            )
-    }
+#     if (any(!is.na(diamondYears))) {
+#         p4 <- p4 + geom_point(
+#             data = df_segments %>% filter(Year %in% diamondYears),
+#             aes(
+#                 x = Year,
+#                 y = StockSize,
+#                 text = map(
+#                     paste0(
+#                         "<b>Year: </b>", Year,
+#                         "<br>",
+#                         "<b>Forecast spawning-stock biomass (StockSize): </b>", StockSize
+#                     ), HTML
+#                 )
+#             ),
+#             shape = 23,
+#             fill = "#cfcfcf",
+#             color = "#047c6c",
+#             size = 2.5,
+#             show.legend = FALSE,
+#             inherit.aes = FALSE
+#         )
+#     }
 
 
+#     # add average lines
+#     averageYears <-
+#         processed$sagSettings4 %>%
+#         filter(settingKey == 46) %>%
+#         pull(settingValue) %>%
+#         str_split(",", simplify = TRUE) %>%
+#         as.numeric()
 
-    min_year <- min(df_segments$Year[which(!is.na(df_segments$StockSize))])
+#     if (length(averageYears)) {
+#         id1 <- nrow(df_segments) - 1:averageYears[1] + 1
+#         id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
+#         avedf1 <- data.frame(
+#             Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
+#             StockSize = mean(df_segments$StockSize[id1], na.rm = TRUE)
+#         )
+#         avedf2 <- data.frame(
+#             Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
+#             StockSize = mean(df_segments$StockSize[id2], na.rm = TRUE)
+#         )
+
+#         p4 <-
+#             p4 + geom_line(
+#                 data = avedf1,
+#                 aes(
+#                     x = Year,
+#                     y = StockSize,
+#                     linetype = "Average",
+#                     colour = "Average",
+#                     size = "Average",
+#                     text = map(
+#                         paste0(
+#                             "<b>Average: </b>", StockSize
+#                         ), HTML
+#                     )
+#                 )
+#             ) +
+#             geom_line(
+#                 data = avedf2,
+#                 aes(
+#                     x = Year,
+#                     y = StockSize,
+#                     linetype = "Average",
+#                     colour = "Average",
+#                     size = "Average",
+#                     text = map(
+#                         paste0(
+#                             "<b>Average: </b>", StockSize
+#                         ), HTML
+#                     )
+#                 )
+#             )
+#     }
+
+
+
+#     min_year <- min(df_segments$Year[which(!is.na(df_segments$StockSize))])
     
 
-    p4 <-
-        p4 +
-        xlim(min_year, max(df_segments$Year)) +
-        theme_ICES_plots(
-            type = "StockSize", df_segments,
-            title = processed$sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
-            ylegend = processed$sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% replace_subscript_symbols(.) %>% nullifempty(),
-            ymax = processed$sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
-        )
+#     p4 <-
+#         p4 +
+#         xlim(min_year, max(df_segments$Year)) +
+#         theme_ICES_plots(
+#             type = "StockSize", df_segments,
+#             title = processed$sagSettings4 %>% filter(settingKey == 1) %>% pull(settingValue) %>% nullifempty(),
+#             ylegend = processed$sagSettings4 %>% filter(settingKey == 20) %>% pull(settingValue) %>% as.character() %>% replace_subscript_symbols(.) %>% nullifempty(),
+#             ymax = processed$sagSettings4 %>% filter(settingKey == 6) %>% pull(settingValue) %>% as.numeric() %>% nullifempty()
+#         )
 
     
-    # converting
-    fig4 <- ggplotly(p4, tooltip = "text") %>%
-        layout(
-            autosize = T,
-            legend = list(
-                itemsizing = "trace",
-                orientation = "h",
-                y = -.3,
-                yanchor = "bottom",
-                x = 0.5,
-                xanchor = "center",
-                itemwidth = 20,
-                itemsizing = "trace",
-                title = list(text = "")
-            ),
-            xaxis = list(zeroline = TRUE),
-            annotations = list(
-                showarrow = FALSE,
-                text = sagStamp,
-                font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
-                yref = "paper", y = 1.05, 
-                xref = "paper", x = 1,
-                yanchor = "right", 
-                xanchor = "right"
-            )
-        )  #%>% style(showlegend = FALSE, traces = 2)
+#     # converting
+#     fig4 <- ggplotly(p4, tooltip = "text") %>%
+#         layout(
+#             autosize = T,
+#             legend = list(
+#                 itemsizing = "trace",
+#                 orientation = "h",
+#                 y = -.3,
+#                 yanchor = "bottom",
+#                 x = 0.5,
+#                 xanchor = "center",
+#                 itemwidth = 20,
+#                 itemsizing = "trace",
+#                 title = list(text = "")
+#             ),
+#             xaxis = list(zeroline = TRUE),
+#             annotations = list(
+#                 showarrow = FALSE,
+#                 text = sagStamp,
+#                 font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+#                 yref = "paper", y = 1.05, 
+#                 xref = "paper", x = 1,
+#                 yanchor = "right", 
+#                 xanchor = "right"
+#             )
+#         )  #%>% style(showlegend = FALSE, traces = 2)
 
-    for (i in 1:length(fig4$x$data)) {
-        if (!is.null(fig4$x$data[[i]]$name)) {
-            fig4$x$data[[i]]$name <- gsub("\\(", "", str_split(fig4$x$data[[i]]$name, ",")[[1]][1])
-            if (fig4$x$data[[i]]$name == "StockSize") {
-                fig4$x$data[[i]]$name <- df_segments$StockSizeDescription[1]
-            }
-        }
+#     for (i in 1:length(fig4$x$data)) {
+#         if (!is.null(fig4$x$data[[i]]$name)) {
+#             fig4$x$data[[i]]$name <- gsub("\\(", "", str_split(fig4$x$data[[i]]$name, ",")[[1]][1])
+#             if (fig4$x$data[[i]]$name == "StockSize") {
+#                 fig4$x$data[[i]]$name <- df_segments$StockSizeDescription[1]
+#             }
+#         }
+#     }
+
+
+#     fig4
+# }
+ICES_plot_4 <- function(df, sagSettings, sagStamp) {
+  # Helper (used later when passing empty values to theme_ICES_plots)
+  nullifempty <- function(x) if (length(x) == 0) NULL else x
+
+  # If df$StockSizeUnits is empty, set a placeholder to avoid scaling lookup issues
+  if (is.na(df$StockSizeUnits[1])) {
+    df$StockSizeUnits <- "empty"
+  }
+
+  # Scaling factor based on units (assumes same factor for TBiomass if used)
+  scaling_factor_stockSize <- get_scaling_factor("StockSizeUnits", df$StockSizeUnits[1])
+
+  # Process (now returns unified Metric columns + flag)
+  processed <- process_dataframe_SSB(df, sagSettings, scaling_factor_stockSize)
+
+  # Work on non-NA Metric rows; keep segment boundaries
+  df_segments <- processed$df4 %>%
+    dplyr::filter(!is.na(Metric)) %>%
+    dplyr::group_by(segment) %>%
+    dplyr::mutate(start = dplyr::first(Year), end = dplyr::last(Year))
+
+  p4 <- df_segments %>% ggplot2::ggplot(ggplot2::aes(x = Year, y = Metric))
+
+  # Ribbon (CI)
+  if (any(!is.na(df_segments$Low_Metric))) {
+    p4 <- p4 +
+      ggplot2::geom_ribbon(
+        data = df_segments %>% dplyr::filter(!is.na(Low_Metric) & !is.na(High_Metric)),
+        ggplot2::aes(
+          ymin = Low_Metric,
+          ymax = High_Metric,
+          fill = as.character(ConfidenceIntervalDefinition),
+          group = segment,
+          text = purrr::map(
+            paste0(
+              "<b>Year: </b>", Year, "<br>",
+              "<b>", MetricDescription, ": </b>", Metric, "<br>",
+              "<b>High ", MetricDescription, ": </b>", High_Metric, "<br>",
+              "<b>Low ", MetricDescription,  ": </b>", Low_Metric
+            ), htmltools::HTML
+          )
+        ),
+        linetype = "blank",
+        alpha = 0.8,
+        size = 0
+      )
+  }
+
+  # Main line
+  p4 <- p4 +
+    ggplot2::geom_line(
+      data = df_segments,
+      ggplot2::aes(
+        y = Metric,
+        color = "Metric",
+        group = segment,
+        text = purrr::map(
+          paste0(
+            "<b>Year: </b>", Year, "<br>",
+            "<b>", MetricDescription, ": </b>", Metric
+          ), htmltools::HTML
+        )
+      )
+    )
+
+  # Points to show the single-value-in-segment logic
+  p4 <- p4 +
+    ggplot2::geom_point(
+      data = df_segments[df_segments$show_error, ],
+      ggplot2::aes(
+        y = Metric,
+        color = "Metric",
+        group = segment,
+        text = purrr::map(
+          paste0(
+            "<b>Year: </b>", Year, "<br>",
+            "<b>", MetricDescription, ": </b>", Metric
+          ), htmltools::HTML
+        )
+      )
+    )
+
+  # Reference lines (unchanged logic)
+  if (any(!is.na(df_segments$MSYBtrigger))) {
+    p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+      y = MSYBtrigger,
+      linetype = "MSY B<sub>trigger</sub>",
+      colour = "MSY B<sub>trigger</sub>",
+      size = "MSY B<sub>trigger</sub>",
+      text = purrr::map(
+        paste0("<b>MSY B<sub>trigger</sub>: </b>", dplyr::last(MSYBtrigger)), htmltools::HTML
+      )
+    ))
+  }
+
+  if (any(!is.na(df_segments$Blim))) {
+    p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+      y = Blim,
+      linetype = "B<sub>Lim</sub>",
+      colour = "B<sub>Lim</sub>",
+      size = "B<sub>Lim</sub>",
+      text = purrr::map(paste0("<b>B<sub>Lim</sub>: </b>", dplyr::last(Blim)), htmltools::HTML)
+    ))
+  }
+
+  if (any(!is.na(df_segments$Bpa))) {
+    p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+      y = Bpa,
+      linetype = "B<sub>pa</sub>",
+      colour = "B<sub>pa</sub>",
+      size = "B<sub>pa</sub>",
+      text = purrr::map(paste0("<b>B<sub>pa</sub>: </b>", dplyr::last(Bpa)), htmltools::HTML)
+    ))
+  }
+
+  if (any(!is.na(df_segments$Bmanagement)) &&
+      length(processed$customRefPoint) != 0 && processed$customRefPoint == "Bmanagement") {
+    p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+      y = Bmanagement,
+      linetype = "B<sub>management</sub>",
+      colour = "B<sub>management</sub>",
+      size = "B<sub>management</sub>",
+      text = purrr::map(paste0("<b>B<sub>management</sub>: </b>", dplyr::last(Bmanagement)), htmltools::HTML)
+    ))
+  }
+
+  if (any(!is.na(df_segments$BMGT_lower)) && length(processed$customRefPoint) != 0 &&
+      any(processed$customRefPoint == "BMGT_lower")) {
+    p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+      y = BMGT_lower,
+      linetype = "BMGT<sub>lower</sub>",
+      colour = "BMGT<sub>lower</sub>",
+      size = "BMGT<sub>lower</sub>",
+      text = purrr::map(paste0("<b>BMGT<sub>lower</sub>: </b>", dplyr::last(BMGT_lower)), htmltools::HTML)
+    ))
+  }
+
+  if (any(!is.na(df_segments$BMGT_upper)) && length(processed$customRefPoint) != 0 &&
+      any(processed$customRefPoint == "BMGT_upper")) {
+    p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+      y = BMGT_upper,
+      linetype = "BMGT<sub>upper</sub>",
+      colour = "BMGT<sub>upper</sub>",
+      size = "BMGT<sub>upper</sub>",
+      text = purrr::map(paste0("<b>BMGT<sub>upper</sub>: </b>", dplyr::last(BMGT_upper)), htmltools::HTML)
+    ))
+  }
+
+  # Custom reference points 1..3 (unchanged logic, but draw over Metric axis)
+  for (k in 1:3) {
+    if (length(processed$customRefPoint) >= k) {
+      key <- processed$customRefPoint[k]
+      if (grepl("^[0-5]$", key) && !all(key %in% colnames(df_segments)) &&
+          any(!is.na(df_segments[[paste0("CustomRefPointValue", key)]]))) {
+        p4 <- p4 + ggplot2::geom_line(ggplot2::aes(
+          y = df_segments[[paste0("CustomRefPointValue", key)]],
+          linetype = df_segments[[paste0("CustomRefPointName", key)]][1],
+          colour = df_segments[[paste0("CustomRefPointName", key)]][1],
+          size = df_segments[[paste0("CustomRefPointName", key)]][1],
+          text = purrr::map(
+            paste0(
+              "<b>", df_segments[[paste0("CustomRefPointName", key)]][1], ": </b>",
+              dplyr::last(df_segments[[paste0("CustomRefPointValue", key)]])
+            ), htmltools::HTML
+          )
+        ))
+      }
     }
+  }
 
+  # Additional custom time series
+  if (!is.null(processed$additionalCustomeSeries) && !is.na(processed$additionalCustomeSeries) &&
+      length(processed$new_name) != 0) {
+    p4 <- p4 + ggplot2::geom_line(
+      data = df_segments,
+      ggplot2::aes(
+        y = df_segments[[processed$new_name]],
+        color = processed$new_name,
+        group = segment,
+        text = purrr::map(
+          paste0(
+            "<b>Year: </b>", Year, "<br>",
+            "<b>", processed$new_name, ": </b>", df_segments[[processed$new_name]]
+          ), htmltools::HTML
+        )
+      )
+    )
+  }
 
-    fig4
+  # Forecast diamonds (label adapts)
+  diamondYears <- processed$sagSettings4 %>%
+    dplyr::filter(settingKey == 14) %>%
+    dplyr::pull(settingValue) %>%
+    stringr::str_split(pattern = ",", simplify = TRUE) %>%
+    as.numeric()
+
+  if (any(!is.na(diamondYears))) {
+    # browser()
+    # forecast_label <- if (processed$use_total_biomass) "Forecast total biomass"
+    #                   else "Forecast SSB"
+    p4 <- p4 + ggplot2::geom_point(
+      data = df_segments %>% dplyr::filter(Year %in% diamondYears),
+      ggplot2::aes(
+        y = Metric,
+        text = purrr::map(
+          paste0(
+            "<b>Year: </b>", Year, "<br>",
+            "<b>Forecast ", "(", processed$metric_key, "): </b>", Metric
+          ), htmltools::HTML
+        )
+      ),
+      shape = 23,
+      fill = "#cfcfcf",
+      color = "#047c6c",
+      size = 2.5,
+      show.legend = FALSE
+    )
+  }
+
+  # Averages (unchanged but use Metric)
+  averageYears <- processed$sagSettings4 %>%
+    dplyr::filter(settingKey == 46) %>%
+    dplyr::pull(settingValue) %>%
+    stringr::str_split(",", simplify = TRUE) %>%
+    as.numeric()
+
+  if (length(averageYears)) {
+    id1 <- nrow(df_segments) - 1:averageYears[1] + 1
+    id2 <- nrow(df_segments) - 1:averageYears[2] - averageYears[1] + 1
+    avedf1 <- data.frame(
+      Year = range(df_segments$Year[id1]) + c(-0.5, 0.5),
+      Metric = mean(df_segments$Metric[id1], na.rm = TRUE)
+    )
+    avedf2 <- data.frame(
+      Year = range(df_segments$Year[id2]) + c(-0.5, 0.5),
+      Metric = mean(df_segments$Metric[id2], na.rm = TRUE)
+    )
+    p4 <- p4 +
+      ggplot2::geom_line(
+        data = avedf1,
+        ggplot2::aes(
+          y = Metric,
+          linetype = "Average",
+          colour = "Average",
+          size = "Average",
+          text = purrr::map(paste0("<b>Average: </b>", Metric), htmltools::HTML)
+        )
+      ) +
+      ggplot2::geom_line(
+        data = avedf2,
+        ggplot2::aes(
+          y = Metric,
+          linetype = "Average",
+          colour = "Average",
+          size = "Average",
+          text = purrr::map(paste0("<b>Average: </b>", Metric), htmltools::HTML)
+        )
+      )
+  }
+
+  # Axes and theme
+  min_year <- min(df_segments$Year[which(!is.na(df_segments$Metric))])
+  p4 <- p4 +
+    ggplot2::xlim(min_year, max(df_segments$Year)) +
+    theme_ICES_plots(
+      type = "StockSize", df_segments,
+      title = processed$sagSettings4 %>% dplyr::filter(settingKey == 1) %>% dplyr::pull(settingValue) %>% nullifempty(),
+      ylegend = processed$sagSettings4 %>% dplyr::filter(settingKey == 20) %>% dplyr::pull(settingValue) %>% as.character() %>% replace_subscript_symbols(.) %>% nullifempty(),
+      ymax = processed$sagSettings4 %>% dplyr::filter(settingKey == 6) %>% dplyr::pull(settingValue) %>% as.numeric() %>% nullifempty()
+    )
+
+  # Convert to plotly
+  fig4 <- ggplotly(p4, tooltip = "text") %>%
+    plotly::layout(
+      autosize = TRUE,
+      legend = list(
+        itemsizing = "trace",
+        orientation = "h",
+        y = -.3, yanchor = "bottom",
+        x = 0.5, xanchor = "center",
+        itemwidth = 20,
+        title = list(text = "")
+      ),
+      xaxis = list(zeroline = TRUE),
+      annotations = list(
+        showarrow = FALSE,
+        text = sagStamp,
+        font = list(family = "Calibri, serif", size = 12, color = "#acacac"),
+        yref = "paper", y = 1.05,
+        xref = "paper", x = 1,
+        yanchor = "right", xanchor = "right"
+      )
+    )
+
+  # Rename the main "Metric" trace to the description in the legend
+  for (i in seq_along(fig4$x$data)) {
+    if (!is.null(fig4$x$data[[i]]$name)) {
+      fig4$x$data[[i]]$name <- gsub("\\(", "", stringr::str_split(fig4$x$data[[i]]$name, ",")[[1]][1])
+      if (fig4$x$data[[i]]$name == "Metric") {
+        fig4$x$data[[i]]$name <- df_segments$MetricDescription[1]
+      }
+    }
+  }
+
+  fig4
 }
 
 

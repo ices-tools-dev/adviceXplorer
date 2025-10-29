@@ -290,12 +290,11 @@ output$download_SAG_Data <- downloadHandler(
 ######################### Stock development over time plots
 
   output$plot1 <- renderPlotly({
-    
     if (is.null(sagSettings() %>% filter(SAGChartKey == 1) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
       validate(
-      need(c(SAG_data_reactive()$Landings, SAG_data_reactive()$Catches) != "", "") # ,
-      # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
-    )
+        need(c(SAG_data_reactive()$Landings, SAG_data_reactive()$Catches) != "", "") # ,
+        # need(all(!c(0, 1) %in% drop_plots()), "Figure not included in the published advice for this stock")
+      )
       suppressWarnings(ICES_plot_1(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
@@ -303,11 +302,10 @@ output$download_SAG_Data <- downloadHandler(
   })
 
   output$plot2 <- renderPlotly({
-    
     if (is.null(sagSettings() %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
       validate(
-      need(SAG_data_reactive()$Recruitment != "", "")      
-    )
+        need(SAG_data_reactive()$Recruitment != "", "")
+      )
       suppressWarnings(ICES_plot_2(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
@@ -315,64 +313,57 @@ output$download_SAG_Data <- downloadHandler(
   })
   
   output$plot3 <- renderPlotly({
-    
-if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-  validate(
-      need(SAG_data_reactive()$FishingPressure != "", "")      
-    )
-    suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings(), query$sagStamp))
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+        need(SAG_data_reactive()$FishingPressure != "", "")
+      )
+      suppressWarnings(ICES_plot_3(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
     }
   })
   
   output$plot4 <- renderPlotly({
-    
-if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-  validate(
-      need(SAG_data_reactive()$StockSize != "", "")      
-      
-    )
-    suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings(), query$sagStamp))
+    if (is.null(sagSettings() %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+        need(SAG_data_reactive()$StockSize != "", "")
+      )
+      suppressWarnings(ICES_plot_4(SAG_data_reactive(), sagSettings(), query$sagStamp))
     } else {
       return(NULL)
     }
   })
   
   output$customPlot1 <- renderPlotly({
-    
     if (nrow(sagSettings() %>% filter(SAGChartKey == 15)) >= 1) {
-    
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 15, query$sagStamp))
-    } else {    
-    return(NULL)
-  }
-  })
-output$customPlot2 <- renderPlotly({
-  
-    if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
-
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 16, query$sagStamp))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 15, query$sagStamp))
     } else {
-    return(NULL)
-  }
+      return(NULL)
+    }
+  })
+
+  output$customPlot2 <- renderPlotly({
+    if (nrow(sagSettings() %>% filter(SAGChartKey == 16)) >= 1) {
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 16, query$sagStamp))
+    } else {
+      return(NULL)
+    }
   })
 
   output$customPlot3 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 17)) >= 1) {
-
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 17, query$sagStamp))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 17, query$sagStamp))
     } else {
-    return(NULL)
-  }
+      return(NULL)
+    }
   })
+
   output$customPlot4 <- renderPlotly({
     if (nrow(sagSettings() %>% filter(SAGChartKey == 18)) >= 1) {
-
-    suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 18, query$sagStamp))
+      suppressWarnings(ICES_custom_plot(SAG_data_reactive(), sagSettings(), ChartKey = 18, query$sagStamp))
     } else {
-    return(NULL)
-  }
+      return(NULL)
+    }
   })
 
 ####################### Quality of assessment data

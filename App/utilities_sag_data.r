@@ -642,76 +642,225 @@ process_dataframe_F <- function(df, sagSettings) {
 
 
 
+# process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
+#   nullifempty <- function(x) if (length(x) == 0) NULL else x
+  
+#   useTotBiomass <- sagSettings %>% 
+#     filter(SAGChartKey == 0 & settingKey == 37) %>%
+#     pull(settingValue) %>%
+#     nullifempty()
+
+#   # Filter settings for SAGChartKey 4
+#   sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
+
+#   # Extract custom reference points
+#   customRefPoint <- sagSettings4 %>%
+#     filter(settingKey == 51) %>%
+#     pull(settingValue) %>%
+#     standardiseRefPoints(.) %>%
+#     str_split(pattern = ",", simplify = TRUE)
+
+#   # Extract additional custom series
+#   additionalCustomeSeries <- sagSettings4 %>%
+#     filter(settingKey == 45) %>%
+#     pull(settingValue) %>%
+#     as.numeric() %>%
+#     nullifempty()
+
+#   useTotBiomass
+
+#   # Process the dataframe
+#   df4 <- df %>%
+#     filter(Purpose == "Advice") %>%
+#     arrange(Year) %>%
+#     select(
+#       c(
+#         Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger,
+#         Bmanagement, StockSizeDescription, StockSizeUnits,  ConfidenceIntervalDefinition, #SAGStamp,
+#         BMGT_lower, BMGT_upper
+#       ),
+#       if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
+#         c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+#       },
+#       if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+#         c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+#       }
+#     ) %>%
+#     mutate(
+#       Year = as.numeric(Year),
+#       Blim = as.numeric(Blim), #* scaling_factor_stockSize,
+#       Bpa = as.numeric(Bpa), #* scaling_factor_stockSize,
+#       MSYBtrigger = as.numeric(MSYBtrigger), #* scaling_factor_stockSize,
+#       Bmanagement = as.numeric(Bmanagement), #* scaling_factor_stockSize,
+#       BMGT_lower = as.numeric(BMGT_lower), #* scaling_factor_stockSize,
+#       BMGT_upper = as.numeric(BMGT_upper), #* scaling_factor_stockSize,
+#       StockSize = as.numeric(StockSize) * scaling_factor_stockSize,
+#       Low_StockSize = as.numeric(Low_StockSize) * scaling_factor_stockSize,
+#       High_StockSize = as.numeric(High_StockSize) * scaling_factor_stockSize,
+#       across(starts_with("CustomRefPointValue"), as.numeric)
+#     ) %>%
+#     mutate(
+#       segment = cumsum(is.na(StockSize)),
+#       is_single_value_in_segment = ave(!is.na(StockSize), segment, FUN = function(x) sum(x) == 1),
+#       show_error = !is.na(StockSize) & is_single_value_in_segment
+#     )
+
+#   new_name <- list()
+#   # Handle additional custom series
+#   if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
+#     for (index in additionalCustomeSeries) {
+#       custom_col <- paste0("Custom", index)
+#       custom_name_col <- paste0("CustomName", index)
+
+#       # Ensure the custom name column exists and has a valid value
+#       if (custom_name_col %in% names(df4) && !is.na(df4[[custom_name_col]][1]) && nzchar(df4[[custom_name_col]][1])) {
+#         # Rename the custom column using the first value in the corresponding CustomName column
+#         new_name <- df4[[custom_name_col]][1]
+#         names(df4)[names(df4) == custom_col] <- new_name
+#         # Multiply the custom column by scaling_factor_catches
+#         df4[[new_name]] <- as.numeric(df4[[new_name]]) * scaling_factor_stockSize
+#         # Drop the CustomName column
+#         df4[[custom_name_col]] <- NULL
+#       }
+#     }
+#   }
+
+#   return(list(
+#     df4 = df4,
+#     sagSettings4 = sagSettings4,
+#     customRefPoint = customRefPoint,
+#     additionalCustomeSeries = additionalCustomeSeries,
+#     new_name = new_name
+#   ))
+# }
+
 process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
   nullifempty <- function(x) if (length(x) == 0) NULL else x
-  # Filter settings for SAGChartKey 4
-  sagSettings4 <- sagSettings %>% filter(SAGChartKey == 4)
 
-  # Extract custom reference points
+  # Use total biomass only if requested AND any TBiomass data exist
+  useTotBiomass <- {
+    flag <- sagSettings %>%
+      dplyr::filter(SAGChartKey == 0, settingKey == 37) %>%
+      dplyr::pull(settingValue) %>%
+      nullifempty()
+    on <- !is.null(flag) && tolower(flag[1]) == "y"
+    non_empty <- any(!is.na(df$TBiomass)) ||
+                 any(!is.na(df$Low_TBiomass)) ||
+                 any(!is.na(df$High_TBiomass))
+    on && non_empty
+  }
+
+  # Helper to repurpose StockSizeDescription
+  rewrite_metric_desc <- function(d, use_tot) {
+    d <- as.character(d)
+    if (use_tot) {
+      out <- ifelse(
+        !is.na(d) & nzchar(d),
+        stringr::str_replace_all(
+          d,
+          stringr::regex("(SSB|spawning[- ]?stock biomass|stock size)", ignore_case = TRUE),
+          "Total biomass"
+        ),
+        "Total biomass"
+      )
+    } else {
+      out <- ifelse(!is.na(d) & nzchar(d), d, "SSB")
+    }
+    out
+  }
+
+  # Settings for this chart
+  sagSettings4 <- sagSettings %>% dplyr::filter(SAGChartKey == 4)
+
+  # Custom reference points
   customRefPoint <- sagSettings4 %>%
-    filter(settingKey == 51) %>%
-    pull(settingValue) %>%
+    dplyr::filter(settingKey == 51) %>%
+    dplyr::pull(settingValue) %>%
     standardiseRefPoints(.) %>%
-    str_split(pattern = ",", simplify = TRUE)
+    stringr::str_split(pattern = ",", simplify = TRUE)
 
-  # Extract additional custom series
+  # Additional custom series
   additionalCustomeSeries <- sagSettings4 %>%
-    filter(settingKey == 45) %>%
-    pull(settingValue) %>%
+    dplyr::filter(settingKey == 45) %>%
+    dplyr::pull(settingValue) %>%
     as.numeric() %>%
     nullifempty()
 
-  # Process the dataframe
+  # Process and keep BOTH SSB and TBiomass (desc/units for TBiomass may not exist)
   df4 <- df %>%
-    filter(Purpose == "Advice") %>%
-    arrange(Year) %>%
-    select(
+    dplyr::filter(Purpose == "Advice") %>%
+    dplyr::arrange(Year) %>%
+    dplyr::select(
       c(
         Year, Low_StockSize, StockSize, High_StockSize, Blim, Bpa, MSYBtrigger,
-        Bmanagement, StockSizeDescription, StockSizeUnits,  ConfidenceIntervalDefinition, #SAGStamp,
-        BMGT_lower, BMGT_upper
+        Bmanagement, StockSizeDescription, StockSizeUnits, ConfidenceIntervalDefinition,
+        BMGT_lower, BMGT_upper,
+        Low_TBiomass, TBiomass, High_TBiomass
       ),
       if (length(customRefPoint) != 0 && !all(customRefPoint %in% colnames(.))) {
-        c(paste0("CustomRefPointValue", customRefPoint), paste0("CustomRefPointName", customRefPoint))
+        c(paste0("CustomRefPointValue", customRefPoint),
+          paste0("CustomRefPointName",  customRefPoint))
       },
       if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
-        c(paste0("Custom", additionalCustomeSeries), paste0("CustomName", additionalCustomeSeries))
+        c(paste0("Custom",     additionalCustomeSeries),
+          paste0("CustomName", additionalCustomeSeries))
       }
     ) %>%
-    mutate(
+    dplyr::mutate(
       Year = as.numeric(Year),
-      Blim = as.numeric(Blim), #* scaling_factor_stockSize,
-      Bpa = as.numeric(Bpa), #* scaling_factor_stockSize,
-      MSYBtrigger = as.numeric(MSYBtrigger), #* scaling_factor_stockSize,
-      Bmanagement = as.numeric(Bmanagement), #* scaling_factor_stockSize,
-      BMGT_lower = as.numeric(BMGT_lower), #* scaling_factor_stockSize,
-      BMGT_upper = as.numeric(BMGT_upper), #* scaling_factor_stockSize,
-      StockSize = as.numeric(StockSize) * scaling_factor_stockSize,
-      Low_StockSize = as.numeric(Low_StockSize) * scaling_factor_stockSize,
+      Blim = as.numeric(Blim),
+      Bpa  = as.numeric(Bpa),
+      MSYBtrigger = as.numeric(MSYBtrigger),
+      Bmanagement = as.numeric(Bmanagement),
+      BMGT_lower = as.numeric(BMGT_lower),
+      BMGT_upper = as.numeric(BMGT_upper),
+
+      # scale both sets consistently
+      StockSize      = as.numeric(StockSize)      * scaling_factor_stockSize,
+      Low_StockSize  = as.numeric(Low_StockSize)  * scaling_factor_stockSize,
       High_StockSize = as.numeric(High_StockSize) * scaling_factor_stockSize,
-      across(starts_with("CustomRefPointValue"), as.numeric)
+
+      TBiomass      = as.numeric(TBiomass)      * scaling_factor_stockSize,
+      Low_TBiomass  = as.numeric(Low_TBiomass)  * scaling_factor_stockSize,
+      High_TBiomass = as.numeric(High_TBiomass) * scaling_factor_stockSize
     ) %>%
-    mutate(
-      segment = cumsum(is.na(StockSize)),
-      is_single_value_in_segment = ave(!is.na(StockSize), segment, FUN = function(x) sum(x) == 1),
-      show_error = !is.na(StockSize) & is_single_value_in_segment
+    dplyr::mutate(dplyr::across(dplyr::starts_with("CustomRefPointValue"), as.numeric))
+
+  # Unified metric columns
+  if (useTotBiomass) {
+    df4 <- df4 %>% dplyr::mutate(
+      Metric      = TBiomass,
+      Low_Metric  = Low_TBiomass,
+      High_Metric = High_TBiomass
+    )
+    metric_key <- "TBiomass"
+  } else {
+    df4 <- df4 %>% dplyr::mutate(
+      Metric      = StockSize,
+      Low_Metric  = Low_StockSize,
+      High_Metric = High_StockSize
+    )
+    metric_key <- "StockSize"
+  }
+
+  df4 <- df4 %>%
+    dplyr::mutate(
+      MetricDescription = rewrite_metric_desc(StockSizeDescription, useTotBiomass),
+      segment = cumsum(is.na(Metric)),
+      is_single_value_in_segment = ave(!is.na(Metric), segment, FUN = function(x) sum(x) == 1),
+      show_error = !is.na(Metric) & is_single_value_in_segment
     )
 
+  # Additional custom series renaming/scaling
   new_name <- list()
-  # Handle additional custom series
   if (!is.null(additionalCustomeSeries) && !is.na(additionalCustomeSeries)) {
     for (index in additionalCustomeSeries) {
       custom_col <- paste0("Custom", index)
       custom_name_col <- paste0("CustomName", index)
-
-      # Ensure the custom name column exists and has a valid value
       if (custom_name_col %in% names(df4) && !is.na(df4[[custom_name_col]][1]) && nzchar(df4[[custom_name_col]][1])) {
-        # Rename the custom column using the first value in the corresponding CustomName column
         new_name <- df4[[custom_name_col]][1]
         names(df4)[names(df4) == custom_col] <- new_name
-        # Multiply the custom column by scaling_factor_catches
         df4[[new_name]] <- as.numeric(df4[[new_name]]) * scaling_factor_stockSize
-        # Drop the CustomName column
         df4[[custom_name_col]] <- NULL
       }
     }
@@ -722,9 +871,13 @@ process_dataframe_SSB <- function(df, sagSettings, scaling_factor_stockSize) {
     sagSettings4 = sagSettings4,
     customRefPoint = customRefPoint,
     additionalCustomeSeries = additionalCustomeSeries,
-    new_name = new_name
+    new_name = new_name,
+    useTotBiomass = useTotBiomass,
+    metric_key = metric_key
   ))
 }
+
+
 
 nullifempty <- function(x) if (length(x) == 0) NULL else x
 
