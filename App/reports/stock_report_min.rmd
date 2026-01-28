@@ -1,0 +1,24 @@
+---
+title: "adviceXplorer Offline Stock Report (MIN)"
+output:
+  html_document:
+    self_contained: true
+params:
+    assessmentkey: "TEST"
+    assessmentcomponent: "TEST"
+    stockkeylabel: "TEST"
+    year: 2025
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+## AssessmentKey: `r params$assessmentkey`
+
+## Stock: `r params$stockkeylabel`
+
+## Assessment component: `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`
+
+## Year: `r params$year`
+
+## Generated: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`
+

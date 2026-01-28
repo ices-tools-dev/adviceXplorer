@@ -39,11 +39,13 @@ library(datamods)
 library(reactable)
 library(ggthemes)
 
+
 library(future)
 library(promises)
 library(data.table)
 library(memoise)
 library(future.apply)
+library(quarto)
 
 plan(multisession)  # Enable parallel execution
 
@@ -175,7 +177,9 @@ navbarPage(
             ),
             tabPanel(
                 "Citation",
-                htmlOutput("citation")
+                htmlOutput("citation"),
+                downloadButton("download_stock_report", "Download offline report")
+
             ),
             align = "right"
         )

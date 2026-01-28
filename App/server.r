@@ -795,4 +795,34 @@ output$citation <- renderUI({
   
 })
 
+
+output$download_stock_report <- downloadHandler(
+  filename = function() {
+    paste0("adviceXplorer_report_", Sys.Date(), ".html")
+  },
+  content = function(file) {
+
+    # Use a stable path to the app root; in Shiny it’s usually getwd()
+    rmd_in <- file.path(getwd(), "reports", "stock_report_min.Rmd")
+    if (!file.exists(rmd_in)) stop("Rmd not found at: ", rmd_in)
+
+    rmarkdown::render(
+      input = rmd_in,
+      output_file = file,              # write directly to the download path
+      params = list(
+        assessmentkey = isolate(query$assessmentkey %||% "TEST"),
+        assessmentcomponent = isolate(query$assessmentcomponent %||% NA),
+        stockkeylabel = isolate(query$stockkeylabel %||% "TEST"),
+        year = isolate(query$year %||% 2025)
+      ),
+      envir = new.env(parent = globalenv()),
+      quiet = FALSE
+    )
+  },
+  contentType = "text/html"
+)
+
+
+
+
 }
