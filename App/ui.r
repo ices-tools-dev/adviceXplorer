@@ -42,10 +42,10 @@ library(ggthemes)
 
 library(future)
 library(promises)
-library(data.table)
 library(memoise)
 library(future.apply)
-library(quarto)
+library(xaringan)
+
 
 plan(multisession)  # Enable parallel execution
 

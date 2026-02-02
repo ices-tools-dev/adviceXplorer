@@ -1,24 +1,191 @@
 ---
-title: "adviceXplorer Offline Stock Report (MIN)"
+title: "adviceXplorer Offline Stock Report"
 output:
-  html_document:
+  ioslides_presentation:
+    widescreen: true
+    incremental: false
     self_contained: true
 params:
-    assessmentkey: "TEST"
-    assessmentcomponent: "TEST"
-    stockkeylabel: "TEST"
-    year: 2025
+  app_dir: null
+  assessmentkey: null
+  assessmentcomponent: null
+  stockkeylabel: null
+  year: null
 ---
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
-## AssessmentKey: `r params$assessmentkey`
 
-## Stock: `r params$stockkeylabel`
+## Stock information
 
-## Assessment component: `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`
+### AssessmentKey: `r params$assessmentkey`
+### Stock code: `r params$stockkeylabel`
+### Assessment component: `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`
+### Year: `r params$year`
+### File generated: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`
 
-## Year: `r params$year`
+## Stock development over time - Catches
 
-## Generated: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`
+```{r}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
+library(dplyr)
+library(plotly)
+library(htmltools)
+library(reactable)
+library(icesSAG)
+library(icesASD)
+library(icesSD)
+library(data.table)
+library(dplyr)
+library(dygraphs)
+library(DT)
+library(htmltools)
+library(htmlwidgets)
+library(ggplot2)
+library(ggradar)
+library(ggtext)
+library(glue)
+library(gsubfn)
+library(icesSAG)
+library(icesTAF)
+library(icesVocab)
+library(leaflet)
+library(plotly)
+library(reshape2)
+library(rintrojs)
+library(RColorBrewer)
+library(RCurl)
+library(rvest)
+library(scales)
+library(sf)
+library(shinyalert)
+library(shinyBS)
+library(shinycssloaders)
+library(shinyjs)
+library(shinythemes)
+library(shinyWidgets)
+library(stringr)
+library(tidyr)
+library(tidyverse)
+library(tm)
+library(widgetframe)
+library(icesASD)
+library(zip)
+library(datamods)
+library(reactable)
+library(ggthemes)
+
+# Source your existing code from the app folder
+app_dir <- params$app_dir
+stopifnot(!is.null(app_dir))
+
+source(file.path(app_dir, "utilities_help.r"))
+source(file.path(app_dir, "utilities_sag_data.r"))
+source(file.path(app_dir, "utilities_plotting.r"))
+source(file.path(app_dir, "utilities_catch_scenarios.r"))
+source(file.path(app_dir, "utilities_resources.r"))
+
+assessmentkey <- params$assessmentkey
+req_assessmentkey <- function(x) if (is.null(x) || is.na(x)) stop("assessmentkey is missing") else x
+assessmentkey <- req_assessmentkey(assessmentkey)
+
+info <- getStockInfoFromSAG(assessmentkey)
+sagStamp <- info$SAGStamp
+
+sag <- getSAGData(assessmentkey)
+
+sagSettings <- icesSAG::getSAGSettingsForAStock(assessmentkey)
+sagSettings <- sagSettings[sagSettings$settingValue != "", , drop = FALSE]
+
+drop_plots <- sagSettings %>%
+  filter(settingKey == 22, settingValue %in% c("yes", "y")) %>%
+  pull(SAGChartKey) %>%
+  as.numeric()
+```
+
+```{r echo=FALSE}
+if (is.null(sagSettings %>% filter(SAGChartKey == 1) %>% filter(settingKey == 22) %>% pull  (settingValue) %>% nullifempty())) {
+      validate(
+        need(c(sag$Landings, sag$Catches) != "", "") # ,
+        # need(all(!c(0, 1) %in% drop_plots), "Figure not included in the published advice for this stock")
+      )
+      suppressWarnings(ICES_plot_1(sag, sagSettings, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Development over time – Recruitment
+```{r echo=FALSE}
+if (is.null(sagSettings %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+        need(sag$Recruitment != "", "")
+      )
+      suppressWarnings(ICES_plot_2(sag, sagSettings, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Development over time – Fishing pressure
+```{r echo=FALSE}
+if (is.null(sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+        need(sag$FishingPressure != "", "")
+      )
+      suppressWarnings(ICES_plot_3(sag, sagSettings, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Development over time – SSB
+```{r echo=FALSE}
+if (is.null(sagSettings %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
+      validate(
+        need(sag$StockSize != "", "")
+      )
+      suppressWarnings(ICES_plot_4(sag, sagSettings, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Custom plot 1
+```{r echo = FALSE}
+if (nrow(sagSettings %>% filter(SAGChartKey == 15)) >= 1) {
+      suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 15, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Custom plot 2
+```{r echo = FALSE}
+if (nrow(sagSettings %>% filter(SAGChartKey == 16)) >= 1) {
+      suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 16, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Custom plot 3
+```{r echo = FALSE}
+if (nrow(sagSettings %>% filter(SAGChartKey == 17)) >= 1) {
+      suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 17, sagStamp))
+    } else {
+      return(NULL)
+    }
+```
+
+## Custom plot 4
+```{r echo = FALSE}
+if (nrow(sagSettings %>% filter(SAGChartKey == 18)) >= 1) {
+      suppressWarnings(ICES_custom_plot(sag, sagSettings,, ChartKey = 18, sagStamp))
+    } else {
+      return(NULL)
+    }
+```

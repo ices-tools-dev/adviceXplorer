@@ -796,31 +796,41 @@ output$citation <- renderUI({
 })
 
 
+
 output$download_stock_report <- downloadHandler(
   filename = function() {
-    paste0("adviceXplorer_report_", Sys.Date(), ".html")
+    paste0("adviceXplorer_report_", isolate(query$stockkeylabel), "_", Sys.Date(), ".html")
   },
   content = function(file) {
 
-    # Use a stable path to the app root; in Shiny it’s usually getwd()
-    rmd_in <- file.path(getwd(), "reports", "stock_report_min.Rmd")
-    if (!file.exists(rmd_in)) stop("Rmd not found at: ", rmd_in)
+    req(query$assessmentkey, query$stockkeylabel, query$year)
 
+    app_dir <- normalizePath(getwd())
+
+    rmd_in <- file.path(app_dir, "reports", "stock_report_min.Rmd")
+    stopifnot(file.exists(rmd_in))
+
+    # Render directly to the download file
     rmarkdown::render(
       input = rmd_in,
-      output_file = file,              # write directly to the download path
+      output_file = file,
       params = list(
-        assessmentkey = isolate(query$assessmentkey %||% "TEST"),
-        assessmentcomponent = isolate(query$assessmentcomponent %||% NA),
-        stockkeylabel = isolate(query$stockkeylabel %||% "TEST"),
-        year = isolate(query$year %||% 2025)
+        app_dir = app_dir,
+        assessmentkey = isolate(query$assessmentkey),
+        assessmentcomponent = isolate(query$assessmentcomponent),
+        stockkeylabel = isolate(query$stockkeylabel),
+        year = isolate(query$year)
       ),
+      knit_root_dir = app_dir,                 # key: sources/relative paths resolve like in the app
       envir = new.env(parent = globalenv()),
       quiet = FALSE
     )
   },
   contentType = "text/html"
 )
+
+
+
 
 
 
