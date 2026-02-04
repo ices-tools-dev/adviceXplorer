@@ -103,16 +103,28 @@ assessmentkey <- req_assessmentkey(assessmentkey)
 
 info <- getStockInfoFromSAG(assessmentkey)
 sagStamp <- info$SAGStamp
-
+# sag
 sag <- getSAGData(assessmentkey)
 
+# sag settings
 sagSettings <- icesSAG::getSAGSettingsForAStock(assessmentkey)
 sagSettings <- sagSettings[sagSettings$settingValue != "", , drop = FALSE]
+
+# quality of assessment
+yearsToDisplay <- sagSettings %>%
+      filter(settingKey == 58) %>%
+      pull(settingValue) %>%
+      # str_split(",", simplify = TRUE) %>%
+      as.numeric() %>%
+      nullifempty()
+
+aq <- getSAGQualityAssessment(params$stockkeylabel, params$year, params$assessmentcomponent, yearsToDisplay)
 
 drop_plots <- sagSettings %>%
   filter(settingKey == 22, settingValue %in% c("yes", "y")) %>%
   pull(SAGChartKey) %>%
   as.numeric()
+
 
 has_any <- function(x) any(!is.na(x) & x != "")
 
@@ -193,4 +205,37 @@ if (nrow(sagSettings %>% filter(SAGChartKey == 18)) >= 1) {
   htmltools::div(style = "width: 100%; height: 900px;", pc4)
 }
 
+```
+
+## Quality of assessment - SSB
+```{r echo=FALSE}
+if (!is.null(aq) && has_any(aq$StockSize) && !10 %in% drop_plots) {
+  p5 <- suppressWarnings(ICES_plot_5(aq, sagSettings, sagStamp))
+  htmltools::div(style = "width:100%; height:800px;", p5)
+} else {
+  # optional message:
+  # cat("<p>No SSB quality plot available for this stock.</p>")
+}
+```
+
+## Quality of assessment - Fishing pressure
+```{r echo=FALSE}
+if (!is.null(aq) && has_any(aq$FishingPressure) && !10 %in% drop_plots) {
+  p6 <- suppressWarnings(ICES_plot_6(aq, sagSettings, sagStamp))
+  htmltools::div(style = "width:100%; height:800px;", p6)
+} else {
+  # optional message:
+  # cat("<p>No fishing pressure quality plot available for this stock.</p>")
+}
+```
+
+## Quality of assessment - Recruitment
+```{r echo=FALSE}
+if (!is.null(aq) && has_any(aq$Recruitment) && !10 %in% drop_plots) {
+  p7 <- suppressWarnings(ICES_plot_7(aq, sagSettings, sagStamp))
+  htmltools::div(style = "width:100%; height:700px;", p7)
+} else {
+  # optional message:
+  # cat("<p>No recruitment quality plot available for this stock.</p>")
+}
 ```
