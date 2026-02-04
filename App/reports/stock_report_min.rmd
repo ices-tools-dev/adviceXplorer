@@ -11,6 +11,8 @@ params:
   assessmentcomponent: null
   stockkeylabel: null
   year: null
+  headline: null
+  stock_descr: null
 ---
 
 
@@ -19,14 +21,21 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ## Stock information
-
-### AssessmentKey: `r params$assessmentkey`
+### Stock description: `r params$stock_descr`
 ### Stock code: `r params$stockkeylabel`
-### Assessment component: `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`
 ### Year: `r params$year`
+### Assessment component: `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`
+### AssessmentKey: `r params$assessmentkey`
 ### File generated: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`
 
-## Stock development over time - Catches
+## Headline advice
+```{r echo=FALSE, results='asis'}
+cat("<p>", htmltools::htmlEscape(params$headline), "</p>")
+```
+
+
+
+
 
 ```{r}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
@@ -104,88 +113,84 @@ drop_plots <- sagSettings %>%
   filter(settingKey == 22, settingValue %in% c("yes", "y")) %>%
   pull(SAGChartKey) %>%
   as.numeric()
+
+has_any <- function(x) any(!is.na(x) & x != "")
+
+is_dropped_key <- function(key) {
+  !is.null(
+    sagSettings %>%
+      filter(SAGChartKey == key, settingKey == 22) %>%
+      pull(settingValue) %>%
+      nullifempty()
+  )
+}
 ```
 
-```{r echo=FALSE}
-if (is.null(sagSettings %>% filter(SAGChartKey == 1) %>% filter(settingKey == 22) %>% pull  (settingValue) %>% nullifempty())) {
-      validate(
-        need(c(sag$Landings, sag$Catches) != "", "") # ,
-        # need(all(!c(0, 1) %in% drop_plots), "Figure not included in the published advice for this stock")
-      )
-      suppressWarnings(ICES_plot_1(sag, sagSettings, sagStamp))
-    } else {
-      return(NULL)
-    }
+## Stock development over time - Catches
+```{r Catches,echo=FALSE}
+if (!is_dropped_key(1) && (has_any(sag$Landings) || has_any(sag$Catches))) {
+  p1 <- suppressWarnings(ICES_plot_1(sag, sagSettings, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", p1)
+}
 ```
 
 ## Development over time – Recruitment
-```{r echo=FALSE}
-if (is.null(sagSettings %>% filter(SAGChartKey == 2) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-      validate(
-        need(sag$Recruitment != "", "")
-      )
-      suppressWarnings(ICES_plot_2(sag, sagSettings, sagStamp))
-    } else {
-      return(NULL)
-    }
+```{r Recruitment, echo=FALSE}
+if (!is_dropped_key(2) && has_any(sag$Recruitment)) {
+  p2 <- suppressWarnings(ICES_plot_2(sag, sagSettings, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", p2)
+}
 ```
 
 ## Development over time – Fishing pressure
-```{r echo=FALSE}
-if (is.null(sagSettings %>% filter(SAGChartKey == 3) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-      validate(
-        need(sag$FishingPressure != "", "")
-      )
-      suppressWarnings(ICES_plot_3(sag, sagSettings, sagStamp))
-    } else {
-      return(NULL)
-    }
+```{r F, echo=FALSE}
+if (!is_dropped_key(3) && has_any(sag$FishingPressure)) {
+  p3 <- suppressWarnings(ICES_plot_3(sag, sagSettings, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", p3)
+}
 ```
 
 ## Development over time – SSB
-```{r echo=FALSE}
-if (is.null(sagSettings %>% filter(SAGChartKey == 4) %>% filter(settingKey == 22) %>% pull(settingValue) %>% nullifempty())) {
-      validate(
-        need(sag$StockSize != "", "")
-      )
-      suppressWarnings(ICES_plot_4(sag, sagSettings, sagStamp))
-    } else {
-      return(NULL)
-    }
+```{r SSB, echo=FALSE}
+if (!is_dropped_key(4) && has_any(sag$StockSize)) {
+  p4 <- suppressWarnings(ICES_plot_4(sag, sagSettings, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", p4)
+}
+
 ```
 
 ## Custom plot 1
-```{r echo = FALSE}
+```{r custom1, echo=FALSE}
 if (nrow(sagSettings %>% filter(SAGChartKey == 15)) >= 1) {
-      suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 15, sagStamp))
-    } else {
-      return(NULL)
-    }
+  pc1 <- suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 15, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", pc1)
+}
+
 ```
 
 ## Custom plot 2
-```{r echo = FALSE}
+```{r custom2, echo=FALSE}
 if (nrow(sagSettings %>% filter(SAGChartKey == 16)) >= 1) {
-      suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 16, sagStamp))
-    } else {
-      return(NULL)
-    }
+  pc2 <- suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 16, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", pc2)
+}
+
 ```
 
 ## Custom plot 3
-```{r echo = FALSE}
+```{r custom3, echo=FALSE}
 if (nrow(sagSettings %>% filter(SAGChartKey == 17)) >= 1) {
-      suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 17, sagStamp))
-    } else {
-      return(NULL)
-    }
+  pc3 <- suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 17, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", pc3)
+}
+
 ```
 
 ## Custom plot 4
-```{r echo = FALSE}
+```{r custom4, echo=FALSE}
 if (nrow(sagSettings %>% filter(SAGChartKey == 18)) >= 1) {
-      suppressWarnings(ICES_custom_plot(sag, sagSettings,, ChartKey = 18, sagStamp))
-    } else {
-      return(NULL)
-    }
+  pc4 <- suppressWarnings(ICES_custom_plot(sag, sagSettings, ChartKey = 18, sagStamp))
+  htmltools::div(style = "width: 100%; height: 900px;", pc4)
+}
+
 ```

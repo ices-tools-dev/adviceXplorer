@@ -819,7 +819,9 @@ output$download_stock_report <- downloadHandler(
         assessmentkey = isolate(query$assessmentkey),
         assessmentcomponent = isolate(query$assessmentcomponent),
         stockkeylabel = isolate(query$stockkeylabel),
-        year = isolate(query$year)
+        year = isolate(query$year),
+        headline = isolate(advice_view_info()$adviceSentence),
+        stock_descr = isolate(SAG_data_reactive()$StockDescription[1])
       ),
       knit_root_dir = app_dir,                 # key: sources/relative paths resolve like in the app
       envir = new.env(parent = globalenv()),
