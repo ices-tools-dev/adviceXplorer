@@ -809,7 +809,7 @@ output$download_stock_report <- downloadHandler(
 
     rmd_in <- file.path(app_dir, "reports", "stock_report_min.Rmd")
     stopifnot(file.exists(rmd_in))
-
+    browser()
     # Render directly to the download file
     rmarkdown::render(
       input = rmd_in,
@@ -821,7 +821,8 @@ output$download_stock_report <- downloadHandler(
         stockkeylabel = isolate(query$stockkeylabel),
         year = isolate(query$year),
         headline = isolate(advice_view_info()$adviceSentence),
-        stock_descr = isolate(SAG_data_reactive()$StockDescription[1])
+        stock_descr = isolate(SAG_data_reactive()$StockDescription[1]),
+        adviceKey = isolate(advice_view_info()$adviceKey)
       ),
       knit_root_dir = app_dir,                 # key: sources/relative paths resolve like in the app
       envir = new.env(parent = globalenv()),
