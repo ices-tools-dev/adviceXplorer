@@ -606,7 +606,7 @@ mod_resources_ui <- function(id) {
             description = "Ecoregion layers and spatial context used across the app.",
             dataset_url = "https://gis.ices.dk/sf/index.html",
             metadata_url = "https://gis.ices.dk/geonetwork/srv/api/records/4745e824-a612-4a1f-bc56-b540772166eb?language=all",
-            services = list("Ecoregions shapefiles (zip)" = "https://gis.ices.dk/shapefiles/ICES_ecoregions.zip"),
+            services = list("Shapefiles (zip)" = "https://gis.ices.dk/shapefiles/ICES_ecoregions.zip"),
             notes = "See dataset page for data access and conditions."
           ),
           resource_card(
@@ -619,7 +619,7 @@ mod_resources_ui <- function(id) {
           ),
           resource_card(
             title = "Stock Assessment Graphs (SAG)",
-            description = "Assessment outputs and status indicators (e.g., F/FMSY, SSB/MSY Btrigger) shown in status and trends views.",
+            description = "Stock assessment outputs used across the app.",
             dataset_url = "https://www.ices.dk/data/assessment-tools/Pages/stock-assessment-graphs.aspx",
             metadata_url = "https://gis.ices.dk/geonetwork/srv/api/records/f5992b7d-b9da-40d4-81b9-d6db9e87e759?language=all",
             services = list("APIs" = "https://sag.ices.dk/sag_api/docs/swagger/index.html"),

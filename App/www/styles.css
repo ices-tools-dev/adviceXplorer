@@ -305,7 +305,6 @@ caption {
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 14px;
   margin-top: 12px;
-  border: 1px solid rgba(0,0,0,0.08);
 }
 
 .resource-card, .intro-card, .fair-card, .disclaimer-card, .cite-card {
@@ -347,4 +346,28 @@ caption {
 
 .msform-embed {
   margin-top: 10px;
+}
+
+
+/* cards created by resource_card() */
+.source-card{
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.source-title{
+  font-size: 22px; 
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.source-links{
+  margin-top: 6px;
+}
+
+.source-notes{
+  margin-top: 8px;
 }
