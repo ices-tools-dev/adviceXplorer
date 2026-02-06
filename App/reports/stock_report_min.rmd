@@ -1,10 +1,11 @@
 ---
-title: "adviceXplorer Offline Stock Report"
+title: "adviceXplorer Offline Report"
 output:
   ioslides_presentation:
     widescreen: true
     incremental: false
     self_contained: true
+    css: ioslides-advice.css
 params:
   app_dir: null
   assessmentkey: null
@@ -22,17 +23,21 @@ params:
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
-## Stock information
-### Stock description: `r params$stock_descr`
-### Stock code: `r params$stockkeylabel`
-### Year: `r params$year`
-### Assessment component: `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`
-### AssessmentKey: `r params$assessmentkey`
-### File generated: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`
+## Stock information {.fit}
 
-## Headline advice
+<div class="fitbox wrap">
+<strong>Stock description:</strong> `r params$stock_descr`<br/>
+<strong>Stock code:</strong> `r params$stockkeylabel`<br/>
+<strong>Year:</strong> `r params$year`<br/>
+<strong>Assessment component:</strong> `r ifelse(is.na(params$assessmentcomponent), "NA", params$assessmentcomponent)`<br/>
+<strong>AssessmentKey:</strong> `r params$assessmentkey`<br/>
+<strong>File generated:</strong> `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`
+</div>
+
+## Headline advice {.fit}
+
 ```{r echo=FALSE, results='asis'}
-cat("<p>", htmltools::htmlEscape(params$headline), "</p>")
+cat('<div class="fitbox wrap">', htmltools::htmlEscape(params$headline), '</div>')
 ```
 
 
@@ -141,6 +146,11 @@ is_dropped_key <- function(key) {
 
 # catch scenarios
 catch_scenario_table <- standardize_catch_scenario_table(icesASD::get_catch_scenario_table(params$adviceKey, params$year))
+catch_scenario_table_collated <- catch_scenario_table$table %>%
+    arrange(cS_Purpose) %>%
+    rename_all(~ catch_scenario_table$cols) %>% 
+    rename("Basis" = cS_Label) %>% #, " " = cS_Purpose
+    select_if(~!(all(is.na(.)) | all(. == "")))
 ```
 
 ## Stock development over time - Catches
@@ -258,9 +268,9 @@ if (str_detect(tail(params$stockkeylabel), "nep")) {
 
 ## Catch scenarios - table
 ```{r table, echo=FALSE}
-reactable(catch_scenario_table %>% select(!(Year)),
+t1 <- reactable(catch_scenario_table_collated %>% select(!(Year)),
   rowStyle = function(index) {
-    if (catch_scenario_table[index, "cS_Purpose"] == "Basis Of Advice") list(fontWeight = "bold")
+    if (catch_scenario_table_collated[index, "cS_Purpose"] == "Basis Of Advice") list(fontWeight = "bold")
   },
     filterable = TRUE,
     highlight = TRUE,
@@ -281,4 +291,5 @@ reactable(catch_scenario_table %>% select(!(Year)),
       cellPadding = "2px 2px"
     )
   )
+t1
 ```

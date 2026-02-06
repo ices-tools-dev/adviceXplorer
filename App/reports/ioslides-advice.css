@@ -1,0 +1,43 @@
+/* Global: slightly smaller type so slides are less fragile */
+slides > slide {
+  font-size: 20px;           /* adjust: 18–22 usually */
+  line-height: 1.25;
+}
+
+/* Make headings less tall (ioslides headings can steal vertical space) */
+slides > slide h2 { margin: 0 0 8px 0; }
+slides > slide h3 { margin: 0 0 4px 0; }
+
+/* Utility: a “fit” slide class to shrink typography when content is long */
+slides > slide.fit {
+  font-size: 16px;
+  line-height: 1.15;
+}
+slides > slide.fit h2 { font-size: 28px; }
+slides > slide.fit h3 { font-size: 18px; }
+
+/* Utility: constrain a block to the slide height and allow internal scrolling */
+.fitbox {
+  max-height: 72vh;          /* keep content within viewport */
+  overflow: auto;
+}
+
+/* Utility: wrap long codes/keys/headlines instead of overflowing */
+.wrap {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Optional: when you really want a one-line headline with ellipsis */
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Reactable: force it to not exceed the slide and allow scrolling inside */
+.reactable {
+  max-height: 70vh;
+  overflow: auto;
+}

@@ -809,7 +809,7 @@ output$download_stock_report <- downloadHandler(
 
     rmd_in <- file.path(app_dir, "reports", "stock_report_min.Rmd")
     stopifnot(file.exists(rmd_in))
-    browser()
+    
     # Render directly to the download file
     rmarkdown::render(
       input = rmd_in,
