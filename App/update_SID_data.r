@@ -125,14 +125,6 @@ getSID <- function(year) {
     stock_list_long <- ASDList[stock_list_long, on = "StockKeyLabel"]
     # Merge stock list with ASDList
     message("Merging SID and ASD records...")
-    # leaving this in for now
-    # stock_list_long <- merge(ASDList %>% select(AssessmentKey, StockKeyLabel, AssessmentComponent),
-    #     stock_list_long,
-    #     by = "StockKeyLabel",
-    #     all = TRUE
-    # ) %>%
-    #     select(-AssessmentKey.y) %>%
-    #     rename(AssessmentKey = AssessmentKey.x)
     
     # Filter out rows where AssessmentKey is NA and YearOfLastAssessment is NA or 0
     missing_keys <- which(!is.na(stock_list_long$AssessmentKey) &
@@ -140,62 +132,6 @@ getSID <- function(year) {
         stock_list_long$YearOfLastAssessment != 0)
 
     stock_list_long <- stock_list_long[missing_keys,]
-
-    
-    # if (length(missing_keys) > 0) {
-    #     message("Finding missing assessment keys...")
-
-    #     # Retrieve assessment keys (returns list)
-    #     assessment_keys <- lapply(missing_keys, function(i) {
-    #         keys <- findAssessmentKey(stock_list_long$StockKeyLabel[i],
-    #             year = stock_list_long$YearOfLastAssessment[i]
-    #         )
-    #         if (length(keys) > 0) keys[1] else NA # Take only the first key or return NA
-    #     })
-
-    #     # Convert list to vector and assign
-    #     stock_list_long$AssessmentKey[missing_keys] <- unlist(assessment_keys)
-        
-    # }
-
-
-    # this solution spreads the different calls across threads, but each thread is still calling
-    # the webservice multiple times, which is not ideal
-    # # Identify missing AssessmentKeys
-    # missing_rows <- stock_list_long %>%
-    #     filter(is.na(AssessmentKey) & !is.na(YearOfLastAssessment) & YearOfLastAssessment != 0)
-
-    # # Get unique (StockKeyLabel, YearOfLastAssessment) pairs
-    # missing_pairs <- unique(missing_rows[, c("StockKeyLabel", "YearOfLastAssessment")])
-
-    # if (nrow(missing_pairs) > 0) {
-    #     message("Finding missing assessment keys in parallel...")
-
-    #     # Parallel batch processing
-    #     results <- future_lapply(seq_len(nrow(missing_pairs)), function(i) {
-    #         stock <- missing_pairs$StockKeyLabel[i]
-    #         year <- missing_pairs$YearOfLastAssessment[i]
-
-    #         keys <- icesSAG::findAssessmentKey(stock, year)
-    #         if (length(keys) > 0) keys[1] else NA  # Return only the first key
-    #     })
-
-    #     # Convert results to a lookup table
-    #     assessment_lookup <- data.frame(
-    #         StockKeyLabel = missing_pairs$StockKeyLabel,
-    #         YearOfLastAssessment = missing_pairs$YearOfLastAssessment,
-    #         AssessmentKey = unlist(results)
-    #     )
-
-    #     # Merge back into stock_list_long
-    #     stock_list_long <- stock_list_long %>%
-    #         left_join(assessment_lookup, by = c("StockKeyLabel", "YearOfLastAssessment")) %>%
-    #         mutate(AssessmentKey = coalesce(AssessmentKey.x, AssessmentKey.y)) %>%
-    #         select(-AssessmentKey.x, -AssessmentKey.y)
-    # }
-
-    # Drop rows where AssessmentKey is still NA
-    # stock_list_long <- stock_list_long[!is.na(AssessmentKey)]
 
     # Extract stock location
     stock_list_long[, stock_location := parse_location_from_stock_description(StockKeyDescription)]
@@ -226,18 +162,159 @@ getSID <- function(year) {
 #'
 #' @export
 #'
-UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
-    if (mode == "AllYears") {
-        years <- c(2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017)
-    } else if (mode == "LatestYear") {
-        years <- as.integer(format(Sys.Date(), "%Y"))
-    }
+# UpdateDataApp <- function(mode = c("AllYears", "LatestYear")) {
+#     if (mode == "AllYears") {
+#         years <- c(2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017)
+#     } else if (mode == "LatestYear") {
+#         years <- as.integer(format(Sys.Date(), "%Y"))
+#     }
 
-    for (year in years) {
-        update_SAG(year)
-        update_SID(year)
-    }
+#     for (year in years) {
+#         update_SAG(year)
+#         update_SID(year)
+#     }
+# }
+
+
+ # --- SID: metadata + ecoregions only (no ASD/SAG here) ---
+  getSID_meta_cached <- memoise::memoise(function(year) {
+    message("Downloading SID (meta) for year: ", year)
+    x_all  <- download_SID(year)
+    x_long <- separate_ecoregions(x_all)
+    data.table::setDT(x_long)
+
+    # icons
+    src <- match_stockcode_to_illustration(x_long$StockKeyLabel, x_long)
+    x_long[, icon := paste0('<img src="', src, '" height=40>')]
+
+    # keep rows with meaningful last assessment info
+    x_long <- x_long[!is.na(YearOfLastAssessment) & YearOfLastAssessment != 0]
+    x_long[, stock_location := parse_location_from_stock_description(StockKeyDescription)]
+    x_long[]
+  }, cache = sid_cache_by_year)
+
+  # --- SAG: latest advice map (single call) ---
+  getSAG_latest_cached <- memoise::memoise(function() {
+    message("Fetching SAG latest stock advice list")
+    dt <- data.table::as.data.table(icesSAG::getLatestStockAdviceList())
+    # Normalise names to what your table expects
+    # (Adjust if your returned column names differ)
+    if ("stockCode" %in% names(dt)) dt[, StockKeyLabel := stockCode]
+    if ("assessmentKey" %in% names(dt)) dt[, AssessmentKey := assessmentKey]
+    if ("adviceComponent" %in% names(dt)) dt[, AssessmentComponent := adviceComponent]
+    if ("AssessmentYear" %in% names(dt)) dt[, AssessmentYear := AssessmentYear]
+    dt[, .(StockKeyLabel, AssessmentKey, AssessmentComponent, AssessmentYear)]
+  }, cache = cachem::cache_mem(max_age = 6 * 3600))
+
+  # --- SAG: stock list by year (one call per year; cached) ---
+  getSAG_stocklist_year_cached <- memoise::memoise(function(year) {
+    message("Fetching SAG StockList for year: ", year)
+    url <- sprintf("https://sag.ices.dk/SAG_API/api/StockList?assessmentKey=0&year=%s", year)
+    dt <- data.table::as.data.table(jsonlite::fromJSON(url))
+
+    # Normalise
+    if ("stockCode" %in% names(dt)) dt[, StockKeyLabel := stockCode]
+    if ("assessmentKey" %in% names(dt)) dt[, AssessmentKey := assessmentKey]
+    if ("adviceComponent" %in% names(dt)) dt[, AssessmentComponent := adviceComponent]
+    if ("AssessmentYear" %in% names(dt)) dt[, AssessmentYear := AssessmentYear]
+    if ("assessmentYear" %in% names(dt)) dt[, AssessmentYear := assessmentYear]
+
+    # Keep only what we need for joining
+    dt[, .(StockKeyLabel, AssessmentKey, AssessmentComponent, AssessmentYear)]
+  }, cache = sag_cache_by_year)
+
+
+  # --- ASD: advice view record by assessmentKey (lazy, cached) ---
+  getASD_by_key_cached <- memoise::memoise(function(assessment_key) {
+    message("Fetching ASD advice view record for assessmentKey: ", assessment_key)
+    icesASD::getAdviceViewRecord(assessmentKey = assessment_key)
+  }, cache = asd_cache_by_key)
+
+  pick_asd_record_for_year <- function(df, active_year, assessment_component = NULL) {
+  if (is.null(df) || nrow(df) == 0) return(df)
+
+  df <- df %>%
+    dplyr::filter(adviceViewPublished == TRUE, adviceStatus == "Advice")
+
+  if (nrow(df) == 0) return(df)
+
+  # Optional component filter (only if it actually narrows results)
+  comp <- assessment_component
+  if (is.na(comp) || comp == "NA") comp <- "N.A."
+
+  if (!is.null(comp) && nzchar(comp)) {
+    df_comp <- df %>%
+      dplyr::filter(adviceComponent == comp | (is.na(adviceComponent) & comp == "N.A."))
+    if (nrow(df_comp) > 0) df <- df_comp
+  }
+
+  active_date <- as.Date(sprintf("%d-07-01", as.integer(active_year)))
+
+  df <- df %>%
+    dplyr::mutate(
+      from  = as.Date(substr(adviceApplicableFrom,  1, 10)),
+      until = as.Date(substr(adviceApplicableUntil, 1, 10)),
+
+      contains_year = (is.na(from)  | from  <= active_date) &
+                      (is.na(until) | active_date <= until),
+
+      # always defined; used only if contains_year == FALSE
+      abs_start_dist = dplyr::if_else(
+        is.na(from),
+        Inf,
+        abs(as.numeric(from - active_date))
+      )
+    )
+
+  # Ranking:
+  # 1) Prefer intervals that contain the active year
+  # 2) If inside interval: prefer later 'from' (more specific)
+  # 3) If not inside: prefer closest start date (abs_start_dist)
+  # 4) Then later 'until'
+  # 5) Then higher adviceKey (stable tie-break)
+  df %>%
+    dplyr::arrange(
+      dplyr::desc(contains_year),
+      dplyr::desc(from),
+      abs_start_dist,
+      dplyr::desc(until),
+      dplyr::desc(adviceKey)
+    ) %>%
+    dplyr::slice(1)
 }
 
+getSAG_valid_for_year_from_sid <- function(active_year, sid_dt) {
+  y <- as.integer(active_year)
 
+  # Use SID only to decide which SAG years to fetch (no hard-coded lookback)
+  yrs <- sort(unique(sid_dt$YearOfLastAssessment))
+  yrs <- yrs[!is.na(yrs) & yrs != 0 & yrs <= y]
+
+  # Safety: ensure the active year is included (in case SID misses it)
+  if (!y %in% yrs) yrs <- c(yrs, y)
+
+  # Fetch and combine SAG lists for those years (each year fetch is cached)
+  sag_all <- data.table::rbindlist(lapply(yrs, getSAG_stocklist_year_cached), fill = TRUE)
+  data.table::setDT(sag_all)
+
+  sag_all <- sag_all[!is.na(StockKeyLabel) & !is.na(AssessmentKey)]
+  sag_all <- unique(sag_all, by = c("StockKeyLabel", "AssessmentKey", "AssessmentComponent", "AssessmentYear"))
+
+  # Only keep assessments up to the active year
+  sag_all <- sag_all[AssessmentYear <= y]
+
+  # Normalise component for grouping
+  sag_all[, comp_norm := data.table::fifelse(
+    is.na(AssessmentComponent) | AssessmentComponent %in% c("", "NA", "N.A."),
+    "<none>",
+    AssessmentComponent
+  )]
+
+  # For each stock + component, keep the most recent assessment (tie-break by AssessmentKey)
+  sag_all <- sag_all[order(StockKeyLabel, comp_norm, -AssessmentYear, -AssessmentKey)]
+  sag_keep <- sag_all[, .SD[1], by = .(StockKeyLabel, comp_norm)]
+
+  sag_keep[, comp_norm := NULL]
+  sag_keep[]
+}
 

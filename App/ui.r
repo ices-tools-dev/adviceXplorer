@@ -45,8 +45,21 @@ library(promises)
 library(data.table)
 library(memoise)
 library(future.apply)
+library(cachem)
 
-plan(multisession)  # Enable parallel execution
+# plan(multisession)  # Enable parallel execution
+# --- shared caches (must be in .GlobalEnv because update_*.r is sourced there) ---
+assign("asd_cache_by_key",
+       cachem::cache_mem(max_size = 100 * 1024^2, max_age = 6 * 3600),
+       envir = .GlobalEnv)
+
+assign("sag_cache_by_year",
+       cachem::cache_mem(max_size = 100 * 1024^2, max_age = 24 * 3600),
+       envir = .GlobalEnv)
+
+assign("sid_cache_by_year",
+       cachem::cache_mem(max_size = 200 * 1024^2, max_age = 24 * 3600),
+       envir = .GlobalEnv)
 
 ########## Load utilities ############
 source("utilities_help.r")
