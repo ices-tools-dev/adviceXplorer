@@ -291,3 +291,83 @@ caption {
   height: calc(72vh - 220px) !important;
   overflow-y: hidden;
 }
+
+
+
+.resources-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 18px;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.resource-card, .intro-card, .fair-card, .disclaimer-card, .cite-card {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.resource-card h4 {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.resource-links {
+  margin-top: 6px;
+}
+
+.resource-services h5 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.codeblock {
+  white-space: pre-wrap;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.03);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.cite-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.msform-embed {
+  margin-top: 10px;
+}
+
+
+/* cards created by resource_card() */
+.source-card{
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.source-title{
+  font-size: 22px; 
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.source-links{
+  margin-top: 6px;
+}
+
+.source-notes{
+  margin-top: 8px;
+}
