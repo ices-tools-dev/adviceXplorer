@@ -336,9 +336,9 @@ make_disclaimer_block <- function() {
       class = "disclaimer-card",
       shiny::h3(shiny::HTML("<b>Data disclaimer</b>")),
       shiny::p(
-        "The fisheriesXplorer Data Disclaimer can be found ",
+        "The adviceXplorer Data Disclaimer can be found ",
         shiny::a("here",
-          href = "https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_fisheriesXplorer.txt",
+          href = "https://raw.githubusercontent.com/ices-tools-prod/disclaimers/master/Disclaimer_adviceXplorer.txt",
           target = "_blank", rel = "noopener"
         ),
         "."
@@ -360,13 +360,6 @@ make_disclaimer_block <- function() {
           target = "_blank", rel = "noopener"
         ),
         ", and data products are by default publicly available."
-      ),
-      shiny::tags$ul(
-        shiny::tags$li("Exclusions to unrestricted public access (relevant to fisheriesXplorer) include:"),
-        shiny::tags$ul(
-          shiny::tags$li("Commercial catch data from RDB-FishFrame and InterCatch"),
-          shiny::tags$li("VMS and Logbook data")
-        )
       ),
       shiny::p(
         "See the full policy on the ICES website. ",
