@@ -38,6 +38,7 @@ library(zip)
 library(datamods)
 library(reactable)
 library(ggthemes)
+library(bslib)
 
 library(future)
 library(promises)
@@ -159,26 +160,7 @@ navbarPage(
         
     ),
     bslib::nav_spacer(),
-    navbarMenu(
-            "Resources",
-            tabPanel(
-                "Contact & feedback",
-                htmlOutput("contact_feedback")
-            ),
-            tabPanel(
-                "Data sources",
-                htmlOutput("data_sources")
-            ),
-            tabPanel(
-                "Data disclaimer & policy",
-                htmlOutput("data_disclaimer_policy")
-            ),
-            tabPanel(
-                "Citation",
-                htmlOutput("citation")
-            ),
-            align = "right"
-        )
+    tabPanel("Resources", mod_resources_ui("resources"))
 )   
 )
 
