@@ -34,8 +34,8 @@ source("update_SID_data.r")
 # Usage:
 # - Run this script to ensure the application is using the latest available data.
 #
-UpdateDataApp(mode = "AllYears")
+# UpdateDataApp(mode = "AllYears")
 
 
-# source("deploy.r")
+source("deploy.r")
 
