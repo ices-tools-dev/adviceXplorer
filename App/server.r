@@ -85,10 +85,10 @@ server <- function(input, output, session) {
   # }) %>%
   #   bindCache(input$selected_locations, input$selected_years) %>%
   #   bindEvent(input$selected_locations, input$selected_years)
-  
-  
-  
-  
+
+
+
+
   # eco_filter <- reactive({
   #   req(input$selected_locations, input$selected_years)
 
@@ -134,49 +134,49 @@ server <- function(input, output, session) {
   #   bindCache(input$selected_locations, input$selected_years) %>%
   #   bindEvent(input$selected_locations, input$selected_years)
   eco_filter <- reactive({
-  req(input$selected_locations, input$selected_years)
-  year <- input$selected_years
+    req(input$selected_locations, input$selected_years)
+    year <- input$selected_years
 
-  # SID: one row per stock x ecoregion (dedupe to prevent accidental multiplicity)
-  sid_dt <- getSID_meta_cached(year)
-  # SID: dedupe and filter ecoregions early
-data.table::setDT(sid_dt)
-sid_dt <- unique(sid_dt, by = c("StockKeyLabel", "EcoRegion"))
+    # SID: one row per stock x ecoregion (dedupe to prevent accidental multiplicity)
+    sid_dt <- getSID_meta_cached(year)
+    # SID: dedupe and filter ecoregions early
+    data.table::setDT(sid_dt)
+    sid_dt <- unique(sid_dt, by = c("StockKeyLabel", "EcoRegion"))
 
-sid_dt <- sid_dt[stringr::str_detect(
-  EcoRegion,
-  paste0("(", paste(input$selected_locations, collapse = "|"), ")")
-)]
+    sid_dt <- sid_dt[stringr::str_detect(
+      EcoRegion,
+      paste0("(", paste(input$selected_locations, collapse = "|"), ")")
+    )]
 
-# SAG list for UI (latest fast path; historical uses SID years)
-sag_dt <- if (is_latest_selected()) {
-  getSAG_latest_cached()
-} else {
-  getSAG_valid_for_year_from_sid(active_year = year, sid_dt = sid_dt)
-}
+    # SAG list for UI (latest fast path; historical uses SID years)
+    sag_dt <- if (is_latest_selected()) {
+      getSAG_latest_cached()
+    } else {
+      getSAG_valid_for_year_from_sid(active_year = year, sid_dt = sid_dt)
+    }
 
-data.table::setDT(sag_dt)
-sag_dt <- unique(sag_dt, by = c("StockKeyLabel", "AssessmentKey", "AssessmentComponent", "AssessmentYear"))
+    data.table::setDT(sag_dt)
+    sag_dt <- unique(sag_dt, by = c("StockKeyLabel", "AssessmentKey", "AssessmentComponent", "AssessmentYear"))
 
-# Join: replicate each SAG entry across SID ecoregions for that stock
-out <- sid_dt[sag_dt, on = "StockKeyLabel", allow.cartesian = TRUE, nomatch = 0]
+    # Join: replicate each SAG entry across SID ecoregions for that stock
+    out <- sid_dt[sag_dt, on = "StockKeyLabel", allow.cartesian = TRUE, nomatch = 0]
 
-  # Optional: create your combined display label here (or in res_modo)
-  out[, Component_clean := data.table::fifelse(
-    is.na(AssessmentComponent) | AssessmentComponent %in% c("NA", "N.A.", ""),
-    "",
-    AssessmentComponent
-  )]
-  out[, StockDisplay := data.table::fifelse(
-    Component_clean == "",
-    StockKeyLabel,
-    paste0(StockKeyLabel, " (", Component_clean, ")")
-  )]
+    # Optional: create your combined display label here (or in res_modo)
+    out[, Component_clean := data.table::fifelse(
+      is.na(AssessmentComponent) | AssessmentComponent %in% c("NA", "N.A.", ""),
+      "",
+      AssessmentComponent
+    )]
+    out[, StockDisplay := data.table::fifelse(
+      Component_clean == "",
+      StockKeyLabel,
+      paste0(StockKeyLabel, " (", Component_clean, ")")
+    )]
 
-  out[order(StockKeyLabel, AssessmentComponent, EcoRegion)]
-}) %>%
-  bindCache(input$selected_locations, input$selected_years) %>%
-  bindEvent(input$selected_locations, input$selected_years)
+    out[order(StockKeyLabel, AssessmentComponent, EcoRegion)]
+  }) %>%
+    bindCache(input$selected_locations, input$selected_years) %>%
+    bindEvent(input$selected_locations, input$selected_years)
 
 
   res_mod <- select_group_server(
@@ -268,11 +268,19 @@ out <- sid_dt[sag_dt, on = "StockKeyLabel", allow.cartesian = TRUE, nomatch = 0]
           filterable = FALSE,
           align = "center",
           aggregate = "unique"
+        ),
+        "Assessment year" = colDef(
+          align = "left",
+          width = 90, # try 70–110
+          minWidth = 70,
+          maxWidth = 110
+        ),
+        "Common name" = colDef(
+          align = "left",
+          width = 110, # try 70–110
+          minWidth = 100,
+          maxWidth = 120
         )
-        # "Year of last assessment" = colDef(
-        #   filterable = TRUE,
-        #   align = "left"
-        # )
       ),
       theme = reactableTheme(
         stripedColor = "#eff2f5",
