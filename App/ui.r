@@ -96,7 +96,18 @@ tagList(
     });
     '
   ),
-  
+  tags$script(HTML("
+  Shiny.addCustomMessageHandler('copyText', function(message) {
+    if (!navigator.clipboard) {
+      Shiny.setInputValue('share_copy_error', 'Clipboard API not available', {priority: 'event'});
+      return;
+    }
+    navigator.clipboard.writeText(message.text).then(
+      function(){ Shiny.setInputValue('share_copy_success', Date.now(), {priority: 'event'}); },
+      function(err){ Shiny.setInputValue('share_copy_error', err.toString(), {priority: 'event'}); }
+    );
+  });
+")),
     
 
 
@@ -160,6 +171,15 @@ navbarPage(
         
     ),
     bslib::nav_spacer(),
+    bslib::nav_item(
+  actionButton(
+    "share_btn",
+    label = "Share",
+    icon  = icon("link"),
+    class = "btn btn-default",
+    style = "margin-right: 8px;"
+  )
+),
     tabPanel("Resources", mod_resources_ui("resources"))
 )   
 )

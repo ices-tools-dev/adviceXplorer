@@ -411,3 +411,7 @@ get_advice_doi <- function(assessmentKey) {
   return(doi)
 }
 
+
+`%||%` <- function(x, y) if (is.null(x) || length(x) == 0 || (is.atomic(x) && length(x) == 1 && is.na(x))) y else x
+
+

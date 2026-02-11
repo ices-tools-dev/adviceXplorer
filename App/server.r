@@ -18,10 +18,45 @@ sf::sf_use_s2(FALSE)
 
 server <- function(input, output, session) {
   msg("server loop start:\n  ", getwd())
-  shinyjs::disable(selector = '.navbar-nav a[data-value="Development over time"')
-  shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-  shinyjs::disable(selector = '.navbar-nav a[data-value="Catch scenarios"')
+  # shinyjs::disable(selector = '.navbar-nav a[data-value="Development over time"')
+  # shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"')
+  # shinyjs::disable(selector = '.navbar-nav a[data-value="Catch scenarios"')
+  shinyjs::disable(selector = '.navbar-nav a[data-value="Development over time"]')
+shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"]')
+shinyjs::disable(selector = '.navbar-nav a[data-value="Catch scenarios"]')
   
+  ###################################################################
+  # Build a query string like ?assessmentkey=...&assessmentcomponent=...&tab=...
+make_url_search <- function(assessmentkey = NULL, assessmentcomponent = NULL, tab = NULL) {
+  params <- list()
+
+  if (!is.null(assessmentkey) && nzchar(assessmentkey)) {
+    params$assessmentkey <- assessmentkey
+  }
+  if (!is.null(assessmentcomponent) && nzchar(assessmentcomponent)) {
+    params$assessmentcomponent <- assessmentcomponent
+  }
+  if (!is.null(tab) && nzchar(tab)) {
+    params$tab <- tab
+  }
+
+  if (length(params) == 0) return("")
+
+  enc <- function(x) URLencode(as.character(x), reserved = TRUE)
+  paste0("?", paste(sprintf("%s=%s", names(params), vapply(params, enc, FUN.VALUE = "")), collapse = "&"))
+}
+
+# Base URL for the running app (works on shinyapps.io too)
+.base_url <- function(session) {
+  proto <- session$clientData$url_protocol %||% "https:"
+  host  <- session$clientData$url_hostname %||% ""
+  port  <- session$clientData$url_port %||% ""
+  path  <- session$clientData$url_pathname %||% "/"
+
+  port_part <- if (nzchar(port) && !port %in% c("80", "443")) paste0(":", port) else ""
+  paste0(proto, "//", host, port_part, path)
+}
+############################################################################################
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
 
@@ -153,50 +188,132 @@ server <- function(input, output, session) {
   
   selected <- reactive(getReactableState("tbl", "selected"))
 
+  # observeEvent(selected(), {
+  #   shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"]')
+  #   shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"]')
+  #   shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"]')
+    
+  #   filtered_row <- res_mod()[selected(), ]
+  #   updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey, "&assessmentcomponent=",filtered_row$AssessmentComponent), mode = "push") ####
+
+  #   query$query_from_table <- TRUE
+
+  #   msg("stock selected from table:", filtered_row$StockKeyLabel)
+  #   msg("year of SAG/SID selected from table:", input$selected_years) #####
+
+  #   ### this allow to trigger the "Development over time" tab when the radio button is clicked
+  #   updateNavbarPage(session, "tabset", selected = "Development over time")
+    
+  # })
   observeEvent(selected(), {
-    shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
-    shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-    shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
-    
-    filtered_row <- res_mod()[selected(), ]
-    updateQueryString(paste0("?assessmentkey=", filtered_row$AssessmentKey, "&assessmentcomponent=",filtered_row$AssessmentComponent), mode = "push") ####
+  shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"]')
+  shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"]')
+  shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"]')
 
-    query$query_from_table <- TRUE
+  filtered_row <- res_mod()[selected(), ]
 
-    msg("stock selected from table:", filtered_row$StockKeyLabel)
-    msg("year of SAG/SID selected from table:", input$selected_years) #####
+  # Update server-side state immediately
+  query$assessmentkey <- filtered_row$AssessmentKey
+  query$assessmentcomponent <- filtered_row$AssessmentComponent %||% "NA"
 
-    ### this allow to trigger the "Development over time" tab when the radio button is clicked
-    updateNavbarPage(session, "tabset", selected = "Development over time")
-    
-  })
+  # Write URL (push to history)
+  nav$restoring <- TRUE
+  updateQueryString(
+    make_url_search(query$assessmentkey, query$assessmentcomponent, "Development over time"),
+    mode = "push"
+  )
+
+  query$query_from_table <- TRUE
+
+  updateNavbarPage(session, "tabset", selected = "Development over time")
+
+  nav$restoring <- FALSE
+})
+
   
-  ###### this runs only when the app loads from a URL
-  observe({
-    # read url string
-    query_string <- getQueryString()
-    names(query_string) <- tolower(names(query_string))
+  # ###### this runs only when the app loads from a URL
+  # observe({
+  #   # read url string
+  #   query_string <- getQueryString()
+  #   names(query_string) <- tolower(names(query_string))
 
-    query$assessmentkey <- query_string$assessmentkey
-    query$assessmentcomponent <-  modify_assessment_component(query_string$assessmentcomponent)
+  #   query$assessmentkey <- query_string$assessmentkey
+  #   query$assessmentcomponent <-  modify_assessment_component(query_string$assessmentcomponent)
     
 
-    if (!is.null(query$assessmentkey) && !query$query_from_table) {
-      # info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
-      info <- getStockInfoFromSAG(query$assessmentkey)
-      query$stockkeylabel <- info$StockKeyLabel
-      query$year <- info$AssessmentYear
+  #   if (!is.null(query$assessmentkey) && !query$query_from_table) {
+  #     # info <- icesSAG::getFishStockReferencePoints(query$assessmentkey)
+  #     info <- getStockInfoFromSAG(query$assessmentkey)
+  #     query$stockkeylabel <- info$StockKeyLabel
+  #     query$year <- info$AssessmentYear
 
 
-      msg("stock selected from url:", query$stockkeylabel)
-      msg("year of SAG/SID selected from url:", query$year)
+  #     msg("stock selected from url:", query$stockkeylabel)
+  #     msg("year of SAG/SID selected from url:", query$year)
 
-      updateNavbarPage(session, "tabset", selected = "Development over time")
-      shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
-      shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
-      shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
-    }
-  })
+  #     updateNavbarPage(session, "tabset", selected = "Development over time")
+  #     shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"')
+  #     shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"')
+  #     shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"')
+  #   }
+  # })
+  ####################################################################################################
+  # Track whether we're in a restore phase (prevents writer loops)
+nav <- reactiveValues(restoring = TRUE)
+
+observeEvent(session$clientData$url_search, {
+  nav$restoring <- TRUE
+  on.exit({ nav$restoring <- FALSE }, add = TRUE)
+
+  qs <- shiny::parseQueryString(session$clientData$url_search %||% "")
+  names(qs) <- tolower(names(qs))
+
+  ak  <- qs$assessmentkey %||% ""
+  ac0 <- qs$assessmentcomponent
+  tab <- qs$tab %||% ""
+
+  # Backward compatibility: old URLs had no tab -> go to Development over time
+  if (!nzchar(tab) && nzchar(ak)) tab <- "Development over time"
+  # If no stock and no tab specified, do nothing (stay at UI default)
+
+  # Only update stock state if assessmentkey actually changed (prevents refetch on tab-only changes)
+  cur_ak <- isolate(query$assessmentkey %||% "")
+
+  if (nzchar(ak) && !identical(ak, cur_ak) && !isTRUE(query$query_from_table)) {
+    query$assessmentkey <- ak
+
+    if (is.null(ac0) || !nzchar(ac0)) ac0 <- "NA"
+    query$assessmentcomponent <- modify_assessment_component(ac0)
+
+    info <- getStockInfoFromSAG(query$assessmentkey)
+    query$stockkeylabel <- info$StockKeyLabel
+    query$year <- info$AssessmentYear
+
+    shinyjs::enable(selector = '.navbar-nav a[data-value="Development over time"]')
+    shinyjs::enable(selector = '.navbar-nav a[data-value="Quality of assessment"]')
+    shinyjs::enable(selector = '.navbar-nav a[data-value="Catch scenarios"]')
+  }
+
+  # Restore tab (even if stock already loaded)
+  if (nzchar(tab) && !identical(isolate(input$tabset %||% ""), tab)) {
+    updateNavbarPage(session, "tabset", selected = tab)
+  }
+
+}, ignoreInit = FALSE)
+
+
+observeEvent(input$tabset, {
+  if (isTRUE(nav$restoring)) return()
+
+  new_search <- make_url_search(query$assessmentkey, query$assessmentcomponent, input$tabset)
+  cur_search <- session$clientData$url_search %||% ""
+
+  if (!identical(cur_search, new_search)) {
+    updateQueryString(new_search, mode = "replace")
+  }
+}, ignoreInit = TRUE)
+
+#######################################################################################
 
   ######### SAG data
   SAG_data_reactive <- reactive({
@@ -795,5 +912,54 @@ output$footnotes <-renderUI({
   
 # })
 mod_resources_server("resources")
+
+
+share_url <- reactiveVal("")
+
+observeEvent(input$share_btn, {
+  ak  <- query$assessmentkey %||% ""
+  ac  <- query$assessmentcomponent %||% "NA"
+  tab <- input$tabset %||% ""
+
+  # If no stock selected yet, you can still share the app root (optional)
+  final <- if (nzchar(ak)) {
+    paste0(.base_url(session), make_url_search(ak, ac, tab))
+  } else {
+    paste0(.base_url(session), make_url_search(NULL, NULL, tab))
+  }
+  
+  share_url(final)
+
+  showModal(modalDialog(
+    title = "Share this view",
+    easyClose = TRUE,
+    footer = tagList(
+      modalButton("Close"),
+      actionButton("copy_share_link", "Copy link", icon = icon("copy"), class = "btn btn-primary btn-sm")
+    ),
+    tags$p("This link reproduces this exact view:"),
+    tags$div(
+      style = "word-break: break-all; padding: 6px; border: 1px solid #ddd; border-radius: 4px;",
+      final
+    ),
+    tags$div(style = "margin-top: 8px;",
+      tags$a(href = final, target = "_blank", rel = "noopener", "Open in new tab")
+    ),
+    size = "m"
+  ))
+})
+
+observeEvent(input$copy_share_link, {
+  session$sendCustomMessage("copyText", list(text = share_url()))
+})
+
+observeEvent(input$share_copy_success, {
+  showNotification("Link copied to clipboard", type = "message")
+})
+
+observeEvent(input$share_copy_error, {
+  showNotification(paste("Copy failed:", input$share_copy_error), type = "error")
+})
+
 
 }
