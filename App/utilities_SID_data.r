@@ -411,3 +411,158 @@ get_advice_doi <- function(assessmentKey) {
   return(doi)
 }
 
+#' Null / empty-coalescing infix operator
+#'
+#' Returns the first argument \code{a} if it is considered "meaningful",
+#' otherwise returns \code{b}. A value is treated as meaningful if it is
+#' not \code{NULL}, has length > 0, its first element is not \code{NA},
+#' and the first element is a non-empty string when coerced to character.
+#'
+#' @param a First candidate value. Typically a vector (often length 1)
+#'   that may be \code{NULL}, empty, \code{NA}, or a blank string.
+#' @param b Fallback value to use when \code{a} is not meaningful.
+#'
+#' @return
+#' Either \code{a} (if it passes the checks) or \code{b} (otherwise).
+#'
+#' @details
+#' This operator is a convenience for expressions such as:
+#' \code{if (!is.null(a) && length(a) > 0 && !is.na(a[1]) && nzchar(a[1])) a else b}.
+#' It is particularly useful in Shiny bookmarking and URL/query parsing
+#' logic, where missing or empty parameters should fall back to default
+#' values.
+#'
+#' @examples
+#' "foo" %||% "bar"           # "foo"
+#' NULL  %||% "default"       # "default"
+#' ""    %||% "fallback"      # "fallback"
+#' NA    %||% 10              # 10
+#'
+#' @export
+`%||%` <- function(x, y) if (is.null(x) || length(x) == 0 || (is.atomic(x) && length(x) == 1 && is.na(x))) y else x
+
+
+
+
+#' Construct base URL from a Shiny session
+#'
+#' Internal helper that reconstructs the base URL of the current Shiny
+#' app request from \code{session$clientData}. The result includes the
+#' protocol, host, (optional) port, and path.
+#'
+#' @param session A Shiny session object, typically the \code{session}
+#'   argument passed into a Shiny server function or module server.
+#'
+#' @return
+#' A single character string of the form
+#' \code{"<protocol>//<host>[:port]<path>"}, for example
+#' \code{"https://example.org/app/"}.
+#'
+#' @details
+#' The function uses:
+#' \itemize{
+#'   \item \code{session$clientData$url_protocol}, defaulting to
+#'     \code{"https:"} if missing.
+#'   \item \code{session$clientData$url_hostname}, defaulting to
+#'     the empty string.
+#'   \item \code{session$clientData$url_port}, which is omitted when it
+#'     matches the default port for the protocol (80 for HTTP, 443 for
+#'     HTTPS) or is empty.
+#'   \item \code{session$clientData$url_pathname}, defaulting to
+#'     \code{"/"}.
+#' }
+#'
+#' It is mainly used for constructing absolute URLs for bookmarking,
+#' share links, or redirects inside the app. This function relies on
+#' the \code{\%||\%} operator to provide sensible defaults.
+#'
+#' @examples
+#' \dontrun{
+#' shinyServer(function(input, output, session) {
+#'   base <- .base_url(session)
+#'   # e.g., paste0(base, "?tab=overview")
+#' })
+#' }
+#'
+#' @keywords internal
+  .base_url <- function(session) {
+    proto <- session$clientData$url_protocol %||% "https:"
+    host <- session$clientData$url_hostname %||% ""
+    port <- session$clientData$url_port %||% ""
+    path <- session$clientData$url_pathname %||% "/"
+
+    port_part <- if (nzchar(port) && !port %in% c("80", "443")) paste0(":", port) else ""
+    paste0(proto, "//", host, port_part, path)
+  }
+
+
+
+  #' Build a URL query string for adviceXplorer navigation
+#'
+#' Constructs a query string encoding the current app “view” in a stable,
+#' human-readable form. The query string is designed to support:
+#' \itemize{
+#'   \item deep links to a specific assessment via \code{assessmentkey}
+#'   \item optional disambiguation via \code{assessmentcomponent}
+#'   \item tab-level navigation via \code{tab}
+#' }
+#'
+#' The function omits any parameter that is \code{NULL} or an empty string,
+#' and returns an empty string when no parameters are provided. Values are
+#' URL-encoded using \code{URLencode(..., reserved = TRUE)} to ensure that
+#' spaces and special characters (e.g., in tab names) are safely represented.
+#'
+#' This helper is intended to be paired with \code{updateQueryString()} (writer)
+#' and a corresponding URL parser (reader) so that bookmarking and share links
+#' reproduce the current app state. It is also backward-compatible with older
+#' adviceXplorer links that only included \code{assessmentkey} and
+#' \code{assessmentcomponent} (i.e., no \code{tab} parameter).
+#'
+#' @param assessmentkey Character scalar. The SAG assessment key identifying
+#'   the selected stock/advice record. If \code{NULL} or empty, the parameter is
+#'   omitted from the query string.
+#' @param assessmentcomponent Character scalar. Optional assessment component
+#'   associated with the selected assessment (e.g., \code{"NA"}). If \code{NULL}
+#'   or empty, the parameter is omitted.
+#' @param tab Character scalar. Optional top-level tab name (e.g.,
+#'   \code{"Development over time"}). If \code{NULL} or empty, the parameter is
+#'   omitted.
+#'
+#' @return A character scalar. Either:
+#' \itemize{
+#'   \item an empty string \code{""} if no parameters are provided; or
+#'   \item a query string beginning with \code{"?"}, with \code{"&"}-separated
+#'     key-value pairs (e.g., \code{"?assessmentkey=...&tab=..."}).
+#' }
+#'
+#' @examples
+#' make_url_search("12345", "NA", "Development over time")
+#' #> "?assessmentkey=12345&assessmentcomponent=NA&tab=Development%20over%20time"
+#'
+#' make_url_search("12345", "NA", NULL)
+#' #> "?assessmentkey=12345&assessmentcomponent=NA"
+#'
+#' make_url_search(NULL, NULL, NULL)
+#' #> ""
+#'
+#' @keywords internal
+  make_url_search <- function(assessmentkey = NULL, assessmentcomponent = NULL, tab = NULL) {
+    params <- list()
+
+    if (!is.null(assessmentkey) && nzchar(assessmentkey)) {
+      params$assessmentkey <- assessmentkey
+    }
+    if (!is.null(assessmentcomponent) && nzchar(assessmentcomponent)) {
+      params$assessmentcomponent <- assessmentcomponent
+    }
+    if (!is.null(tab) && nzchar(tab)) {
+      params$tab <- tab
+    }
+
+    if (length(params) == 0) {
+      return("")
+    }
+
+    enc <- function(x) URLencode(as.character(x), reserved = TRUE)
+    paste0("?", paste(sprintf("%s=%s", names(params), vapply(params, enc, FUN.VALUE = "")), collapse = "&"))
+  }
