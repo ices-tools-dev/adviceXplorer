@@ -21,39 +21,9 @@ server <- function(input, output, session) {
   shinyjs::disable(selector = '.navbar-nav a[data-value="Quality of assessment"]')
   shinyjs::disable(selector = '.navbar-nav a[data-value="Catch scenarios"]')
 
-  ############################ Build URL ######################################
-  # Build a query string like ?assessmentkey=...&assessmentcomponent=...&tab=...
-  make_url_search <- function(assessmentkey = NULL, assessmentcomponent = NULL, tab = NULL) {
-    params <- list()
+  
 
-    if (!is.null(assessmentkey) && nzchar(assessmentkey)) {
-      params$assessmentkey <- assessmentkey
-    }
-    if (!is.null(assessmentcomponent) && nzchar(assessmentcomponent)) {
-      params$assessmentcomponent <- assessmentcomponent
-    }
-    if (!is.null(tab) && nzchar(tab)) {
-      params$tab <- tab
-    }
-
-    if (length(params) == 0) {
-      return("")
-    }
-
-    enc <- function(x) URLencode(as.character(x), reserved = TRUE)
-    paste0("?", paste(sprintf("%s=%s", names(params), vapply(params, enc, FUN.VALUE = "")), collapse = "&"))
-  }
-
-  # Base URL for the running app (works on shinyapps.io too)
-  .base_url <- function(session) {
-    proto <- session$clientData$url_protocol %||% "https:"
-    host <- session$clientData$url_hostname %||% ""
-    port <- session$clientData$url_port %||% ""
-    path <- session$clientData$url_pathname %||% "/"
-
-    port_part <- if (nzchar(port) && !port %in% c("80", "443")) paste0(":", port) else ""
-    paste0(proto, "//", host, port_part, path)
-  }
+  
   ############################################################################################
   # values of the query string and first visit flag
   query <- reactiveValues(query_from_table = FALSE)
