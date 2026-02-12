@@ -486,14 +486,21 @@ get_advice_doi <- function(assessmentKey) {
 #'
 #' @keywords internal
   .base_url <- function(session) {
-    proto <- session$clientData$url_protocol %||% "https:"
-    host <- session$clientData$url_hostname %||% ""
-    port <- session$clientData$url_port %||% ""
-    path <- session$clientData$url_pathname %||% "/"
+  proto <- session$clientData$url_protocol %||% "https:"
+  host  <- session$clientData$url_hostname %||% ""
+  port  <- session$clientData$url_port %||% ""
+  path  <- session$clientData$url_pathname %||% "/"
 
-    port_part <- if (nzchar(port) && !port %in% c("80", "443")) paste0(":", port) else ""
-    paste0(proto, "//", host, port_part, path)
-  }
+  # shinyapps.io sometimes injects a worker segment like /_w_<hex>/
+  path <- sub("/_w_[^/]+/", "/", path)
+
+  # keep trailing slash so paste0(base, "?a=b") is correct
+  if (!grepl("/$", path)) path <- paste0(path, "/")
+
+  port_part <- if (nzchar(port) && !port %in% c("80", "443")) paste0(":", port) else ""
+  paste0(proto, "//", host, port_part, path)
+}
+
 
 
 
