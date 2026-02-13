@@ -133,50 +133,99 @@ server <- function(input, output, session) {
   # }) %>%
   #   bindCache(input$selected_locations, input$selected_years) %>%
   #   bindEvent(input$selected_locations, input$selected_years)
+
+
+
+
+
+
+  # eco_filter <- reactive({
+  #   req(input$selected_locations, input$selected_years)
+  #   year <- input$selected_years
+
+  #   # SID: one row per stock x ecoregion (dedupe to prevent accidental multiplicity)
+  #   sid_dt <- getSID_meta_cached(year)
+    
+  #   browser()
+  #   test <- sid_dt %>% filter(StockKeyLabel == "cod.27.46a7d20")
+    
+  #   # SID: dedupe and filter ecoregions early
+  #   data.table::setDT(sid_dt)
+  #   sid_dt <- unique(sid_dt, by = c("StockKeyLabel", "EcoRegion"))
+
+  #   sid_dt <- sid_dt[stringr::str_detect(
+  #     EcoRegion,
+  #     paste0("(", paste(input$selected_locations, collapse = "|"), ")")
+  #   )]
+
+  #   # SAG list for UI (latest fast path; historical uses SID years)
+  #   sag_dt <- if (is_latest_selected()) {
+  #     getSAG_latest_cached()
+  #   } else {
+  #     getSAG_valid_for_year_from_sid(active_year = year, sid_dt = sid_dt)
+  #   }
+    
+  #   test2 <- sag_dt %>% filter(StockKeyLabel == "cod.27.46a7d20")
+    
+    
+  #   data.table::setDT(sag_dt)
+  #   sag_dt <- unique(sag_dt, by = c("StockKeyLabel", "AssessmentKey", "AssessmentComponent", "AssessmentYear"))
+
+  #   # Join: replicate each SAG entry across SID ecoregions for that stock
+  #   out <- sid_dt[sag_dt, on = "StockKeyLabel", allow.cartesian = TRUE, nomatch = 0]
+
+  #   # Optional: create your combined display label here (or in res_modo)
+  #   out[, Component_clean := data.table::fifelse(
+  #     is.na(AssessmentComponent) | AssessmentComponent %in% c("NA", "N.A.", ""),
+  #     "",
+  #     AssessmentComponent
+  #   )]
+  #   out[, StockDisplay := data.table::fifelse(
+  #     Component_clean == "",
+  #     StockKeyLabel,
+  #     paste0(StockKeyLabel, " (", Component_clean, ")")
+  #   )]
+
+  #   out[order(StockKeyLabel, AssessmentComponent, EcoRegion)]
+  # }) %>%
+  #   bindCache(input$selected_locations, input$selected_years) %>%
+  #   bindEvent(input$selected_locations, input$selected_years)
+
+
   eco_filter <- reactive({
-    req(input$selected_locations, input$selected_years)
-    year <- input$selected_years
+  req(input$selected_locations, input$selected_years)
+  year <- input$selected_years
 
-    # SID: one row per stock x ecoregion (dedupe to prevent accidental multiplicity)
-    sid_dt <- getSID_meta_cached(year)
-    # SID: dedupe and filter ecoregions early
-    data.table::setDT(sid_dt)
-    sid_dt <- unique(sid_dt, by = c("StockKeyLabel", "EcoRegion"))
+  sid_dt <- getSID_meta_cached(year)
+  data.table::setDT(sid_dt)
 
-    sid_dt <- sid_dt[stringr::str_detect(
-      EcoRegion,
-      paste0("(", paste(input$selected_locations, collapse = "|"), ")")
-    )]
+  # keep SID key if you want it for debugging, but don't let it collide
+  if ("AssessmentKey" %in% names(sid_dt)) {
+    sid_dt[, SID_AssessmentKey := AssessmentKey]
+    sid_dt[, AssessmentKey := NULL]
+  }
 
-    # SAG list for UI (latest fast path; historical uses SID years)
-    sag_dt <- if (is_latest_selected()) {
-      getSAG_latest_cached()
-    } else {
-      getSAG_valid_for_year_from_sid(active_year = year, sid_dt = sid_dt)
-    }
+  # dedupe + ecoregion filter
+  sid_dt <- unique(sid_dt, by = c("StockKeyLabel", "EcoRegion"))
+  sid_dt <- sid_dt[stringr::str_detect(
+    EcoRegion,
+    paste0("(", paste(input$selected_locations, collapse = "|"), ")")
+  )]
 
-    data.table::setDT(sag_dt)
-    sag_dt <- unique(sag_dt, by = c("StockKeyLabel", "AssessmentKey", "AssessmentComponent", "AssessmentYear"))
+  sag_dt <- if (is_latest_selected()) {
+    getSAG_latest_cached()
+  } else {
+    getSAG_valid_for_year_from_sid(active_year = year, sid_dt = sid_dt)
+  }
+  data.table::setDT(sag_dt)
+  sag_dt <- unique(sag_dt, by = c("StockKeyLabel", "AssessmentKey", "AssessmentComponent", "AssessmentYear"))
 
-    # Join: replicate each SAG entry across SID ecoregions for that stock
-    out <- sid_dt[sag_dt, on = "StockKeyLabel", allow.cartesian = TRUE, nomatch = 0]
+  # join: replicate each SAG row across SID ecoregions
+  out <- sid_dt[sag_dt, on = "StockKeyLabel", allow.cartesian = TRUE, nomatch = 0]
 
-    # Optional: create your combined display label here (or in res_modo)
-    out[, Component_clean := data.table::fifelse(
-      is.na(AssessmentComponent) | AssessmentComponent %in% c("NA", "N.A.", ""),
-      "",
-      AssessmentComponent
-    )]
-    out[, StockDisplay := data.table::fifelse(
-      Component_clean == "",
-      StockKeyLabel,
-      paste0(StockKeyLabel, " (", Component_clean, ")")
-    )]
+  out[order(StockKeyLabel, AssessmentComponent, EcoRegion)]
+})
 
-    out[order(StockKeyLabel, AssessmentComponent, EcoRegion)]
-  }) %>%
-    bindCache(input$selected_locations, input$selected_years) %>%
-    bindEvent(input$selected_locations, input$selected_years)
 
 
   res_mod <- select_group_server(
